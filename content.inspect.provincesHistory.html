@@ -1,0 +1,43 @@
+<div ng-controller="ProvincesHistoryTool">
+<div ui-layout="{ flow : 'row'}">
+	<div ui-layout-container>
+		<div ui-layout="{ flow : 'row'}" style="overflow: hidden;">
+			<div ui-layout-container size="60px" style="overflow: hidden;">
+				<div class="window-box">
+					<h2>Map tool <span class="loading-icon" ng-class="{'icon-animate': loading}"></span> 
+						 <button type="button" class="btn btn-primary" ng-click="createFiles()">Create missing</button>
+					</h2>
+				</div>				
+			</div>
+		 	<div ui-layout-container>
+				<div class="window-body">
+					<div ng-controller="PanZoom" style="width:100%;height:100%;" size-element>
+					    <div style="position:relative">
+					        <panzoomwidget panzoom-id="PanZoom" style="position:absolute;top:10px;left:10px;z-index:1"></panzoomwidget>
+					        <panzoom id="PanZoom" config="panzoomConfig" model="panzoomModel" style="width:100%;height: {{height}}px;">
+					            <img ng-src="{{scrollImage}}">
+					        </panzoom>
+					    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ui-layout-container size="200px" remember-size="true">
+		<div ui-layout="{ flow : 'column'}">
+			<div ui-layout-container class="text-output-window">
+				<h3>{{outputTitle}}</h3>
+				<div class="text-output-body">
+					<textarea ng-model="output"></textarea>
+				</div>
+			</div>
+			<div ui-layout-container class="text-output-window">
+				<h3>{{messagesTitle}}</h3>
+				<div class="text-output-body">
+					<textarea ng-model="messages"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>		
+</div>
+</div>

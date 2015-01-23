@@ -1,0 +1,72 @@
+<div ng-controller="MapCheck">
+<div ui-layout="{ flow : 'row'}">
+	<div ui-layout-container>
+		<div ui-layout="{ flow : 'row'}" style="overflow: hidden;">
+			<div ui-layout-container size="60px" style="overflow: hidden;">
+				<div class="window-box">
+					<h2>Map tool <span class="loading-icon" ng-class="{'icon-animate': loading}"></span> 
+						<button type="button" class="btn btn-primary" ng-click="loadSeasMap()">Analyze seas.png</button>
+						<button type="button" class="btn btn-primary" ng-click="loadNumberedMap()">Analyze provinces.bmp</button> 
+						<button type="button" class="btn btn-primary" ng-click="compareWithDefinitions()">Compare with current</button>
+						
+						<div class="map-action-bar">
+							Options
+							<div class="btn-group">
+								<label class="btn btn-success" ng-model="options.showGrid" btn-checkbox>Grid</label>
+								<label class="btn btn-success" ng-model="options.highLight" btn-checkbox>Highlight</label>
+								<label class="btn btn-success" ng-model="options.showLabels" btn-checkbox>Labels</label>
+							</div>
+							Views 
+							<div class="btn-group">
+								<label class="btn btn-success" ng-model="view" btn-radio="'provinces'">Provinces</label>
+								<label class="btn btn-success" ng-model="view" btn-radio="'seas'">Seas</label>
+								<label class="btn btn-success" ng-model="view" btn-radio="'countries'">Countries</label>
+							</div>
+						</div>
+					</h2>
+				</div>				
+			</div>
+		 	<div ui-layout-container>
+				<div class="window-body">
+					<div ng-controller="PanZoom" style="width:100%;height:100%;" size-element>
+					    <div style="position:relative">
+					        <panzoomwidget panzoom-id="PanZoom" style="position:absolute;top:10px;left:10px;z-index:1"></panzoomwidget>
+					        <div class="map-hint" ng-show="mapHint">{{mapHint}}</div>
+					        <panzoom id="PanZoom" config="panzoomConfig" model="panzoomModel" style="width:100%;height: {{height}}px;">
+					        	<div class="map-contents" ng-mousedown="toggleAreaDown($event)" ng-mouseup="toggleAreaUp($event)" ng-mousemove="toggleAreaHover($event)">
+					            	<canvas id="PanZoomCanvas" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
+					            	<canvas id="PanZoomCanvasHover" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
+					            	<div>
+					            		<img ng-src="{{scrollImage}}" id="scollImage" width="{{mapWidth}}" height="{{mapHeight}}">
+					            		<img ng-src="{{gridImage}}" id="gridImage" ng-show="gridImage" width="{{mapWidth}}" height="{{mapHeight}}">
+					            	</div>
+					            	<div class="map-labels" ng-show="options.showLabels">
+					            		<div ng-repeat="label in labels" class="map-label" style="left:{{::label.extentMin[0]}}px; top: {{::label.extentMin[1]}}px; width: {{::label.extentSize[0]}}px; height: {{::label.extentSize[1]}}px; line-height: {{::label.extentSize[1]}}px;{{::label.message ? ' color: red; outline: 2px solid red;' : ''}};" title="{{::label.message}}">{{::label.text}}</div>
+					            	</div>
+					            	<div class="label-cover" style="width: {{mapWidth}}px; height:{{mapHeight}}px"></div>
+				            	</div>
+					        </panzoom>
+					    </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ui-layout-container size="200px" remember-size="true">
+		<div ui-layout="{ flow : 'column'}">
+			<div ui-layout-container class="text-output-window">
+				<h3>{{outputTitle}}</h3>
+				<div class="text-output-body">
+					<textarea ng-model="output"></textarea>
+				</div>
+			</div>
+			<div ui-layout-container class="text-output-window">
+				<h3>{{messagesTitle}}</h3>
+				<div class="text-output-body">
+					<textarea ng-model="messages"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>		
+</div>
+</div>

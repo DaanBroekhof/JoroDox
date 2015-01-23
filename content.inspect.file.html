@@ -1,0 +1,52 @@
+<h2>{{node.name}} <span class="loading-icon" ng-class="{'icon-animate': loading}"></h2>
+
+<dl>
+	<dt>Full path:</dt><dd>{{node.path}}</dd>
+	<dt>Size:</dt><dd>{{node.metadata.size || '?'}} bytes</dd>
+	<dt>Last modified:</dt><dd>{{node.metadata.modificationTime.toLocaleString() || '?'}}</dd>
+	<dt ng-if="node.extension != null">Extension:</dt><dd ng-if="node.extension != null">{{node.extension}}</dd>
+	<dt ng-if="node.fileType != null">File type:</dt><dd ng-if="node.fileType != null">{{node.fileType}}</dd>
+</dl> 
+
+
+<div ng-if="node.image != null">
+	<h3>Image ({{node.image.width}}x{{node.image.height}})</h3>
+	<img ng-src="{{node.image.src}}" style="max-width: 100%">
+</div>
+
+
+<div ng-if="node.treeData != null">
+	<h3>Data structure</h3>
+		
+	<script type="text/ng-template" id="datanodes_renderer.html">
+		<div ui-tree-handle class="datatree-item datatree-depth-{{dataNode.depth}}">
+			<span class="glyphicon" data-nodrag ng-class="{'glyphicon-none': (!dataNode.subNodes.length), 'glyphicon-chevron-right': (dataNode.subNodes.length) && collapsed, 'glyphicon-chevron-down': dataNode.subNodes.length && !collapsed}" ng-click="this.toggle()"></span>
+			<span class="datatree-item-name" ng-click="this.toggle()"><span class="glyphicon glyphicon-{{dataNode.icon ? dataNode.icon : 'folder-close'}}"></span>{{::dataNode.name}}</span>
+			<span class="datatree-item-type" ng-show="node.treeDataType != 'simple'">{{::dataNode.type}}</span>
+			<span class="datatree-item-data" ng-show="dataNode.data">{{::dataSample(dataNode.data, node.treeDataType)}}</span>
+			<span class="datatree-item-comments" ng-show="dataNode.comments"><span ng-repeat="c in dataNode.comments | commentFilter track by $index"># {{c}}<br /></span></span>
+		</div>
+		<ol ng-class="{hidden: collapsed}" ui-tree-nodes ng-model="dataNode.subNodes">
+			<li ng-repeat="dataNode in dataNode.subNodes" ui-tree-node ng-include="'datanodes_renderer.html'" data-collapsed="true">
+			</li>
+		</ol>
+	</script>
+
+	<div ui-tree data-drag-enabled="false">
+		<div class="datatree-root-comments" ng-show="node.treeData.comments">
+			<span ng-repeat="c in node.treeData.comments | commentFilter track by $index"># {{c}}<br /></span>
+		</div>
+		<ol ui-tree-nodes ng-model="node.treeData.subNodes">
+			<li ng-repeat="dataNode in node.treeData.subNodes" ui-tree-node ng-include="'datanodes_renderer.html'" data-collapsed="true"></li>
+		</ol>
+	</div>
+	
+	<h4>In JSON <div class="btn-group"><button class="btn btn-xs btn-default" ng-model="showJson" btn-radio="true">Show</button><button class="btn btn-xs btn-default" ng-model="showJson" btn-radio="false">Hide</button></div></h4>
+	<div class="datatext" ng-show="showJson">{{node.treeData | jsonFiltered: ['comments', 'icon', 'depth']:'    '}}</div>
+</div>
+
+<div ng-if="node.textData != null">
+	<h3>Text contents</h3>
+		
+	<div class="datatext">{{node.textData}}</div>
+</div>

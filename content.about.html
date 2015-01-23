@@ -1,0 +1,42 @@
+<div class="window-box">
+	<h2>About the JoroDox</h2>
+
+	<p>
+		The JoroDox is a tool to assist in the creation of user-made mods for <a href="https://www.paradoxplaza.com/paradox-development-studio" target="_blank">Paradox Development Studio</a> games like <a href="https://www.paradoxplaza.com/europa-universalis-4" target="_blank">Europa Universalis 4</a> and <a href="https://www.paradoxplaza.com/crusader-kings-2" target="_blank">Crusader Kings 2</a>.
+	</p>
+	
+	<dl class="dl-horizontal property-list">
+		<dt>Version</dt><dd>v0.1</dd>
+		<dt>By</dt><dd>Daan Broekhof (<a href="mailto:Daan Broekhof <daan.broekhof@gmail.com>" target="_blank">daan.broekhof@gmail.com</a>)</dd>
+		<dt>Source</dt><dd><a href="https://github.com/DaanBroekhof/JoroDox" target="_blank">https://github.com/DaanBroekhof/JoroDox</a> - please report issues here</dd>
+	</dl>
+	
+	<h3>Changelog</h3>
+	
+	<h4>v0.1 (2015-01-05)</h4>
+	<h5>Changes</h5>
+	<ul>
+		<li>Added basic data reading tools
+			<ul>
+				<li>View Paradox-script files (.asset, .txt, .map, .gfx and many others) in data-tree structure</li>
+				<li>View Paradox binary format ("pdxmesh" format for meshes &amp; animations: .mesh, .anim) data</li>
+				<li>View image files (including .tga files, excluding .dds files)</li>
+			</ul>
+		</li>
+		<li>Added some map tools
+			<ul>
+				<li>Load map image &amp; zoom/pan through it a-la google maps.</li>
+				<li>Check `provinces.bmp` for anomolies like stray pixels.</li>
+				<li>Generate `definition.csv` for `provinces.bmp`.</li>
+		 		<li>Compare `provinces.bmp` to current `definition.csv`.</li>
+		 		<li>Create `sea_starts` list for `definition.csv` from `seas.png` (non-standard file with just the sea-provinces of provinces.bmp).</li>
+		 	</ul>
+		</li>
+	</ul>
+	<h5>Known issues</h5>
+	<ul>
+		
+		<li>Reading big asset/data files can be slooooow. Know issue with the tree renderer, not the reader code. Will fix in future.</li>
+		<li>Most data reading/analyzing is not done in the background. Will fix at a later moment.</li>
+	</ul>	
+</div>
