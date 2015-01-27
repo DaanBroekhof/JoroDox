@@ -1,4 +1,4 @@
-var myMod = angular.module('JoroDox', ['ui.bootstrap', 'ui.router', 'ui.layout', 'ui.tree', 'panzoom', 'panzoomwidget', 'modService', 'mapAnalyzeService', 'pdxDataService', 'pdxScriptService']);
+var myMod = angular.module('JoroDox', ['ui.bootstrap', 'ui.router', 'ui.layout', 'ui.tree', 'panzoom', 'panzoomwidget', 'modService', 'mapAnalyzeService', 'pdxDataService', 'pdxScriptService', 'rendererService']);
 
 myMod.filter('commentFilter', function() {
 	return function(input) {
@@ -66,11 +66,12 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 		name: 'inspect.file',
 		templateUrl: 'content.inspect.file.html',
 		url: '/inspect/:path',
-		controller: function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout) { 
+		controller: function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout, rendererService) { 
 			$scope.node = node;
 			$scope.loading = true;
 			$scope.showJson = false;
 			$scope.modData = modService.data;
+			$scope.viewScene = null;
 			
 			modService.getMetadata(node);
 
@@ -97,10 +98,40 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 			{
 				modService.getFileBuffer(node.path).then(function (buffer) {
 					$timeout(function () {
-						node.treeData = pdxDataService.readFile(buffer);
+						node.treeData = pdxDataService.readFromBuffer(buffer);
 						node.treeDataType = 'complex';
-						$scope.loading = false;
+						
+						if ('object' in node.treeData.props)
+						{
+							rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
+								$scope.viewScene = viewScene;
+								rendererService.loadPdxMesh(node.treeData, node.parent.path).then(function (viewObject) {
+									viewScene.scene.add(viewObject.object);
+									viewScene.viewConfig.distance = viewObject.distance * 4;
+									viewScene.viewConfig.update = viewObject.update;
+									$scope.loading = false;
+								});
+							});
+						}
+						else
+						{
+							$scope.loading = false;
+						}
 					}, 0);
+				});
+			}
+			else if (node.fileType == 'collada')
+			{
+				rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
+					$scope.viewScene = viewScene;
+					modService.getFileText(node.path).then(function (text) {
+						rendererService.loadCollada(text, node.parent.path).then(function (viewObject) {
+							viewScene.scene.add(viewObject.object);
+							viewScene.viewConfig.distance = viewObject.distance * 4;
+							viewScene.viewConfig.update = viewObject.update;
+							$scope.loading = false;
+						});
+					});
 				});
 			}
 			else if (node.fileType == 'pdx-script')
@@ -128,6 +159,90 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 			{
 				$scope.loading = false;
 			}
+			
+			$scope.convertToPdxmesh = function () {
+				$scope.loading = true;
+				modService.getFileText($scope.node.path).then(function (text) {
+					return rendererService.loadCollada(text, node.parent.path);
+				}).then(function (viewObject) {
+					var pdxdata = rendererService.convertToPdxmesh(viewObject.object, {
+						textureBaseName: $scope.node.name.replace('.dae', ''),
+					});
+					var buffer = pdxDataService.writeToBuffer(pdxdata);
+					
+					return modService.writeFileBuffer($scope.node.path.replace('.dae', '.mesh'), buffer, true).then(function () {
+						$scope.loading = false;
+					});						
+				});
+			};
+			
+			$scope.createBlankAnim = function () {
+				$scope.loading = true;
+				var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
+				pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
+
+				pdxDataRoot.subNodes.push({name: 'info', type: 'object', subNodes: [
+					{name: 'fps', type: 'float', data: [1]},
+					{name: 'sa', type: 'int', data: [1]},
+					{name: 'j', type: 'int', data: [2]},
+					{name: 'Root', type: 'object', subNodes: [
+						{name: 'sa', type: 'string', data: 't'},
+						{name: 't', type: 'float', data: [0, 0, 0]},
+						{name: 'q', type: 'float', data: [0, 0, 0, -1]},
+						{name: 's', type: 'float', data: [1]},
+					]},
+					{name: 'joint1', type: 'object', subNodes: [
+						{name: 'sa', type: 'string', data: ''},
+						{name: 't', type: 'float', data: [0, 0, 0]},
+						{name: 'q', type: 'float', data: [0, 0, 0, -1]},
+						{name: 's', type: 'float', data: [1]},
+					]}
+				]});
+				pdxDataRoot.subNodes.push({name: 'samples', type: 'object', subNodes: [
+					{name: 'q', type: 'float', data: [0, 0, 0]}
+				]});
+				
+				var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
+					
+				return modService.writeFileBuffer('blank.anim', buffer, true).then(function () {
+					$scope.loading = false;
+				});						
+			};
+			
+			$scope.createTriangle = function () {
+				$scope.loading = true;
+				var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
+				pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
+
+				pdxDataRoot.subNodes.push({name: 'object', type: 'object', subNodes: [
+					{name: 'shape', type: 'object', subNodes: [
+						{name: 'mesh', type: 'object', subNodes: [
+							{name: 'p', type: 'float', data: [0, 0, 0, 1, 0, 0, 1, 0, 1]},
+							{name: 'n', type: 'float', data: [0, 1, 0, 0, 1, 0, 0, 1, 0]},
+							{name: 'ta', type: 'float', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
+							{name: 'u0', type: 'float', data: [0, 0, 1, 0, 1, 1]},
+							{name: 'tri', type: 'int', data: [2, 1, 0]},
+							{name: 'aabb', type: 'object', subNodes: [
+								{name: 'min', type: 'float', data: [-1, 0, -1]},
+								{name: 'max', type: 'float', data: [1, 0, 1]},
+							]},
+							{name: 'material', type: 'object', subNodes: [
+								{name: 'shader', type: 'string', data: 'PdxMeshStandard', nullByteString: true},
+								{name: 'diff', type: 'string', data: 'coin_diffuse.dds', nullByteString: true},
+								{name: 'n', type: 'string', data: 'coin_normal.dds', nullByteString: true},
+								{name: 'spec', type: 'string', data: 'nospec.dds', nullByteString: true},
+							]},
+						]},
+					]},
+				]});
+				pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
+				
+				var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
+					
+				return modService.writeFileBuffer('space_frigate/triangle.mesh', buffer, true).then(function () {
+					$scope.loading = false;
+				});						
+			};
 
 			$scope.dataSample = function (data, showType) {
 				if (typeof data == 'string' && showType != 'simple')
@@ -153,10 +268,17 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 					if (data.length > 10)
 						return '['+ formattedSample.join(', ') +' ... ] (count: '+ data.length +')'; 
 					else
-						return '['+ formattedSample.join(', ') +']';
+						return '['+ formattedSample.join(', ') +'] (count: '+ data.length +')';
 				}	
 				
 				return data;
+			};
+			
+			$scope.zoomIn = function() {
+				$scope.viewScene.viewConfig.distance *= 0.9;
+			};
+			$scope.zoomOut = function() {
+				$scope.viewScene.viewConfig.distance *= 1.1;
 			};
 		},
 		resolve: {

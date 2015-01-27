@@ -1,0 +1,14 @@
+{
+  "name": "ColladaLoader",
+  "_cacheHeaders": {
+    "ETag": "\"580e8308ad4f6ba3f0afa32fecb83bb8727c5f55\"",
+    "Content-Length": "100321",
+    "Content-Type": "text/plain; charset=utf-8"
+  },
+  "_release": "e-tag:580e8308a",
+  "main": "index.js",
+  "_source": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js",
+  "_target": "*",
+  "_originalSource": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js",
+  "_direct": true
+}

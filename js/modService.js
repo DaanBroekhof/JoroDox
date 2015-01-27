@@ -577,6 +577,11 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						fileNode.fileType = 'lua';
 					else if (fileNode.extension == 'fxh')
 						fileNode.fileType = 'hlsl-header';
+					else if (fileNode.extension == 'dae')
+					{
+						fileNode.fileType = 'collada';
+						fileNode.specialView = true;
+					}
 				}
 				else
 				{
@@ -674,7 +679,9 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			});
 		},
 		'writeFileText': function (path, text, encoding, overwrite) {
-			var self = this;
+			return this.writeFileBuffer(path, this.convertUtf8ToBuffer(text, 'cp1252'), overwrite);
+		},
+		'writeFileBuffer': function (path, buffer, overwrite) {
 			return this.getFileEntry(path, {create: true, exclusive: !overwrite}, !overwrite).then(function (fileEntry) {
 				if (!fileEntry)
 				{
@@ -686,7 +693,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				fileEntry.createWriter(function (writer) {
 					writer.onerror = deferred.reject;
 					writer.onwriteend = deferred.resolve;
-					var blob = new Blob([self.convertUtf8ToBuffer(text, 'cp1252')]);
+					var blob = new Blob([buffer]);
 					writer.write(blob);
 					
 				}, deferred.reject);
