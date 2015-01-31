@@ -1,6 +1,7 @@
 <div ui-layout="{ flow : 'column'}">
 	<div ui-layout-container size="300px" remember-size="true" class="window-box">
 		<div ng-controller="ModTree">
+		<button type="button" class="btn btn-default pull-right btn-sm" ng-click="refreshOpenDirectories()"><span class="glyphicon glyphicon-refresh" ng-class="{'icon-animate': dirLoading}"></span></button>
 		<h2>{{modService.data.mod.name ? modService.data.mod.name : '- Unknown -'}}</h2>
 		<!-- Nested node template -->
 		<script type="text/ng-template" id="nodes_renderer_file.html">
@@ -21,7 +22,7 @@
 				</li>
 			</ol>
 		</script>
-	
+
 		<div ui-tree data-drag-enabled="false">
 			<ol ui-tree-nodes ng-model="modService.data.fileSystem.root.folders">
 				<li ng-repeat="node in modService.data.fileSystem.root.folders" ui-tree-node ng-include="'nodes_renderer.html'" data-collapsed="true"></li>
@@ -38,5 +39,5 @@
 			<p ng-show="!modService.data">You probably see this because you don't have a mod dir configured. Do that in <a ui-sref="settings">Settings</a>.</p>
 			<p ng-show="modService.data">Explore your mod structure. Green items have extra tools attached.</p>
 		</div>
-	</div>	
+	</div>
 </div>

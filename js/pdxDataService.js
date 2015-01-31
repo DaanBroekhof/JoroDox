@@ -1,18 +1,18 @@
 var module = angular.module('pdxDataService', []);
 
 module.factory('pdxDataService', ['$rootScope', function($rootScope) {
-	
+
 	var pdxDataService = {
 		'readFromBuffer': function (buffer) {
 			var data = new DataView(buffer);
 			var offset = 0;
-			
+
 			// Skip '@@b@' file type marker
 			offset += 4;
 
 			var base = {type: 'object', name: 'pdxData', subNodes: [], depth: 0, 'props': {}};
 			offset = this.readObject(base, data, offset, -1);
-			
+
 			return base;
 		},
 
@@ -26,7 +26,7 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			}
 			if (depth <= objectDepth)
 				return offset - depth;
-			
+
 			if (depth > 0)
 			{
 				var name = this.readNullByteString(data, offset);
@@ -36,7 +36,7 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 				object.props[name] = newObject;
 				object = newObject;
 			}
-			
+
 			while (offset < data.byteLength)
 			{
 				if (data.getInt8(offset) == '!'.charCodeAt(0))
@@ -51,13 +51,13 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 						break;
 					offset = newOffset;
 				}
-				else 
+				else
 				{
 					console.log('Unknown object start byte '+ data.getInt8(offset) +' at '+ offset);
 					break;
 				}
 			}
-			
+
 			return offset;
 		},
 
@@ -71,15 +71,15 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			// Propname
 			var propertyName = this.readString(data, offset, propertyNameLength);
 			offset += propertyNameLength;
-			
+
 			// Value
 			var property = this.readRawData(data, offset);
-			
+
 			property.name = propertyName;
 			property.depth = object.depth + 1;
 			object.subNodes.push(property);
 			object.props[propertyName] = property.data;
-			
+
 			return property.offset;
 		},
 
@@ -107,7 +107,7 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			else if (data.getInt8(offset) == 'f'.charCodeAt(0))
 			{
 				result.type = 'float';
-				
+
 				// 'f'
 				offset++;
 				// nr of floats
@@ -132,22 +132,22 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 				result.stringType = data.getUint32(offset, true);
 				if (result.stringType != 1)
 					console.log('Non-type "1" string detected');
-					
+
 				offset += 4;
 				var strLength = data.getUint32(offset, true);
 				offset += 4;
 				result.data = this.readString(data, offset, strLength);
-				
+
 				// NullByte string
 				result.nullByteString = (result.data.charCodeAt(strLength-1) == 0);
 				if (result.nullByteString)
 					result.data = result.data.substr(0, strLength-1);
-				
+
 				offset += strLength;
 			}
-			
+
 			result.offset = offset;
-			
+
 			return result;
 		},
 
@@ -171,20 +171,20 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 
 			return str;
 		},
-		
+
 		'writeToBuffer': function (data) {
 			var buffer = {
 				byteLength: 0,
 				current: null,
 				extendSize: 2048,
 				objectDepth: 0,
-			};			
-			
+			};
+
 			// Write header
 			this.writeChars(buffer, '@@b@');
-			
+
 			this.writeData(buffer, data);
-			
+
 			// Truncate buffer to actual length for result
 			return buffer.current.buffer.slice(0, buffer.byteLength);
 		},
@@ -198,11 +198,11 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			{
 				var tmp = new Uint8Array(new ArrayBuffer(buffer.current.byteLength + buffer.extendSize));
 				tmp.set(new Uint8Array(buffer.current.buffer), 0);
-				
+
 				buffer.current = new DataView(tmp.buffer);
 			}
 			return buffer;
-		},		
+		},
 		'writeData': function (buffer, data)
 		{
 			if (data.type == 'object')
@@ -222,24 +222,24 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 				this.writeStringProperty(buffer, data);
 			}
 		},
-		
+
 		'writeObject': function (buffer, objectData)
 		{
 			for (var i = 0; i < buffer.objectDepth; i++)
 				this.writeChar(buffer, '[');
-			
+
 			if (buffer.objectDepth > 0)
 			{
 				this.writeNullByteString(buffer, objectData.name);
 			}
 			buffer.objectDepth++;
-			
+
 			var l = objectData.subNodes.length;
 			for (var i = 0; i < l; i++)
 			{
 				this.writeData(buffer, objectData.subNodes[i]);
 			}
-			
+
 			buffer.objectDepth--;
 		},
 		'writeIntProperty': function (buffer, propertyData)
@@ -248,7 +248,7 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			this.writeFixedString(buffer, propertyData.name);
 
 			this.writeChar(buffer, 'i');
-			
+
 			var data = [].concat(propertyData.data);
 			var l = data.length;
 			this.writeUint32(buffer, l);
@@ -261,9 +261,9 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			this.writeFixedString(buffer, propertyData.name);
 
 			this.writeChar(buffer, 'f');
-			
+
 			if (propertyData.data)
-			
+
 			var data = [].concat(propertyData.data);
 			var l = data.length;
 			this.writeUint32(buffer, l);
@@ -276,12 +276,12 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			this.writeFixedString(buffer, propertyData.name);
 
 			this.writeChar(buffer, 's');
-			
+
 			if ('stringType' in propertyData)
 				this.writeUint32(buffer, propertyData.stringType);
 			else
 				this.writeUint32(buffer, 1);
-			
+
 			var l = propertyData.data.length + (propertyData.nullByteString ? 1 : 0);
 			this.writeUint32(buffer, l);
 			this.writeChars(buffer, propertyData.data + (propertyData.nullByteString ? "\0" : ''));
@@ -317,7 +317,7 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			this.extendBuffer(buffer, 4);
 			buffer.current.setFloat32(buffer.byteLength, float, true);
 			buffer.byteLength += 4;
-		},		
+		},
 	};
   	return pdxDataService;
 }]);

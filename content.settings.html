@@ -1,7 +1,7 @@
 <div class="window-box" ng-controller="LoadMod">
 	<h2>Your Mod</h2>
 	<div class="alert alert-success">{{modService.data.mod.pathDisplayName ? modService.data.mod.pathDisplayName : '- No mod loaded -'}}</div>
-	
+
 	<button type="button" class="btn btn-primary" ng-click="chooseModRootDir()">Select Mod Directory</button>
 	(can also be the root directory of the game itself)
 	<span ng-model="message"></span>

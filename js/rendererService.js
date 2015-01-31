@@ -1,7 +1,7 @@
 var module = angular.module('rendererService', ['modService']);
 
 module.factory('rendererService', ['$rootScope', '$q', 'modService', function($rootScope, $q, modService) {
-	
+
 	var rendererService = {
 		'handlerAdded': false,
 		'insertValues': function (array, offset, values) {
@@ -12,32 +12,31 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			return array;
 		},
 		'convertToPdxmesh': function (object, options) {
-			
-			if (!options) 
+
+			if (!options)
 				options = {
 					textureBaseName: 'unknown',
 					pdxShader: 'PdxMeshStandard',
 				};
-			
+
 			var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
 			pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
 
 			var objectsRoot = {name: 'object', type: 'object', subNodes: []};
 			pdxDataRoot.subNodes.push(objectsRoot);
 			pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
-			
+
 			var shapeRoot = {name: 'polySurfaceShape1', type: 'object', subNodes: []};
 			objectsRoot.subNodes.push(shapeRoot);
-			
+
 			// find all geometry
 			object.traverse(function (subObject) {
 				if (subObject instanceof THREE.Mesh)
 				{
-					subObject.position.y = 5;
 					// Bounding box
 					var bb = new THREE.Box3();
 					bb.setFromObject(subObject);
-					
+
 					// Scale / rotate to world
 					subObject.geometry.applyMatrix(subObject.matrixWorld);
 
@@ -47,7 +46,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					{
 						verts.push.apply(verts, subObject.geometry.vertices[k].toArray());
 					}
-					
+
 					// Tmp assign all skin to joint '0'
 					var skinIds = [];
 					var skinWeights = [];
@@ -55,22 +54,22 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					{
 						skinIds.push(0, -1, -1, -1);
 						skinWeights.push(1, 0, 0, 0);
-					}					
-					
+					}
+
 					// Face-stored data
 					var tri = [];
 					var normals = [];
 					var tangents = [];
-					var uvs = [];					
-					
+					var uvs = [];
+
 					if (!subObject.geometry.hasTangents && subObject.geometry.faceVertexUvs[0].length)
 						subObject.geometry.computeTangents();
-					
+
 					for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
 					{
 						var face = subObject.geometry.faces[k];
 						tri.push(face.a, face.b, face.c);
-						
+
 						this.insertValues(normals, face.a*3, face.vertexNormals[0].toArray());
 						this.insertValues(normals, face.b*3, face.vertexNormals[1].toArray());
 						this.insertValues(normals, face.c*3, face.vertexNormals[2].toArray());
@@ -87,13 +86,14 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 							this.insertValues(tangents, face.b*4, new THREE.Vector4().toArray());
 							this.insertValues(tangents, face.c*4, new THREE.Vector4().toArray());
 						}
-						
+
 						if (subObject.geometry.faceVertexUvs[0])
 						{
 							var uv = subObject.geometry.faceVertexUvs[0][k];
-							var flipY = subObject.material.map.flipY;
-							if (uv)
+
+							if (uv && subObject.material.map)
 							{
+								var flipY = subObject.material.map.flipY;
 								uvs[face.a*2] = uv[0].x;
 								uvs[face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
 								uvs[face.b*2] = uv[1].x;
@@ -111,8 +111,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 								uvs[face.c*2+1] = 0;
 							}
 						}
-					}											
-					
+					}
+
 					var mesh = {name: 'mesh', type: 'object', subNodes: []};
 					mesh.subNodes.push({name: 'p', type: 'float', data: verts});
 					mesh.subNodes.push({name: 'n', type: 'float', data: normals});
@@ -136,7 +136,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 						{name: 'w', type: 'float', data: skinWeights},
 					]});
 					*/
-					
+
 					shapeRoot.subNodes.push(mesh);
 					/*
 					var skeleton = {name: 'skeleton', type: 'object', subNodes: [
@@ -154,19 +154,19 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					*/
 				}
 			}.bind(this));
-			
+
 			return pdxDataRoot;
-		},		
+		},
 		'setThreeJsLoaderHandlers': function () {
 			if (this.handlerAdded)
 				return;
-			
+
 			THREE.Loader.Handlers.add(/^mod\:\/\//, {
 				'load': function (path) {
 					var texture = new THREE.Texture();
-					
+
 					var modPath = path.substr(6);
-					
+
 					if (modPath.substr(-4) == '.dds')
 					{
 						this.loadDdsToTexture(modService.getFileBuffer(modPath));
@@ -180,7 +180,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 							});
 						});
 					}
-					
+
 					return texture;
 				}
 			});
@@ -190,13 +190,16 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			var deferred = $q.defer();
 	        var loader = new THREE.ColladaLoader();
 			loader.options.convertUpAxis = true;
-			
+
+			var boneCount = 0;
+			var triangleCount = 0;
+
 			this.setThreeJsLoaderHandlers();
-			
+
 			var xmlParser = new DOMParser();
 			var colladaXML = xmlParser.parseFromString(string, 'application/xml');
 			loader.parse(colladaXML, function (collada) {
-				
+
 				var skeletons = [];
 				var meshes = [];
 				var update = function (viewScene) {
@@ -210,49 +213,55 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 						meshes[i].material.visible = viewScene.viewConfig.showMeshes;
 					}
 				};
-				
+
 				dae = collada.scene;
 				dae.traverse( function ( child ) {
 					if ( child instanceof THREE.Mesh ) {
 						meshes.push(child);
+						triangleCount += child.geometry.faces.length + 1;
 					}
 					if ( child instanceof THREE.SkinnedMesh ) {
 						var animation = new THREE.Animation( child, child.geometry.animation );
 						animation.play();
-						
+
 						var skeletonHelper = new THREE.SkeletonHelper(child);
 						for (var k = 0; k < skeletonHelper.geometry.colors.length; k += 2)
 						{
 							skeletonHelper.geometry.colors[k] = new THREE.Color( 1, 0, 0 );
 							skeletonHelper.geometry.colors[k+1] = new THREE.Color( 1, 1, 1 );
 						}
-						
+
 						child.add(skeletonHelper);
 						skeletons.push(skeletonHelper);
+
+						boneCount += skeletonHelper.bones.length + 1;
 					}
 				});
-				
+
 				// Bounding box
 				var bb = new THREE.Box3();
 				bb.setFromObject(collada.scene);
 				var distance = Math.max(-bb.min.x, -bb.min.y, -bb.min.z, bb.max.x, bb.max.y, bb.max.z);
-				
+
 				deferred.resolve({
 					'object': collada.scene,
 					'collada': collada,
 					'distance': distance,
 					'update': update,
+					'triangleCount': triangleCount,
+					'boneCount': boneCount,
+					'meshCount':  meshes.length,
 				});
 			}, 'mod://' + path +'/thefile.dae');
-			
+
 			return deferred.promise;
 		},
 		'renderCubeToElement': function (element, width, height) {
 			var scene, camera, renderer;
 		    var geometry, material, mesh;
-		    
+
 			var scene = new THREE.Scene();
-			
+
 	        camera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
 	        camera.position.z = 1000;
 
@@ -266,12 +275,14 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 	        renderer.setSize(width, height);
 
 	        element.appendChild(renderer.domElement);
-	        
+
 	        renderer.render( scene, camera );
 		},
 		'loadPdxMesh': function (pdxData, path) {
 			var deferred = $q.defer();
-			
+
+			var triangleCount = 0;
+			var boneCount = 0;
 			var skeletons = [];
 			var colliders = [];
 			var meshes = [];
@@ -290,59 +301,59 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					colliders[i].material.visible = viewScene.viewConfig.showColliders;
 				}
 			};
-			
-			
+
+
 			var maxExtent = 0;
-			
-			path += (path == '' ? '' : '/'); 
-			
+
+			path += (path == '' ? '' : '/');
+
 			var scene = new THREE.Scene();
-	      	
-			// Iterate over 'shapes' 
+
+			// Iterate over 'shapes'
 			for(var i = 0; i < pdxData.props['object'].subNodes.length; i++)
 			{
 				if (pdxData.props['object'].subNodes[i].type != 'object')
 					continue;
 
 				var pdxShape = pdxData.props['object'].subNodes[i];
-				
+
 				var bones = [];
 				if ('skeleton' in pdxShape.props)
 				{
 					var skeleton = pdxShape.props['skeleton'];
-					
+
 					var geometry = new THREE.Geometry();
 					var material = new THREE.MeshBasicMaterial();
 					material.wireframe = true;
 					material.color = new THREE.Color(0x00FF00);
-					
+
 					// Iterate over 'bones'
 					for(var j = 0; j < skeleton.subNodes.length; j++)
 					{
 						var pdxBone = skeleton.subNodes[j].props;
-						
+
 						var boneTx = pdxBone.tx;
-						
+
 						var bone = new THREE.Bone();
 						bone.name = skeleton.subNodes[j].name;
 						var matrix = new THREE.Matrix4().set(
-							boneTx[0], boneTx[3], boneTx[6], boneTx[9], 
+							boneTx[0], boneTx[3], boneTx[6], boneTx[9],
 							boneTx[1], boneTx[4], boneTx[7], boneTx[10],
 							boneTx[2], boneTx[5], boneTx[8], boneTx[11],
 							0, 0, 0, 1
 						);
 						matrix = new THREE.Matrix4().getInverse(matrix);
 						bone.matrixWorld = matrix;
-						
+
 						if ('pa' in pdxBone)
 							bones[pdxBone.pa].add(bone);
-						
+
 						bones.push(bone);
-						
+
 						if (pdxBone.ix != bones.length - 1)
 							console.log('Bone #'+ pdxBone.ix.data +' is not entry #'+ (bones.length-1));
 					}
-			  		
+
 					var skeletonHelper = new THREE.SkeletonHelper(bones[0]);
 					for (var k = 0; k < skeletonHelper.geometry.colors.length; k += 2)
 					{
@@ -353,25 +364,26 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					skeletons.push(skeletonHelper);
 				}
 				scene.bones = bones;
-			
+				boneCount += bones.length;
+
 				// Iterate over 'objects in shapes'
 				for(var j = 0; j < pdxShape.subNodes.length; j++)
 				{
 					if (pdxShape.subNodes[j].type != 'object')
 						continue;
-					
+
 					var pdxMesh = pdxShape.subNodes[j].props;
-					
+
 					if ('aabb' in pdxMesh)
 					{
 						maxExtent = Math.max(maxExtent, -pdxMesh.aabb.props.min[0], -pdxMesh.aabb.props.min[1], -pdxMesh.aabb.props.min[2]);
 						maxExtent = Math.max(maxExtent, pdxMesh.aabb.props.max[0], pdxMesh.aabb.props.max[1], pdxMesh.aabb.props.max[2]);
 					}
-					
+
 					if ('p' in pdxMesh)
 					{
 						var geometry = new THREE.Geometry();
-						
+
 						// Vertices
 						for (var k = 0; k < pdxMesh.p.length; k += 3)
 							geometry.vertices.push(new THREE.Vector3(pdxMesh.p[k], pdxMesh.p[k+1], pdxMesh.p[k+2]));
@@ -417,8 +429,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 								geometry.skinWeights.push(new THREE.Vector4(a, b, c, d));
 							}
-						}						
-						
+						}
+
 						// Faces
 						for (var k = 0; k < pdxMesh.tri.length; k += 3)
 						{
@@ -449,7 +461,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 							}
 							geometry.faces.push(f);
 						}
-						
+						triangleCount += geometry.faces.length + 1;
+
 						// Material
 						var material = new THREE.MeshDepthMaterial();
 						if ('material' in pdxMesh)
@@ -460,9 +473,9 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 								material.wireframe = true;
 								material.color = new THREE.Color(0, 1, 0);
 							}
-							else 
+							else
 							{
-								if (!(pdxMesh.material.props.shader == 'PdxMeshTextureAtlas' 
+								if (!(pdxMesh.material.props.shader == 'PdxMeshTextureAtlas'
 									|| pdxMesh.material.props.shader == 'PdxMeshAlphaBlendNoZWrite'
 									|| pdxMesh.material.props.shader == 'PdxMeshColor'
 									|| pdxMesh.material.props.shader == 'PdxMeshStandard'
@@ -472,7 +485,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 								{
 									console.log('Unknown shader: '+ pdxMesh.material.props.shader);
 								}
-								
+
 								material = new THREE.MeshPhongMaterial();
 								if ('diff' in pdxMesh.material.props)
 									material.map = this.loadDdsToTexture(modService.getFileBuffer(path + pdxMesh.material.props.diff)); //THREE.ImageUtils.loadTexture('img/barque_diffuse.png');
@@ -480,7 +493,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 									material.normalMap = this.loadDdsToTexture(modService.getFileBuffer(path + pdxMesh.material.props.n));
 								if ('spec' in pdxMesh.material.props)
 									material.specularMap = this.loadDdsToTexture(modService.getFileBuffer(path + pdxMesh.material.props.spec));
-								
+
 								if (pdxMesh.material.props.shader == 'PdxMeshAlphaBlendNoZWrite')
 								{
 									material.transparent = true;
@@ -489,25 +502,29 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 								{
 									material.transparent = true;
 								}
-							}							
+							}
 						}
 
 						var mesh = new THREE.SkinnedMesh(geometry, material);
-						scene.add( mesh );				
-						
+						scene.add( mesh );
+
 						if ('material' in pdxMesh && pdxMesh.material.props.shader == 'Collision')
 							colliders.push(mesh);
 						else
 							meshes.push(mesh);
 					}
-				}				
+				}
 			}
+
 			deferred.resolve({
 				'object': scene,
 				'distance': maxExtent,
 				'update': update,
-			}) 
-			
+				'triangleCount': triangleCount,
+				'boneCount': boneCount,
+				'meshCount': meshes.length,
+			})
+
 			return deferred.promise;
 		},
 		'loadDdsToTexture': function (bufferPromise, geometry)
@@ -517,19 +534,19 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			var texture = new THREE.CompressedTexture();
 			var images = [];
 			texture.image = images;
-			
+
 			bufferPromise.then(function (buffer) {
 				var texDatas = ddsLoader._parser(buffer, true);
-	
-				if ( texDatas.isCubemap ) 
+
+				if ( texDatas.isCubemap )
 				{
 					var faces = texDatas.mipmaps.length / texDatas.mipmapCount;
-	
-					for ( var f = 0; f < faces; f ++ ) 
+
+					for ( var f = 0; f < faces; f ++ )
 					{
 						images[ f ] = { mipmaps : [] };
-	
-						for ( var i = 0; i < texDatas.mipmapCount; i ++ ) 
+
+						for ( var i = 0; i < texDatas.mipmapCount; i ++ )
 						{
 							images[ f ].mipmaps.push( texDatas.mipmaps[ f * texDatas.mipmapCount + i ] );
 							images[ f ].format = texDatas.format;
@@ -537,36 +554,47 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 							images[ f ].height = texDatas.height;
 						}
 					}
-				} 
-				else 
+				}
+				else
 				{
 					texture.image.width = texDatas.width;
 					texture.image.height = texDatas.height;
 					texture.mipmaps = texDatas.mipmaps;
 				}
-	
-				if ( texDatas.mipmapCount === 1 ) 
+
+				if ( texDatas.mipmapCount === 1 )
 				{
 					texture.minFilter = THREE.LinearFilter;
 				}
-	
+
 				texture.format = texDatas.format;
 				texture.needsUpdate = true;
-				
+
 				if (geometry)
 				{
 					geometry.buffersNeedUpdate = true;
 					geometry.uvsNeedUpdate = true;
 				}
+			}, function () {
+				var greyTexture = new Uint8Array(4);
+				greyTexture[0] = 128;
+				greyTexture[1] = 128;
+				greyTexture[2] = 128;
+				greyTexture[3] = 255;
+
+				texture.mipmaps = [
+					{ "data": greyTexture, "width": 1, "height": 1 }
+				];
+				texture.needsUpdate = true;
 			});
-			
+
 			return texture;
 		},
 		'createViewScene': function (container, width, height, viewConfig) {
 			var deferred = $q.defer();
-			
+
 			var scene, camera, renderer;
-			
+
 			if (!viewConfig)
 			{
 				viewConfig = {
@@ -576,8 +604,10 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					showColliders: true,
 					showMeshes: true,
 					showSpotlights: true,
+					rotate: true,
+					rotation: 0,
 				};
-			}				
+			}
 
 			camera = new THREE.PerspectiveCamera( 45, width / height, 1, 10000);
 			camera.position.set(0, 6, 0);
@@ -588,7 +618,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			var size = 100, step = 1;
 			var geometry = new THREE.Geometry();
 			var material = new THREE.LineBasicMaterial( { color: 0x303030 } );
-			for ( var i = - size; i <= size; i += step ) 
+			for ( var i = - size; i <= size; i += step )
 			{
 				geometry.vertices.push( new THREE.Vector3( - size, - 0.04, i ) );
 				geometry.vertices.push( new THREE.Vector3(   size, - 0.04, i ) );
@@ -619,14 +649,14 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			renderer = new THREE.WebGLRenderer();
 			renderer.setSize(width, height);
 			container.appendChild(renderer.domElement);
-			
+
 			renderer.render(scene, camera);
-			
+
 			var clock = new THREE.Clock();
-			
+
 			var viewerDestroyed = false;
 
-			function render() 
+			function render()
 			{
 				// Crappy detection if view is destroyed...
 				if (viewerDestroyed || !renderer.domElement.parentNode.baseURI)
@@ -634,46 +664,51 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					viewerDestroyed = true;
 					return;
 				}
-				
+
+				var delta = clock.getDelta();
+
+				if (viewConfig.rotate)
+					viewConfig.rotation += delta * 0.5;
+
+				camera.position.x = Math.cos(viewConfig.rotation) * viewConfig.distance;
+				camera.position.y = viewConfig.distance / 4;
+				camera.position.z = Math.sin(viewConfig.rotation) * viewConfig.distance;
+
+				camera.lookAt(scene.position);
+
 				var timer = Date.now() * 0.0005;
 
-				camera.position.x = Math.cos( timer ) * viewConfig.distance;
-				camera.position.y = viewConfig.distance / 4;
-				camera.position.z = Math.sin( timer ) * viewConfig.distance;
-
-				camera.lookAt( scene.position );
-				
 				particleLight.visible = viewConfig.showSpotlights;
 
-				particleLight.position.x = Math.sin( timer * 4 ) * 30009;
-				particleLight.position.y = Math.cos( timer * 5 ) * 40000;
-				particleLight.position.z = Math.cos( timer * 4 ) * 30009;
+				particleLight.position.x = Math.sin(timer * 4) * 30009;
+				particleLight.position.y = Math.cos(timer * 5) * 40000;
+				particleLight.position.z = Math.cos(timer * 4) * 30009;
 
-				THREE.AnimationHandler.update( clock.getDelta() );
+				THREE.AnimationHandler.update(delta);
 
-				renderer.render( scene, camera );
+				renderer.render(scene, camera);
 			}
-			
+
 			var viewScene = {
 				'scene': scene,
 				'renderer': renderer,
 				'camera': camera,
 				'viewConfig': viewConfig,
 			};
-			
-			function animate() 
+
+			function animate()
 			{
 				if (viewerDestroyed)
 					return;
-				
+
 				requestAnimationFrame( animate );
-				
+
 				if (viewConfig.update)
 					viewConfig.update(viewScene);
-				
+
 				render();
 			}
-			
+
 			animate();
 
 			/*
@@ -683,7 +718,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			container.appendChild( stats.domElement );
 			*/
 			deferred.resolve(viewScene);
-			
+
 			return deferred.promise;
 		},
 	};

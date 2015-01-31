@@ -42,7 +42,7 @@ div.window-body div.window-box h2 {
 	background-color: #EEE;
 }
 
-.angular-ui-tree-handle { 
+.angular-ui-tree-handle {
 	cursor: pointer;
 	font-weight: normal;
 	font-size: 90%;
@@ -184,8 +184,8 @@ div.window-body div.window-box h2 {
 }
 
 .map-window {
-	width: 100%; 
-	height: 100%; 
+	width: 100%;
+	height: 100%;
 	overflow: hidden;
 	position: relative;
 }
@@ -201,7 +201,7 @@ div.window-body div.window-box h2 {
 }
 
 .text-output-window {
-	overflow: hidden;	
+	overflow: hidden;
 }
 
 .text-output-window h3 {
@@ -210,16 +210,16 @@ div.window-body div.window-box h2 {
 	height: 35px;
 	border: 1px solid #bbb;
 	border-bottom: none;
-	font-size: 20px;	
+	font-size: 20px;
 }
 
 .text-output-window .text-output-body {
-	width: 100%; 
+	width: 100%;
 	height: calc(100% - 35px);
 }
 
 .text-output-window .text-output-body textarea {
-	width: 100%; 
+	width: 100%;
 	height: 100%;
 }
 
@@ -227,7 +227,7 @@ div.window-body div.window-box h2 {
 	display: inline-block;
 	vertical-align: middle;
 	height: 30px;
-	width: 30px;	
+	width: 30px;
 }
 
 .loading-icon.icon-animate {
@@ -268,8 +268,8 @@ div.window-body div.window-box h2 {
 }
 
 .navbar-nav {
-	margin: 0;	
-} 
+	margin: 0;
+}
 
 .navbar-nav > li > a {
 	padding-top: 15px !important;
@@ -292,7 +292,7 @@ h5 {
 
 
 .pan-zoom-contents canvas#PanZoomCanvasHover {
-	z-index: 2;	
+	z-index: 2;
 }
 .pan-zoom-contents canvas#PanZoomCanvas {
 	z-index: 1;
@@ -311,7 +311,7 @@ h5 {
 	top: 0;
 	left: 0;
 	z-index: 5;
-	width: 2816px; 
+	width: 2816px;
 	height: 1024px;
 }
 
@@ -322,7 +322,7 @@ h5 {
 	top: 0;
 	left: 0;
 }
-	
+
 /* Some mini scrollbars appear in the panel splitters */
 .ui-layout-row > .ui-splitbar {
 	overflow: hidden;

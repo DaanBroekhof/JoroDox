@@ -11,33 +11,35 @@
 	<dt>Last modified:</dt><dd>{{node.metadata.modificationTime.toLocaleString() || '?'}}</dd>
 	<dt ng-if="node.extension != null">Extension:</dt><dd ng-if="node.extension != null">{{node.extension}}</dd>
 	<dt ng-if="node.fileType != null">File type:</dt><dd ng-if="node.fileType != null">{{node.fileType}}</dd>
-</dl> 
+</dl>
 
 
-<div ng-if="node.image != null">
-	<h3>Image ({{node.image.width}}x{{node.image.height}})</h3>
-	<img ng-src="{{node.image.src}}" style="max-width: 100%">
+<div ng-if="image != null">
+	<h3>Image ({{image.width}}x{{image.height}})</h3>
+	<img ng-src="{{image.src}}" style="max-width: 100%">
 </div>
 
-<div class="btn-group btn-group-xs" ng-if="viewScene">
-	<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showSkeletons">Skeleton</button>
-	<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showMeshes">Mesh</button>
-	<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showColliders">Colliders</button>
-	<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showSpotlights">Spotlights</button>
-</div>
-<div class="btn-group btn-group-xs" ng-if="viewScene">
-	<button type="button" class="btn btn-default" ng-click="zoomIn()"><span class="glyphicon glyphicon-plus"></span></button>
-	<button type="button" class="btn btn-default" ng-click="zoomOut()"><span class="glyphicon glyphicon-minus"></span></button>
-</div>
+<div id="model-viewer" ng-show="viewScene">
+	<div class="btn-group btn-group-xs">
+		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showSkeletons">Skeleton</button>
+		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showMeshes">Mesh</button>
+		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showColliders">Colliders</button>
+		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showSpotlights">Spotlights</button>
+	</div>
+	<div class="btn-group btn-group-xs">
+		<button type="button" class="btn btn-default" ng-click="zoomIn()"><span class="glyphicon glyphicon-plus"></span></button>
+		<button type="button" class="btn btn-default" ng-click="zoomOut()"><span class="glyphicon glyphicon-minus"></span></button>
+		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.rotate"><span class="glyphicon glyphicon-refresh"></span></button>
+	</div>
+	<span>Meshes: {{viewScene.viewConfig.viewObject.meshCount}} - Triangles: {{viewScene.viewConfig.viewObject.triangleCount}} - Bones: {{viewScene.viewConfig.viewObject.boneCount}}</span>
 
-<div id="3dview">
-	
-	
+	<div id="3dview">
+	</div>
 </div>
 
 <div ng-if="node.treeData != null">
 	<h3>Data structure</h3>
-		
+
 	<script type="text/ng-template" id="datanodes_renderer.html">
 		<div ui-tree-handle class="datatree-item datatree-depth-{{dataNode.depth}}">
 			<span class="glyphicon" data-nodrag ng-class="{'glyphicon-none': (!dataNode.subNodes.length), 'glyphicon-chevron-right': (dataNode.subNodes.length) && collapsed, 'glyphicon-chevron-down': dataNode.subNodes.length && !collapsed}" ng-click="this.toggle()"></span>
@@ -61,7 +63,7 @@
 		</ol>
 	</div>
 
-<!-- 	
+<!--
 	<h4>In JSON <div class="btn-group"><button class="btn btn-xs btn-default" ng-model="showJson" btn-radio="true">Show</button><button class="btn btn-xs btn-default" ng-model="showJson" btn-radio="false">Hide</button></div></h4>
 	<div class="datatext" ng-show="showJson">{{node.treeData | jsonFiltered: ['comments', 'icon', 'depth']:'    '}}</div>
 -->
@@ -69,6 +71,6 @@
 
 <div ng-if="node.textData != null">
 	<h3>Text contents</h3>
-		
+
 	<div class="datatext">{{node.textData}}</div>
 </div>
