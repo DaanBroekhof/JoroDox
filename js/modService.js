@@ -165,24 +165,29 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}
 			return deferred.promise;
 		},
-		'getStorage': function (callback) {
+		'getStorage': function () {
+			var deferred = $q.defer();
 			if (this.storage)
 			{
-				callback();
-				return;
+				deferred.resolve(this.storage);
 			}
-
-			this.storage = new IDBStore({
-				storeName: 'JoroDoxMods',
-				storePrefix: 'IDBWrapper-',
-				dbVersion: 2,
-				keyPath: 'id',
-				autoIncrement: true,
-				indexes: [
-					{'name': 'pathDisplayName', 'unique': false}
-				],
-				onError: this.errorCallback
-			}, callback);
+			else
+			{
+				this.storage = new IDBStore({
+					storeName: 'JoroDoxMods',
+					storePrefix: 'IDBWrapper-',
+					dbVersion: 2,
+					keyPath: 'id',
+					autoIncrement: true,
+					indexes: [
+						{'name': 'pathDisplayName', 'unique': false}
+					],
+					onError: deferred.reject
+				}, function () {
+					deferred.resolve(this.storage);
+				});
+			}
+			return deferred.promise;
 		},
 		'loadPreviousData': function (id) {
 			var deferred = $q.defer();
@@ -202,21 +207,45 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
+		'getPreviousModData': function () {
+			var deferred = $q.defer();
+			this.getStorage().then(function(storage) {
+				storage.query(function(result) {
+					deferred.resolve(result);
+				}, function (e) {
+					deferred.reject();
+				});
+			});
+			return deferred.promise;
+		},
 		'loadData': function (id) {
 			var deferred = $q.defer();
-			this.getStorage(function () {
+			this.getStorage().then(function () {
 				this.storage.get(id, function (data) {
-					$rootScope.$apply(function () {
-						this.data = data;
+					if (data) {
+						$rootScope.$apply(function () {
+							this.data = data;
 
-						this.data.fileSystem.root.dirVisible = true;
+							this.data.fileSystem.root.dirVisible = true;
+							this.pathToFileEntry = {};
 
-						this.pathToFileEntry = {};
-						deferred.resolve();
-					}.bind(this));
+							this.loadFileNodeDirectory(this.data.fileSystem.root);
+
+							chrome.storage.local.set({'lastLoadedModId': this.data.id});
+
+							deferred.resolve();
+						}.bind(this));
+					}
 				}.bind(this), deferred.reject);
 			}.bind(this));
 
+			return deferred.promise;
+		},
+		'getDisplayPath': function (entry) {
+			var deferred = $q.defer();
+			chrome.fileSystem.getDisplayPath(entry, function (displayPath) {
+				deferred.resolve(displayPath);
+			});
 			return deferred.promise;
 		},
 		'setRootFileEntry': function (entry) {
@@ -225,12 +254,6 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			this.data.mod.retainedRootFileEntry = chrome.fileSystem.retainEntry(entry);
 			this.data.mod.name = entry.name;
-			chrome.fileSystem.getDisplayPath(entry, function (displayPath) {
-				$rootScope.$apply(function () {
-					this.data.pathDisplayName = displayPath;
-					this.data.mod.pathDisplayName = displayPath;
-				}.bind(this));
-			}.bind(this));
 
 			this.pathToFileEntry[''] = entry;
 
@@ -241,13 +264,18 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return this.loadFileNodeDirectory(rootFileNode);
 			//}.bind(this)).then(function () {
 			//	return this.refreshOpenDirectories();
+			}.bind(this)).then(function() {
+				return this.getDisplayPath(entry).then(function (displayPath) {
+					this.data.pathDisplayName = displayPath;
+					this.data.mod.pathDisplayName = displayPath;
+				}.bind(this));
 			}.bind(this)).then(function () {
-				this.saveData();
+				return this.saveData();
 			}.bind(this));
 		},
 		'saveData': function () {
 			var deferred = $q.defer();
-			this.getStorage(function () {
+			this.getStorage().then(function () {
 				this.storage.put(this.data, function (id) {
 					this.data.id = id;
 					chrome.storage.local.set({'lastLoadedModId': id}, function() {

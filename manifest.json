@@ -1,6 +1,6 @@
 {
   "name": "JoroDox Tools",
-  "version": "0.2",
+  "version": "0.3",
   "manifest_version": 2,
   "minimum_chrome_version": "31",
   "app": {

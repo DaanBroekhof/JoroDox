@@ -62,7 +62,7 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 	$stateProvider.state({
 		name: 'settings',
 		url: '/settings',
-		templateUrl: 'content.settings.html'
+		templateUrl: 'content.settings.html',
 	});
 	$stateProvider.state({
 		name: 'about',
@@ -82,7 +82,6 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 			$scope.node = node;
 			$scope.loading = true;
 			$scope.showJson = false;
-			$scope.modData = modService.data;
 			$scope.viewScene = null;
 			$scope.image = null;
 
@@ -322,7 +321,8 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 // Mod tree
 myMod.controller('ModTree', ['$scope', '$state', 'modService', function ($scope, $state, modService) {
 
-	modService.loadPreviousData().then(null, modService.errorCallback);
+	if (!modService.data)
+		modService.loadPreviousData().then(null, modService.errorCallback);
 
 	$scope.selectedItem = {};
 
@@ -381,13 +381,36 @@ myMod.controller('ModTree', ['$scope', '$state', 'modService', function ($scope,
 
 //LoadMod
 myMod.controller('LoadMod', ['$scope', 'modService', function ($scope, modService) {
-	$scope.modData = modService.data;
+	$scope.mods = [];
 
 	$scope.chooseModRootDir = function () {
 		 chrome.fileSystem.chooseEntry({type: 'openDirectory'}, function(directory) {
-			modService.setRootFileEntry(directory);
+			modService.setRootFileEntry(directory).then(function () {
+				$scope.loadPreviousModData();
+			});
 		});
 	};
+
+	$scope.loadPreviousModData = function () {
+		modService.getPreviousModData().then(function (mods) {
+			$scope.mods = mods;
+		});
+	};
+
+	$scope.deleteModData = function (modData) {
+		modService.getStorage().then(function (storage) {
+			// Remove from storage
+			storage.remove(modData.id, function () {
+				$scope.loadPreviousModData();
+			});
+		});
+	};
+
+	$scope.loadModData = function (modData) {
+		modService.loadData(modData.id);
+	};
+
+	$scope.loadPreviousModData();
 }]);
 
 //Provinces History Tool

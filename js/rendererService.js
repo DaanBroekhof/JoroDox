@@ -29,6 +29,36 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			var shapeRoot = {name: 'polySurfaceShape1', type: 'object', subNodes: []};
 			objectsRoot.subNodes.push(shapeRoot);
 
+			// 'internal' function
+			var getVertexNrForUniqueData = function (vertNr, uv, normal, vertexToUniqueData, verts)
+			{
+				if (!vertexToUniqueData[vertNr])
+				{
+					vertexToUniqueData[vertNr] = [{'uv': uv, 'normal': normal, v: vertNr}];
+					return vertNr;
+				}
+
+				// See if we already mapped this UV before
+				for (var j = 0, jl = vertexToUniqueData[vertNr].length; j < jl; j++)
+				{
+					if (vertexToUniqueData[vertNr][j].uv.equals(uv) && vertexToUniqueData[vertNr][j].normal.equals(normal))
+					{
+						return vertexToUniqueData[vertNr][j].v;
+					}
+				}
+
+				// Create new vert, copy of existing
+				verts.push(verts[vertNr*3]);
+				verts.push(verts[vertNr*3+1]);
+				verts.push(verts[vertNr*3+2]);
+
+				var newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
+
+				vertexToUniqueData[vertNr].push({'uv': uv, 'normal': normal, v: newVert})
+
+				return newVert;
+			}
+
 			// find all geometry
 			object.traverse(function (subObject) {
 				if (subObject instanceof THREE.Mesh)
@@ -65,6 +95,19 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					if (!subObject.geometry.hasTangents && subObject.geometry.faceVertexUvs[0].length)
 						subObject.geometry.computeTangents();
 
+					// See if we have any multi-UV vertices, split those
+					var vertexToUniqueData = [];
+					for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
+					{
+						var face = subObject.geometry.faces[k];
+						var uvs = subObject.geometry.faceVertexUvs[0][k];
+
+						face.a = getVertexNrForUniqueData(face.a, uvs[0], face.vertexNormals[0], vertexToUniqueData, verts);
+						face.b = getVertexNrForUniqueData(face.b, uvs[1], face.vertexNormals[1], vertexToUniqueData, verts);
+						face.c = getVertexNrForUniqueData(face.c, uvs[2], face.vertexNormals[2], vertexToUniqueData, verts);
+					}
+
+					// Process all faces
 					for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
 					{
 						var face = subObject.geometry.faces[k];
@@ -91,9 +134,10 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 						{
 							var uv = subObject.geometry.faceVertexUvs[0][k];
 
-							if (uv && subObject.material.map)
+							if (uv)
 							{
-								var flipY = subObject.material.map.flipY;
+								var flipY = !subObject.material.map || subObject.material.map.flipY;
+
 								uvs[face.a*2] = uv[0].x;
 								uvs[face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
 								uvs[face.b*2] = uv[1].x;

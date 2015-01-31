@@ -1,8 +1,41 @@
 <div class="window-box" ng-controller="LoadMod">
-	<h2>Your Mod</h2>
-	<div class="alert alert-success">{{modService.data.mod.pathDisplayName ? modService.data.mod.pathDisplayName : '- No mod loaded -'}}</div>
+	<h2>Loaded Mod</h2>
+	<div class="alert alert-success" ng-if="modService.data">
+		<strong>{{modService.data.mod.name}}</strong><br  />
+		<em>{{modService.data.mod.pathDisplayName}}</em>
+	</div>
+	<div class="alert alert-warning" ng-if="!modService.data">
+		<em>- No mod loaded -</em>
+	</div>
 
 	<button type="button" class="btn btn-primary" ng-click="chooseModRootDir()">Select Mod Directory</button>
 	(can also be the root directory of the game itself)
-	<span ng-model="message"></span>
+
+	<h3 ng-show="mods.length > 0">Cached mod info</h3>
+
+	<table ng-show="mods.length > 0" class="table" style="width: auto;">
+		<colgroup>
+			<col>
+			<col style="min-width: 50%;">
+			<col>
+		</colgroup>
+		<thead>
+			<tr><th></th><th>Directory</th><th>Extra actions</th></tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="modData in mods">
+				<td class="vcenter">
+					<button ng-if="modData.id != modService.data.id" type="button" class="btn btn-sm btn-primary" ng-click="loadModData(modData);">Load</button>
+					<span ng-if="modData.id == modService.data.id">(current)</span>
+				</td>
+				<td>
+					<strong>{{modData.mod.name}}</strong><br />
+					<em>{{modData.mod.pathDisplayName}}</em>
+				</td>
+				<td class="vcenter">
+					<button type="button" class="btn btn-xs btn-danger" ng-click="deleteModData(modData);">Remove cache</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 </div>
