@@ -1,4 +1,4 @@
-<div class="window-box">
+<div class="window-box" ng-controller="AboutPage">
 	<h2>About the JoroDox</h2>
 
 	<p>
@@ -6,12 +6,35 @@
 	</p>
 
 	<dl class="dl-horizontal property-list">
-		<dt>Version</dt><dd>v0.1</dd>
+		<dt>Version</dt><dd>v{{manifest.version}}</dd>
 		<dt>By</dt><dd>Daan Broekhof (<a href="mailto:Daan Broekhof <daan.broekhof@gmail.com>" target="_blank">daan.broekhof@gmail.com</a>)</dd>
 		<dt>Source</dt><dd><a href="https://github.com/DaanBroekhof/JoroDox" target="_blank">https://github.com/DaanBroekhof/JoroDox</a> - please report issues here</dd>
 	</dl>
 
 	<h3>Changelog</h3>
+
+	<h4>v0.3.1 (2015-02-02)</h4>
+	<h5>Changes</h5>
+	<ul>
+		<li>Fixed bug in model converter where last triangle in model would have incorrect texture UVs</li>
+		<li>Redirect on mesh conversion</li>
+		<li>Updated about &amp; version info</li>
+	</ul>
+
+	<h4>v0.3 (2015-01-31)</h4>
+	<h5>Changes</h5>
+	<ul>
+		<li>Fixed texture mapping for multi-UV-per-vertex models</li>
+		<li>Added data cache view &amp; management in 'settings' tab</li>
+	</ul>
+
+	<h4>v0.2 (2015-01-31)</h4>
+	<h5>Changes</h5>
+	<ul>
+		<li>Basic static Collada-to-pdxmesh converter added</li>
+		<li>Pimped model viewer</li>
+		<li>Refresh directory button</li>
+	</ul>
 
 	<h4>v0.1 (2015-01-05)</h4>
 	<h5>Changes</h5>

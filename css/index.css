@@ -324,6 +324,25 @@ h5 {
 	left: 0;
 }
 
+.view3d-labels {
+	position: relative;
+	text-shadow: 0.5px 0.5px white;
+}
+
+.view3d-labels div:after {
+   position: absolute;
+	top: -2px;
+	bottom: 0;
+	left: -2px;
+	right: 0;
+	content: "x";
+	font-size: 10px;
+	color: red;
+	text-shadow: none;
+}
+
+
+
 /* Some mini scrollbars appear in the panel splitters */
 .ui-layout-row > .ui-splitbar {
 	overflow: hidden;

@@ -100,11 +100,11 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
 					{
 						var face = subObject.geometry.faces[k];
-						var uvs = subObject.geometry.faceVertexUvs[0][k];
+						var faceUvs = subObject.geometry.faceVertexUvs[0][k];
 
-						face.a = getVertexNrForUniqueData(face.a, uvs[0], face.vertexNormals[0], vertexToUniqueData, verts);
-						face.b = getVertexNrForUniqueData(face.b, uvs[1], face.vertexNormals[1], vertexToUniqueData, verts);
-						face.c = getVertexNrForUniqueData(face.c, uvs[2], face.vertexNormals[2], vertexToUniqueData, verts);
+						face.a = getVertexNrForUniqueData(face.a, faceUvs[0], face.vertexNormals[0], vertexToUniqueData, verts);
+						face.b = getVertexNrForUniqueData(face.b, faceUvs[1], face.vertexNormals[1], vertexToUniqueData, verts);
+						face.c = getVertexNrForUniqueData(face.c, faceUvs[2], face.vertexNormals[2], vertexToUniqueData, verts);
 					}
 
 					// Process all faces
@@ -330,6 +330,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			var skeletons = [];
 			var colliders = [];
 			var meshes = [];
+			var labels = [];
+
 			var update = function (viewScene) {
 				for (var i = 0; i < skeletons.length; i++)
 				{
@@ -563,6 +565,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			deferred.resolve({
 				'object': scene,
 				'distance': maxExtent,
+				'labels': labels,
 				'update': update,
 				'triangleCount': triangleCount,
 				'boneCount': boneCount,
@@ -700,6 +703,9 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 			var viewerDestroyed = false;
 
+			var halfWidth = width / 2;
+		    var halfHeight = height / 2;
+
 			function render()
 			{
 				// Crappy detection if view is destroyed...
@@ -729,6 +735,27 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				particleLight.position.z = Math.cos(timer * 4) * 30009;
 
 				THREE.AnimationHandler.update(delta);
+
+				if (viewConfig.viewObject && viewConfig.viewObject.labels)
+				{
+					for (var i = 0; i < viewConfig.viewObject.labels.length; i++)
+					{
+						var label = viewConfig.viewObject.labels[i];
+
+						if (!label.div)
+						{
+							label.div = document.createElement('div');
+							label.div.innerHTML = label.text;
+							label.div.style.position = 'absolute';
+							container.children[0].appendChild(label.div);
+						}
+
+						var pos = label.pos3d.clone().project(camera);
+
+					    label.div.style.left = Math.round(pos.x * halfWidth + halfWidth) +'px';
+					    label.div.style.top = Math.round(-pos.y * halfHeight + halfHeight) +'px';
+					}
+				}
 
 				renderer.render(scene, camera);
 			}

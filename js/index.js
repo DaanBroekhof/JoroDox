@@ -78,7 +78,7 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 		name: 'inspect.file',
 		templateUrl: 'content.inspect.file.html',
 		url: '/inspect/:path',
-		controller: function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout, rendererService) {
+		controller: function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout, rendererService, $state) {
 			$scope.node = node;
 			$scope.loading = true;
 			$scope.showJson = false;
@@ -184,12 +184,20 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 					});
 					var buffer = pdxDataService.writeToBuffer(pdxdata);
 
-					return modService.writeFileBuffer($scope.node.path.replace('.dae', '.mesh'), buffer, true).then(function () {
+					var newFile = $scope.node.path.replace('.dae', '.mesh');
+
+					return modService.writeFileBuffer(newFile, buffer, true).then(function () {
 						$scope.loading = false;
+					}).then(function () {
+						return newFile;
 					});
-				}).then(function () {
-					modService.loadFileNodeDirectory($scope.node.parent);
-					return modService.showMessage({title: 'Model converted to PDXmesh format', text: 'Model saved to `'+ $scope.node.path.replace('.dae', '.mesh') +'`'});
+				}).then(function (newFile) {
+					modService.loadFileNodeDirectory($scope.node.parent).then(function () {
+						modService.getFileNodeByPath(newFile).then(function(newNode) {
+							$state.go('inspect.file', {path: newNode.path, 'node': newNode});
+							return modService.showMessage({title: 'Model converted to PDXmesh format', text: 'Model saved to `'+ newFile +'`'});
+						});
+					});
 				});
 			};
 
@@ -887,4 +895,14 @@ myMod.controller('PanZoom', ['$scope', 'PanZoomService', function ($scope, PanZo
 	// directive. It can be used to read the current state of pan and zoom. Also, it will
 	// contain methods for manipulating this state.
 	$scope.panzoomModel = {};
+}]);
+
+// For navigation top bar
+myMod.controller('TopBar', ['$scope',function ($scope) {
+	$scope.manifest = chrome.runtime.getManifest();
+}]);
+
+// About page
+myMod.controller('AboutPage', ['$scope',function ($scope) {
+	$scope.manifest = chrome.runtime.getManifest();
 }]);
