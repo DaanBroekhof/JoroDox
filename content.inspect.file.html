@@ -1,10 +1,12 @@
 <h2>{{node.name}} <span class="loading-icon" ng-class="{'icon-animate': loading}"></h2>
 
 <div ng-if="node.fileType == 'collada'">
-	<button type="button" class="btn btn-primary" ng-click="convertToPdxmesh()">Convert to .mesh</button>
+	<p>
+		<button type="button" class="btn btn-primary" ng-click="convertToPdxmesh()">Convert to .mesh</button>
+	</p>
 </div>
 
-<dl>
+<dl class="dl-horizontal">
 	<dt>Full path:</dt><dd>{{node.path}}</dd>
 	<dt>Size:</dt><dd>{{node.metadata.size || '?'}} bytes</dd>
 	<dt>Last modified:</dt><dd>{{node.metadata.modificationTime.toLocaleString() || '?'}}</dd>
@@ -34,6 +36,16 @@
 
 	<div id="3dview">
 		<div class="view3d-labels"></div>
+	</div>
+	<h3>Animation</h3>
+	<div ng-if="node.fileType == 'collada'">
+		<p><button type="button" class="btn btn-primary" ng-click="convertToPdxAnim(selectedAnimation.animation)" ng-disabled="!selectedAnimation">Convert to .anim</button></p>
+	</div>
+	<dl class="dl-horizontal">
+		<dt>Current animation:</dt><dd><select ng-model="selectedAnimation" ng-options="opt as opt.name for opt in animations"><option value="">- none -</option></select></dd>
+		<dt ng-if="selectedAnimation">FPS:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.fps.toFixed(2)}}</dd>
+		<dt ng-if="selectedAnimation">Bones:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.bones}}</dd>
+		<dt ng-if="selectedAnimation">Duration:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.duration.toFixed(2)}} seconds</dd>
 	</div>
 </div>
 

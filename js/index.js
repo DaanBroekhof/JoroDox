@@ -78,234 +78,7 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 		name: 'inspect.file',
 		templateUrl: 'content.inspect.file.html',
 		url: '/inspect/:path',
-		controller: function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout, rendererService, $state) {
-			$scope.node = node;
-			$scope.loading = true;
-			$scope.showJson = false;
-			$scope.viewScene = null;
-			$scope.image = null;
-
-			modService.getMetadata(node);
-
-			if (node.fileType == 'image')
-			{
-				modService.getFile(node.path).then(function (file) {
-					loadImage(file, function (img) {
-						$scope.$apply(function() { $scope.image = img; $scope.loading = false; });
-					}, {noRevoke: true});
-				});
-			}
-			else if (node.fileType == 'image-tga')
-			{
-				modService.getFileBuffer(node.path).then(function (buffer) {
-					var tga = new TGA();
-					tga.load(new Uint8Array(buffer));
-					var img = new Image();
-					img.src = tga.getDataURL('image/png');
-					$scope.image = img;
-					$scope.loading = false;
-				});
-			}
-			else if (node.fileType == 'pdx-animation' || node.fileType == 'pdx-mesh')
-			{
-				modService.getFileBuffer(node.path).then(function (buffer) {
-					$timeout(function () {
-						node.treeData = pdxDataService.readFromBuffer(buffer);
-						node.treeDataType = 'complex';
-
-						if ('object' in node.treeData.props)
-						{
-							rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
-								$scope.viewScene = viewScene;
-								rendererService.loadPdxMesh(node.treeData, node.parent.path).then(function (viewObject) {
-									viewScene.scene.add(viewObject.object);
-									viewScene.viewConfig.distance = viewObject.distance * 4;
-									viewScene.viewConfig.update = viewObject.update;
-									viewScene.viewConfig.viewObject = viewObject;
-									$scope.loading = false;
-								});
-							});
-						}
-						else
-						{
-							$scope.loading = false;
-						}
-					}, 0);
-				});
-			}
-			else if (node.fileType == 'collada')
-			{
-				rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
-					$scope.viewScene = viewScene;
-					modService.getFileText(node.path).then(function (text) {
-						rendererService.loadCollada(text, node.parent.path).then(function (viewObject) {
-							viewScene.scene.add(viewObject.object);
-							viewScene.viewConfig.distance = viewObject.distance * 4;
-							viewScene.viewConfig.update = viewObject.update;
-							viewScene.viewConfig.viewObject = viewObject;
-							$scope.loading = false;
-						});
-					});
-				});
-			}
-			else if (node.fileType == 'pdx-script')
-			{
-				modService.getFileText(node.path).then(function (text) {
-					$timeout(function () {
-						node.treeData = pdxScriptService.readFile(text);
-						node.treeDataType = 'simple';
-						$scope.loading = false;
-					}, 0);
-				});
-			}
-			else if (node.fileType == 'text' || node.fileType == 'csv' || node.fileType == 'yml'
-				|| node.fileType == 'python' || node.fileType == 'xml'  || node.fileType == 'lua'
-				|| node.fileType == 'lua' || node.fileType == 'hlsl-header')
-			{
-				modService.getFileText(node.path).then(function (text) {
-					$timeout(function () {
-						node.textData = text;
-						$scope.loading = false;
-					}, 0);
-				});
-			}
-			else
-			{
-				$scope.loading = false;
-			}
-
-			$scope.convertToPdxmesh = function () {
-				$scope.loading = true;
-				modService.getFileText($scope.node.path).then(function (text) {
-					return rendererService.loadCollada(text, node.parent.path);
-				}).then(function (viewObject) {
-					var pdxdata = rendererService.convertToPdxmesh(viewObject.object, {
-						textureBaseName: $scope.node.name.replace('.dae', ''),
-					});
-					var buffer = pdxDataService.writeToBuffer(pdxdata);
-
-					var newFile = $scope.node.path.replace('.dae', '.mesh');
-
-					return modService.writeFileBuffer(newFile, buffer, true).then(function () {
-						$scope.loading = false;
-					}).then(function () {
-						return newFile;
-					});
-				}).then(function (newFile) {
-					modService.loadFileNodeDirectory($scope.node.parent).then(function () {
-						modService.getFileNodeByPath(newFile).then(function(newNode) {
-							$state.go('inspect.file', {path: newNode.path, 'node': newNode});
-							return modService.showMessage({title: 'Model converted to PDXmesh format', text: 'Model saved to `'+ newFile +'`'});
-						});
-					});
-				});
-			};
-
-			$scope.createBlankAnim = function () {
-				$scope.loading = true;
-				var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
-				pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
-
-				pdxDataRoot.subNodes.push({name: 'info', type: 'object', subNodes: [
-					{name: 'fps', type: 'float', data: [1]},
-					{name: 'sa', type: 'int', data: [1]},
-					{name: 'j', type: 'int', data: [2]},
-					{name: 'Root', type: 'object', subNodes: [
-						{name: 'sa', type: 'string', data: 't'},
-						{name: 't', type: 'float', data: [0, 0, 0]},
-						{name: 'q', type: 'float', data: [0, 0, 0, -1]},
-						{name: 's', type: 'float', data: [1]},
-					]},
-					{name: 'joint1', type: 'object', subNodes: [
-						{name: 'sa', type: 'string', data: ''},
-						{name: 't', type: 'float', data: [0, 0, 0]},
-						{name: 'q', type: 'float', data: [0, 0, 0, -1]},
-						{name: 's', type: 'float', data: [1]},
-					]}
-				]});
-				pdxDataRoot.subNodes.push({name: 'samples', type: 'object', subNodes: [
-					{name: 'q', type: 'float', data: [0, 0, 0]}
-				]});
-
-				var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
-
-				return modService.writeFileBuffer('blank.anim', buffer, true).then(function () {
-					$scope.loading = false;
-				});
-			};
-
-			$scope.createTriangle = function () {
-				$scope.loading = true;
-				var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
-				pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
-
-				pdxDataRoot.subNodes.push({name: 'object', type: 'object', subNodes: [
-					{name: 'shape', type: 'object', subNodes: [
-						{name: 'mesh', type: 'object', subNodes: [
-							{name: 'p', type: 'float', data: [0, 0, 0, 1, 0, 0, 1, 0, 1]},
-							{name: 'n', type: 'float', data: [0, 1, 0, 0, 1, 0, 0, 1, 0]},
-							{name: 'ta', type: 'float', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
-							{name: 'u0', type: 'float', data: [0, 0, 1, 0, 1, 1]},
-							{name: 'tri', type: 'int', data: [2, 1, 0]},
-							{name: 'aabb', type: 'object', subNodes: [
-								{name: 'min', type: 'float', data: [-1, 0, -1]},
-								{name: 'max', type: 'float', data: [1, 0, 1]},
-							]},
-							{name: 'material', type: 'object', subNodes: [
-								{name: 'shader', type: 'string', data: 'PdxMeshStandard', nullByteString: true},
-								{name: 'diff', type: 'string', data: 'coin_diffuse.dds', nullByteString: true},
-								{name: 'n', type: 'string', data: 'coin_normal.dds', nullByteString: true},
-								{name: 'spec', type: 'string', data: 'nospec.dds', nullByteString: true},
-							]},
-						]},
-					]},
-				]});
-				pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
-
-				var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
-
-				return modService.writeFileBuffer('space_frigate/triangle.mesh', buffer, true).then(function () {
-					$scope.loading = false;
-				});
-			};
-
-			$scope.dataSample = function (data, showType) {
-				if (typeof data == 'string' && showType != 'simple')
-				{
-					return data.length > 200 ? ('"'+ data.slice(0, 200) + '" ... (length: ' + data.length +')') : '"' + data +'"';
-				}
-				else if (typeof data == 'string' && showType == 'simple')
-				{
-					return data.length > 400 ? (data.slice(0, 400) + ' ... (length: ' + data.length +')') : data;
-				}
-				else if (typeof data == 'number')
-				{
-					return Math.round(data * 100)/100;
-				}
-				else if (typeof data == 'object' && data != null)
-				{
-					var formattedSample = [];
-					for (var i = 0; i <  10 && i < data.length; i++)
-					{
-						formattedSample.push($scope.dataSample(data[i]));
-					}
-
-					if (data.length > 10)
-						return '['+ formattedSample.join(', ') +' ... ] (count: '+ data.length +')';
-					else
-						return '['+ formattedSample.join(', ') +'] (count: '+ data.length +')';
-				}
-
-				return data;
-			};
-
-			$scope.zoomIn = function() {
-				$scope.viewScene.viewConfig.distance *= 0.9;
-			};
-			$scope.zoomOut = function() {
-				$scope.viewScene.viewConfig.distance *= 1.1;
-			};
-		},
+		controller: 'FileInspect',
 		resolve: {
 			node: function ($stateParams, modService) {
 				return modService.data.fileSystem.byPath[$stateParams.path];
@@ -325,6 +98,352 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 }]).config(['$urlRouterProvider', function ($urlRouterProvider) {
 	$urlRouterProvider.otherwise("/inspect")
 }]);
+
+// File inspector
+myMod.controller('FileInspect', function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout, rendererService, $state) {
+	$scope.node = node;
+	$scope.loading = true;
+	$scope.showJson = false;
+	$scope.viewScene = null;
+	$scope.image = null;
+
+	$scope.Math = window.Math;
+
+	modService.getMetadata(node).then(function () {
+
+	});
+
+	if (node.fileType == 'image')
+	{
+		modService.getFile(node.path).then(function (file) {
+			loadImage(file, function (img) {
+				$scope.$apply(function() { $scope.image = img; $scope.loading = false; });
+			}, {noRevoke: true});
+		});
+	}
+	else if (node.fileType == 'image-tga')
+	{
+		modService.getFileBuffer(node.path).then(function (buffer) {
+			var tga = new TGA();
+			tga.load(new Uint8Array(buffer));
+			var img = new Image();
+			img.src = tga.getDataURL('image/png');
+			$scope.image = img;
+			$scope.loading = false;
+		});
+	}
+	else if (node.fileType == 'pdx-animation')
+	{
+		modService.getFileBuffer(node.path).then(function (buffer) {
+			$timeout(function () {
+				node.treeData = pdxDataService.readFromBuffer(buffer);
+				node.treeDataType = 'complex';
+				$scope.loading = false;
+			});
+		});
+	}
+	else if (node.fileType == 'pdx-mesh')
+	{
+		$scope.animations = [];
+		$scope.selectedAnimation = null;
+
+		var findAnimations = function (folder) {
+			for (var i = 0; i < folder.files.length; i++)
+			{
+				if (folder.files[i].fileType == 'pdx-animation')
+				{
+					$scope.animations.push({
+						name: folder.files[i].path,
+						fps: 0,
+						bones: 0,
+						duration: 0,
+						animation: null,
+						node: folder.files[i],
+					});
+				}
+			}
+			for (var i = 0; i < folder.folders.length; i++)
+				findAnimations(folder.folders[i]);
+		};
+		findAnimations(node.parent);
+
+		$scope.$watch('selectedAnimation', function(newValue, oldValue) {
+			$scope.loadAnimation(newValue);
+		});
+
+		$scope.loadAnimation = function (animation) {
+			if (animation)
+			{
+				$scope.loading = true;
+				modService.getFileBuffer(animation.node.path).then(function (buffer) {
+					animation.node.treeData = pdxDataService.readFromBuffer(buffer);
+					animation.node.treeDataType = 'complex';
+					animation.fps = animation.node.treeData.props.info.props.fps;
+					animation.bones = animation.node.treeData.props.info.props.j;
+					animation.duration = animation.node.treeData.props.info.props.sa / animation.node.treeData.props.info.props.fps;
+
+					rendererService.setPdxAnimation($scope.viewScene, animation.node.treeData);
+					$scope.loading = false;
+				});
+			}
+			else if ($scope.viewScene)
+			{
+				rendererService.setPdxAnimation($scope.viewScene, null);
+			}
+		};
+
+		modService.getFileBuffer(node.path).then(function (buffer) {
+			$timeout(function () {
+				node.treeData = pdxDataService.readFromBuffer(buffer);
+				node.treeDataType = 'complex';
+
+				if ('object' in node.treeData.props)
+				{
+					rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
+						$scope.viewScene = viewScene;
+						rendererService.loadPdxMesh(node.treeData, node.parent.path).then(function (viewObject) {
+							viewScene.scene.add(viewObject.object);
+							viewScene.viewConfig.distance = viewObject.distance * 4;
+							viewScene.viewConfig.update = viewObject.update;
+							viewScene.viewConfig.viewObject = viewObject;
+							$scope.loading = false;
+						});
+					});
+				}
+				else
+				{
+					$scope.loading = false;
+				}
+			}, 0);
+		});
+	}
+	else if (node.fileType == 'collada')
+	{
+		$scope.animations = [];
+
+		$scope.$watch('selectedAnimation', function(newValue, oldValue) {
+			if ($scope.viewScene && $scope.viewScene.viewConfig.viewObject)
+			{
+				if (oldValue)
+				{
+					oldValue.animation.stop();
+					oldValue.animation.root.pose();
+				}
+				if (newValue)
+				{
+					newValue.animation.play();
+				}
+			}
+		});
+
+		rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
+			$scope.viewScene = viewScene;
+			modService.getFileText(node.path).then(function (text) {
+				rendererService.loadCollada(text, node.parent.path).then(function (viewObject) {
+					viewScene.scene.add(viewObject.object);
+					viewScene.viewConfig.distance = viewObject.distance * 4;
+					viewScene.viewConfig.update = viewObject.update;
+					viewScene.viewConfig.viewObject = viewObject;
+
+					for (var i = 0; i < viewObject.animations.length; i++)
+					{
+						var anim = viewObject.animations[i];
+
+						$scope.animations.push({
+							name: anim.data.name ? anim.data.name : 'Embedded',
+							fps: anim.data.fps,
+							bones: anim.data.hierarchy.length,
+							duration: anim.data.length,
+							animation: anim,
+							node: null
+						});
+					}
+
+					$scope.loading = false;
+				});
+			});
+		});
+	}
+	else if (node.fileType == 'pdx-script')
+	{
+		modService.getFileText(node.path).then(function (text) {
+			$timeout(function () {
+				node.treeData = pdxScriptService.readFile(text);
+				node.treeDataType = 'simple';
+				$scope.loading = false;
+			}, 0);
+		});
+	}
+	else if (node.fileType == 'text' || node.fileType == 'csv' || node.fileType == 'yml'
+		|| node.fileType == 'python' || node.fileType == 'xml'  || node.fileType == 'lua'
+		|| node.fileType == 'lua' || node.fileType == 'hlsl-header')
+	{
+		modService.getFileText(node.path).then(function (text) {
+			$timeout(function () {
+				node.textData = text;
+				$scope.loading = false;
+			}, 0);
+		});
+	}
+	else
+	{
+		$scope.loading = false;
+	}
+
+	$scope.convertToPdxmesh = function () {
+		$scope.loading = true;
+		modService.getFileText($scope.node.path).then(function (text) {
+			return rendererService.loadCollada(text, node.parent.path);
+		}).then(function (viewObject) {
+			var pdxdata = rendererService.convertToPdxmesh(viewObject.object, {
+				textureBaseName: $scope.node.name.replace('.dae', ''),
+			});
+			var buffer = pdxDataService.writeToBuffer(pdxdata);
+
+			var newFile = $scope.node.path.replace('.dae', '.mesh');
+
+			return modService.writeFileBuffer(newFile, buffer, true).then(function () {
+				$scope.loading = false;
+			}).then(function () {
+				return newFile;
+			});
+		}).then(function (newFile) {
+			modService.loadFileNodeDirectory($scope.node.parent).then(function () {
+				modService.getFileNodeByPath(newFile).then(function(newNode) {
+					$state.go('inspect.file', {path: newNode.path, 'node': newNode});
+					return modService.showMessage({title: 'Model converted to PDXmesh format', text: 'Model saved to `'+ newFile +'`'});
+				});
+			});
+		});
+	};
+
+	$scope.convertToPdxAnim = function (animation) {
+		$scope.loading = true;
+		modService.getFileText($scope.node.path).then(function (text) {
+			return rendererService.loadCollada(text, node.parent.path);
+		}).then(function (viewObject) {
+			var pdxdata = rendererService.convertToPdxAnim(animation, viewObject);
+			var buffer = pdxDataService.writeToBuffer(pdxdata, viewObject);
+
+			var newFile = $scope.node.path.replace('.dae', '_'+ animation.name +'.anim');
+
+			return modService.writeFileBuffer(newFile, buffer, true).then(function () {
+				$scope.loading = false;
+			}).then(function () {
+				return newFile;
+			});
+		}).then(function (newFile) {
+			modService.loadFileNodeDirectory($scope.node.parent).then(function () {
+				return modService.showMessage({title: 'Animation converted to PDX animation format', text: 'Animation saved to `'+ newFile +'`'});
+			});
+		});
+	};
+
+	$scope.createBlankAnim = function () {
+		$scope.loading = true;
+		var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
+		pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
+
+		pdxDataRoot.subNodes.push({name: 'info', type: 'object', subNodes: [
+			{name: 'fps', type: 'float', data: [1]},
+			{name: 'sa', type: 'int', data: [1]},
+			{name: 'j', type: 'int', data: [2]},
+			{name: 'Root', type: 'object', subNodes: [
+				{name: 'sa', type: 'string', data: 't'},
+				{name: 't', type: 'float', data: [0, 0, 0]},
+				{name: 'q', type: 'float', data: [0, 0, 0, -1]},
+				{name: 's', type: 'float', data: [1]},
+			]},
+			{name: 'joint1', type: 'object', subNodes: [
+				{name: 'sa', type: 'string', data: ''},
+				{name: 't', type: 'float', data: [0, 0, 0]},
+				{name: 'q', type: 'float', data: [0, 0, 0, -1]},
+				{name: 's', type: 'float', data: [1]},
+			]}
+		]});
+		pdxDataRoot.subNodes.push({name: 'samples', type: 'object', subNodes: [
+			{name: 'q', type: 'float', data: [0, 0, 0]}
+		]});
+
+		var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
+
+		return modService.writeFileBuffer('blank.anim', buffer, true).then(function () {
+			$scope.loading = false;
+		});
+	};
+
+	$scope.createTriangle = function () {
+		$scope.loading = true;
+		var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
+		pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
+
+		pdxDataRoot.subNodes.push({name: 'object', type: 'object', subNodes: [
+			{name: 'shape', type: 'object', subNodes: [
+				{name: 'mesh', type: 'object', subNodes: [
+					{name: 'p', type: 'float', data: [0, 0, 0, 1, 0, 0, 1, 0, 1]},
+					{name: 'n', type: 'float', data: [0, 1, 0, 0, 1, 0, 0, 1, 0]},
+					{name: 'ta', type: 'float', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
+					{name: 'u0', type: 'float', data: [0, 0, 1, 0, 1, 1]},
+					{name: 'tri', type: 'int', data: [2, 1, 0]},
+					{name: 'aabb', type: 'object', subNodes: [
+						{name: 'min', type: 'float', data: [-1, 0, -1]},
+						{name: 'max', type: 'float', data: [1, 0, 1]},
+					]},
+					{name: 'material', type: 'object', subNodes: [
+						{name: 'shader', type: 'string', data: 'PdxMeshStandard', nullByteString: true},
+						{name: 'diff', type: 'string', data: 'coin_diffuse.dds', nullByteString: true},
+						{name: 'n', type: 'string', data: 'coin_normal.dds', nullByteString: true},
+						{name: 'spec', type: 'string', data: 'nospec.dds', nullByteString: true},
+					]},
+				]},
+			]},
+		]});
+		pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
+
+		var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
+
+		return modService.writeFileBuffer('space_frigate/triangle.mesh', buffer, true).then(function () {
+			$scope.loading = false;
+		});
+	};
+
+	$scope.dataSample = function (data, showType) {
+		if (typeof data == 'string' && showType != 'simple')
+		{
+			return data.length > 200 ? ('"'+ data.slice(0, 200) + '" ... (length: ' + data.length +')') : '"' + data +'"';
+		}
+		else if (typeof data == 'string' && showType == 'simple')
+		{
+			return data.length > 400 ? (data.slice(0, 400) + ' ... (length: ' + data.length +')') : data;
+		}
+		else if (typeof data == 'number')
+		{
+			return Math.round(data * 100)/100;
+		}
+		else if (typeof data == 'object' && data != null)
+		{
+			var formattedSample = [];
+			for (var i = 0; i <  10 && i < data.length; i++)
+			{
+				formattedSample.push($scope.dataSample(data[i]));
+			}
+
+			if (data.length > 10)
+				return '['+ formattedSample.join(', ') +' ... ] (count: '+ data.length +')';
+			else
+				return '['+ formattedSample.join(', ') +'] (count: '+ data.length +')';
+		}
+
+		return data;
+	};
+
+	$scope.zoomIn = function() {
+		$scope.viewScene.viewConfig.distance *= 0.9;
+	};
+	$scope.zoomOut = function() {
+		$scope.viewScene.viewConfig.distance *= 1.1;
+	};
+});
 
 // Mod tree
 myMod.controller('ModTree', ['$scope', '$state', 'modService', function ($scope, $state, modService) {
@@ -388,7 +507,7 @@ myMod.controller('ModTree', ['$scope', '$state', 'modService', function ($scope,
 }]);
 
 //LoadMod
-myMod.controller('LoadMod', ['$scope', 'modService', function ($scope, modService) {
+myMod.controller('LoadMod', ['$scope', 'modService', '$state', function ($scope, modService, $state) {
 	$scope.mods = [];
 
 	$scope.chooseModRootDir = function () {
@@ -415,7 +534,9 @@ myMod.controller('LoadMod', ['$scope', 'modService', function ($scope, modServic
 	};
 
 	$scope.loadModData = function (modData) {
-		modService.loadData(modData.id);
+		modService.loadData(modData.id).then(function () {
+			$state.go('inspect');
+		});
 	};
 
 	$scope.loadPreviousModData();
