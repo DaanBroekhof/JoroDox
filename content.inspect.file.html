@@ -1,6 +1,6 @@
 <h2>{{node.name}} <span class="loading-icon" ng-class="{'icon-animate': loading}"></h2>
 
-<div ng-if="node.fileType == 'collada'">
+<div ng-if="node.fileType == 'collada' || node.fileType == 'json'">
 	<p>
 		<button type="button" class="btn btn-primary" ng-click="convertToPdxmesh()">Convert to .mesh</button>
 	</p>
@@ -24,6 +24,7 @@
 	<div class="btn-group btn-group-xs">
 		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showSkeletons">Skeleton</button>
 		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showMeshes">Mesh</button>
+	<!--  <button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showWireframes">Wireframes</button> -->
 		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showColliders">Colliders</button>
 		<button type="button" class="btn btn-default" btn-checkbox ng-model="viewScene.viewConfig.showSpotlights">Spotlights</button>
 	</div>
@@ -37,15 +38,74 @@
 	<div id="3dview">
 		<div class="view3d-labels"></div>
 	</div>
-	<h3>Animation</h3>
-	<div ng-if="node.fileType == 'collada'">
-		<p><button type="button" class="btn btn-primary" ng-click="convertToPdxAnim(selectedAnimation.animation)" ng-disabled="!selectedAnimation">Convert to .anim</button></p>
+	<div ng-show="!selectMultipleAnimations">
+		<h3>Run .anim animation</h3>
+		<dl class="dl-horizontal">
+			<dt>Current animation:</dt><dd><select ng-model="selectedAnimation" ng-options="opt as opt.name for opt in animations"><option value="">- none -</option></select></dd>
+			<dt ng-if="selectedAnimation">FPS:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.fps.toFixed(2)}}</dd>
+			<dt ng-if="selectedAnimation">Bones:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.bones}}</dd>
+			<dt ng-if="selectedAnimation">Duration:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.duration.toFixed(2)}} seconds</dd>
+		</div>
 	</div>
-	<dl class="dl-horizontal">
-		<dt>Current animation:</dt><dd><select ng-model="selectedAnimation" ng-options="opt as opt.name for opt in animations"><option value="">- none -</option></select></dd>
-		<dt ng-if="selectedAnimation">FPS:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.fps.toFixed(2)}}</dd>
-		<dt ng-if="selectedAnimation">Bones:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.bones}}</dd>
-		<dt ng-if="selectedAnimation">Duration:</dt><dd ng-if="selectedAnimation">{{selectedAnimation.duration.toFixed(2)}} seconds</dd>
+	<div ng-if="selectMultipleAnimations">
+		<h3>Embedded animations</h3>
+		<div>
+			<p><button type="button" class="btn btn-primary" ng-click="convertMultipleToPdxAnim()" ng-disabled="!selectedAnimations.length">Convert selected to .anim</button></p>
+		</div>
+		<table class="table">
+		<thead>
+			<tr><th>Animation</th><th>FPS</th><th>Bones</th><th>Duration</th></tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="animation in animations">
+				<td><label><input type="checkbox" ng-click="toggleSelectedAnimation(animation)"> {{animation.name}}</label></td>
+				<td>{{animation.fps.toFixed(2)}}</td>
+				<td>{{animation.bones}}</td>
+				<td>{{animation.duration.toFixed(2)}} seconds</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
+	<div ng-if="meshes">
+		<h3>Meshes</h3>
+		<table class="table mesh-list">
+		<thead>
+			<tr><th>Name</th><th>PDX Shader</th><th>Textures</th></tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="mesh in meshes">
+				<td width="20%">{{mesh.name}}</label></td>
+				<td width="40%">
+					<select ng-model="mesh.pdxMaterial.shader" ng-options="opt as opt for opt in pdxShaders"><option value="">- Other -</option></select><br />
+					<input ng-show="pdxShaders.indexOf(mesh.pdxMaterial.shader) == -1" ng-model="mesh.pdxMaterial.shader">
+					<p><em>{{pdxShaderDescriptions[mesh.pdxMaterial.shader]}}</em></p>
+				</td>
+				<td width="40%">
+					<dl class="dl-horizontal" ng-show="mesh.pdxMaterial.shader != 'Collision'">
+						<dt>Diffuse:</dt>
+						<dd>
+							<select ng-model="mesh.pdxMaterial.diff" ng-options="opt as opt for opt in textureFiles"><option value="">- Other -</option></select><br />
+							<input ng-show="textureFiles.indexOf(mesh.pdxMaterial.diff) == -1" ng-model="mesh.pdxMaterial.diff">
+						</dd>
+						<dt>Normal:</dt>
+						<dd>
+							<select ng-model="mesh.pdxMaterial.n" ng-options="opt as opt for opt in textureFiles"><option value="">- Other -</option></select><br />
+							<input ng-show="textureFiles.indexOf(mesh.pdxMaterial.n) == -1" ng-model="mesh.pdxMaterial.n">
+						</dd>
+						<dt>Specular:</dt>
+						<dd>
+							<select ng-model="mesh.pdxMaterial.spec" ng-options="opt as opt for opt in textureFiles"><option value="">- Other -</option></select><br />
+							<input ng-show="textureFiles.indexOf(mesh.pdxMaterial.spec) == -1" ng-model="mesh.pdxMaterial.spec">
+						</dd>
+					</dl>
+					<em ng-show="mesh.pdxMaterial.shader == 'Collision'">- Not supported for this shader -</em>
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		<div>
+			<p><button type="button" class="btn btn-primary" ng-click="savePdxMesh()">Save mesh changes to file</button></p>
+		</div>
 	</div>
 </div>
 

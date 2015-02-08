@@ -341,6 +341,17 @@ h5 {
 	text-shadow: none;
 }
 
+.mesh-list dl {
+	margin-bottom: 0;
+}
+.mesh-list dt {
+	text-align: left;
+	width: 80px;
+}
+.mesh-list dd {
+	margin-left: 90px;
+}
+
 
 
 /* Some mini scrollbars appear in the panel splitters */

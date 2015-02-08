@@ -28,6 +28,35 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 			return boneList;
 		},
+		'getBoneListRooted': function (object) {
+
+			var boneList = this.getBoneList(object);
+
+			if (boneList.length > 0)
+			{
+				var multipleRootBones = false;
+				for (var i = 0; i < boneList.length; i++)
+				{
+					boneList[i].boneNr = i;
+					if (!(boneList[i].parent instanceof THREE.Bone) && i != 0)
+					{
+						multipleRootBones = true;
+					}
+				}
+
+				// Multiple roots - add a new single root
+				if (multipleRootBones)
+				{
+					var newRoot = new THREE.Bone();
+					newRoot.name = 'AddedRoot';
+					object.add(newRoot);
+					boneList.unshift(newRoot);
+				}
+			}
+
+			return boneList;
+		},
+
 		'epsilonEquals': function (a, b) {
 			var epsilon = 0.00001;
 
@@ -43,125 +72,163 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			}
 			return true;
 		},
-		'convertToPdxAnim': function (animation, viewObject) {
+		'convertMultipleToPdxAnim': function (animations, viewObject) {
 			var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: [
-				{name: 'pdxasset', type: 'int', data: [1, 0]},
-			]};
+   				{name: 'pdxasset', type: 'int', data: [1, 0]},
+   			]};
 
-			// Re-order hierarchy by boneList order
-			var newHierarchy = [];
-			var boneList = this.getBoneList(viewObject.object);
-			for (var i = 0; i < boneList.length; i++)
-			{
-				for (var k = 0; k < animation.data.hierarchy.length; k++)
-				{
-					if (animation.data.hierarchy[k].name == boneList[i].name)
-					{
-						newHierarchy.push(animation.data.hierarchy[k]);
-						break;
-					}
-				}
-			}
+   			// Re-order hierarchy by boneList order
+   			var multiHierarchies = [];
+   			var boneList = this.getBoneListRooted(viewObject);
+   			var sampleCount = 0;
+   			for (var i = 0; i < boneList.length; i++)
+   			{
+   				multiHierarchies[i] = [];
+   				for (var j = 0; j < animations.length; j++)
+   				{
+   					var animation = animations[j].animation;
+	   				for (var k = 0; k < animation.data.hierarchy.length; k++)
+	   				{
+	   					if (animation.data.hierarchy[k].name == boneList[i].name)
+	   					{
+	   						multiHierarchies[i].push(animation.data.hierarchy[k]);
+	   						sampleCount = Math.max(sampleCount, animation.data.hierarchy[k].keys.length);
+	   						break;
+	   					}
+	   				}
+   				}
+   			}
 
-			var pdxInfo = {name: 'info', type: 'object', subNodes: [
-				{name: 'fps', type: 'float', data: [animation.data.fps]},
-				{name: 'sa', type: 'int', data: [newHierarchy[0].keys.length]},
-				{name: 'j', type: 'int', data: [newHierarchy.length]},
-			]};
-			pdxDataRoot.subNodes.push(pdxInfo);
+   			var pdxInfo = {name: 'info', type: 'object', subNodes: [
+   				{name: 'fps', type: 'float', data: [animation.data.fps]},
+   				{name: 'sa', type: 'int', data: [sampleCount]},
+   				{name: 'j', type: 'int', data: [multiHierarchies.length]},
+   			]};
+   			pdxDataRoot.subNodes.push(pdxInfo);
 
-			// Set the 'start' positions of the animation, and detect if there are any changed from that start-position,
-			// for each animation type (position, rotation and/or scale)
-			for (var i = 0; i < newHierarchy.length; i++)
-			{
-				var animNode = newHierarchy[i];
+   			// Set the 'start' positions of the animation, and detect if there are any changed from that start-position,
+   			// for each animation type (position, rotation and/or scale)
+   			var boneData = [];
+   			for (var i = 0; i < multiHierarchies.length; i++)
+   			{
+   				boneData[i] = {
+   					name: boneList[i].name,
+   					hasTransformChange: false,
+   					hasRotationChange: false,
+   					hasScaleChange: false,
+   					startPos: [0, 0, 0],
+   					startQuat: [0, 0, 0, 1],
+   					startScale: [1],
+   				};
 
-				var startKey = animNode.keys[0]
+   				for (var j = 0; j < multiHierarchies[i].length; j++)
+   	   			{
+   					animNode = multiHierarchies[i][j];
 
-				animNode.hasTransformChange = animNode.keys.some(function (key) {
-					return !this.epsilonArrayEquals(key.pos, startKey.pos);
-				}.bind(this));
-				animNode.hasRotationChange = animNode.keys.some(function (key) {
-					return !this.epsilonArrayEquals(key.rot.toArray(), startKey.rot.toArray());
-				}.bind(this));
-				animNode.hasScaleChange = animNode.keys.some(function (key) {
-					return !this.epsilonArrayEquals(key.scl, startKey.scl);
-				}.bind(this));
+	   				var startKey = animNode.keys[0]
 
-				var sampleFrom = '';
-				if (animNode.hasTransformChange)
-					sampleFrom += 't';
-				if (animNode.hasRotationChange)
-					sampleFrom += 'q';
-				if (animNode.hasScaleChange)
-					sampleFrom += 's';
+	   				animNode.hasTransformChange = animNode.keys.some(function (key) {
+	   					return !this.epsilonArrayEquals(key.pos, startKey.pos);
+	   				}.bind(this));
+	   				animNode.hasRotationChange = animNode.keys.some(function (key) {
+	   					return !this.epsilonArrayEquals(key.rot.toArray(), startKey.rot.toArray());
+	   				}.bind(this));
+	   				animNode.hasScaleChange = animNode.keys.some(function (key) {
+	   					return !this.epsilonArrayEquals(key.scl, startKey.scl);
+	   				}.bind(this));
 
-				var pdxBoneData = {
-					name: animNode.name,
-					type: 'object',
-					subNodes: [
-						{name: 'sa', type: 'string', data: sampleFrom, nullByteString: true},
-						{name: 't', type: 'float', data: animNode.keys[0].pos},
-						{name: 'q', type: 'float', data: animNode.keys[0].rot.toArray()},
-						{name: 's', type: 'float', data: [animNode.keys[0].scl[0]]},
-					]
-				}
+	   				boneData[i].hasTransformChange = boneData[i].hasTransformChange || animNode.hasTransformChange;
+	   				boneData[i].hasRotationChange = boneData[i].hasRotationChange || animNode.hasRotationChange;
+	   				boneData[i].hasScaleChange = boneData[i].hasScaleChange || animNode.hasScaleChange;
 
-				pdxInfo.subNodes.push(pdxBoneData);
-			}
+	   				boneData[i].startPos = animNode.keys[0].pos;
+	   				boneData[i].startQuat = animNode.keys[0].rot.toArray();
+	   				boneData[i].startScale = [animNode.keys[0].scl[0]];
+   	   			}
 
-			// Collect all samples. We assume a smooth time-step, and no missing 'keys'.
-			// (this is what the collada importer currently does)
-			// (we could expand this to support interpolation, etc - but too much work)
+   				var sampleFrom = '';
+   				if (boneData[i].hasTransformChange)
+   					sampleFrom += 't';
+   				if (boneData[i].hasRotationChange)
+   					sampleFrom += 'q';
+   				if (boneData[i].hasScaleChange)
+   					sampleFrom += 's';
 
-			var pdxSamples = {name: 'samples', type: 'object', subNodes: []};
-			pdxDataRoot.subNodes.push(pdxSamples);
-			var samples = {
-				t: [],
-				q: [],
-				s: [],
-			}
-			var nrSamples = newHierarchy[0].keys.length;
+   				var pdxBoneData = {
+   					name: boneData[i].name,
+   					type: 'object',
+   					subNodes: [
+   						{name: 'sa', type: 'string', data: sampleFrom, nullByteString: true},
+   						{name: 't', type: 'float', data: boneData[i].startPos},
+   						{name: 'q', type: 'float', data: boneData[i].startQuat},
+   						{name: 's', type: 'float', data: boneData[i].startScale},
+   					]
+   				}
 
-			for (var k = 0; k < nrSamples; k++)
-			{
-				var keyTime = newHierarchy[0].keys[k].time;
-				for (var i = 0; i < newHierarchy.length; i++)
-				{
-					var animNode = newHierarchy[i];
-					var key = animNode.keys[k];
+   				pdxInfo.subNodes.push(pdxBoneData);
+   			}
 
-					if (keyTime != key.time)
-					{
-						console.log('Key frames are not equally timed!');
-						console.log(key);
-					}
+   			// Collect all samples. We assume a smooth time-step, and no missing 'keys'.
+   			// (this is what the collada importer currently does)
+   			// (we could expand this to support interpolation, etc - but too much work)
 
-					if (animNode.hasTransformChange)
-						samples.t.push(key.pos[0], key.pos[1], key.pos[2]);
-					if (animNode.hasRotationChange)
-						samples.q.push(key.rot.x, key.rot.y, key.rot.z, key.rot.w);
-					if (animNode.hasScaleChange)
-					{
-						if (!this.epsilonEquals(key.scl[0], key.scl[1]) || !this.epsilonEquals(key.scl[0], key.scl[2]) || !this.epsilonEquals(key.scl[1], key.scl[2]))
-						{
-							console.log('Usage of non-cubic scale!');
-							console.log(key);
-						}
+   			var pdxSamples = {name: 'samples', type: 'object', subNodes: []};
+   			pdxDataRoot.subNodes.push(pdxSamples);
+   			var samples = {
+   				t: [],
+   				q: [],
+   				s: [],
+   			}
 
-						samples.s.push(key.scl[0]);
-					}
-				}
-			}
+   			for (var k = 0; k < sampleCount; k++)
+   			{
+   				// Assume all keys have same key time (for now)
+   				// Take first keyTime found
+   				var keyTime = null;
 
-			if (samples.t.length > 0)
-				pdxSamples.subNodes.push({name: 't', type: 'float', data: samples.t});
-			if (samples.q.length > 0)
-				pdxSamples.subNodes.push({name: 'q', type: 'float', data: samples.q});
-			if (samples.s.length > 0)
-				pdxSamples.subNodes.push({name: 's', type: 'float', data: samples.s});
+   				for (var i = 0; i < multiHierarchies.length; i++)
+   	   			{
+   					for (var j = 0; j < multiHierarchies[i].length; j++)
+   	   	   			{
+	   					var animNode = multiHierarchies[i][j];
+	   					var key = animNode.keys[k];
+	   					var boneInfo = boneData[i];
 
-			return pdxDataRoot;
+	   					if (keyTime === null)
+	   						keyTime = key.time;
+
+	   					if (keyTime != key.time)
+	   					{
+	   						console.log('Key frames are not equally timed!');
+	   						console.log(key);
+	   					}
+
+	   					if (animNode.hasTransformChange)
+	   						samples.t.push(key.pos[0], key.pos[1], key.pos[2]);
+	   					if (animNode.hasRotationChange)
+	   						samples.q.push(key.rot.x, key.rot.y, key.rot.z, key.rot.w);
+	   					if (animNode.hasScaleChange)
+	   					{
+	   						if (!this.epsilonEquals(key.scl[0], key.scl[1]) || !this.epsilonEquals(key.scl[0], key.scl[2]) || !this.epsilonEquals(key.scl[1], key.scl[2]))
+	   						{
+	   							console.log('Usage of non-cubic scale!');
+	   							console.log(key);
+	   						}
+
+	   						samples.s.push(key.scl[0]);
+	   					}
+   	   	   			}
+   				}
+   			}
+
+   			if (samples.t.length > 0)
+   				pdxSamples.subNodes.push({name: 't', type: 'float', data: samples.t});
+   			if (samples.q.length > 0)
+   				pdxSamples.subNodes.push({name: 'q', type: 'float', data: samples.q});
+   			if (samples.s.length > 0)
+   				pdxSamples.subNodes.push({name: 's', type: 'float', data: samples.s});
+
+   			return pdxDataRoot;
 		},
 		'convertToPdxmesh': function (object, options) {
 
@@ -178,7 +245,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			pdxDataRoot.subNodes.push(objectsRoot);
 			pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
 
-			var shapeRoot = {name: 'polySurfaceShape1', type: 'object', subNodes: []};
+			var shapeRoot = {name: 'jorodoxShape', type: 'object', subNodes: []};
 			objectsRoot.subNodes.push(shapeRoot);
 
 			// 'internal' function
@@ -222,74 +289,77 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				return newVert;
 			}
 
+			// Get bones
+			var boneList = this.getBoneListRooted(object);
+			var boneData = [];
+			var boneNrToHeirarchyBoneNr = [];
+			boneNrToHeirarchyBoneNr[-1] = -1;
+			if (boneList.length > 0)
+			{
+				var multipleRootBones = (boneList[0].name == 'AddedRoot');
+
+				for (var i = 0; i < boneList.length; i++)
+				{
+					// pdxmesh uses a 3x4 transform matrix for bones in the world space, whereas Three.js uses a 4x4 matrix (local&world space) - we just have to transform it and snip of the 'skew' row
+
+					boneList[i].updateMatrix();
+					boneList[i].updateMatrixWorld(true);
+					boneList[i].parent.updateMatrix();
+					boneList[i].parent.updateMatrixWorld(true);
+
+					// Get matrix of bone in world matrix
+					var pdxMatrix = new THREE.Matrix4().multiplyMatrices(boneList[i].parent.matrixWorld, boneList[i].matrix);
+					pdxMatrix = new THREE.Matrix4().getInverse(pdxMatrix, true);
+					var m = pdxMatrix.elements;
+
+					var parentBoneNr = boneList[i].parent.boneNr;
+
+					// Set to added root bone
+					if (!(boneList[i].parent instanceof THREE.Bone) && multipleRootBones && i != 0)
+						parentBoneNr = 0;
+
+					// NOTE: m is in COLUMN-major order
+					boneData.push({
+						name: boneList[i].name,
+						type: 'object',
+						subNodes: [
+							{name: 'ix', type: 'int', data: [i]},
+							{name: 'pa', type: 'int', data: [boneList[i].parent.boneNr]},
+							{name: 'tx', type: 'float', data: [
+								m[0], m[1], m[2],
+								m[4], m[5], m[6],
+								m[8], m[9], m[10],
+								m[12], m[13], m[14],
+							]},
+						]
+					});
+
+					if (parentBoneNr === undefined)
+					{
+						// Remove 'pa' at root node
+						boneData[i].subNodes = [boneData[i].subNodes[0], boneData[i].subNodes[2]];
+					}
+				}
+			}
+
 			// find all geometry
 			object.traverse(function (subObject) {
 				if (subObject instanceof THREE.Mesh)
 				{
-					// Get bones
-					var boneList = this.getBoneList(object);
-					var boneData = [];
-					var boneNrToHeirarchyBoneNr = [];
-					boneNrToHeirarchyBoneNr[-1] = -1;
-					if (boneList.length > 0)
+					if (subObject.geometry.bones)
 					{
-						for (var i = 0; i < boneList.length; i++)
-							boneList[i].boneNr = i;
-
-						for (var i = 0; i < boneList.length; i++)
+						for (var i = 0; i < subObject.geometry.bones.length; i++)
 						{
-							// pdxmesh uses a 3x4 transform matrix for bones in the world space, whereas Three.js uses a 4x4 matrix (local&world space) - we just have to transform it and snip of the 'skew' row
-
-
-							boneList[i].updateMatrix();
-							boneList[i].updateMatrixWorld(true);
-							boneList[i].parent.updateMatrix();
-							boneList[i].parent.updateMatrixWorld(true);
-
-							// Get matrix of bone in world matrix
-							var pdxMatrix = new THREE.Matrix4().multiplyMatrices(boneList[i].parent.matrixWorld, boneList[i].matrix);
-							pdxMatrix = new THREE.Matrix4().getInverse(pdxMatrix, true);
-							var m = pdxMatrix.elements;
-
-							// NOTE: m is in COLUMN-major order
-							boneData.push({
-								name: boneList[i].name,
-								type: 'object',
-								subNodes: [
-									{name: 'ix', type: 'int', data: [i]},
-									{name: 'pa', type: 'int', data: [boneList[i].parent.boneNr]},
-									{name: 'tx', type: 'float', data: [
-										m[0], m[1], m[2],
-										m[4], m[5], m[6],
-										m[8], m[9], m[10],
-										m[12], m[13], m[14],
-									]},
-								]
-							});
-
-							if (!(boneList[i].parent instanceof THREE.Bone))
+							for (var k = 0; k < boneList.length; k++)
 							{
-								// Remove 'pa' at root node
-								boneData[i].subNodes = [boneData[i].subNodes[0], boneData[i].subNodes[2]];
-							}
-						}
-
-						if (subObject.geometry.bones)
-						{
-							for (var i = 0; i < subObject.geometry.bones.length; i++)
-							{
-								for (var k = 0; k < boneList.length; k++)
+								if (subObject.geometry.bones[i].name == boneList[k].name)
 								{
-									if (subObject.geometry.bones[i].name == boneList[k].name)
-									{
-										boneNrToHeirarchyBoneNr[i] = k;
-										break;
-									}
+									boneNrToHeirarchyBoneNr[i] = k;
+									break;
 								}
 							}
 						}
 					}
-
 
 					// Bounding box
 					var bb = new THREE.Box3();
@@ -417,14 +487,17 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					if (boneData.length)
 					{
 						mesh.subNodes.push({name: 'skin', type: 'object', subNodes: [
-	 						{name: 'bones', type: 'int', data: [4]},
-	 						{name: 'ix', type: 'int', data: skinIds},
-	 						{name: 'w', type: 'float', data: skinWeights},
-	 					]});
-						shapeRoot.subNodes.push({name: 'skeleton', type: 'object', subNodes: boneData});
+							{name: 'bones', type: 'int', data: [4]},
+							{name: 'ix', type: 'int', data: skinIds},
+							{name: 'w', type: 'float', data: skinWeights},
+						]});
 					}
 				}
 			}.bind(this));
+
+			if (boneData.length)
+				shapeRoot.subNodes.push({name: 'skeleton', type: 'object', subNodes: boneData});
+
 
 			return pdxDataRoot;
 		},
@@ -474,11 +547,16 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				var skeletons = [];
 				var meshes = [];
 				var animations = [];
+				var wireframes = [];
 				var update = function (viewScene) {
 					for (var i = 0; i < skeletons.length; i++)
 					{
 						skeletons[i].visible = viewScene.viewConfig.showSkeletons;
 						skeletons[i].update();
+					}
+					for (var i = 0; i < wireframes.length; i++)
+					{
+						wireframes[i].visible = viewScene.viewConfig.showWireframes;
 					}
 					for (var i = 0; i < meshes.length; i++)
 					{
@@ -492,6 +570,10 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					{
 						meshes.push(node);
 						triangleCount += node.geometry.faces.length + 1;
+
+						var wireframeHelper = new THREE.WireframeHelper(node, 0xff0000);
+						node.add(wireframeHelper);
+						wireframes.push(wireframeHelper);
 					}
 					if (node instanceof THREE.SkinnedMesh)
 					{
@@ -530,8 +612,132 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					'meshCount':  meshes.length,
 					'animations': animations,
 					'skeletons': skeletons,
+					'wireframes': wireframes,
 				});
 			}, 'mod://' + path +'/thefile.dae');
+
+			return deferred.promise;
+		},
+		'loadThreeJson': function (json, path) {
+			var deferred = $q.defer();
+	        var loader = new THREE.ObjectLoader();
+
+			var boneCount = 0;
+			var triangleCount = 0;
+
+			this.setThreeJsLoaderHandlers();
+
+			var data = JSON.parse(json);
+
+			var threeJsData = {
+				scene: loader.parse(data)
+			};
+
+			var skeletons = [];
+			var meshes = [];
+			var animations = [];
+			var wireframes = [];
+			var update = function (viewScene) {
+				for (var i = 0; i < skeletons.length; i++)
+				{
+					skeletons[i].visible = viewScene.viewConfig.showSkeletons;
+					skeletons[i].update();
+				}
+				for (var i = 0; i < wireframes.length; i++)
+				{
+					wireframes[i].visible = viewScene.viewConfig.showWireframes;
+				}
+				for (var i = 0; i < meshes.length; i++)
+				{
+					meshes[i].material.visible = viewScene.viewConfig.showMeshes;
+				}
+			};
+
+			threeJsData.scene.traverse(function (node)
+			{
+				if (node instanceof THREE.Mesh)
+				{
+					if (node.geometry.skinIndices.length > 0 && node.geometry.bones.length)
+					{
+						// Actually a SkinnedMesh
+
+						var skinnedMesh = new THREE.SkinnedMesh(node.geometry, node.material)
+						skinnedMesh.id = node.id;
+						skinnedMesh.uuid = node.uuid;
+						skinnedMesh.name = node.name;
+						skinnedMesh.position = node.position;
+						skinnedMesh.rotation = node.rotation;
+						skinnedMesh.scale = node.scale;
+						skinnedMesh.up = node.up;
+						skinnedMesh.matrix = node.matrix;
+						skinnedMesh.quaternion = node.quaternion;
+						skinnedMesh.visible = node.visible;
+						skinnedMesh.castShadow = node.castShadow;
+						skinnedMesh.recieveShadow = node.recieveShadow;
+						skinnedMesh.frustumCulled = node.frustumCulled;
+						skinnedMesh.matrixAutoUpdate = node.matrixAutoUpdate;
+						skinnedMesh.matrixWorldNeedsUpdate = node.matrixWorldNeedsUpdate;
+						skinnedMesh.rotationAutoUpdate = node.rotationAutoUpdate;
+						skinnedMesh.userData = node.userData;
+						skinnedMesh.matrixWorld = node.matrixWorld;
+
+						node.parent.add(skinnedMesh);
+
+						for (var i = 0; i < node.children.length; i++)
+							skinnedMesh.add(node.children[i]);
+
+						node.parent.remove(node);
+
+						node = skinnedMesh;
+					}
+
+					meshes.push(node);
+					triangleCount += node.geometry.faces.length + 1;
+
+					var wireframeHelper = new THREE.WireframeHelper(node, 0xff0000);
+					node.add(wireframeHelper);
+					wireframes.push(wireframeHelper);
+				}
+				if (node instanceof THREE.SkinnedMesh)
+				{
+					if (node.geometry.animation)
+					{
+						var animation = new THREE.Animation(node, node.geometry.animation);
+						animations.push(animation);
+					}
+
+					var skeletonHelper = new THREE.SkeletonHelper(node);
+					for (var k = 0; k < skeletonHelper.geometry.colors.length; k += 2)
+					{
+						skeletonHelper.geometry.colors[k] = new THREE.Color( 1, 0, 0 );
+						skeletonHelper.geometry.colors[k+1] = new THREE.Color( 1, 1, 1 );
+					}
+
+					node.add(skeletonHelper);
+					skeletons.push(skeletonHelper);
+
+
+					boneCount += skeletonHelper.bones.length + 1;
+				}
+			});
+
+			// Bounding box
+			var bb = new THREE.Box3();
+			bb.setFromObject(threeJsData.scene);
+			var distance = Math.max(-bb.min.x, -bb.min.y, -bb.min.z, bb.max.x, bb.max.y, bb.max.z);
+
+			deferred.resolve({
+				'object': threeJsData.scene,
+				'threeJsData': threeJsData,
+				'distance': distance,
+				'update': update,
+				'triangleCount': triangleCount,
+				'boneCount': boneCount,
+				'meshCount':  meshes.length,
+				'animations': animations,
+				'skeletons': skeletons,
+				'wireframes': wireframes,
+			});
 
 			return deferred.promise;
 		},
@@ -563,6 +769,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			var triangleCount = 0;
 			var boneCount = 0;
 			var skeletons = [];
+			var wireframes = [];
 			var colliders = [];
 			var meshes = [];
 			var labels = [];
@@ -572,6 +779,10 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				{
 					skeletons[i].visible = viewScene.viewConfig.showSkeletons;
 					skeletons[i].update();
+				}
+				for (var i = 0; i < wireframes.length; i++)
+				{
+					wireframes[i].visible = viewScene.viewConfig.showWireframes;
 				}
 				for (var i = 0; i < meshes.length; i++)
 				{
@@ -777,51 +988,19 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 						// Material
 						var material = new THREE.MeshDepthMaterial();
-						if ('material' in pdxMesh)
-						{
-							if (pdxMesh.material.props.shader == 'Collision')
-							{
-								material = new THREE.MeshBasicMaterial();
-								material.wireframe = true;
-								material.color = new THREE.Color(0, 1, 0);
-							}
-							else
-							{
-								if (!(pdxMesh.material.props.shader == 'PdxMeshTextureAtlas'
-									|| pdxMesh.material.props.shader == 'PdxMeshAlphaBlendNoZWrite'
-									|| pdxMesh.material.props.shader == 'PdxMeshColor'
-									|| pdxMesh.material.props.shader == 'PdxMeshStandard'
-									|| pdxMesh.material.props.shader == 'PdxMeshSnow'
-									|| pdxMesh.material.props.shader == 'PdxMeshAlphaBlend'
-									|| pdxMesh.material.props.shader == 'PdxMeshStandard_NoFoW_NoTI'))
-								{
-									console.log('Unknown shader: '+ pdxMesh.material.props.shader);
-								}
-
-								material = new THREE.MeshPhongMaterial();
-								if ('diff' in pdxMesh.material.props)
-									material.map = this.loadDdsToTexture(modService.getFileBuffer(path + pdxMesh.material.props.diff)); //THREE.ImageUtils.loadTexture('img/barque_diffuse.png');
-								if ('n' in pdxMesh.material.props)
-									material.normalMap = this.loadDdsToTexture(modService.getFileBuffer(path + pdxMesh.material.props.n));
-								if ('spec' in pdxMesh.material.props)
-									material.specularMap = this.loadDdsToTexture(modService.getFileBuffer(path + pdxMesh.material.props.spec));
-
-								if (pdxMesh.material.props.shader == 'PdxMeshAlphaBlendNoZWrite')
-								{
-									material.transparent = true;
-								}
-								if (pdxMesh.material.props.shader == 'PdxMeshAlphaBlend')
-								{
-									material.transparent = true;
-								}
-
-								if (bones.length && geometry.skinIndices.length)
-									material.skinning = true;
-							}
-						}
 
 						var mesh = new THREE.SkinnedMesh(geometry, material);
+						mesh.name = pdxShape.subNodes[j].name;
+						mesh.pdxData = pdxShape.subNodes[j];
+						mesh.pdxPath = path;
+
+						this.updatePdxMesh(mesh);
+
 						scene.add(mesh);
+
+						var wireframeHelper = new THREE.WireframeHelper(mesh, 0xff0000);
+						mesh.add(wireframeHelper);
+						wireframes.push(wireframeHelper);
 
 						if (scene.bones && scene.bones.length)
 						{
@@ -833,8 +1012,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 						if ('material' in pdxMesh && pdxMesh.material.props.shader == 'Collision')
 							colliders.push(mesh);
-						else
-							meshes.push(mesh);
+
+						meshes.push(mesh);
 					}
 				}
 			}
@@ -847,12 +1026,63 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				'triangleCount': triangleCount,
 				'boneCount': boneCount,
 				'meshCount': meshes.length,
+				'meshes': meshes,
 				'animations': [],
 			})
 
 			return deferred.promise;
 		},
+		'updatePdxMesh': function (mesh)
+		{
+			if (!mesh.pdxData)
+				return;
 
+			var pdxMaterial = mesh.pdxData.props.material.props;
+
+			if (pdxMaterial.shader == 'Collision')
+			{
+				var material = new THREE.MeshBasicMaterial();
+				material.wireframe = true;
+				material.color = new THREE.Color(0, 1, 0);
+
+				mesh.material = material;
+			}
+			else
+			{
+				if (!(pdxMaterial.shader == 'PdxMeshTextureAtlas'
+					|| pdxMaterial.shader == 'PdxMeshAlphaBlendNoZWrite'
+					|| pdxMaterial.shader == 'PdxMeshColor'
+					|| pdxMaterial.shader == 'PdxMeshStandard'
+					|| pdxMaterial.shader == 'PdxMeshSnow'
+					|| pdxMaterial.shader == 'PdxMeshAlphaBlend'
+					|| pdxMaterial.shader == 'PdxMeshStandard_NoFoW_NoTI'))
+				{
+					console.log('Unknown shader: '+ pdxMaterial.shader);
+				}
+
+				material = new THREE.MeshPhongMaterial();
+				if ('diff' in pdxMaterial)
+					material.map = this.loadDdsToTexture(modService.getFileBuffer(mesh.pdxPath + pdxMaterial.diff)); //THREE.ImageUtils.loadTexture('img/barque_diffuse.png');
+				if ('n' in pdxMaterial)
+					material.normalMap = this.loadDdsToTexture(modService.getFileBuffer(mesh.pdxPath + pdxMaterial.n));
+				if ('spec' in pdxMaterial)
+					material.specularMap = this.loadDdsToTexture(modService.getFileBuffer(mesh.pdxPath + pdxMaterial.spec));
+
+				if (pdxMaterial.shader == 'PdxMeshAlphaBlendNoZWrite')
+				{
+					material.transparent = true;
+				}
+				if (pdxMaterial.shader == 'PdxMeshAlphaBlend')
+				{
+					material.transparent = true;
+				}
+
+				if (mesh.geometry.skinIndices.length)
+					material.skinning = true;
+			}
+
+			mesh.material = material;
+		},
 		'setPdxAnimation': function (viewScene, pdxAnimationData)
 		{
 			var deferred = $q.defer();
@@ -1067,6 +1297,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					distance: 20,
 					update: null,
 					showSkeletons: true,
+					showWireframes: false,
 					showColliders: true,
 					showMeshes: true,
 					showSpotlights: true,

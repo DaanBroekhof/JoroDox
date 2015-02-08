@@ -237,6 +237,13 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			var l = objectData.subNodes.length;
 			for (var i = 0; i < l; i++)
 			{
+				// Get data from 'props', if present. (for easier writing-back-to-file)
+				if (objectData.props && objectData.props[objectData.subNodes[i].name]
+					&& objectData.subNodes[i].data != objectData.props[objectData.subNodes[i].name])
+				{
+					objectData.subNodes[i].data = objectData.props[objectData.subNodes[i].name];
+				}
+
 				this.writeData(buffer, objectData.subNodes[i]);
 			}
 
@@ -261,8 +268,6 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 			this.writeFixedString(buffer, propertyData.name);
 
 			this.writeChar(buffer, 'f');
-
-			if (propertyData.data)
 
 			var data = [].concat(propertyData.data);
 			var l = data.length;

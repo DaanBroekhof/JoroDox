@@ -77,11 +77,17 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 	$stateProvider.state({
 		name: 'inspect.file',
 		templateUrl: 'content.inspect.file.html',
-		url: '/inspect/:path',
+		url: '/inspect/:path/:animationPath',
 		controller: 'FileInspect',
 		resolve: {
 			node: function ($stateParams, modService) {
 				return modService.data.fileSystem.byPath[$stateParams.path];
+			},
+			animation: function ($stateParams, modService) {
+				if ($stateParams.animationPath)
+					return modService.data.fileSystem.byPath[$stateParams.animationPath];
+				else
+					return null;
 			}
 		}
 	});
@@ -100,7 +106,7 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 }]);
 
 // File inspector
-myMod.controller('FileInspect', function ($scope, node, modService, pdxDataService, pdxScriptService, $timeout, rendererService, $state) {
+myMod.controller('FileInspect', function ($scope, node, animation, modService, pdxDataService, pdxScriptService, $timeout, rendererService, $state, $stateParams) {
 	$scope.node = node;
 	$scope.loading = true;
 	$scope.showJson = false;
@@ -108,6 +114,28 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 	$scope.image = null;
 
 	$scope.Math = window.Math;
+
+	$scope.pdxShaders = [
+   		'PdxMeshStandard',
+		'PdxMeshColor',
+		'PdxMeshTextureAtlas',
+		'PdxMeshSnow',
+		'PdxMeshAlphaBlend',
+		'PdxMeshAlphaBlendNoZWrite',
+		'PdxMeshStandard_NoFoW_NoTI',
+		'Collision',
+	];
+
+	$scope.pdxShaderDescriptions = {
+		'PdxMeshStandard': '[EU4 + CK2] The default not-transparent texture shader.',
+		'PdxMeshColor': '[EU4 + CK2] Shader which can blend the three \'national\' colors of the units country into the texture via the specular texture.',
+		'PdxMeshTextureAtlas': '[EU4 + CK2] Shader which blends the texture with an image of the units country\'s flag.',
+		'PdxMeshSnow': '[EU4 only] Shader which will add snow on top facing surfaces, when in a snowy location.',
+		'PdxMeshAlphaBlend': '[EU4 only] Shader which will allow transparency via the alpha channel of the diffuse texture.',
+		'PdxMeshAlphaBlendNoZWrite': '[EU4 only] A slower transparency shader with less transparency order glitches.',
+		'PdxMeshStandard_NoFoW_NoTI': '[EU4 only] Shader for objects which should never be hidden by Fog of War or Terra Incognita.',
+		'Collision': '[EU4 + CK2] \'Shader\' which will not render the mesh, but instead use it to check for (input) collision checking. (ie the clickable space of the item)',
+	};
 
 	modService.getMetadata(node).then(function () {
 
@@ -145,7 +173,10 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 	else if (node.fileType == 'pdx-mesh')
 	{
 		$scope.animations = [];
+		$scope.meshes = [];
+		$scope.meshToRender = [];
 		$scope.selectedAnimation = null;
+		$scope.textureFiles = [];
 
 		var findAnimations = function (folder) {
 			for (var i = 0; i < folder.files.length; i++)
@@ -167,9 +198,31 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 		};
 		findAnimations(node.parent);
 
+		var findTextures = function (folder, basePath) {
+			if (!basePath)
+				basePath = folder.path +'/';
+			for (var i = 0; i < folder.files.length; i++)
+			{
+				if (folder.files[i].fileType == 'image-dds')
+				{
+					$scope.textureFiles.push(folder.files[i].path.replace(basePath, ''));
+				}
+			}
+			for (var i = 0; i < folder.folders.length; i++)
+				findTextures(folder.folders[i], basePath);
+		};
+		findTextures(node.parent);
+
 		$scope.$watch('selectedAnimation', function(newValue, oldValue) {
 			$scope.loadAnimation(newValue);
 		});
+
+		$scope.$watch('meshes', function(newValue, oldValue) {
+			for (var i = 0; i < $scope.meshes.length; i++)
+			{
+				rendererService.updatePdxMesh($scope.meshToRender[i]);
+			}
+		}, true);
 
 		$scope.loadAnimation = function (animation) {
 			if (animation)
@@ -192,6 +245,23 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 			}
 		};
 
+		$scope.savePdxMesh = function() {
+			var buffer = pdxDataService.writeToBuffer($scope.node.treeData);
+
+			$scope.loading = true;
+
+			return modService.writeFileBuffer($scope.node.path, buffer, true).then(function () {
+				$scope.loading = false;
+			}).then(function () {
+				modService.loadFileNodeDirectory($scope.node.parent).then(function () {
+					$state.reload();
+
+					return modService.showMessage({title: 'Mesh data updated.', text: 'Mesh data saved to `'+ $scope.node.path +'`'});
+				});
+
+			});
+		};
+
 		modService.getFileBuffer(node.path).then(function (buffer) {
 			$timeout(function () {
 				node.treeData = pdxDataService.readFromBuffer(buffer);
@@ -206,6 +276,27 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 							viewScene.viewConfig.distance = viewObject.distance * 4;
 							viewScene.viewConfig.update = viewObject.update;
 							viewScene.viewConfig.viewObject = viewObject;
+
+							for (var i = 0; i < viewObject.meshes.length; i++)
+							{
+								var mesh = viewObject.meshes[i];
+
+								$scope.meshes.push({
+									name: mesh.name,
+									pdxMaterial: mesh.pdxData.props.material.props,
+								});
+								$scope.meshToRender[$scope.meshes.length - 1] = mesh;
+							}
+
+							if (animation)
+							{
+								for (var i = 0; i < $scope.animations.length; i++)
+									if ($scope.animations[i].node.path == animation.path)
+										$scope.selectedAnimation = $scope.animations[i];
+
+								$stateParams.animationPath = null;
+							}
+
 							$scope.loading = false;
 						});
 					});
@@ -220,26 +311,93 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 	else if (node.fileType == 'collada')
 	{
 		$scope.animations = [];
+		$scope.selectedAnimations = [];
+		$scope.selectMultipleAnimations = true;
 
-		$scope.$watch('selectedAnimation', function(newValue, oldValue) {
+		$scope.$watchCollection('selectedAnimations', function(newValues, oldValues) {
 			if ($scope.viewScene && $scope.viewScene.viewConfig.viewObject)
 			{
-				if (oldValue)
+				for (var i = 0; i < oldValues.length; i++)
 				{
-					oldValue.animation.stop();
-					oldValue.animation.root.pose();
+					oldValues[i].animation.stop();
+					oldValues[i].animation.root.pose();
 				}
-				if (newValue)
+				for (var i = 0; i < newValues.length; i++)
 				{
-					newValue.animation.play();
+					newValues[i].animation.play();
 				}
 			}
 		});
+
+		$scope.toggleSelectedAnimation = function (animation) {
+			var index = $scope.selectedAnimations.indexOf(animation);
+			if (index == -1)
+				$scope.selectedAnimations.push(animation);
+			else
+				$scope.selectedAnimations.splice(index, 1);
+		};
 
 		rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
 			$scope.viewScene = viewScene;
 			modService.getFileText(node.path).then(function (text) {
 				rendererService.loadCollada(text, node.parent.path).then(function (viewObject) {
+					viewScene.scene.add(viewObject.object);
+					viewScene.viewConfig.distance = viewObject.distance * 4;
+					viewScene.viewConfig.update = viewObject.update;
+					viewScene.viewConfig.viewObject = viewObject;
+
+					for (var i = 0; i < viewObject.animations.length; i++)
+					{
+						var anim = viewObject.animations[i];
+
+						$scope.animations.push({
+							name: anim.data.name ? anim.data.name : 'Embedded',
+							fps: anim.data.fps,
+							bones: anim.data.hierarchy.length,
+							duration: anim.data.length,
+							animation: anim,
+							node: null
+						});
+					}
+
+					$scope.loading = false;
+				});
+			});
+		});
+	}
+	else if (node.fileType == 'json')
+	{
+		$scope.animations = [];
+		$scope.selectedAnimations = [];
+		$scope.selectMultipleAnimations = true;
+
+		$scope.$watchCollection('selectedAnimations', function(newValues, oldValues) {
+			if ($scope.viewScene && $scope.viewScene.viewConfig.viewObject)
+			{
+				for (var i = 0; i < oldValues.length; i++)
+				{
+					oldValues[i].animation.stop();
+					oldValues[i].animation.root.pose();
+				}
+				for (var i = 0; i < newValues.length; i++)
+				{
+					newValues[i].animation.play();
+				}
+			}
+		});
+
+		$scope.toggleSelectedAnimation = function (animation) {
+			var index = $scope.selectedAnimations.indexOf(animation);
+			if (index == -1)
+				$scope.selectedAnimations.push(animation);
+			else
+				$scope.selectedAnimations.splice(index, 1);
+		};
+
+		rendererService.createViewScene(document.getElementById('3dview'), 800, 600).then(function (viewScene) {
+			$scope.viewScene = viewScene;
+			modService.getFileText(node.path).then(function (text) {
+				rendererService.loadThreeJson(text, node.parent.path).then(function (viewObject) {
 					viewScene.scene.add(viewObject.object);
 					viewScene.viewConfig.distance = viewObject.distance * 4;
 					viewScene.viewConfig.update = viewObject.update;
@@ -317,93 +475,25 @@ myMod.controller('FileInspect', function ($scope, node, modService, pdxDataServi
 		});
 	};
 
-	$scope.convertToPdxAnim = function (animation) {
+	$scope.convertMultipleToPdxAnim = function () {
 		$scope.loading = true;
-		modService.getFileText($scope.node.path).then(function (text) {
-			return rendererService.loadCollada(text, node.parent.path);
-		}).then(function (viewObject) {
-			var pdxdata = rendererService.convertToPdxAnim(animation, viewObject);
-			var buffer = pdxDataService.writeToBuffer(pdxdata, viewObject);
+		var pdxdata = rendererService.convertMultipleToPdxAnim($scope.selectedAnimations, $scope.viewScene.scene);
+		var buffer = pdxDataService.writeToBuffer(pdxdata);
 
-			var newFile = $scope.node.path.replace('.dae', '_'+ animation.name +'.anim');
+		var newFile = $scope.node.path.replace('.dae', '_anim.anim').replace('.json', '_anim.anim');
+		var meshFile = $scope.node.path.replace('.dae', '.mesh').replace('.json', '.mesh');
 
-			return modService.writeFileBuffer(newFile, buffer, true).then(function () {
-				$scope.loading = false;
-			}).then(function () {
-				return newFile;
-			});
-		}).then(function (newFile) {
+		return modService.writeFileBuffer(newFile, buffer, true).then(function () {
+			$scope.loading = false;
+		}).then(function () {
 			modService.loadFileNodeDirectory($scope.node.parent).then(function () {
+				modService.getFileNodeByPath(meshFile).then(function(meshNode) {
+					$state.go('inspect.file', {path: meshNode.path, 'node': meshNode, 'animationPath': newFile});
+				});
+
 				return modService.showMessage({title: 'Animation converted to PDX animation format', text: 'Animation saved to `'+ newFile +'`'});
 			});
-		});
-	};
 
-	$scope.createBlankAnim = function () {
-		$scope.loading = true;
-		var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
-		pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
-
-		pdxDataRoot.subNodes.push({name: 'info', type: 'object', subNodes: [
-			{name: 'fps', type: 'float', data: [1]},
-			{name: 'sa', type: 'int', data: [1]},
-			{name: 'j', type: 'int', data: [2]},
-			{name: 'Root', type: 'object', subNodes: [
-				{name: 'sa', type: 'string', data: 't'},
-				{name: 't', type: 'float', data: [0, 0, 0]},
-				{name: 'q', type: 'float', data: [0, 0, 0, -1]},
-				{name: 's', type: 'float', data: [1]},
-			]},
-			{name: 'joint1', type: 'object', subNodes: [
-				{name: 'sa', type: 'string', data: ''},
-				{name: 't', type: 'float', data: [0, 0, 0]},
-				{name: 'q', type: 'float', data: [0, 0, 0, -1]},
-				{name: 's', type: 'float', data: [1]},
-			]}
-		]});
-		pdxDataRoot.subNodes.push({name: 'samples', type: 'object', subNodes: [
-			{name: 'q', type: 'float', data: [0, 0, 0]}
-		]});
-
-		var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
-
-		return modService.writeFileBuffer('blank.anim', buffer, true).then(function () {
-			$scope.loading = false;
-		});
-	};
-
-	$scope.createTriangle = function () {
-		$scope.loading = true;
-		var pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
-		pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]})
-
-		pdxDataRoot.subNodes.push({name: 'object', type: 'object', subNodes: [
-			{name: 'shape', type: 'object', subNodes: [
-				{name: 'mesh', type: 'object', subNodes: [
-					{name: 'p', type: 'float', data: [0, 0, 0, 1, 0, 0, 1, 0, 1]},
-					{name: 'n', type: 'float', data: [0, 1, 0, 0, 1, 0, 0, 1, 0]},
-					{name: 'ta', type: 'float', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]},
-					{name: 'u0', type: 'float', data: [0, 0, 1, 0, 1, 1]},
-					{name: 'tri', type: 'int', data: [2, 1, 0]},
-					{name: 'aabb', type: 'object', subNodes: [
-						{name: 'min', type: 'float', data: [-1, 0, -1]},
-						{name: 'max', type: 'float', data: [1, 0, 1]},
-					]},
-					{name: 'material', type: 'object', subNodes: [
-						{name: 'shader', type: 'string', data: 'PdxMeshStandard', nullByteString: true},
-						{name: 'diff', type: 'string', data: 'coin_diffuse.dds', nullByteString: true},
-						{name: 'n', type: 'string', data: 'coin_normal.dds', nullByteString: true},
-						{name: 'spec', type: 'string', data: 'nospec.dds', nullByteString: true},
-					]},
-				]},
-			]},
-		]});
-		pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
-
-		var buffer = pdxDataService.writeToBuffer(pdxDataRoot);
-
-		return modService.writeFileBuffer('space_frigate/triangle.mesh', buffer, true).then(function () {
-			$scope.loading = false;
 		});
 	};
 
@@ -475,7 +565,7 @@ myMod.controller('ModTree', ['$scope', '$state', 'modService', function ($scope,
 		else if (node.path == 'history/provinces')
 			$state.go('inspect.provincesHistory');
 		else
-			$state.go('inspect.file', {path: node.path, 'node': node});
+			$state.go('inspect.file', {path: node.path, 'node': node}, {inherit: false});
 	};
 
 	$scope.fileTypeToIcon = function (node) {

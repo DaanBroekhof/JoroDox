@@ -681,6 +681,11 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						fileNode.fileType = 'pdx-mesh';
 						fileNode.specialView = true;
 					}
+					else if (fileNode.extension == 'json')
+					{
+						fileNode.fileType = 'json';
+						fileNode.specialView = true;
+					}
 					else if (fileNode.extension == 'csv')
 						fileNode.fileType = 'csv';
 					else if (fileNode.extension == 'dds')
