@@ -258,12 +258,29 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				}
 
 				// See if we already mapped this UV before
+				var foundVertNr = false;
 				for (var j = 0, jl = vertexToUniqueData[vertNr].length; j < jl; j++)
 				{
-					if (vertexToUniqueData[vertNr][j].uv.equals(uv) && vertexToUniqueData[vertNr][j].normal.equals(normal))
+					foundVertNr = vertexToUniqueData[vertNr][j].v;
+
+					if (!vertexToUniqueData[vertNr][j].normal.equals(normal))
 					{
-						return vertexToUniqueData[vertNr][j].v;
+						foundVertNr = false;
 					}
+					else
+					{
+						for (var i = 0; i < vertexToUniqueData[vertNr][j].uv.length; i++)
+						{
+							if (!uv[i] || !vertexToUniqueData[vertNr][j].uv[i].equals(uv[i]))
+							{
+								foundVertNr = false;
+								break;
+							}
+						}
+					}
+
+					if (foundVertNr !== false)
+						return foundVertNr;
 				}
 
 				// Create new vert, copy of existing
@@ -282,7 +299,6 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				skinWeights.push(skinWeights[vertNr*4+2]);
 
 				var newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
-
 
 				vertexToUniqueData[vertNr].push({'uv': uv, 'normal': normal, v: newVert})
 
@@ -387,6 +403,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					// Assume skinIds as long as skinWeights
 					var skinIds = [];
 					var skinWeights = [];
+					var bonesUsed = 0;
 					for (var k = 0, l = subObject.geometry.skinIndices.length; k < l; k++)
 					{
 						skinIds.push(
@@ -401,14 +418,25 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 							subObject.geometry.skinWeights[k].z,
 							subObject.geometry.skinWeights[k].w
 						);
+
+						var used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil(subObject.geometry.skinWeights[k].y) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
+
+						bonesUsed = Math.max(used, bonesUsed);
 					}
 
 					// See if we have any multi-UV vertices, split those
 					var vertexToUniqueData = [];
+					var uvCount = subObject.geometry.faceVertexUvs.length;
 					for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
 					{
 						var face = subObject.geometry.faces[k];
-						var faceUvs = subObject.geometry.faceVertexUvs[0][k];
+						var faceUvs = [];
+						for (var j = 0; j < 3; j++)
+						{
+							faceUvs[j] = [];
+							for (var i = 0; i < uvCount; i++)
+								faceUvs[j][i] = subObject.geometry.faceVertexUvs[i][k][j];
+						}
 
 						face.a = getVertexNrForUniqueData(face.a, faceUvs[0], face.vertexNormals[0], vertexToUniqueData, verts, skinIds, skinWeights);
 						face.b = getVertexNrForUniqueData(face.b, faceUvs[1], face.vertexNormals[1], vertexToUniqueData, verts, skinIds, skinWeights);
@@ -439,29 +467,35 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 							this.insertValues(tangents, face.c*4, new THREE.Vector4().toArray());
 						}
 
-						if (subObject.geometry.faceVertexUvs[0])
+
+						for (var i = 0; i < uvCount; i++)
 						{
-							var uv = subObject.geometry.faceVertexUvs[0][k];
-
-							if (uv)
+							if (!uvs[i])
+								uvs[i] = [];
+							if (subObject.geometry.faceVertexUvs[i])
 							{
-								var flipY = !subObject.material.map || subObject.material.map.flipY;
+								var uv = subObject.geometry.faceVertexUvs[i][k];
 
-								uvs[face.a*2] = uv[0].x;
-								uvs[face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
-								uvs[face.b*2] = uv[1].x;
-								uvs[face.b*2+1] = flipY? 1 - uv[1].y : uv[1].y;
-								uvs[face.c*2] = uv[2].x;
-								uvs[face.c*2+1] = flipY? 1 - uv[2].y : uv[2].y;
-							}
-							else
-							{
-								uvs[face.a*2] = 0;
-								uvs[face.a*2+1] = 0;
-								uvs[face.b*2] = 0;
-								uvs[face.b*2+1] = 0;
-								uvs[face.c*2] = 0;
-								uvs[face.c*2+1] = 0;
+								if (uv)
+								{
+									var flipY = !subObject.material.map || subObject.material.map.flipY;
+
+									uvs[i][face.a*2] = uv[0].x;
+									uvs[i][face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
+									uvs[i][face.b*2] = uv[1].x;
+									uvs[i][face.b*2+1] = flipY? 1 - uv[1].y : uv[1].y;
+									uvs[i][face.c*2] = uv[2].x;
+									uvs[i][face.c*2+1] = flipY? 1 - uv[2].y : uv[2].y;
+								}
+								else
+								{
+									uvs[i][face.a*2] = 0;
+									uvs[i][face.a*2+1] = 0;
+									uvs[i][face.b*2] = 0;
+									uvs[i][face.b*2+1] = 0;
+									uvs[i][face.c*2] = 0;
+									uvs[i][face.c*2+1] = 0;
+								}
 							}
 						}
 					}
@@ -470,7 +504,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					mesh.subNodes.push({name: 'p', type: 'float', data: verts});
 					mesh.subNodes.push({name: 'n', type: 'float', data: normals});
 					mesh.subNodes.push({name: 'ta', type: 'float', data: tangents});
-					mesh.subNodes.push({name: 'u0', type: 'float', data: uvs});
+					for (var i = 0; i < uvCount; i++)
+						mesh.subNodes.push({name: 'u' + i, type: 'float', data: uvs[i]});
 					mesh.subNodes.push({name: 'tri', type: 'int', data: tri});
 					mesh.subNodes.push({name: 'aabb', type: 'object', subNodes: [
 						{name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z]},
@@ -487,7 +522,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					if (boneData.length)
 					{
 						mesh.subNodes.push({name: 'skin', type: 'object', subNodes: [
-							{name: 'bones', type: 'int', data: [4]},
+							{name: 'bones', type: 'int', data: [bonesUsed]},
 							{name: 'ix', type: 'int', data: skinIds},
 							{name: 'w', type: 'float', data: skinWeights},
 						]});
@@ -741,28 +776,6 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 			return deferred.promise;
 		},
-		'renderCubeToElement': function (element, width, height) {
-			var scene, camera, renderer;
-		    var geometry, material, mesh;
-
-			var scene = new THREE.Scene();
-
-	        camera = new THREE.PerspectiveCamera( 75, width / height, 1, 10000 );
-	        camera.position.z = 1000;
-
-	        geometry = new THREE.BoxGeometry( 200, 200, 200 );
-	        material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-
-	        mesh = new THREE.Mesh(geometry, material);
-	        scene.add( mesh );
-
-	        renderer = new THREE.WebGLRenderer();
-	        renderer.setSize(width, height);
-
-	        element.appendChild(renderer.domElement);
-
-	        renderer.render( scene, camera );
-		},
 		'loadPdxMesh': function (pdxData, path, pdxAnimationData) {
 			var deferred = $q.defer();
 
@@ -934,16 +947,17 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 						{
 							var skin = pdxMesh.skin.props;
 							var influencesPerVertex = skin.bones;
-							for (var k = 0; k < skin.ix.length; k += influencesPerVertex)
+							// Stored per 4, but if less is used, this is stored for optimalization?
+							for (var k = 0; k < skin.ix.length; k += 4)
 							{
 								var a =                               skin.ix[k];
-								var b = ( influencesPerVertex > 1 ) ? skin.ix[k + 1] : 0;
-								var c = ( influencesPerVertex > 2 ) ? skin.ix[k + 2] : 0;
-								var d = ( influencesPerVertex > 3 ) ? skin.ix[k + 3] : 0;
+								var b = ( influencesPerVertex > 1 ) ? skin.ix[k + 1] : -1;
+								var c = ( influencesPerVertex > 2 ) ? skin.ix[k + 2] : -1;
+								var d = ( influencesPerVertex > 3 ) ? skin.ix[k + 3] : -1;
 
 								geometry.skinIndices.push(new THREE.Vector4(a, b, c, d));
 							}
-							for (var k = 0; k < skin.w.length; k += influencesPerVertex)
+							for (var k = 0; k < skin.w.length; k += 4)
 							{
 								var a =                               skin.w[k];
 								var b = ( influencesPerVertex > 1 ) ? skin.w[k + 1] : 0;
