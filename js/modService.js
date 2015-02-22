@@ -2,7 +2,7 @@ var module = angular.module('modService', ['mapAnalyzeService']);
 
 // A service representing a Mod
 
-module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnalyzeService', function($rootScope, $timeout, $modal, $q, mapAnalyzeService) {
+module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnalyzeService', 'pdxScriptService', function($rootScope, $timeout, $modal, $q, mapAnalyzeService, pdxScriptService) {
 
 	var errorCallback = function (error) {
 		var modalInstance = $modal.open({
@@ -17,11 +17,12 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 	};
 
 	var modServiceInstance = {
-		'storage': null,
+		storage: null,
 		data: null,
 		defaultFileNode: {
 			name: null,
 			path: null,
+			baseName: null,
 			extension: null,
 			fileType: null,
 			metadata: null,
@@ -29,22 +30,25 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			folders: [],
 			files: [],
 			count: 0,
-			'depth': 0,
+			depth: 0,
 			parent: null,
 			specialView: false,
 			isFile: false,
 			isDirectory: false,
 			byName: {},
 			dirVisible: false,
+			isCurrent: false,
 		},
 		defaultData: {
+			dataVersion: '1.0.9a',
 			pathDisplayName: null,
 			fileSystem: {
 				root: null,
 				byPath: {},
+				current: null,
 			},
 			mod: {
-				lastModified: null,
+				lastGenerated: null,
 				sourceFiles: [''],
 				sourceDataNodes: [],
 
@@ -52,10 +56,83 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				pathDisplayName: null,
 				retainedRootFileEntry: null,
 			},
+			pdxScriptData: {
+				byPath: {},
+				proto: {
+					lastGenerated: null,
+					localModified: null,
+					sourceFiles: [],
+					generateMethod: 'generatePdxScriptData',
+					saveMethod: 'savePdxScriptData',
+					data: null,
+					file: null,
+				}
+			},
+			yamlData: {
+				byPath: {},
+				proto: {
+					lastGenerated: null,
+					localModified: null,
+					sourceFiles: [],
+					generateMethod: 'generateYamlData',
+					saveMethod: 'saveYamlData',
+					data: null,
+					file: null,
+				}
+			},
+			csvData: {
+				byPath: {},
+				proto: {
+					lastGenerated: null,
+					localModified: null,
+					sourceFiles: [],
+					generateMethod: 'generateCsvData',
+					saveMethod: 'saveCsvData',
+					data: null,
+					file: null,
+				}
+			},
+			localisation: {
+				lastGenerated: null,
+				sourceFiles: ['localisation'],
+				sourceDataNodes: [],
+				generateMethod: 'generateLocalisation',
+				saveMethod: 'saveLocalisation',
+				byFile: {},
+				byId: {},
+				byLanguage: {},
+				languages: [],
+			},
+			countries: {
+				tags: {
+					lastGenerated: null,
+					sourceFiles: ['common/country_tags'],
+					generateMethod: 'generateCountryTags',
+					byTag: {},
+				},
+				info: {
+					lastGenerated: null,
+					sourceFiles: ['common/countries'],
+					generateMethod: 'generateCountryInfo',
+					byPath: {},
+				}
+			},
+			history: {
+				provinces: {
+					lastGenerated: null,
+					sourceFiles: ['history/provinces'],
+					generateMethod: 'generateProvinceHistory',
+					byId: [],
+					provinceIds: [],
+				},
+				countries: {
+
+				},
+			},
 			map: {
 				provinces: {
 					image: {
-						lastModified: null,
+						lastGenerated: null,
 						sourceFiles: ['map/provinces.bmp'],
 						generateMethod: 'generateMapImage',
 						mapSource: 'provinces',
@@ -63,14 +140,14 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						imageCacheName: 'map/provinces.bmp',
 					},
 					info: {
-						lastModified: null,
+						lastGenerated: null,
 						sourceFiles: ['map/provinces.bmp'],
 						generateMethod: 'generateMapInfo',
 						mapSource: 'provinces',
 						analytics: null,
 					},
 					grid: {
-						lastModified: null,
+						lastGenerated: null,
 						sourceFiles: ['map/provinces.bmp'],
 						generateMethod: 'generateMapGrid',
 						mapSource: 'provinces',
@@ -80,7 +157,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				},
 				seas: {
 					image: {
-						lastModified: null,
+						lastGenerated: null,
 						sourceFiles: ['map/seas.png'],
 						generateMethod: 'generateMapImage',
 						mapSource: 'seas',
@@ -88,14 +165,14 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						imageCacheName: 'map/seas.png',
 					},
 					info: {
-						lastModified: null,
+						lastGenerated: null,
 						sourceFiles: ['map/seas.png'],
 						generateMethod: 'generateMapInfo',
 						mapSource: 'seas',
 						analytics: null,
 					},
 					grid: {
-						lastModified: null,
+						lastGenerated: null,
 						sourceFiles: ['map/seas.png'],
 						generateMethod: 'generateMapGrid',
 						mapSource: 'seas',
@@ -103,37 +180,66 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						imageCacheName: 'map/seas.png:grid',
 					},
 				},
+				environment: {
+					lastGenerated: null,
+					sourceFiles: [
+						'map/default.map',
+						'map/climate.txt',
+						'map/continent.txt',
+						'map/region.txt',
+						'map/seasons.txt',
+						'map/terrain.txt',
+						//'map/trade_winds.txt',
+					],
+					generateMethod: 'generateMapEnvironment',
+				},
+				adjecencies: {
+					lastGenerated: null,
+					sourceFiles: [
+						'map/adjecensies.csv',
+					],
+					generateMethod: 'generateMapAdjecensies',
+				},
+				decoration: {
+					lastGenerated: null,
+					sourceFiles: [
+						'map/positions.txt',
+						'map/ambient_object.txt',
+						//'map/static.txt',
+					],
+					generateMethod: 'generateMapGrid',
+					mapSource: 'provinces',
+					imageBlob: null,
+					imageCacheName: 'map/provinces.bmp:grid',
+				},
 				colorMapping: {
-					lastModified: null,
-					sourceFiles: [], //'map/definition.csv'
+					lastGenerated: null,
+					sourceFiles: ['map/definition.csv'],
 					sourceDataNodes: [],
 					generateMethod: 'generateMapColorMapping',
-
 					byId: [],
 					byColor: [],
 				},
+				provinceMapping: {
+					lastGenerated: null,
+					sourceFiles: [],
+					sourceDataNodes: [],
+					generateMethod: 'generateProvinceMapping',
+					areaByProvinceId: [],
+				},
 			}
 		},
-		'pathToFileEntry': {},
+		loadingState: {},
+		pathToFileEntry: {},
 
-		'errorCallback': errorCallback,
-		'modRootDir': null,
-		'rootNode': null,
-		'nodeByPath': {},
-		'entries': [],
-		'lastEntryId': -1,
-		'mapColorMapping': [],
-		'mapColorMappingByColor': [],
+		imageCache: {},
 
-		'imageCache': {},
-
-		'encodings': {
+		encodings: {
 			// Windows code page 1252 Western European
 		    //
 			cp1252: '\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f\u20ac\ufffd\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\ufffd\u017d\ufffd\ufffd\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\ufffd\u017e\u0178\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff',
 		},
-
-		'showMessage': function (message) {
+		showMessage: function (message) {
 			var deferred = $q.defer();
 			$modal.open({
 				templateUrl: 'messageModal.html',
@@ -150,7 +256,15 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'getImage': function (dataNode) {
+		getImageByPath: function (path) {
+			return this.getFile(path).then(function (file) {
+				return this.getImage({
+					imageCacheName: path,
+					imageBlob: file,
+				});
+			}.bind(this));
+		},
+		getImage: function (dataNode) {
 			var deferred = $q.defer();
 			if (dataNode.imageCacheName in this.imageCache)
 			{
@@ -165,7 +279,8 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}
 			return deferred.promise;
 		},
-		'getStorage': function () {
+		/** @memberOf modService */
+		getStorage: function () {
 			var deferred = $q.defer();
 			if (this.storage)
 			{
@@ -189,13 +304,14 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}
 			return deferred.promise;
 		},
-		'loadPreviousData': function (id) {
+		/** @memberOf modService */
+		loadPreviousData: function (id) {
 			var deferred = $q.defer();
 			chrome.storage.local.get('lastLoadedModId', function(result) {
 				if (result.lastLoadedModId)
 				{
 					if (!this.data || !(id in this.data) || this.data.id != result.lastLoadedModId)
-						deferred.resolve(this.loadData(result.lastLoadedModId));
+						deferred.resolve(this.loadModData(result.lastLoadedModId));
 					else
 						deferred.resolve();
 				}
@@ -207,7 +323,8 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'getPreviousModData': function () {
+		/** @memberOf modService */
+		getPreviousModData: function () {
 			var deferred = $q.defer();
 			this.getStorage().then(function(storage) {
 				storage.query(function(result) {
@@ -218,22 +335,44 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			});
 			return deferred.promise;
 		},
-		'loadData': function (id) {
+		/** @memberOf modService */
+		loadModData: function (id) {
 			var deferred = $q.defer();
 			this.getStorage().then(function () {
 				this.storage.get(id, function (data) {
 					if (data) {
 						$rootScope.$apply(function () {
-							this.data = data;
 
-							this.data.fileSystem.root.dirVisible = true;
-							this.pathToFileEntry = {};
+							if (data.dataVersion && data.dataVersion === this.defaultData.dataVersion)
+							{
+								this.clearModData();
 
-							this.loadFileNodeDirectory(this.data.fileSystem.root);
+								this.data = data;
 
-							chrome.storage.local.set({'lastLoadedModId': this.data.id});
+								this.data.fileSystem.root.dirVisible = true;
 
-							deferred.resolve();
+								this.loadFileNodeDirectory(this.data.fileSystem.root);
+								chrome.storage.local.set({'lastLoadedModId': this.data.id});
+
+								deferred.resolve();
+							}
+							else
+							{
+								// Outdated structure
+								chrome.fileSystem.isRestorable(data.mod.retainedRootFileEntry, function(isRestorable) {
+									if (!isRestorable)
+										deferred.reject('Cannot restore root file entry.');
+									else
+									{
+										chrome.fileSystem.restoreEntry(data.mod.retainedRootFileEntry, function(entry) {
+											return this.setRootFileEntry(entry, data.id).then(function () {
+												chrome.storage.local.set({'lastLoadedModId': this.data.id});
+												deferred.resolve();
+											}.bind(this));
+										}.bind(this));
+									}
+								}.bind(this));
+							}
 						}.bind(this));
 					}
 				}.bind(this), deferred.reject);
@@ -241,16 +380,21 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'getDisplayPath': function (entry) {
+		/** @memberOf modService */
+		getDisplayPath: function (entry) {
 			var deferred = $q.defer();
 			chrome.fileSystem.getDisplayPath(entry, function (displayPath) {
 				deferred.resolve(displayPath);
 			});
 			return deferred.promise;
 		},
-		'setRootFileEntry': function (entry) {
-			this.data = angular.copy(this.defaultData);
-			this.pathToFileEntry = {};
+		/** @memberOf modService */
+		setRootFileEntry: function (entry, dataId) {
+
+			this.clearModData();
+
+			if (dataId)
+				this.data.id = dataId;
 
 			this.data.mod.retainedRootFileEntry = chrome.fileSystem.retainEntry(entry);
 			this.data.mod.name = entry.name;
@@ -270,10 +414,11 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 					this.data.mod.pathDisplayName = displayPath;
 				}.bind(this));
 			}.bind(this)).then(function () {
-				return this.saveData();
+				return this.saveModData();
 			}.bind(this));
 		},
-		'saveData': function () {
+		/** @memberOf modService */
+		saveModData: function () {
 			var deferred = $q.defer();
 			this.getStorage().then(function () {
 				this.storage.put(this.data, function (id) {
@@ -286,11 +431,21 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'clearData': function () {
+		/** @memberOf modService */
+		clearModData: function () {
 			this.data = angular.copy(this.defaultData);
 			this.pathToFileEntry = {};
+			this.imageCache = {};
 		},
-		'refreshOpenDirectories': function (node) {
+		setCurrent: function (node) {
+			if (this.data.fileSystem.current)
+				this.data.fileSystem.current.isCurrent = false;
+			this.data.fileSystem.current = node;
+			if (this.data.fileSystem.current)
+				this.data.fileSystem.current.isCurrent = true;
+		},
+		/** @memberOf modService */
+		refreshOpenDirectories: function (node) {
 
 			if (!node)
 				node = this.data.fileSystem.root;
@@ -310,19 +465,28 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return deferred.promise;
 			}
 		},
-		'convertUtf8ToBuffer': function (text, encoding) {
-			var buffer = new Uint8Array(text.length);
-			var enc = this.encodings[encoding];
-
-			var len = text.length;
-			for (var i = 0; i < len; i++)
+		/** @memberOf modService */
+		convertUtf8ToBuffer: function (text, encoding) {
+			if (encoding == 'cp1252')
 			{
-				buffer[i] = enc.indexOf(text[i]);
-			}
+				var buffer = new Uint8Array(text.length);
+				var enc = this.encodings[encoding];
 
-			return buffer;
+				var len = text.length;
+				for (var i = 0; i < len; i++)
+				{
+					buffer[i] = enc.indexOf(text[i]);
+				}
+
+				return buffer;
+			}
+			else
+			{
+
+			}
 		},
-		'getMetadata': function (fileNode) {
+		/** @memberOf modService */
+		getMetadata: function (fileNode) {
 			var deferred = $q.defer();
 
 			this.getFileEntry(fileNode.path).then(function (entry) {
@@ -334,17 +498,18 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'isNodeOutdated': function (dataNode, date) {
+		/** @memberOf modService */
+		isNodeOutdated: function (dataNode, date) {
 			var deferred = $q.defer();
 
-			if ('lastModified' in dataNode)
+			if ('lastGenerated' in dataNode)
 			{
-				if (!dataNode.lastModified)
+				if (!dataNode.lastGenerated)
 				{
 					deferred.resolve(true);
 					return deferred.promise;
 				}
-				if (date && dataNode.lastModified > date)
+				if (date && dataNode.lastGenerated > date)
 				{
 					deferred.resolve(true);
 					return deferred.promise;
@@ -352,13 +517,13 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}
 			else
 			{
-				deferred.reject('Node has no lastModified.');
+				deferred.reject('Node has no lastGenerated.');
 				return deferred.promise;
 			}
 
 			if (('metadata' in dataNode) && dataNode.metadata)
 			{
-				if (dataNode.metadata.modificationDate > dataNode.lastModified)
+				if (dataNode.metadata.modificationDate > dataNode.lastGenerated)
 				{
 					deferred.resolve(true);
 					return deferred.promise;
@@ -372,14 +537,14 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			if ('metadata' in dataNode)
 			{
 				promises.push(this.getMetadata(dataNode).then(function (metadata) {
-					return metadata.modificationDate > dataNode.lastModified;
+					return metadata.modificationDate > dataNode.lastGenerated;
 				}));
 			}
 
 			if ('sourceDataNodes' in dataNode)
 			{
 				angular.forEach(dataNode.sourceDataNodes, function (sourceDataNode) {
-					promises.push(this.isNodeOutdated(sourceDataNode, dataNode.lastModified));
+					promises.push(this.isNodeOutdated(sourceDataNode, dataNode.lastGenerated));
 				}, this);
 			}
 
@@ -404,22 +569,43 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'getData': function (dataNode) {
+		getData: function (dataNode) {
+			if (!dataNode)
+				console.log('Unknown datanode!');
+
+			// Is already generating... wait for that
+			if ('generatePromise' in dataNode && dataNode.generatePromise)
+				return dataNode.generatePromise;
+
 			return this.isNodeOutdated(dataNode).then(function (isOutdated) {
 				if (!isOutdated)
 					return dataNode;
 				else
-					return this.generateData(dataNode);
+				{
+					dataNode.generatePromise = this.generateData(dataNode);
+
+					dataNode.generatePromise.then(function() {
+						dataNode.generatePromise = null;
+					});
+
+					return dataNode.generatePromise;
+				}
 			}.bind(this));
 		},
-		'generateData': function (dataNode) {
+		generateData: function (dataNode) {
 			var deferred = $q.defer();
 
 			if ('generateMethod' in dataNode)
 				return this.loadDependencies(dataNode).then(function () {
-					return this[dataNode.generateMethod](dataNode);
+						this.loadingState[dataNode.generateMethod] = true;
+						//this.loadingState = dataNode.generateMethod;
+					return this[dataNode.generateMethod](dataNode).then(function () {
+						this.loadingState[dataNode.generateMethod] = false;
+						//this.loadingState = '';
+						return dataNode;
+					}.bind(this));
 				}.bind(this)).then(function (dataNode) {
-					dataNode.lastModified = new Date();
+					dataNode.lastGenerated = new Date();
 					return dataNode;
 				});
 			else
@@ -427,7 +613,43 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return deferred.promise;
 		},
-		'loadDependencies': function (dataNode) {
+		saveData: function (dataNode) {
+			if (!dataNode)
+				console.log('Unknown datanode!');
+
+			var deferred = $q.defer();
+
+			if (!('saveMethod' in dataNode))
+			{
+				deferred.reject('Node `'+ dataNode +'` cannot save data, no saveMethod set.');
+				return deferred.promise;
+			}
+
+			return this[dataNode.saveMethod](dataNode).then(function () {
+				dataNode.localModifified = null;
+				return dataNode;
+			}.bind(this));
+		},
+		watchData: function (dataNode) {
+			if (!dataNode)
+				console.log('Unknown datanode!');
+
+			return this.isNodeOutdated(dataNode).then(function (isOutdated) {
+				if (!isOutdated)
+					return dataNode;
+				else
+				{
+					dataNode.generatePromise = this.generateData(dataNode);
+
+					dataNode.generatePromise.then(function() {
+						dataNode.generatePromise = null;
+					});
+
+					return dataNode.generatePromise;
+				}
+			}.bind(this));
+		},
+		loadDependencies: function (dataNode) {
 			var promises = [];
 
 			if ('metadata' in dataNode)
@@ -438,7 +660,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			if ('sourceDataNodes' in dataNode)
 			{
 				angular.forEach(dataNode.sourceDataNodes, function (sourceDataNode) {
-					promises.push(this.generateData(sourceDataNode, dataNode.lastModified));
+					promises.push(this.generateData(sourceDataNode, dataNode.lastGenerated));
 				}, this);
 			}
 
@@ -449,9 +671,12 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				}, this);
 			}
 
-			return $q.all(promises);
+			return $q.all(promises).then(function () {
+				return dataNode;
+			});
 		},
-		'getFileEntry': function (path, options, ignoreExist) {
+		/** @memberOf modService */
+		getFileEntry: function (path, options, ignoreExist, isDir) {
 			var deferred = $q.defer();
 			if (!options && this.pathToFileEntry[path])
 			{
@@ -478,7 +703,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 				return this.getFileEntry('').then(function (rootEntry) {
 					var deferred = $q.defer();
-					var getter = this.data.fileSystem.byPath[path] && this.data.fileSystem.byPath[path].isDirectory ? 'getDirectory' : 'getFile';
+					var getter = isDir || (this.data.fileSystem.byPath[path] && this.data.fileSystem.byPath[path].isDirectory) ? 'getDirectory' : 'getFile';
 					rootEntry[getter](
 						path,
 						options,
@@ -491,26 +716,35 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 							{
 								deferred.resolve(false);
 							}
+							else if (e.name == 'TypeMismatchError' && !isDir)
+							{
+								// Tried to access directory as a file, try again as dir
+								deferred.resolve(this.getFileEntry(path, options, ignoreExist, true));
+							}
 							else
 							{
 								deferred.reject(e);
 							}
-						}
-
+						}.bind(this)
 					);
 					return deferred.promise;
 				}.bind(this));
 			}
 			return deferred.promise;
 		},
-		'getFile': function (path, options) {
+		getFile: function (path, options) {
 			if (!options)
 			{
 				return this.getFileEntry(path).then(function (entry) {
 					var deferred = $q.defer();
-					entry.file(function (file) {
-						deferred.resolve(file);
-					}, deferred.reject);
+					if (!entry.isFile)
+						deferred.reject('Path `'+ path +'` not a file.');
+					else
+					{
+						entry.file(function (file) {
+							deferred.resolve(file);
+						}, deferred.reject);
+					}
 					return deferred.promise;
 				})
 			}
@@ -530,7 +764,8 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				});
 			}
 		},
-		'loadFileNodeDirectory': function (fileNode) {
+		/** @memberOf modService */
+		loadFileNodeDirectory: function (fileNode) {
 			if (!fileNode.isDirectory)
 			{
 				var deferred = $q.defer();
@@ -629,7 +864,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				var fileNameChanged = (fileNode.name != entry.name);
 
 				fileNode.name = entry.name;
-				fileNode.lastModified = new Date();
+				fileNode.lastGenerated = new Date();
 
 				fileNode.isFile = entry.isFile;
 				fileNode.isDirectory = entry.isDirectory;
@@ -637,6 +872,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				if (fileNode.isFile)
 				{
 					fileNode.extension = fileNode.name.lastIndexOf('.') != -1 ? fileNode.name.substring(fileNode.name.lastIndexOf('.') + 1) : null;
+					fileNode.baseName = fileNode.name.lastIndexOf('.') != -1 ? fileNode.name.substring(0, fileNode.name.lastIndexOf('.')) : fileNode.name;
 
 					if (fileNode.extension == 'txt')
 					{
@@ -719,6 +955,184 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return fileNode;
 			}.bind(this));
 		},
+		'generateProvinceHistory': function (dataNode) {
+			return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+				return this.loadFileNodeDirectory(node);
+			}.bind(this)).then(function (node) {
+				var promises = [];
+				var idRegex = /^([0-9]+)\s*.*\.txt$/i;
+				for (var i = 0; i < node.files.length; i++)
+				{
+					var file = node.files[i];
+
+					var matches = idRegex.exec(file.name);
+
+					if (!matches)
+					{
+						console.log(file.path +' not a province history file.')
+						continue;
+					}
+					var id = matches[1];
+
+					promises.push(function (path, id) {
+						return this.getPdxScriptDataByPath(path).then(function (pdxDataNode) {
+							dataNode.byId[id] = pdxDataNode;
+							dataNode.provinceIds.push(id);
+						});
+					}.bind(this)(file.path, id));
+				}
+
+				return $q.all(promises).then(
+					function (results) {
+						return dataNode;
+					}
+				);
+			}.bind(this));
+		},
+		'generateCountryInfo': function (dataNode) {
+			return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+				return this.loadFileNodeDirectory(node);
+			}.bind(this)).then(function (node) {
+				var promises = [];
+				for (var i = 0; i < node.files.length; i++)
+				{
+					var file = node.files[i];
+					promises.push(function (path) {
+						return this.getPdxScriptDataByPath(path).then(function (pdxDataNode) {
+							dataNode.byPath[path] = pdxDataNode;
+						});
+					}.bind(this)(file.path));
+				}
+
+				return $q.all(promises).then(
+					function (results) {
+						return dataNode;
+					}
+				);
+			}.bind(this));
+		},
+		'generateCountryTags': function (dataNode) {
+			return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+				return this.loadFileNodeDirectory(node);
+			}.bind(this)).then(function (node) {
+				var promises = [];
+				for (var i = 0; i < node.files.length; i++)
+				{
+					var file = node.files[i];
+					promises.push(function (path) {
+						return this.getPdxScriptDataByPath(path).then(function (pdxDataNode) {
+							for (var j = 0; j < pdxDataNode.data.subNodes.length; j++)
+							{
+								dataNode.byTag[pdxDataNode.data.subNodes[j].name] = pdxDataNode.data.subNodes[j].value;
+							}
+						});
+					}.bind(this)(file.path));
+				}
+
+				return $q.all(promises).then(
+					function (results) {
+						return dataNode;
+					}
+				);
+			}.bind(this));
+		},
+		'generateMapEnvironment':  function (dataNode) {
+			var promises = [];
+			for (var i = 0; i < dataNode.sourceFiles.length; i++)
+			{
+				promises.push(this.getPdxScriptDataByPath(dataNode.sourceFiles[i]).then(function (pdxNode) {
+					dataNode[pdxNode.file.baseName] = pdxNode.data;
+				}));
+			}
+			return $q.all(promises).then(function () {
+				return dataNode;
+			});;
+		},
+		'getPdxScriptDataByPath': function (path) {
+			// Make data-wrapper
+			if (!this.data.pdxScriptData.byPath[path])
+			{
+				this.data.pdxScriptData[path] = angular.copy(this.data.pdxScriptData.proto);
+				this.data.pdxScriptData[path].sourceFiles = [path];
+			}
+
+			return this.generateData(this.data.pdxScriptData[path]);
+		},
+		'getYamlDataByPath': function (path) {
+			// Make data-wrapper
+			if (!this.data.yamlData.byPath[path])
+			{
+				this.data.yamlData[path] = angular.copy(this.data.yamlData.proto);
+				this.data.yamlData[path].sourceFiles = [path];
+			}
+
+			return this.generateData(this.data.yamlData[path]);
+		},
+		'getCsvDataByPath': function (path) {
+			// Make data-wrapper
+			if (!this.data.csvData.byPath[path])
+			{
+				this.data.csvData[path] = angular.copy(this.data.csvData.proto);
+				this.data.csvData[path].sourceFiles = [path];
+			}
+
+			return this.generateData(this.data.yamlData[path]);
+		},
+		'generatePdxScriptData': function (dataNode) {
+			dataNode.data = null;
+			return this.getFileText(dataNode.sourceFiles[0]).then(function (text) {
+				dataNode.data = pdxScriptService.readFile(text);
+
+				/*$rootScope.$watch(function () {
+					return dataNode.data;
+				}, function (newValue, oldValue) {
+					dataNode.localModified = new Date();
+				});*/
+
+				return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+					dataNode.file = node;
+					return dataNode;
+				}.bind(this));
+			}.bind(this));
+		},
+		'generateYamlData': function (dataNode) {
+			dataNode.data = null;
+			return this.getFileText(dataNode.sourceFiles[0]).then(function (text) {
+				dataNode.data = jsyaml.load(text);
+
+				/*$rootScope.$watch(function () {
+					return dataNode.data;
+				}, function (newValue, oldValue) {
+					dataNode.localModified = new Date();
+				}, true);*/
+
+				return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+					dataNode.file = node;
+					return dataNode;
+				}.bind(this));
+			}.bind(this), 'utf8');
+		},
+		'generateCsvData': function (dataNode) {
+			dataNode.data = null;
+			return this.getFileText(dataNode.sourceFiles[0]).then(function (text) {
+				dataNode.data = jsyaml.load(text);
+
+				/*$rootScope.$watch(function () {
+					return dataNode.data;
+				}, function (newValue, oldValue) {
+					dataNode.localModified = new Date();
+				}, true);*/
+
+				return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+					dataNode.file = node;
+					return dataNode;
+				}.bind(this));
+			}.bind(this));
+		},
+		'saveYamlData': function (dataNode) {
+			var yamlText = jsyaml.dump(dataNode.data);
+			return this.writeFileText(dataNode.file.path, yamlText, 'utf-8', true);
+		},
 		'generateMapImage': function (dataNode) {
 			return this.getFile(dataNode.sourceFiles[0]).then(function (file) {
 				dataNode.imageBlob = file;
@@ -783,6 +1197,143 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return dataNode;
 			}.bind(this));
 		},
+		'generateProvinceMapping': function (dataNode) {
+			return this.getData(this.data.map.colorMapping).then(function (mappings) {
+				return this.getData(this.data.map.provinces.info).then(function (mapInfo) {
+					dataNode.areaByProvinceId = [];
+					for (var i = 0; i < mappings.byId.length; i++)
+					{
+						if (mappings.byId[i] && mapInfo.analytics.colors[mappings.byId[i].colorNum])
+						{
+							dataNode.areaByProvinceId[i] = mapInfo.analytics.colors[mappings.byId[i].colorNum];
+						}
+					}
+					return dataNode;
+				}.bind(this));
+			}.bind(this));
+		},
+		'generateLocalisation': function (dataNode) {
+			return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
+				return this.loadFileNodeDirectory(node);
+			}.bind(this)).then(function (node) {
+				var promises = [];
+				dataNode.byId = {};
+				dataNode.byLanguage = {};
+				dataNode.languages = [];
+				dataNode.sourceDataNodes.length = 0;
+
+				for (var i = 0; i < node.files.length; i++)
+				{
+					var file = node.files[i];
+					if (file.extension == 'yml')
+					{
+						promises.push(function (path) {
+
+							return this.getYamlDataByPath(path).then(function (yamlDataNode) {
+								dataNode.byFile[path] = yamlDataNode;
+								dataNode.sourceDataNodes.push(yamlDataNode);
+								var language;
+								var localisationId;
+								for (language in yamlDataNode.data)
+								{
+									if (yamlDataNode.data.hasOwnProperty(language))
+									{
+										for (localisationId in yamlDataNode.data[language])
+										{
+											if (yamlDataNode.data[language].hasOwnProperty(localisationId))
+											{
+												if (!dataNode.byId[localisationId])
+													dataNode.byId[localisationId] = {};
+
+												dataNode.byId[localisationId][language] = yamlDataNode;
+
+												if (!dataNode.byLanguage[language])
+													dataNode.byLanguage[language] = {};
+
+												dataNode.byLanguage[language][localisationId] = yamlDataNode;
+
+												if (dataNode.languages.indexOf(language) == -1)
+													dataNode.languages.push(language);
+											}
+										}
+									}
+								}
+							});
+						}.bind(this)(file.path));
+					}
+					else
+					{
+						/*
+						promises.push(function (path) {
+
+							return this.getCsvDataByPath(path).then(function (csvDataNode) {
+								dataNode.byFile[path] = yamlDataNode;
+								dataNode.sourceDataNodes.push(yamlDataNode);
+								var language;
+								var localisationId;
+								for (language in yamlDataNode.data)
+								{
+									if (yamlDataNode.data.hasOwnProperty(language))
+									{
+										for (localisationId in yamlDataNode.data[language])
+										{
+											if (yamlDataNode.data[language].hasOwnProperty(localisationId))
+											{
+												if (!dataNode.byId[localisationId])
+													dataNode.byId[localisationId] = {};
+
+												dataNode.byId[localisationId][language] = yamlDataNode;
+
+												if (!dataNode.byLanguage[language])
+													dataNode.byLanguage[language] = {};
+
+												dataNode.byLanguage[language][localisationId] = yamlDataNode;
+
+												if (dataNode.languages.indexOf(language) == -1)
+													dataNode.languages.push(language);
+											}
+										}
+									}
+								}
+							});
+						}.bind(this)(file.path));
+						*/
+					}
+				}
+
+				return $q.all(promises).then(
+					function (results) {
+						return dataNode;
+					}
+				);
+			}.bind(this));
+		},
+		'getProvinceByArea': function (area) {
+			return this.getData(this.data.map.provinceMapping).then(function (mapping) {
+				return this.getData(this.data.history.provinces).then(function (provinces) {
+					var provinceId = mapping.areaByProvinceId.indexOf(area);
+
+					if (provinceId == -1 || !provinces.byId[provinceId])
+						return null
+					else
+						return provinces.byId[provinceId];
+				}.bind(this));
+			}.bind(this));
+		},
+		'getCountryByTag': function (tag) {
+			return this.getData(this.data.countries.tags).then(function (tags) {
+				return this.getData(this.data.countries.info).then(function (countries) {
+
+					var countryFile = tags.byTag[tag];
+
+					if (countryFile && countries.byPath['common/'+ countryFile])
+						return countries.byPath['common/'+ countryFile];
+					else
+						return null;
+
+				}.bind(this));
+			}.bind(this));
+		},
 		'fileExists': function (path) {
 			return this.getFileEntry(path).then(function (fileEntry) {
 				return !!fileEntry;
@@ -803,9 +1354,19 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			});
 		},
 		'writeFileText': function (path, text, encoding, overwrite) {
-			return this.writeFileBuffer(path, this.convertUtf8ToBuffer(text, 'cp1252'), overwrite);
+
+			if (!encoding)
+				encoding = 'cp1252';
+
+			if (encoding != 'utf-8')
+				return this.writeFileBuffer(path, this.convertUtf8ToBuffer(text, encoding), overwrite);
+
+			return this.writeFileBlob(path, new Blob([text], {type: 'text/plain'}), overwrite);
 		},
 		'writeFileBuffer': function (path, buffer, overwrite) {
+			return this.writeFileBlob(path,  new Blob([buffer]), overwrite);
+		},
+		'writeFileBlob': function (path, blob, overwrite) {
 			return this.getFileEntry(path, {create: true, exclusive: !overwrite}, !overwrite).then(function (fileEntry) {
 				if (!fileEntry)
 				{
@@ -825,7 +1386,6 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						}
 						deferred.resolve();
 					}
-					var blob = new Blob([buffer]);
 					writer.write(blob);
 				}, deferred.reject);
 
@@ -848,7 +1408,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 		},
 		// for directories, read the contents of the top-level directory (ignore sub-dirs)
 		// and put the results into the textarea, then disable the Save As button
-		'readDir': function (entry) {
+		readDir: function (entry) {
 			var deferred = $q.defer();
 			if (entry.isDirectory)
 			{

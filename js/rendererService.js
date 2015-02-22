@@ -435,7 +435,8 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 						{
 							faceUvs[j] = [];
 							for (var i = 0; i < uvCount; i++)
-								faceUvs[j][i] = subObject.geometry.faceVertexUvs[i][k][j];
+								if (subObject.geometry.faceVertexUvs[i][k])
+									faceUvs[j][i] = subObject.geometry.faceVertexUvs[i][k][j];
 						}
 
 						face.a = getVertexNrForUniqueData(face.a, faceUvs[0], face.vertexNormals[0], vertexToUniqueData, verts, skinIds, skinWeights);
@@ -1069,7 +1070,9 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					|| pdxMaterial.shader == 'PdxMeshStandard'
 					|| pdxMaterial.shader == 'PdxMeshSnow'
 					|| pdxMaterial.shader == 'PdxMeshAlphaBlend'
-					|| pdxMaterial.shader == 'PdxMeshStandard_NoFoW_NoTI'))
+					|| pdxMaterial.shader == 'PdxMeshStandard_NoFoW_NoTI'
+					|| pdxMaterial.shader == 'JdxMeshShield'
+					|| pdxMaterial.shader == 'JdxMeshShieldTextureAtlas'))
 				{
 					console.log('Unknown shader: '+ pdxMaterial.shader);
 				}

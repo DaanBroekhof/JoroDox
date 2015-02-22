@@ -77,6 +77,8 @@ module.factory('pdxDataService', ['$rootScope', function($rootScope) {
 
 			property.name = propertyName;
 			property.depth = object.depth + 1;
+			property.value = property.data;
+
 			object.subNodes.push(property);
 			object.props[propertyName] = property.data;
 

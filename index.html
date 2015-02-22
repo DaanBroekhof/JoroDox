@@ -25,6 +25,7 @@
 				<li ui-sref-active="active"><a ui-sref="settings">Settings</a></li>
 				<li ui-sref-active="active"><a ui-sref="about">About</a></li>
 			</ul>
+			<div class="loading-state"><span class="loading-icon" ng-class="{'icon-animate': loadingStateText}"></span> {{loadingStateText}}</a></div>
 		</div>
 	</nav>
 	<div class="window-body" ui-view>
@@ -43,6 +44,8 @@
 	<script src="bower_components/victor/build/victor.min.js"></script>
 	<script src="bower_components/blueimp-load-image/js/load-image.all.min.js"></script>
 	<script src="bower_components/idbwrapper/idbstore.min.js"></script>
+	<script src="bower_components/angular-hotkeys/build/hotkeys.min.js"></script>
+	<script src="bower_components/js-yaml/dist/js-yaml.min.js"></script>
 
 	<script src="bower_components/hamsterjs/hamster.js"></script>
 	<script src="bower_components/angular-mousewheel/mousewheel.js"></script>
@@ -56,6 +59,7 @@
 
 	<script src="js/modService.js"></script>
 	<script src="js/mapAnalyzeService.js"></script>
+	<script src="js/mapDrawService.js"></script>
 	<script src="js/pdxDataService.js"></script>
 	<script src="js/pdxScriptService.js"></script>
 	<script src="js/rendererService.js"></script>

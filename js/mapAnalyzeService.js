@@ -26,6 +26,7 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 				pix++;
 				if (x >= canvas.width)
 				{
+					byCoords[y][x] = lastColor;
 					x = 0;
 					y++;
 					byCoords[y] = [];
@@ -34,6 +35,7 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 
 				if (imagedata[i+3] == 0)
 				{
+					// Transparent pixel (seas)
 					byCoords[y][x] = null;
 					lastColor = null;
 					continue;
@@ -46,11 +48,12 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 					var c = colors[color];
 					c.count++;
 
-					// Do not measure the 'left' size of provinces on borders
-					if (x > c.extentMax[0] && (!c.onBorder || x < canvas.width / 2))
+					// Do not measure the 'right' size of provinces on borders
+					if (x > c.extentMax[0])// && (!c.onBorder || x < canvas.width / 2))
 						c.extentMax[0] = x;
 					else if (x < c.extentMin[0])
 						c.extentMin[0] = x;
+
 
 					if (y > c.extentMax[1])
 						c.extentMax[1] = y;
@@ -63,10 +66,15 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 						if (imagedata[i] != imagedata[i + row]
 							|| imagedata[i + 1] != imagedata[i + row + 1]
 							|| imagedata[i + 2] != imagedata[i + row + 2]
-
-							/*|| imagedata[i] != imagedata[i - row]
+						)
+						{
+							// Pixel above or below is different
+							c.outLine.push(pix);
+							c.outLineSingle.push(pix);
+						}
+						else if (imagedata[i] != imagedata[i - row]
 							|| imagedata[i + 1] != imagedata[i - row + 1]
-							|| imagedata[i + 2] != imagedata[i - row + 2]*/
+							|| imagedata[i + 2] != imagedata[i - row + 2]
 							)
 						{
 							// Pixel above or below is different
@@ -76,11 +84,16 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 					else
 					{
 						// The last pixel seen is outline, if not 1 pixel long
-						//if (c.offsetRanges[0][0] != c.offsetRanges[0][1])
-						//	c.outLine.push(c.offsetRanges[0][1]);
+						if (c.offsetRanges[0][1] != c.offsetRanges[0][2])
+						{
+							var oldPix = c.offsetRanges[0][0] * canvas.width + c.offsetRanges[0][2];
+							if (c.outLine[c.outLine.length - 1] != oldPix)
+								c.outLine.push(oldPix);
+						}
 						c.offsetRanges.unshift([y, x, x]);
 						// The new pixel seen is outline
 						c.outLine.push(pix);
+						c.outLineSingle.push(pix);
 					}
 				}
 				else
@@ -93,6 +106,7 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 						'count': 1,
 						'offsetRanges': [[y, x, x]],
 						'outLine': [pix],
+						'outLineSingle': [pix],
 						'r': imagedata[i],
 						'g': imagedata[i+1],
 						'b': imagedata[i+2],
@@ -113,8 +127,8 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 				if (x == 0 && !colors[color].onBorder)
 				{
 					//reset extent
-					colors[color].extentMax = [x, y];
-					colors[color].extentMin = [x, y];
+					//colors[color].extentMax = [x, y];
+					//colors[color].extentMin = [x, y];
 					colors[color].onBorder = true;
 				}
 			}
@@ -127,6 +141,8 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 				if (colors.hasOwnProperty(color))
 				{
 					var c = colors[color];
+
+					c.offsetRanges.reverse();
 
 					c.center = [Math.round((c.extentMax[0] + c.extentMin[0])/2), Math.round((c.extentMax[1] + c.extentMin[1])/2)];
 					c.extentSize = [c.extentMax[0] - c.extentMin[0], c.extentMax[1] - c.extentMin[1]];
@@ -248,13 +264,13 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 				if (colors.hasOwnProperty(color))
 				{
 					var c = colors[color];
-					var len = c.outLine.length;
+					var len = c.outLineSingle.length;
 					for (var i = 0; i < len; i++)
 					{
-						imageData.data[c.outLine[i]*4] = 0;
-						imageData.data[c.outLine[i]*4 + 1] = 0;
-						imageData.data[c.outLine[i]*4 + 2] = 0;
-						imageData.data[c.outLine[i]*4 + 3] = 255;
+						imageData.data[c.outLineSingle[i]*4] = 0;
+						imageData.data[c.outLineSingle[i]*4 + 1] = 0;
+						imageData.data[c.outLineSingle[i]*4 + 2] = 0;
+						imageData.data[c.outLineSingle[i]*4 + 3] = 255;
 					}
 				}
 			}
@@ -265,47 +281,6 @@ module.factory('mapAnalyzeService', ['$rootScope', function($rootScope) {
 			borderImg.src = canvas.toDataURL();
 
 			return borderImg;
-		},
-		'colorCanvasArea': function (canvas, area, color) {
-
-			var context = canvas.getContext('2d');
-
-			var imageData = context.getImageData(area.extentMin[0], area.extentMin[1], 1 + area.extentMax[0] - area.extentMin[0], area.extentMax[1] - area.extentMin[1]);
-
-			var len = area.offsetRanges.length;
-			for (var i = 0; i < len; i++)
-			{
-				var y = area.offsetRanges[i][0] - area.extentMin[1];
-				var lastX = area.offsetRanges[i][2];
-				for (var x = area.offsetRanges[i][1]; x <= lastX; x++)
-				{
-					var offset = ((y * imageData.width) + (x - area.extentMin[0])) * 4;
-					imageData.data[offset] = color[0];
-					imageData.data[offset + 1] = color[1];
-					imageData.data[offset + 2] = color[2];
-					imageData.data[offset + 3] = color[3];
-				}
-			}
-
-			context.putImageData(imageData, area.extentMin[0], area.extentMin[1]);
-
-			return canvas;
-		},
-		'getAreaFromCoords': function (analytics, x, y) {
-
-			var area = null;
-			for (var startX in analytics.byCoords[y])
-			{
-				if (analytics.byCoords[y].hasOwnProperty(startX))
-				{
-					if (x < startX)
-						return area;
-
-					area = analytics.byCoords[y][startX];
-				}
-			}
-
-			return null;
 		},
 	};
   	return mapAnalyzeServiceInstance;

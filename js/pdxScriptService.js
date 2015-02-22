@@ -17,7 +17,7 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 			this.data = data;
 			this.lineScope = null;
 
-			var base = {type: 'rootScope', name: 'pdxScript', subNodes: [], depth: 0, comments: []};
+			var base = {type: 'rootScope', name: 'pdxScript', subNodes: [], depth: 0, comments: [], 'data' : {}};
 
 			do
 			{
@@ -26,7 +26,7 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 				if (token == false)
 					break;
 
-				var varScope = {type: 'object', name: token, subNodes: [], depth: 1, data: null, comments: []};
+				var varScope = {type: 'object', name: token, subNodes: [], depth: 1, value: null, data: {}, comments: []};
 				base.subNodes.push(varScope);
 
 				// Copy any comments immediately above this statement to scope
@@ -34,7 +34,7 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 
 				var assign = this.readToken(varScope);
 				if (assign != '=' && assign != '{')
-					console.log('Expected token `=` or `{` at line '+ this.currentLine +'`, instead got "' + token +'".');
+					console.log('Expected token `=` or `{` at line '+ this.currentLine +'`, instead got "' + assign +'".');
 
 				var value = assign;
 
@@ -48,9 +48,22 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 				}
 				else
 				{
+					varScope.value = value;
 					varScope.data = value;
 					varScope.type = 'property';
 					varScope.icon = 'asterisk';
+				}
+
+				if (base.data[varScope.name])
+				{
+					if (!angular.isArray(base.data[varScope.name]))
+						base.data[varScope.name] = [base.data[varScope.name]];
+
+					base.data[varScope.name].push(varScope.data);
+				}
+				else
+				{
+					base.data[varScope.name] = varScope.data;
 				}
 			}
 			while (token !== false)
@@ -73,7 +86,7 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 				{
 					// property style object
 
-					var propertyScope = {type: 'property', name: prevToken, subNodes: [], depth: scope.depth+1, value: null, comments: []};
+					var propertyScope = {type: 'property', name: prevToken, subNodes: [], depth: scope.depth+1, value: null, data: {}, comments: []};
 					scope.subNodes.push(propertyScope);
 					// Copy any comments immediately above this statement to scope
 					this.moveComments(scope, propertyScope, this.currentLine - 1);
@@ -90,7 +103,20 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 					{
 						propertyScope.type = 'property';
 						propertyScope.icon = 'asterisk';
+						propertyScope.value = token;
 						propertyScope.data = token;
+					}
+
+					if (scope.data[propertyScope.name])
+					{
+						if (!angular.isArray(scope.data[propertyScope.name]))
+							scope.data[propertyScope.name] = [scope.data[propertyScope.name]];
+
+						scope.data[propertyScope.name].push(propertyScope.data);
+					}
+					else
+					{
+						scope.data[propertyScope.name] = propertyScope.data;
 					}
 
 					// Reset token for new property
@@ -100,21 +126,25 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 				else if (prevToken != null)
 				{
 					// value list style object
-					if (scope.data == null)
-						scope.data = [];
+					if (scope.value == null)
+						scope.value = [];
 
 					scope.icon = 'list';
 
-					scope.data.push(prevToken);
+					scope.value.push(prevToken);
+
+					scope.data = scope.value;
 				}
 
 				if (token == '}')
 				{
-					if (scope.subNodes.length == 0 && scope.data == null)
+					if (scope.subNodes.length == 0 && scope.value == null)
 					{
 						// Empty array input
-						scope.data = [];
+						scope.value = [];
 						scope.icon = 'list';
+
+						scope.data = scope.value;
 					}
 					break;
 				}
@@ -156,16 +186,18 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 					else
 						return this.readToken(scope);
 				}
-				// '=' can only be a solo operator
-				if (this.data[this.currentOffset] == '=' && token != '')
+				// '=', '{', '}' can only be a solo token
+				if (token != '' &&  (this.data[this.currentOffset] == '=' || this.data[this.currentOffset] == '{' || this.data[this.currentOffset] == '}'))
+				{
 					break;
+				}
 
 				token += this.data[this.currentOffset];
 
 				this.currentOffset++;
 
-				// '=' can only be a solo operator
-				if (token == '=')
+				// '=', '{' can only be a solo operator
+				if (token == '=' || token == '{')
 					break;
 
 				// Whitespace breaks token

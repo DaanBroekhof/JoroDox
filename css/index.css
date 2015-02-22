@@ -73,9 +73,15 @@ div.window-body div.window-box h2 {
 }
 
 .tree-item-name:hover, .datatree-item-name:hover {
-	border-radius: 2px;
+	border-radius: 4px;
 	border: 0;
 	box-shadow: 0 0 0 2px grey;
+}
+
+.tree-item-name.current, .datatree-item-name.current {
+	border-radius: 4px;
+	border: 0;
+	background-color: rgba(0, 128, 0, 0.14);
 }
 
 .datatree-item:hover {
@@ -224,6 +230,38 @@ div.window-body div.window-box h2 {
 	height: 100%;
 }
 
+
+.text-output-window .data-view-text,
+.text-output-window .data-view-province,
+.text-output-window .data-view-country {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.text-output-window .data-view-province-body,
+.text-output-window .data-view-country-body,
+.text-output-window .data-view-text-body {
+	width: 100%;
+	height: calc(100% - 35px);
+	overflow: auto;
+	border: 1px solid #bbb;
+}
+
+.text-output-window .data-view-text-body {
+	overflow: hidden;
+}
+
+.text-output-window .data-view-province table {
+}
+
+.text-output-window .data-view-text textarea {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+
 .loading-icon {
 	display: inline-block;
 	vertical-align: middle;
@@ -292,19 +330,25 @@ h5 {
 }
 
 
+.pan-zoom-contents img#gridImage {
+	z-index: 4;
+}
 .pan-zoom-contents canvas#PanZoomCanvasHover {
+	z-index: 3;
+}
+.pan-zoom-contents canvas#PanZoomCanvasSelect {
 	z-index: 2;
 }
 .pan-zoom-contents canvas#PanZoomCanvas {
 	z-index: 1;
 }
-
-.pan-zoom-contents img#gridImage {
-	z-index: 3;
-}
-
 .pan-zoom-contents img#scrollImage {
 	z-index: 0;
+}
+
+.pan-zoom-contents img#overlayImage {
+	z-index: 5;
+	opacity: 0.75;
 }
 
 .pan-zoom-contents .label-cover {
@@ -350,6 +394,16 @@ h5 {
 }
 .mesh-list dd {
 	margin-left: 90px;
+}
+
+.loading-state {
+	float: left;
+	padding-top: 12px;
+	padding-right: 30px;
+	color: #9d9d9d;
+}
+.loading-state span {
+	color: #9d9d9d;
 }
 
 

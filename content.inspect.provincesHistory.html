@@ -4,8 +4,21 @@
 		<div ui-layout="{ flow : 'row'}" style="overflow: hidden;">
 			<div ui-layout-container size="60px" style="overflow: hidden;">
 				<div class="window-box">
-					<h2>Map tool <span class="loading-icon" ng-class="{'icon-animate': loading}"></span>
-						 <button type="button" class="btn btn-primary" ng-click="createFiles()">Create missing</button>
+					<h2>Province history tool <span class="loading-icon" ng-class="{'icon-animate': loading}"></span>
+						<div class="map-action-bar">
+							Options
+							<div class="btn-group">
+								<label class="btn btn-success" ng-model="options.showGrid" btn-checkbox>Grid</label>
+								<label class="btn btn-success" ng-model="options.highLight" btn-checkbox>Highlight</label>
+								<label class="btn btn-success" ng-model="options.showLabels" btn-checkbox>Labels</label>
+							</div>
+							Views
+							<div class="btn-group">
+								<label class="btn btn-success" ng-model="view" btn-radio="'provinces'">Provinces</label>
+								<label ng-if="hasSeasPng" class="btn btn-success" ng-model="view" btn-radio="'seas'">Seas</label>
+								<label class="btn btn-success" ng-model="view" btn-radio="'countries'">Countries</label>
+							</div>
+						</div>
 					</h2>
 				</div>
 			</div>
@@ -14,8 +27,20 @@
 					<div ng-controller="PanZoom" style="width:100%;height:100%;" size-element>
 					    <div style="position:relative">
 					        <panzoomwidget panzoom-id="PanZoom" style="position:absolute;top:10px;left:10px;z-index:1"></panzoomwidget>
+					        <div class="map-hint" ng-show="mapHint">{{mapHint}}</div>
 					        <panzoom id="PanZoom" config="panzoomConfig" model="panzoomModel" style="width:100%;height: {{height}}px;">
-					            <img ng-src="{{scrollImage}}">
+					        	<div class="map-contents" ng-mousedown="toggleAreaDown($event)" ng-mouseup="toggleAreaUp($event)" ng-mousemove="toggleAreaHover($event)">
+					            	<canvas id="PanZoomCanvas" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
+					            	<canvas id="PanZoomCanvasHover" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
+					            	<div>
+					            		<img ng-src="{{scrollImage}}" id="scollImage" width="{{mapWidth}}" height="{{mapHeight}}">
+					            		<img ng-src="{{gridImage}}" id="gridImage" ng-show="gridImage" width="{{mapWidth}}" height="{{mapHeight}}">
+					            	</div>
+					            	<div class="map-labels" ng-show="options.showLabels">
+					            		<div ng-repeat="label in labels" class="map-label" style="left:{{::label.extentMin[0]}}px; top: {{::label.extentMin[1]}}px; width: {{::label.extentSize[0]}}px; height: {{::label.extentSize[1]}}px; line-height: {{::label.extentSize[1]}}px;{{::label.message ? ' color: red; outline: 2px solid red;' : ''}};" title="{{::label.message}}">{{::label.text}}</div>
+					            	</div>
+					            	<div class="label-cover" style="width: {{mapWidth}}px; height:{{mapHeight}}px"></div>
+				            	</div>
 					        </panzoom>
 					    </div>
 					</div>

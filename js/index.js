@@ -1,4 +1,8 @@
-var myMod = angular.module('JoroDox', ['ui.bootstrap', 'ui.router', 'ui.layout', 'ui.tree', 'panzoom', 'panzoomwidget', 'modService', 'mapAnalyzeService', 'pdxDataService', 'pdxScriptService', 'rendererService']);
+var myMod = angular.module('JoroDox', [
+	'ui.bootstrap', 'ui.router', 'ui.layout', 'ui.tree',
+	'panzoom', 'panzoomwidget', 'cfp.hotkeys',
+	'modService', 'mapAnalyzeService', 'mapDrawService', 'pdxDataService', 'pdxScriptService', 'rendererService'
+]);
 
 myMod.filter('commentFilter', function() {
 	return function(input) {
@@ -113,6 +117,8 @@ myMod.controller('FileInspect', function ($scope, node, animation, modService, p
 	$scope.viewScene = null;
 	$scope.image = null;
 
+	modService.setCurrent($scope.node);
+
 	$scope.Math = window.Math;
 
 	$scope.pdxShaders = [
@@ -124,6 +130,8 @@ myMod.controller('FileInspect', function ($scope, node, animation, modService, p
 		'PdxMeshAlphaBlendNoZWrite',
 		'PdxMeshStandard_NoFoW_NoTI',
 		'Collision',
+		'JdxMeshShield',
+		'JdxMeshShieldTextureAtlas',
 	];
 
 	$scope.pdxShaderDescriptions = {
@@ -135,6 +143,8 @@ myMod.controller('FileInspect', function ($scope, node, animation, modService, p
 		'PdxMeshAlphaBlendNoZWrite': '[EU4 only] A slower transparency shader with less transparency order glitches.',
 		'PdxMeshStandard_NoFoW_NoTI': '[EU4 only] Shader for objects which should never be hidden by Fog of War or Terra Incognita.',
 		'Collision': '[EU4 + CK2] \'Shader\' which will not render the mesh, but instead use it to check for (input) collision checking. (ie the clickable space of the item)',
+		'JdxMeshShield': '[CK2-JoroDox] Model always faces the player, and slightly scaled differently on zoom level. JodoDox CK2 Shader extension required!',
+		'JdxMeshShieldTextureAtlas': '[CK2-JoroDox] Custom PdxMeshTextureAtlas shader, which always faces the player, and scaled differently. JodoDox CK2 Shader extension required!',
 	};
 
 	modService.getMetadata(node).then(function () {
@@ -624,7 +634,7 @@ myMod.controller('LoadMod', ['$scope', 'modService', '$state', function ($scope,
 	};
 
 	$scope.loadModData = function (modData) {
-		modService.loadData(modData.id).then(function () {
+		modService.loadModData(modData.id).then(function () {
 			$state.go('inspect');
 		});
 	};
@@ -633,7 +643,7 @@ myMod.controller('LoadMod', ['$scope', 'modService', '$state', function ($scope,
 }]);
 
 //Provinces History Tool
-myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapAnalyzeService', '$timeout', function ($scope, modService, mapAnalyzeService, $timeout) {
+myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapDrawService', '$timeout', function ($scope, modService, mapDrawService, $timeout) {
 	$scope.colors = null;
 	$scope.messages = '';
 	$scope.output = '';
@@ -648,6 +658,13 @@ myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapAnalyzeSer
 		$scope.messages = '';
 		$scope.outputTitle = 'Output';
 
+		modService.getData(modService.data.history.provinces).then(function (dataNode) {
+			$scope.output = '';
+			$scope.messages = 'Found '+ dataNode.byId.length +' province histories' + "\n";
+			console.log(dataNode);
+			$scope.loading = false;
+		})
+		/*
 		modService.getFileNodeByPath('history/provinces').then(function (dataNode) {
 			return modService.loadFileNodeDirectory(dataNode).then(function (dataNode) {
 				$scope.output = '';
@@ -655,6 +672,7 @@ myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapAnalyzeSer
 				$scope.loading = false;
 			});
 		});
+		*/
 	};
 
 	$scope.createFiles = function () {
@@ -698,7 +716,7 @@ myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapAnalyzeSer
 }]);
 
 // MapCheck
-myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$timeout', '$q', function ($scope, modService, mapAnalyzeService, $timeout, $q) {
+myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeout', '$q', '$rootScope', function ($scope, modService, mapDrawService, $timeout, $q, $rootScope) {
 
 	// Map analytics data
 	$scope.analytics = null;
@@ -707,19 +725,36 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 	// If currently doing stuff
 	$scope.loading = false;
 
-	$scope.mapWidth = 3632;
+	$scope.mapWidth = 2816;
 	$scope.mapHeight = 1024;
+
+	modService.getFileNodeByPath('map').then(function (node) {
+		modService.setCurrent(node);
+	});
 
 	// Current map view
 	$scope.view = 'provinces';
+
+	$scope.dataViewInfo = {type: 'province', title: '', text: '', history: null};
+
+	$scope.dataViewLeft = $scope.dataViewInfo;
+
+
+	$scope.hoveredProvinceHistory = null;
 
 	// Display options
 	$scope.options = {
 		showGrid: true,
 		showLabels: false,
 		highLight: true,
-		selectArea: false,
+		selectArea: true,//false,
 	};
+
+	$scope.views = [
+		'provinces',
+		'countries',
+		'climate',
+	];
 
 	$scope.messages = '';
 	$scope.output = '';
@@ -727,46 +762,176 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 	$scope.messagesTitle = 'Messages';
 	$scope.closestArea = 25;
 
+	$scope.historyData = null;
+
+	$scope.selectedProvinces = [];
+	$scope.selectedAreas = [];
+
 	$scope.labels = [];
 
 	$scope.hasSeasPng = false;
+
+	$scope.hoverCanvas = document.getElementById('PanZoomCanvasHover');
+	$scope.selectCanvas = document.getElementById('PanZoomCanvasSelect');
+	$scope.mapCanvas = document.getElementById('PanZoomCanvas');
+
+	$scope.overlayImage = null;
+	modService.getImageByPath('map/terrain/colormsap.png').then(function (img) {
+		$scope.overlayImage = img.src;
+	})
 
 	modService.fileExists('map/seas.png').then(function (exists) {
 		$scope.hasSeasPng = exists;
 	});
 
-
 	$scope.$watch('view', function(newValue, oldValue) {
-		if (newValue == 'provinces')
-		{
-			$scope.loading = true;
-			modService.getData(modService.data.map.provinces.image).then(function (data) {
-				return modService.getImage(data);
-			}).then(function (image) {
-				$scope.scrollImage = image.src;
-				$scope.mapWidth = image.width;
-				$scope.mapHeight = image.height;
-				$scope.loading = false;
-			});
-		}
-		else if (newValue == 'seas')
-		{
-			$scope.loading = true;
-			modService.getData(modService.data.map.seas.image).then(function (data) {
-				return modService.getImage(data);
-			}).then(function (image) {
-				$scope.scrollImage = image.src;
-				$scope.mapWidth = image.width;
-				$scope.mapHeight = image.height;
-				$scope.loading = false;
-			});
-		}
+		$scope.loading = true;
+		$scope.hoverCanvas = document.getElementById('PanZoomCanvasHover');
+		$scope.selectCanvas = document.getElementById('PanZoomCanvasSelect');
+		$scope.mapCanvas = document.getElementById('PanZoomCanvas');
 
-		if ($scope.options.highLight)
-		{
-			$scope.options.highLight = false;
-			$scope.options.highLight = true;
-		}
+		modService.getData(modService.data.map.environment).then(function (environment) {
+			if (environment.default.data.width)
+			{
+				$scope.mapWidth = environment.default.data.width;
+				$scope.mapHeight = environment.default.data.height;
+			}
+
+			if (newValue == 'provinces')
+			{
+				modService.getData(modService.data.map.provinces.image).then(function (data) {
+					return modService.getImage(data);
+				}).then(function (image) {
+					$scope.scrollImage = image.src;
+
+					if ($scope.mapWidth != image.width)
+					{
+						$scope.mapWidth = image.width;
+						$scope.mapHeight = image.height;
+						mapDrawService.clearCanvasCache($scope.mapCanvas);
+					}
+					mapDrawService.clearCanvas($scope.mapCanvas);
+					mapDrawService.drawCanvas($scope.mapCanvas);
+
+
+					$scope.loading = false;
+				});
+			}
+			else if (newValue == 'seas')
+			{
+				mapDrawService.clearCanvas($scope.mapCanvas);
+				modService.getData(modService.data.map.seas.image).then(function (data) {
+					return modService.getImage(data);
+				}).then(function (image) {
+					$scope.scrollImage = image.src;
+
+					if ($scope.mapWidth != image.width)
+					{
+						$scope.mapWidth = image.width;
+						$scope.mapHeight = image.height;
+						mapDrawService.clearCanvasCache($scope.mapCanvas);
+					}
+					mapDrawService.clearCanvas($scope.mapCanvas);
+
+					$scope.loading = false;
+				});
+			}
+			else if (newValue == 'countries')
+			{
+				modService.getData(modService.data.map.environment).then(function (dataNode) {
+					mapDrawService.colorCanvas($scope.mapCanvas, [200, 200, 200, 255]);
+					// CK2
+					if (dataNode.default.data.sea_zones)
+					{
+						for (var i; i < dataNode.default.data.sea_zones.length; i++)
+							mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+					}
+					if (dataNode.default.data.major_rivers)
+						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+					// EU4
+					if (dataNode.default.data.sea_starts)
+						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+					if (dataNode.default.data.lakes)
+						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+
+					mapDrawService.colorProvinces($scope.mapCanvas, []);
+				}).then(function () {
+					modService.getData(modService.data.history.provinces).then(function (provinces) {
+						return modService.getData(modService.data.countries.tags).then(function (countryTags) {
+							return modService.getData(modService.data.countries.info).then(function (countries) {
+								var ids = [];
+								angular.forEach(provinces.byId, function (history, id) {
+									if (history.data.data.owner)
+									{
+										if (countryTags.byTag[history.data.data.owner] && countries.byPath['common/'+ countryTags.byTag[history.data.data.owner]])
+										{
+											country = countries.byPath['common/'+ countryTags.byTag[history.data.data.owner]];
+											mapDrawService.colorProvinces($scope.mapCanvas, [id], [country.data.data.color[0], country.data.data.color[1], country.data.data.color[2], 255], true);
+										}
+									}
+								})
+
+								return mapDrawService.colorProvinces($scope.mapCanvas, []).then(function () {
+									$scope.loading = false;
+								});
+							});
+						});
+					});
+				});
+			}
+			else if (newValue == 'climate')
+			{
+				modService.getData(modService.data.map.environment).then(function (dataNode) {
+					mapDrawService.colorCanvas($scope.mapCanvas, [200, 200, 200, 255]);
+					// CK2
+					if (dataNode.default.data.sea_zones)
+					{
+						for (var i; i < dataNode.default.data.sea_zones.length; i++)
+							mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+					}
+					if (dataNode.default.data.major_rivers)
+						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+					// EU4
+					if (dataNode.default.data.sea_starts)
+						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+					if (dataNode.default.data.lakes)
+						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+
+					var climateToColor = {
+						'tropical': [43, 251, 2, 255],
+						'arid': [251, 242, 2, 255],
+						'arctic': [255, 255, 255, 255],
+						'severe_winter': [200, 162, 149, 255],
+						'normal_winter': [148, 169, 115, 255],
+						'mild_winter': [132, 189, 42, 255],
+						'impassable': [100, 100, 100, 255],
+					}
+					for (var i = 0; i < dataNode.climate.subNodes.length; i++)
+					{
+						var climate = dataNode.climate.subNodes[i];
+						if (climateToColor[climate.name])
+							mapDrawService.colorProvinces($scope.mapCanvas, climate.data, climateToColor[climate.name], true);
+						else
+							console.log(climate.name)
+					}
+
+					mapDrawService.colorProvinces($scope.mapCanvas, []).then(function () {
+						$scope.loading = false;
+					});
+
+				});
+			}
+
+			if ($scope.options.highLight)
+			{
+				$scope.options.highLight = false;
+				$scope.options.highLight = true;
+
+				modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
+					$scope.areaByProvinceId = dataNode.areaByProvinceId;
+				});
+			}
+		});
 	});
 	$scope.$watch('[options.showGrid, view]', function(newValue, oldValue) {
 		if ($scope.options.showGrid)
@@ -780,7 +945,16 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 				return modService.getImage(data);
 			}).then(function (image) {
 				$scope.gridImage = image.src;
+
+				if ($scope.mapWidth != image.width)
+				{
+					$scope.mapWidth = image.width;
+					$scope.mapHeight = image.height;
+					mapDrawService.clearCanvasCache($scope.mapCanvas);
+				}
+
 				$scope.loading = false;
+
 			});
 		}
 		else
@@ -796,8 +970,8 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 				source = modService.data.map.seas.info;
 
 			$scope.loading = true;
-			modService.getData(source).then(function (data) {
-				$scope.analytics = data.analytics;
+			modService.getData(source).then(function (dataNode) {
+				$scope.analytics = dataNode.analytics;
 				$scope.loading = false;
 			});
 		}
@@ -875,6 +1049,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 		$scope.labels = [];
 
 		$scope.view = 'provinces';
+		$scope.dataViewLeft.type = 'output';
 		$scope.options.showLabels = true;
 
 		modService.getData(modService.data.map.provinces.info).then(function (info) {
@@ -909,13 +1084,99 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 			var diff = ($scope.startDown.pageX + $scope.startDown.pageY) - (event.pageX + event.pageY);
 			$scope.startDown = null;
 
-			if (diff > 5 || diff < -5)
+			// We are not multi-selecting & we've moved - don't trigger 'click'
+			if (!event.ctrlKey && (diff > 10 || diff < -10))
 				return;
 		}
-		if ($scope.analytics && $scope.options.selectArea)
+		if ($scope.analytics && $scope.options.selectArea && event.button == 0)
 		{
-			var area = mapAnalyzeService.getAreaFromCoords($scope.analytics, event.offsetX, event.offsetY);
-			mapAnalyzeService.colorCanvasArea(document.getElementById('PanZoomCanvas'), area, [123, 0, 0, 255]);
+			return modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
+				var area = mapDrawService.getAreaFromCoords($scope.analytics, event.offsetX, event.offsetY);
+
+				if (!event.ctrlKey)
+				{
+					// Select one
+					$scope.selectedAreas.length = 0;
+					for (var i = 0; i < $scope.selectedProvinces.length; i++)
+						mapDrawService.colorProvinceSolo($scope.selectCanvas, $scope.selectedProvinces[i], [0, 0, 0, 0]);
+					$scope.selectedProvinces.length = 0;
+				}
+
+				var index = $scope.selectedAreas.indexOf(area);
+				if (index != -1)
+					$scope.selectedAreas.splice(index, 1);
+				else
+					$scope.selectedAreas.push(area);
+
+				var provinceId = dataNode.areaByProvinceId.indexOf(area);
+				var index = $scope.selectedProvinces.indexOf(provinceId);
+				if (index != -1)
+				{
+					$scope.selectedProvinces.splice(index, 1);
+					mapDrawService.colorProvinceSolo($scope.selectCanvas, provinceId, [0, 0, 0, 0]);
+				}
+				else
+				{
+					$scope.selectedProvinces.push(provinceId);
+					mapDrawService.outlineProvinceSolo($scope.selectCanvas, provinceId, [128, 0, 0, 200]);
+				}
+
+				if ($scope.selectedProvinces.length == 1)
+				{
+					modService.getData(modService.data.history.provinces).then(function (provinces) {
+						return modService.getData(modService.data.map.provinceMapping).then(function (mapping) {
+
+							var provinceId = $scope.selectedProvinces[0];
+							var province = provinces.byId[provinceId];
+
+							$scope.dataViewInfo.history = province;
+							modService.getData(modService.data.localisation).then(function (localisation) {
+								$scope.dataViewInfo.provinceLocalisationLanguage = 'l_english';
+								$scope.dataViewInfo.provinceLocalisationId = 'PROV'+ provinceId;
+								if (localisation.byLanguage['l_english'])
+									$scope.dataViewInfo.provinceLocalisation = localisation.byLanguage['l_english']['PROV'+ provinceId];
+							});
+
+
+							if (province)
+							{
+								modService.getFileText(province.file.path).then(function (text) {
+									$scope.dataViewInfo.historyText = text;
+								});
+							}
+							else
+							{
+								$scope.dataViewInfo.historyText = '';
+							}
+
+							if (!province || !province.data.data.owner)
+							{
+								$scope.dataViewInfo.country = null;
+								$scope.dataViewInfo.countryText = null;
+							}
+							else
+							{
+								modService.getCountryByTag(province.data.data.owner).then(function (country) {
+									$scope.dataViewInfo.country = country;
+									modService.getData(modService.data.localisation).then(function (localisation) {
+										$scope.dataViewInfo.countryLocalisationLanguage = 'l_english';
+										$scope.dataViewInfo.countryLocalisationId = province.data.data.owner;
+										if (localisation.byLanguage['l_english'])
+											$scope.dataViewInfo.countryLocalisation = localisation.byLanguage['l_english'][province.data.data.owner];
+									});
+									modService.getFileText(country.file.path).then(function (text) {
+										$scope.dataViewInfo.countryText = text;
+									});
+								});
+							}
+						});
+					});
+				}
+				else
+				{
+					$scope.selectedProvinceHistory = null;
+				}
+			});
 		}
 	};
 
@@ -923,6 +1184,10 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 	$scope.toggleAreaHover = function (event) {
 		if (!$scope.analytics)
 			return;
+
+		// Undo ctrl-effect if window had lost focus
+		if (!event.ctrlKey && !$rootScope.panzoomConfig.panOnClickDrag)
+			$rootScope.panzoomConfig.panOnClickDrag = true;
 
 		if ($scope.startDown)
 		{
@@ -932,22 +1197,35 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 				return;
 		}
 
-		var currentArea = mapAnalyzeService.getAreaFromCoords($scope.analytics, event.offsetX, event.offsetY);
+		var currentArea = mapDrawService.getAreaFromCoords($scope.analytics, event.offsetX, event.offsetY);
 
 		if (currentArea != $scope.hoverArea)
 		{
 			// Remove current
 			if ($scope.hoverArea)
-				mapAnalyzeService.colorCanvasArea(document.getElementById('PanZoomCanvasHover'), $scope.hoverArea, [0, 0, 0, 0]);
+				mapDrawService.colorAreaSolo($scope.hoverCanvas, $scope.hoverArea, [0, 0, 0, 0]);
 
 			// Highlight new
 			$scope.hoverArea = currentArea;
-			if (currentArea)
-				$scope.mapHint = 'Province #'+ currentArea.nr;
-			else
+			if (!currentArea)
+			{
 				$scope.mapHint = '';
-			mapAnalyzeService.colorCanvasArea(document.getElementById('PanZoomCanvasHover'), $scope.hoverArea, [0, 0, 128, 128]);
+				$scope.hoveredProvinceHistory = null;
+			}
+
+			mapDrawService.outlineAreaSolo($scope.hoverCanvas, $scope.hoverArea, [0, 0, 128, 128]);
+
+
+			modService.getProvinceByArea(currentArea).then(function (province) {
+				if (province)
+					$scope.mapHint = province.file.baseName;
+				$scope.hoveredProvinceHistory = province;
+			});
 		}
+	};
+
+	$scope.saveProvinceLocalisation = function () {
+		modService.saveData(modService.data.localization);
 	};
 
 	$scope.compareWithDefinitions = function () {
@@ -959,7 +1237,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapAnalyzeService', '$tim
 
 		$scope.options.showLabels = true;
 		$scope.view = 'provinces';
-
+		$scope.dataViewLeft.type = 'output';
 
 		$scope.messages = '';
 
@@ -1087,10 +1365,10 @@ myMod.directive('sizeElement', function ($window) {
 });
 
 //PanZoom
-myMod.controller('PanZoom', ['$scope', 'PanZoomService', function ($scope, PanZoomService) {
+myMod.controller('PanZoom', ['$scope', 'PanZoomService', 'hotkeys', '$rootScope', function ($scope, PanZoomService, hotkeys, $rootScope) {
 
-		// The panzoom config model can be used to override default configuration values
-	$scope.panzoomConfig = {
+	// The panzoom config model can be used to override default configuration values
+	$rootScope.panzoomConfig = $scope.panzoomConfig = {
 		zoomLevels: 10,
 		neutralZoomLevel: 5,
 		initialZoomLevel: 0,
@@ -1098,9 +1376,26 @@ myMod.controller('PanZoom', ['$scope', 'PanZoomService', function ($scope, PanZo
 		zoomStepDuration: 0,
 		invertMouseWheel: true,
 		friction: 0,
-		haltSpeed: 0
+		haltSpeed: 0,
+		panOnClickDrag: true,
 		//zoomOnMouseWheel: false
 	};
+
+	hotkeys.bindTo($scope).add({
+		combo: 'ctrl',
+		description: 'Don\'t pan on map-drag.',
+		action: 'keydown',
+		callback: function (event, hotkey) {
+			$scope.panzoomConfig.panOnClickDrag = false;
+		},
+    }).add({
+		combo: 'ctrl',
+		description: 'Don\'t pan on map-drag.',
+		action: 'keyup',
+		callback: function (event, hotkey) {
+			$scope.panzoomConfig.panOnClickDrag = true;
+		},
+    });
 
 	// The panzoom model should initialle be empty; it is initialized by the <panzoom>
 	// directive. It can be used to read the current state of pan and zoom. Also, it will
@@ -1109,11 +1404,26 @@ myMod.controller('PanZoom', ['$scope', 'PanZoomService', function ($scope, PanZo
 }]);
 
 // For navigation top bar
-myMod.controller('TopBar', ['$scope',function ($scope) {
+myMod.controller('TopBar', ['$scope', 'modService', function ($scope, modService) {
 	$scope.manifest = chrome.runtime.getManifest();
+	$scope.loadingStateText = '';
+
+	$scope.$watch('modService.loadingState', function(newValue, oldValue) {
+		$scope.loadingStateText = 'Loading: ';
+		for (var p in newValue)
+		{
+			if (newValue.hasOwnProperty(p))
+			{
+				if (newValue[p])
+					$scope.loadingStateText += p.replace('generate', '') +' ';
+			}
+		}
+		if ($scope.loadingStateText == 'Loading: ')
+			$scope.loadingStateText = '';
+	}, true);
 }]);
 
 // About page
-myMod.controller('AboutPage', ['$scope',function ($scope) {
+myMod.controller('AboutPage', ['$scope', function ($scope) {
 	$scope.manifest = chrome.runtime.getManifest();
 }]);

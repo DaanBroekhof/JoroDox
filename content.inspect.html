@@ -6,12 +6,12 @@
 		<!-- Nested node template -->
 		<script type="text/ng-template" id="nodes_renderer_file.html">
 		<div ui-tree-handle ng-class="{'has-special-view': node.specialView}">
-			<span class="glyphicon glyphicon-none" data-nodrag></span><span class="tree-item-name" ng-click="open(node)"><span class="glyphicon glyphicon-{{::fileTypeToIcon(node)}}"></span>{{::node.name}}</span>
+			<span class="glyphicon glyphicon-none" data-nodrag></span><span class="tree-item-name" ng-class="{'current': node.isCurrent}" ng-click="open(node)"><span class="glyphicon glyphicon-{{::fileTypeToIcon(node)}}"></span>{{::node.name}}</span>
 		</div>
 		</script>
 		<script type="text/ng-template" id="nodes_renderer.html">
 			<div ui-tree-handle ng-class="{'has-special-view': node.specialView}">
-				<span class="glyphicon" data-nodrag ng-class="{'glyphicon-none': (node.dirLoaded && !node.count), 'glyphicon-chevron-right': (!node.dirLoaded || node.count) && collapsed, 'glyphicon-chevron-down': (!node.dirLoaded || node.count) && !collapsed}" ng-click="toggleNode(this, node)"></span><span class="tree-item-name" ng-click="open(node)"><span class="glyphicon glyphicon-{{fileTypeToIcon(node)}}"></span>{{node.name}}</span>
+				<span class="glyphicon" data-nodrag ng-class="{'glyphicon-none': (node.dirLoaded && !node.count), 'glyphicon-chevron-right': (!node.dirLoaded || node.count) && collapsed, 'glyphicon-chevron-down': (!node.dirLoaded || node.count) && !collapsed}" ng-click="toggleNode(this, node)"></span><span class="tree-item-name" ng-class="{'current': node.isCurrent}" ng-click="open(node)"><span class="glyphicon glyphicon-{{fileTypeToIcon(node)}}"></span>{{node.name}}</span>
 			</div>
 			<ol ng-class="{hidden: collapsed}" ui-tree-nodes ng-model="node.folders">
 				<li ng-repeat="node in (node.folders | collapseFilter:collapsed)" ui-tree-node ng-include="'nodes_renderer.html'" data-collapsed="true">

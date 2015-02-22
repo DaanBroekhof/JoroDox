@@ -30,7 +30,8 @@
 				</td>
 				<td>
 					<strong>{{modData.mod.name}}</strong><br />
-					<em>{{modData.mod.pathDisplayName}}</em>
+					<em>{{modData.mod.pathDisplayName}}</em><br />
+					<sub>(cache format v{{modData.dataVersion ? modData.dataVersion : '0'}})</sub>
 				</td>
 				<td class="vcenter">
 					<button type="button" class="btn btn-xs btn-danger" ng-click="deleteModData(modData);">Remove cache</button>

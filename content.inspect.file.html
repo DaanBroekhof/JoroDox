@@ -117,7 +117,7 @@
 			<span class="glyphicon" data-nodrag ng-class="{'glyphicon-none': (!dataNode.subNodes.length), 'glyphicon-chevron-right': (dataNode.subNodes.length) && collapsed, 'glyphicon-chevron-down': dataNode.subNodes.length && !collapsed}" ng-click="this.toggle()"></span>
 			<span class="datatree-item-name" ng-click="this.toggle()"><span class="glyphicon glyphicon-{{dataNode.icon ? dataNode.icon : 'folder-close'}}"></span>{{::dataNode.name}}</span>
 			<span class="datatree-item-type" ng-show="node.treeDataType != 'simple'">{{::dataNode.type}}</span>
-			<span class="datatree-item-data" ng-show="dataNode && dataNode.data !== null">{{::dataSample(dataNode.data, node.treeDataType)}}{{::nodeData.nullByteString ? ' (null byte)' :''}}</span>
+			<span class="datatree-item-data" ng-show="dataNode && dataNode.value !== null">{{::dataSample(dataNode.value, node.treeDataType)}}{{::nodeData.nullByteString ? ' (null byte)' :''}}</span>
 			<span class="datatree-item-comments" ng-show="dataNode.comments"><span ng-repeat="c in dataNode.comments | commentFilter track by $index"># {{c}}<br /></span></span>
 		</div>
 		<ol ng-class="{hidden: collapsed}" ui-tree-nodes ng-model="dataNode.subNodes">
@@ -126,7 +126,7 @@
 		</ol>
 	</script>
 
-	<div ui-tree data-drag-enabled="false">
+	<div ui-tree data-drag-enabled="false" data-empty-place-holder-enabled="false">
 		<div class="datatree-root-comments" ng-show="node.treeData.comments">
 			<span ng-repeat="c in node.treeData.comments | commentFilter track by $index"># {{c}}<br /></span>
 		</div>
