@@ -17,6 +17,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 	};
 
 	var modServiceInstance = {
+		'errorCallback': errorCallback,
 		storage: null,
 		data: null,
 		defaultFileNode: {
@@ -26,6 +27,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			extension: null,
 			fileType: null,
 			metadata: null,
+			lastMetadataCheck: null,
 			dirLoaded: false,
 			folders: [],
 			files: [],
@@ -40,7 +42,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			isCurrent: false,
 		},
 		defaultData: {
-			dataVersion: '1.0.9a',
+			dataVersion: '1.0.15',
 			pathDisplayName: null,
 			fileSystem: {
 				root: null,
@@ -109,11 +111,13 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 					sourceFiles: ['common/country_tags'],
 					generateMethod: 'generateCountryTags',
 					byTag: {},
+					byPath: {},
 				},
 				info: {
 					lastGenerated: null,
 					sourceFiles: ['common/countries'],
 					generateMethod: 'generateCountryInfo',
+					byTag: {},
 					byPath: {},
 				}
 			},
@@ -121,6 +125,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				provinces: {
 					lastGenerated: null,
 					sourceFiles: ['history/provinces'],
+					sourceDataNodes: [],
 					generateMethod: 'generateProvinceHistory',
 					byId: [],
 					provinceIds: [],
@@ -130,6 +135,12 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				},
 			},
 			map: {
+				areas: {
+					lastGenerated: null,
+					generateMethod: 'generateAreas',
+					sourceDataNodes: [],
+					list: [],
+				},
 				provinces: {
 					image: {
 						lastGenerated: null,
@@ -191,7 +202,10 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						'map/terrain.txt',
 						//'map/trade_winds.txt',
 					],
+					byPath: {},
+					nodesByName: {},
 					generateMethod: 'generateMapEnvironment',
+					saveMethod: 'saveMapEnvironment',
 				},
 				adjecencies: {
 					lastGenerated: null,
@@ -485,20 +499,92 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			}
 		},
-		/** @memberOf modService */
+		convertMalformedUtf8: function (text) {
+			if (encoding == 'cp1252')
+			{
+				var buffer = new Uint8Array(text.length);
+				var enc = this.encodings[encoding];
+
+				var len = text.length;
+				for (var i = 0; i < len; i++)
+				{
+					buffer[i] = enc.indexOf(text[i]);
+				}
+
+				return buffer;
+			}
+			else
+			{
+
+			}
+		},
 		getMetadata: function (fileNode) {
 			var deferred = $q.defer();
 
 			this.getFileEntry(fileNode.path).then(function (entry) {
 				entry.getMetadata(function (metadata) {
 					fileNode.metadata = metadata;
+					fileNode.lastMetadataCheck = new Date();
 					deferred.resolve(metadata);
 				}, deferred.reject);
 			});
 
 			return deferred.promise;
 		},
-		/** @memberOf modService */
+		isNodeOutdatedQuick: function (dataNode, date) {
+			if (('metadata' in dataNode) && dataNode.metadata)
+			{
+				if (dataNode.metadata.modificationTime > dataNode.lastGenerated)
+				{
+					return true;
+				}
+				if (date && dataNode.metadata.modificationTime > date)
+				{
+					return true;
+				}
+			}
+			else if ('lastGenerated' in dataNode)
+			{
+				if (!dataNode.lastGenerated)
+				{
+					return true;
+				}
+				if (date && dataNode.lastGenerated > date)
+				{
+					return true;
+				}
+			}
+			else
+			{
+				console.log('Node has no lastGenerated.');
+				return false;
+			}
+
+			if ('sourceDataNodes' in dataNode)
+			{
+				for (var i = 0; i < dataNode.sourceDataNodes.length; i++)
+					if (this.isNodeOutdatedQuick(dataNode.sourceDataNodes[i], dataNode.lastGenerated))
+						return true;
+			}
+
+			if ('sourceFiles' in dataNode)
+			{
+				for (var i = 0; i < dataNode.sourceFiles.length; i++)
+				{
+					if (this.data.fileSystem.byPath[dataNode.sourceFiles[i]])
+					{
+						if (this.isNodeOutdatedQuick(this.data.fileSystem.byPath[dataNode.sourceFiles[i]], dataNode.lastGenerated))
+							return true;
+					}
+					else
+					{
+						//return true;
+					}
+				}
+			}
+
+			return false;
+		},
 		isNodeOutdated: function (dataNode, date) {
 			var deferred = $q.defer();
 
@@ -523,7 +609,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			if (('metadata' in dataNode) && dataNode.metadata)
 			{
-				if (dataNode.metadata.modificationDate > dataNode.lastGenerated)
+				if (dataNode.metadata.modificationTime > dataNode.lastGenerated)
 				{
 					deferred.resolve(true);
 					return deferred.promise;
@@ -536,14 +622,18 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			if ('metadata' in dataNode)
 			{
-				promises.push(this.getMetadata(dataNode).then(function (metadata) {
-					return metadata.modificationDate > dataNode.lastGenerated;
-				}));
+				if (dataNode.metadata == null || dataNode.lastMetadataCheck == null || (new Date() - dataNode.lastMetadataCheck > 1000 * 600))
+				{
+					promises.push(this.getMetadata(dataNode).then(function (metadata) {
+						return metadata.modificationTime > dataNode.lastGenerated;
+					}));
+				}
 			}
 
 			if ('sourceDataNodes' in dataNode)
 			{
 				angular.forEach(dataNode.sourceDataNodes, function (sourceDataNode) {
+					if (sourceDataNode)
 					promises.push(this.isNodeOutdated(sourceDataNode, dataNode.lastGenerated));
 				}, this);
 			}
@@ -577,6 +667,21 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			if ('generatePromise' in dataNode && dataNode.generatePromise)
 				return dataNode.generatePromise;
 
+			if (this.isNodeOutdatedQuick(dataNode))
+			{
+				dataNode.generatePromise = this.generateData(dataNode);
+
+				dataNode.generatePromise.then(function() {
+					dataNode.generatePromise = null;
+				});
+
+				return dataNode.generatePromise;
+			}
+			else
+			{
+				return $q.when(dataNode);
+			}
+
 			return this.isNodeOutdated(dataNode).then(function (isOutdated) {
 				if (!isOutdated)
 					return dataNode;
@@ -592,22 +697,34 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				}
 			}.bind(this));
 		},
+		getDataMultiple: function (dataNodes) {
+
+			var promises = [];
+
+			angular.forEach(dataNodes, function (dataNode) {
+				promises.push(this.getData(dataNode));
+			}.bind(this));
+
+			return $q.all(promises);
+		},
 		generateData: function (dataNode) {
 			var deferred = $q.defer();
 
 			if ('generateMethod' in dataNode)
 				return this.loadDependencies(dataNode).then(function () {
-						this.loadingState[dataNode.generateMethod] = true;
-						//this.loadingState = dataNode.generateMethod;
-					return this[dataNode.generateMethod](dataNode).then(function () {
-						this.loadingState[dataNode.generateMethod] = false;
-						//this.loadingState = '';
-						return dataNode;
-					}.bind(this));
-				}.bind(this)).then(function (dataNode) {
+					this.loadingState[dataNode.generateMethod] = true;
+
+					return this[dataNode.generateMethod](dataNode);
+				}.bind(this)).then(function () {
 					dataNode.lastGenerated = new Date();
+
+					if (this[dataNode.generateMethod.replace('generate', 'link')])
+						this[dataNode.generateMethod.replace('generate', 'link')](dataNode);
+
+					this.loadingState[dataNode.generateMethod] = false;
+
 					return dataNode;
-				});
+				}.bind(this));
 			else
 				deferred.reject('Node `'+ dataNode +'` cannot generate data, no generateMethod set.');
 
@@ -626,7 +743,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}
 
 			return this[dataNode.saveMethod](dataNode).then(function () {
-				dataNode.localModifified = null;
+				dataNode.localModified = null;
 				return dataNode;
 			}.bind(this));
 		},
@@ -660,7 +777,10 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			if ('sourceDataNodes' in dataNode)
 			{
 				angular.forEach(dataNode.sourceDataNodes, function (sourceDataNode) {
-					promises.push(this.generateData(sourceDataNode, dataNode.lastGenerated));
+					promises.push(this.isNodeOutdated(sourceDataNode).then(function (isOutdated) {
+						if (isOutdated)
+							return this.generateData(sourceDataNode);
+					}.bind(this)));
 				}, this);
 			}
 
@@ -944,7 +1064,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				}
 				else
 				{
-					if (fileNode.path == 'map' || fileNode.path == 'history/provinces')
+					if (fileNode.path == 'map' || fileNode.path == 'history/provinces' || fileNode.path == 'history/countries')
 						fileNode.specialView = true;
 				}
 
@@ -961,6 +1081,9 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}.bind(this)).then(function (node) {
 				var promises = [];
 				var idRegex = /^([0-9]+)\s*.*\.txt$/i;
+				dataNode.sourceDataNodes = [];
+				dataNode.byId.length = 0;
+				dataNode.provinceIds.length = 0;
 				for (var i = 0; i < node.files.length; i++)
 				{
 					var file = node.files[i];
@@ -972,12 +1095,26 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						console.log(file.path +' not a province history file.')
 						continue;
 					}
-					var id = matches[1];
+					var id = parseInt(matches[1]);
 
 					promises.push(function (path, id) {
 						return this.getPdxScriptDataByPath(path).then(function (pdxDataNode) {
 							dataNode.byId[id] = pdxDataNode;
+							pdxDataNode._id = id;
 							dataNode.provinceIds.push(id);
+							dataNode.sourceDataNodes.push(pdxDataNode);
+							pdxDataNode._addCores = [];
+
+							if (angular.isArray(pdxDataNode.data.data['add_core']))
+							{
+
+							}
+							else if (pdxDataNode.data.data['add_core'])
+							{
+
+							}
+
+
 						});
 					}.bind(this)(file.path, id));
 				}
@@ -985,9 +1122,21 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return $q.all(promises).then(
 					function (results) {
 						return dataNode;
-					}
+					}.bind(this)
 				);
 			}.bind(this));
+		},
+		'linkProvinceHistory': function (dataNode) {
+			// look at all connections
+
+			if (this.data.map.environment.lastGenerated)
+				this.linkMapEnvironment(this.data.map.environment);
+			if (this.data.countries.info.lastGenerated)
+				this.linkCountryInfo(this.data.countries.info);
+			if (this.data.map.provinces.info.lastGenerated)
+				this.linkMapInfo(this.data.map.provinces.info);
+			if (this.data.localisation.lastGenerated)
+				this.linkLocalisation(this.data.localisation);
 		},
 		'generateCountryInfo': function (dataNode) {
 			return this.getFileNodeByPath(dataNode.sourceFiles[0]).then(function (node) {
@@ -1007,8 +1156,38 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return $q.all(promises).then(
 					function (results) {
 						return dataNode;
-					}
+					}.bind(this)
 				);
+			}.bind(this));
+		},
+		'linkCountryInfo': function (dataNode) {
+			// look at all connections
+
+			if (this.data.localisation.lastGenerated)
+				this.linkLocalisation(this.data.localisation);
+
+			angular.forEach(dataNode.byPath, function(country) {
+				// look at all connections
+				if (this.data.countries.tags.lastGenerated)
+				{
+					country._tag = this.data.countries.tags.byPath[country.file.path.replace('common/', '')];
+					if (country._tag)
+						country._tag._country = country;
+				}
+				if (this.data.history.provinces.lastGenerated && country._tag)
+				{
+					angular.forEach(country._ownedProvinces, function (province) {
+						province._country = null;
+					});
+					country._ownedProvinces = [];
+					angular.forEach(this.data.history.provinces.byId, function (province) {
+						if (province.data.data.owner == country._tag.name)
+						{
+							country._ownedProvinces.push(province);
+							province._country = country;
+						}
+					});
+				}
 			}.bind(this));
 		},
 		'generateCountryTags': function (dataNode) {
@@ -1023,7 +1202,8 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						return this.getPdxScriptDataByPath(path).then(function (pdxDataNode) {
 							for (var j = 0; j < pdxDataNode.data.subNodes.length; j++)
 							{
-								dataNode.byTag[pdxDataNode.data.subNodes[j].name] = pdxDataNode.data.subNodes[j].value;
+								dataNode.byTag[pdxDataNode.data.subNodes[j].name] = pdxDataNode.data.subNodes[j];
+								dataNode.byPath[pdxDataNode.data.subNodes[j].value] = pdxDataNode.data.subNodes[j];
 							}
 						});
 					}.bind(this)(file.path));
@@ -1042,41 +1222,241 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			{
 				promises.push(this.getPdxScriptDataByPath(dataNode.sourceFiles[i]).then(function (pdxNode) {
 					dataNode[pdxNode.file.baseName] = pdxNode.data;
+					dataNode.nodesByName[pdxNode.file.baseName] = pdxNode;
+					dataNode.byPath[pdxNode.file.path] = pdxNode;
 				}));
 			}
 			return $q.all(promises).then(function () {
 				return dataNode;
-			});;
+			}.bind(this));
+		},
+		'saveMapEnvironment':  function (dataNode) {
+			var promises = [];
+
+			angular.forEach(dataNode, function (value, key) {
+				if (key[0] == '_')
+				{
+					if (value._type == 'boolean' && '_provinces' in value)
+					{
+						var ids = [];
+						for (var i = 0; i < value._provinces.length; i++)
+							ids.push(value._provinces[i]._id);
+						ids.sort(function (a, b) { return parseInt(a) - parseInt(b); });
+
+						value.length = 0;
+						for (var i = 0; i < ids.length; i++)
+							value.push(ids[i]);
+
+						promises.push(this.saveData(value._node));
+					}
+					else if (value._type == 'namedSet' || value._type == 'multipleNamed')
+					{
+						angular.forEach(value._nodeByName, function (node) {
+							if ('_provinces' in node)
+							{
+								var ids = [];
+								for (var i = 0; i < node._provinces.length; i++)
+									ids.push(node._provinces[i]._id);
+								ids.sort(function (a, b) { return parseInt(a) - parseInt(b); });
+
+								// Replace value with ids
+								node.value.length = 0;
+								Array.prototype.push.apply(node.value, ids);
+							}
+						});
+
+						promises.push(this.saveData(value._node));
+					}
+				}
+			}.bind(this));
+
+			return $q.all(promises).then(function () {
+				return dataNode;
+			}.bind(this));
+		},
+		'linkMapEnvironment': function (dataNode) {
+			this.data.history.provinces._environment = dataNode;
+
+			// Connect things
+			if (this.data.history.provinces.lastGenerated && dataNode.default.data.sea_starts)
+			{
+				dataNode.default.data.sea_starts._provinces = [];
+				dataNode.default.data.sea_starts._node = dataNode.nodesByName.default;
+				dataNode.default.data.sea_starts._type = 'boolean';
+				dataNode._isSeaStart = dataNode.default.data.sea_starts;
+
+				angular.forEach(dataNode.default.data.sea_starts, function (provinceId) {
+					if (this.data.history.provinces.byId[provinceId])
+					{
+						var province = this.data.history.provinces.byId[provinceId];
+
+						province._isSeaStart = dataNode.default.data.sea_starts;
+						if (dataNode.default.data.sea_starts._provinces.indexOf(province) == -1)
+							dataNode.default.data.sea_starts._provinces.push(province);
+					}
+				}.bind(this));
+			}
+			if (this.data.history.provinces.lastGenerated && dataNode.default.data.lakes)
+			{
+				dataNode.default.data.lakes._provinces = [];
+				dataNode.default.data.lakes._node = dataNode.nodesByName.default;
+				dataNode.default.data.lakes._type = 'boolean';
+				dataNode._isLake = dataNode.default.data.lakes;
+
+				angular.forEach(dataNode.default.data.lakes, function (provinceId) {
+					if (this.data.history.provinces.byId[provinceId])
+					{
+						var province = this.data.history.provinces.byId[provinceId];
+
+						province._isLake = dataNode.default.data.lakes;
+						if (dataNode.default.data.lakes._provinces.indexOf(province) == -1)
+							dataNode.default.data.lakes._provinces.push(province);
+					}
+				}.bind(this));
+			}
+			if (this.data.history.provinces.lastGenerated && dataNode.default.data.force_coastal)
+			{
+				dataNode.default.data.force_coastal._provinces = [];
+				dataNode.default.data.force_coastal._node = dataNode.nodesByName.default;
+				dataNode.default.data.force_coastal._type = 'boolean';
+				dataNode._isForcedCoastal = dataNode.default.data.force_coastal;
+
+				angular.forEach(dataNode.default.data.force_coastal, function (provinceId) {
+					if (this.data.history.provinces.byId[provinceId])
+					{
+						var province = this.data.history.provinces.byId[provinceId];
+
+						province._isForcedCoastal = dataNode.default.data.force_coastal;
+						if (dataNode.default.data.force_coastal._provinces.indexOf(province) == -1)
+							dataNode.default.data.force_coastal._provinces.push(province);
+					}
+				}.bind(this));
+			}
+			if (this.data.history.provinces.lastGenerated && dataNode.climate)
+			{
+				dataNode._climate = dataNode.climate;
+				dataNode.climate._type = 'namedSet';
+				dataNode.climate._node = dataNode.nodesByName.climate;
+				dataNode._climate._nodeByName = {};
+
+				angular.forEach(dataNode.climate.subNodes, function (climate) {
+					climate._provinces = [];
+					climate._node = dataNode.climate._node;
+					dataNode._climate._nodeByName[climate.name] = climate;
+					climate._type = 'namedSet';
+
+					angular.forEach(climate.value, function (provinceId) {
+						if (this.data.history.provinces.byId[provinceId])
+						{
+							var province = this.data.history.provinces.byId[provinceId];
+
+							province._climate = climate;
+							if (climate._provinces.indexOf(province) == -1)
+								climate._provinces.push(province);
+						}
+					}.bind(this));
+				}.bind(this));
+			}
+			if (this.data.history.provinces.lastGenerated && dataNode.continent)
+			{
+				dataNode._continent = dataNode.continent;
+				dataNode.continent._type = 'namedSet';
+				dataNode.continent._node = dataNode.nodesByName.continent;
+				dataNode._continent._nodeByName = {};
+
+				angular.forEach(dataNode.continent.subNodes, function (continent) {
+					continent._provinces = [];
+					continent._node = dataNode.continent._node;
+					dataNode._continent._nodeByName[continent.name] = continent;
+					continent._type = 'namedSet';
+
+					angular.forEach(continent.value, function (provinceId) {
+						if (this.data.history.provinces.byId[provinceId])
+						{
+							var province = this.data.history.provinces.byId[provinceId];
+
+							province._continent = continent;
+							if (continent._provinces.indexOf(province) == -1)
+								continent._provinces.push(province);
+						}
+					}.bind(this));
+				}.bind(this));
+			}
+			if (this.data.history.provinces.lastGenerated && dataNode.region)
+			{
+				dataNode._regions = dataNode.region;
+				dataNode.region._type = 'multipleNamed';
+				dataNode.region._node = dataNode.nodesByName.region;
+				dataNode._regions._nodeByName = {};
+
+				angular.forEach(this.data.history.provinces.byId, function (province) {
+					if (!province._regions)
+					{
+						province._regions = [];
+						province._regions._type = 'multipleNamed';
+					}
+					else
+					{
+						province._regions.length = 0;
+					}
+				});
+
+				angular.forEach(dataNode.region.subNodes, function (region) {
+					region._provinces = [];
+					region._node = dataNode.region._node;
+					dataNode._regions._nodeByName[region.name] = region;
+
+					angular.forEach(region.value, function (provinceId) {
+						if (this.data.history.provinces.byId[provinceId])
+						{
+							var province = this.data.history.provinces.byId[provinceId];
+
+							if (province._regions.indexOf(province) == -1)
+								province._regions.push(region);
+
+							if (region._provinces.indexOf(province) == -1)
+								region._provinces.push(province);
+						}
+					}.bind(this));
+				}.bind(this));
+			}
 		},
 		'getPdxScriptDataByPath': function (path) {
 			// Make data-wrapper
 			if (!this.data.pdxScriptData.byPath[path])
 			{
-				this.data.pdxScriptData[path] = angular.copy(this.data.pdxScriptData.proto);
-				this.data.pdxScriptData[path].sourceFiles = [path];
+				this.data.pdxScriptData.byPath[path] = angular.copy(this.data.pdxScriptData.proto);
+				this.data.pdxScriptData.byPath[path].sourceFiles = [path];
+				return this.generateData(this.data.pdxScriptData.byPath[path]);
 			}
-
-			return this.generateData(this.data.pdxScriptData[path]);
+			else if (this.isNodeOutdatedQuick(this.data.pdxScriptData.byPath[path]))
+			{
+				return this.generateData(this.data.pdxScriptData.byPath[path]);
+			}
+			else
+			{
+				return $q.when(this.data.pdxScriptData.byPath[path]);
+			}
 		},
 		'getYamlDataByPath': function (path) {
 			// Make data-wrapper
 			if (!this.data.yamlData.byPath[path])
 			{
-				this.data.yamlData[path] = angular.copy(this.data.yamlData.proto);
-				this.data.yamlData[path].sourceFiles = [path];
+				this.data.yamlData.byPath[path] = angular.copy(this.data.yamlData.proto);
+				this.data.yamlData.byPath[path].sourceFiles = [path];
 			}
 
-			return this.generateData(this.data.yamlData[path]);
+			return this.generateData(this.data.yamlData.byPath[path]);
 		},
 		'getCsvDataByPath': function (path) {
 			// Make data-wrapper
 			if (!this.data.csvData.byPath[path])
 			{
-				this.data.csvData[path] = angular.copy(this.data.csvData.proto);
-				this.data.csvData[path].sourceFiles = [path];
+				this.data.csvData.byPath[path] = angular.copy(this.data.csvData.proto);
+				this.data.csvData.byPath[path].sourceFiles = [path];
 			}
 
-			return this.generateData(this.data.yamlData[path]);
+			return this.generateData(this.data.yamlData.byPath[path]);
 		},
 		'generatePdxScriptData': function (dataNode) {
 			dataNode.data = null;
@@ -1095,10 +1475,31 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				}.bind(this));
 			}.bind(this));
 		},
+		'savePdxScriptData': function (dataNode) {
+			var pdxScriptText = pdxScriptService.writeData(dataNode.data.data);
+
+			return this.writeFileText(dataNode.file.path, pdxScriptText, 'cp1252', true).then(function () {
+				return this.getMetadata(dataNode.file);
+			}.bind(this));
+		},
 		'generateYamlData': function (dataNode) {
 			dataNode.data = null;
 			return this.getFileText(dataNode.sourceFiles[0]).then(function (text) {
-				dataNode.data = jsyaml.load(text);
+
+				// Prefix BOM if not present (EU4 has some 'broken' files)
+				if (text[0] != '\xEF')
+				{
+					//text = '\xEF\xBB\xBF' + text;
+				}
+
+				try
+				{
+					dataNode.data = jsyaml.load(text);
+				}
+				catch (e)
+				{
+					console.log(e);
+				}
 
 				/*$rootScope.$watch(function () {
 					return dataNode.data;
@@ -1129,9 +1530,27 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				}.bind(this));
 			}.bind(this));
 		},
+		'convertToPlainData': function (value) {
+			if (angular.isObject(value))
+			{
+				if ('_text' in value)
+					return value._text;
+
+				var copy = {};
+				angular.forEach(value, function (v, k) {
+					if (k[0] != '_')
+						copy[k] = this.convertToPlainData(v);
+				}.bind(this));
+				return copy;
+			}
+			return value;
+		},
 		'saveYamlData': function (dataNode) {
-			var yamlText = jsyaml.dump(dataNode.data);
-			return this.writeFileText(dataNode.file.path, yamlText, 'utf-8', true);
+			var yamlText = jsyaml.dump(this.convertToPlainData(dataNode.data));
+
+			return this.writeFileText(dataNode.file.path, yamlText, 'utf-8', true).then(function () {
+				return this.getMetadata(dataNode.file);
+			}.bind(this));;
 		},
 		'generateMapImage': function (dataNode) {
 			return this.getFile(dataNode.sourceFiles[0]).then(function (file) {
@@ -1145,7 +1564,28 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}.bind(this)).then(function (image) {
 				dataNode.analytics = mapAnalyzeService.analyzeColorMap(image);
 				return dataNode;
-			});
+			}.bind(this));
+		},
+		'linkMapInfo': function (dataNode) {
+			// look at all connections
+
+			if (this.data.map.colorMapping.lastGenerated)
+				this.linkMapColorMapping(this.data.map.colorMapping);
+
+			for (var color in dataNode.analytics.colors)
+			{
+				if (dataNode.analytics.colors.hasOwnProperty(color))
+				{
+					var area = dataNode.analytics.colors[color];
+					// look at all connections
+					if (this.data.history.provinces.byId.length && area._colorMapping)
+					{
+						area._province = this.data.history.provinces.byId[area._colorMapping.id];
+						if (area._province)
+							area._province._area = area;
+					}
+				}
+			}
 		},
 		'generateMapGrid': function (dataNode) {
 			return $q.all({
@@ -1197,6 +1637,17 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return dataNode;
 			}.bind(this));
 		},
+		'linkMapColorMapping': function (dataNode) {
+			// look at all connections
+			angular.forEach(dataNode.byId, function(colorMapping) {
+				if (this.data.map.provinces.info.analytics)
+				{
+					colorMapping._area = this.data.map.provinces.info.analytics.colors[colorMapping.colorNum];
+					if (colorMapping._area)
+						colorMapping._area._colorMapping = colorMapping;
+				}
+			}.bind(this));
+		},
 		'generateProvinceMapping': function (dataNode) {
 			return this.getData(this.data.map.colorMapping).then(function (mappings) {
 				return this.getData(this.data.map.provinces.info).then(function (mapInfo) {
@@ -1210,6 +1661,36 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 					}
 					return dataNode;
 				}.bind(this));
+			}.bind(this));
+		},
+		'getProvinceNamesByArea': function() {
+			return modService.getData(modService.data.history.provinces).then(function (provinces) {
+				return modService.getData(modService.data.map.provinceMapping).then(function (mapping) {
+
+					modService.getData(modService.data.localisation).then(function (localisation) {
+						$scope.dataViewInfo.provinceLocalisationLanguage = 'l_english';
+						$scope.dataViewInfo.provinceLocalisationId = 'PROV'+ provinceId;
+						if (localisation.byLanguage['l_english'])
+							$scope.dataViewInfo.provinceLocalisation = localisation.byLanguage['l_english']['PROV'+ provinceId];
+					});
+
+				});
+			});
+		},
+		'generateAreas': function (dataNode) {
+			return this.getData(this.data.map.provinces.info).then(function (node) {
+
+				if (dataNode.sourceDataNodes.indexOf(node) == -1)
+					dataNode.sourceDataNodes.push(node);
+
+				for (var color in node.analytics.colors)
+				{
+					if (node.analytics.colors.hasOwnProperty(color))
+					{
+						var area = node.analytics.colors[color];
+						dataNode.list.push(area);
+					}
+				}
 			}.bind(this));
 		},
 		'generateLocalisation': function (dataNode) {
@@ -1242,15 +1723,20 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 										{
 											if (yamlDataNode.data[language].hasOwnProperty(localisationId))
 											{
+												yamlDataNode.data[language][localisationId] = new String(yamlDataNode.data[language][localisationId]);
+
+												yamlDataNode.data[language][localisationId]._text = yamlDataNode.data[language][localisationId].toString();
+												yamlDataNode.data[language][localisationId]._node = yamlDataNode;
+
 												if (!dataNode.byId[localisationId])
 													dataNode.byId[localisationId] = {};
 
-												dataNode.byId[localisationId][language] = yamlDataNode;
+												dataNode.byId[localisationId][language] = yamlDataNode.data[language][localisationId];
 
 												if (!dataNode.byLanguage[language])
 													dataNode.byLanguage[language] = {};
 
-												dataNode.byLanguage[language][localisationId] = yamlDataNode;
+												dataNode.byLanguage[language][localisationId] = yamlDataNode.data[language][localisationId];;
 
 												if (dataNode.languages.indexOf(language) == -1)
 													dataNode.languages.push(language);
@@ -1308,6 +1794,26 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				);
 			}.bind(this));
 		},
+		'linkLocalisation': function (dataNode) {
+			if (this.data.history.provinces.lastGenerated)
+			{
+				angular.forEach(this.data.history.provinces.byId, function (province, provinceId) {
+					if (dataNode.byId['PROV'+ provinceId])
+					{
+						province._localisation = dataNode.byId['PROV'+ provinceId];
+					}
+				});
+			}
+			if (this.data.countries.tags.lastGenerated)
+			{
+				angular.forEach(this.data.countries.tags.byTag, function (tag) {
+					if (dataNode.byId[tag.name])
+					{
+						tag._localisation = dataNode.byId[tag.name];
+					}
+				});
+			}
+		},
 		'getProvinceByArea': function (area) {
 			return this.getData(this.data.map.provinceMapping).then(function (mapping) {
 				return this.getData(this.data.history.provinces).then(function (provinces) {
@@ -1324,7 +1830,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			return this.getData(this.data.countries.tags).then(function (tags) {
 				return this.getData(this.data.countries.info).then(function (countries) {
 
-					var countryFile = tags.byTag[tag];
+					var countryFile = tags.byTag[tag].value;
 
 					if (countryFile && countries.byPath['common/'+ countryFile])
 						return countries.byPath['common/'+ countryFile];
@@ -1344,11 +1850,14 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				var deferred = $q.defer();
 
 				var reader = new FileReader();
-				reader.onerror = function (e) {console.log(e);deferred.reject(e);};
+				reader.onerror = function (e) {console.log(path);console.log(e);deferred.reject(e);};
 				reader.onloadend = function(event) {
 					deferred.resolve(reader.result);
 				};
-				reader.readAsText(file, encoding ? encoding : 'cp1252');
+				if (encoding == 'utf8')
+					reader.readAsText(file)
+				else
+					reader.readAsText(file, encoding ? encoding : 'cp1252');
 
 				return deferred.promise;
 			});

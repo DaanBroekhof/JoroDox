@@ -103,7 +103,12 @@ myMod.config(['$stateProvider', function ($stateProvider) {
 	$stateProvider.state({
 		name: 'inspect.provincesHistory',
 		templateUrl: 'content.inspect.provincesHistory.html',
-		url: '/inspect/seas',
+		url: '/inspect/history/provinces',
+	});
+	$stateProvider.state({
+		name: 'inspect.countriesHistory',
+		templateUrl: 'content.inspect.countriesHistory.html',
+		url: '/inspect/history/countries',
 	});
 }]).config(['$urlRouterProvider', function ($urlRouterProvider) {
 	$urlRouterProvider.otherwise("/inspect")
@@ -485,6 +490,25 @@ myMod.controller('FileInspect', function ($scope, node, animation, modService, p
 		});
 	};
 
+	$scope.convertToCollada = function () {
+		$scope.loading = true;
+
+		var colladaData = rendererService.convertToColladaData($scope.viewScene.viewConfig.viewObject);
+		var colladaXml = rendererService.convertToColladaXml(colladaData);
+		var newFile = $scope.node.path.replace('.mesh', '-export.dae');
+
+		modService.writeFileBuffer(newFile, colladaXml, true).then(function () {
+			$scope.loading = false;
+		}).then(function () {
+			modService.loadFileNodeDirectory($scope.node.parent).then(function () {
+				modService.getFileNodeByPath(newFile).then(function(newNode) {
+					$state.go('inspect.file', {path: newNode.path, 'node': newNode});
+					return modService.showMessage({title: 'Model converted to Collada format', text: 'Model saved to `'+ newFile +'`'});
+				});
+			});
+		});
+	}
+
 	$scope.convertMultipleToPdxAnim = function () {
 		$scope.loading = true;
 		var pdxdata = rendererService.convertMultipleToPdxAnim($scope.selectedAnimations, $scope.viewScene.scene);
@@ -574,6 +598,8 @@ myMod.controller('ModTree', ['$scope', '$state', 'modService', function ($scope,
 			$state.go('inspect.map');
 		else if (node.path == 'history/provinces')
 			$state.go('inspect.provincesHistory');
+		else if (node.path == 'history/countries')
+			$state.go('inspect.countriesHistory');
 		else
 			$state.go('inspect.file', {path: node.path, 'node': node}, {inherit: false});
 	};
@@ -663,7 +689,7 @@ myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapDrawServic
 			$scope.messages = 'Found '+ dataNode.byId.length +' province histories' + "\n";
 			console.log(dataNode);
 			$scope.loading = false;
-		})
+		}, modService.errorCallback)
 		/*
 		modService.getFileNodeByPath('history/provinces').then(function (dataNode) {
 			return modService.loadFileNodeDirectory(dataNode).then(function (dataNode) {
@@ -679,7 +705,7 @@ myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapDrawServic
 		return modService.getData(modService.data.map.colorMapping).then(function (mappings) {
 			$scope.output = '﻿l_english:'+"\n";
 			$scope.outputTitle = 'prov_names_l_english.yml';
-			angular.forEach(mappings, function (mapping) {
+			angular.forEach(mappings.byId, function (mapping) {
 				$scope.output += ' PROV'+ mapping.id +': "'+ mapping.id +'"'+"\n";
 				var text = [
 					'#' + mapping.id,
@@ -699,20 +725,134 @@ myMod.controller('ProvincesHistoryTool', ['$scope', 'modService', 'mapDrawServic
 
 				modService.writeFileText(
 					filePath,
-					text.join("\n"),
-					function (event) {
-						if (!event)
-							$scope.messages += 'File already existed: `'+ filePath +'`' +"\n";
-						else
-							$scope.messages += 'Written `'+ filePath +'`' +"\n";
-					},
-					false
+					text.join("\n")
 				);
 			});
-		});
+		}, modService.errorCallback);
 	};
 
 	$scope.getProvincesFiles();
+}]);
+
+
+//Countries History / Setting Tool
+myMod.controller('CountriesHistoryTool', ['$scope', 'modService', 'pdxScriptService', '$timeout', function ($scope, modService, pdxScriptService, $timeout) {
+	$scope.colors = null;
+	$scope.messages = '';
+	$scope.output = '';
+	$scope.scrollImage = null;
+	$scope.loading = false;
+	$scope.outputTitle = 'Output';
+	$scope.messagesTitle = 'Messages';
+
+	$scope.updateCountriesFromCsv = function () {
+		return modService.getFileText('jorodox/countries.csv').then(function (text) {
+			var csvResult = Papa.parse(text, {header: true});
+
+			var tagList = {};
+
+			angular.forEach(csvResult.data, function (country) {
+				tagList[country.Tag] = 'countries/'+ country.Tag +' - '+ country['Country/Union'] +'.txt';
+
+				var countryHistoryData = {
+					government: country['Government'],
+					mercantilism: 0.25,
+					primary_culture: 'germanic',
+					religion: country['Ideology'],
+					technology_group: 'western',
+				};
+				modService.writeFileText(
+					'history/'+ tagList[country.Tag],
+					pdxScriptService.writeData(countryHistoryData),
+					false,
+					true
+				);
+
+				var countryData = {
+					graphical_culture: 'westerngfx',
+					color: [country['Color R'], country['Color G'], country['Color B']],
+					historical_score: 0,
+					historical_idea_groups: [
+						'economic_ideas',
+						'offensive_ideas',
+						'exploration_ideas',
+						'defensive_ideas',
+						'administrative_ideas',
+						'maritime_ideas',
+						'quality_ideas',
+						'innovativeness_ideas',
+					],
+					historical_units: ['western_medieval_infantry', 'western_medieval_knights', 'western_men_at_arms'],
+					monarch_names: {'Tester #0': 100},
+					leader_names: ['McTester'],
+					ship_names: ['MSS Tester'],
+					army_names: ['TesterSquad'],
+					fleet_names: ['Test Armada-o-$PROVINCE$'],
+				};
+				modService.writeFileText(
+					'common/'+ tagList[country.Tag],
+					pdxScriptService.writeData(countryData),
+					false,
+					true
+				);
+			});
+
+			$scope.outputTitle = 'common/country_tags/YOUR_countries.txt';
+
+			$scope.output = pdxScriptService.writeData(tagList);;
+		});
+	};
+
+	$scope.updateProvincesFromCsv = function () {
+		return modService.getData(modService.data.localisation).then(function(){
+			modService.getFileText('jorodox/provinces.csv').then(function (text) {
+				var csvResult = Papa.parse(text, {header: true});
+
+				var provLocs = modService.data.localisation.byFile['localisation/prov_names_l_english.yml'].data.l_english;
+
+				angular.forEach(csvResult.data, function (province) {
+					var foundId = 0;
+					angular.forEach(provLocs, function (value, key) {
+						if (value == province['Name'])
+							foundId = key.replace('PROV', '');
+					})
+					if (foundId == 0)
+					{
+						$scope.messages += 'No name found for "' + province['Name'] +'"' + "\n";
+						return;
+					}
+
+					var fileName = 'provinces/'+ foundId +' - '+ province['Name'] +'.txt';
+
+					var provinceHistoryData = {
+						trade_goods: 'unknown',
+						hre: 'no',
+						base_tax: province['BaseTax'],
+						manpower: province['Manpower'],
+						discovered_by: 'western',
+						native_size: '0',
+						native_ferocity: '0',
+						native_hostileness: '0',
+						religion: province['Ideology'],
+					};
+					if (province['Controller 2015 Tag'])
+					{
+						provinceHistoryData.controller = province['Controller 2015 Tag'];
+						provinceHistoryData.owner = province['Controller 2015 Tag'];
+					}
+					if (province['Cores 2015'])
+						provinceHistoryData.add_core = province['Cores 2015'];
+
+					modService.writeFileText(
+						'history/'+ fileName,
+						pdxScriptService.writeData(provinceHistoryData),
+						false,
+						true
+					);
+				});
+			});
+		});
+	};
 }]);
 
 // MapCheck
@@ -735,10 +875,20 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 	// Current map view
 	$scope.view = 'provinces';
 
-	$scope.dataViewInfo = {type: 'province', title: '', text: '', history: null};
-
+	$scope.dataViewInfo = {type: 'province', title: '', text: '', province: null};
 	$scope.dataViewLeft = $scope.dataViewInfo;
 
+
+	$scope.labelView = 'none';
+	$scope.labelViews = [
+		'none',
+		'provinceName',
+		'provinceId',
+		'countryTag',
+		'countryName',
+		'countryReligion',
+		'countryGovernment',
+	];
 
 	$scope.hoveredProvinceHistory = null;
 
@@ -747,12 +897,15 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 		showGrid: true,
 		showLabels: false,
 		highLight: true,
+		showTerrainOverlay: true,
 		selectArea: true,//false,
 	};
 
 	$scope.views = [
 		'provinces',
 		'countries',
+		'baseTax',
+		'manpower',
 		'climate',
 	];
 
@@ -771,12 +924,17 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 
 	$scope.hasSeasPng = false;
 
+	$scope.hoverEffect = 'outlineAreaSolo';
+	$scope.hoverEffectClear = 'outlineAreaSolo';
+	$scope.selectEffect = 'inlineProvinceSolo';
+	$scope.selectEffectClear = 'fillProvinceSolo';
+
 	$scope.hoverCanvas = document.getElementById('PanZoomCanvasHover');
 	$scope.selectCanvas = document.getElementById('PanZoomCanvasSelect');
 	$scope.mapCanvas = document.getElementById('PanZoomCanvas');
 
 	$scope.overlayImage = null;
-	modService.getImageByPath('map/terrain/colormsap.png').then(function (img) {
+	modService.getImageByPath('map/terrain/colormap.png').then(function (img) {
 		$scope.overlayImage = img.src;
 	})
 
@@ -815,7 +973,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 
 
 					$scope.loading = false;
-				});
+				}, modService.errorCallback);
 			}
 			else if (newValue == 'seas')
 			{
@@ -834,7 +992,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 					mapDrawService.clearCanvas($scope.mapCanvas);
 
 					$scope.loading = false;
-				});
+				}, modService.errorCallback);
 			}
 			else if (newValue == 'countries')
 			{
@@ -844,40 +1002,199 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 					if (dataNode.default.data.sea_zones)
 					{
 						for (var i; i < dataNode.default.data.sea_zones.length; i++)
-							mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+							mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
 					}
 					if (dataNode.default.data.major_rivers)
-						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
 					// EU4
 					if (dataNode.default.data.sea_starts)
-						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
 					if (dataNode.default.data.lakes)
-						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
 
-					mapDrawService.colorProvinces($scope.mapCanvas, []);
+					//mapDrawService.fillProvinces($scope.mapCanvas, []);
 				}).then(function () {
-					modService.getData(modService.data.history.provinces).then(function (provinces) {
-						return modService.getData(modService.data.countries.tags).then(function (countryTags) {
+					return modService.getData(modService.data.countries.tags).then(function (countryTags) {
+						return modService.getData(modService.data.history.provinces).then(function (provinces) {
 							return modService.getData(modService.data.countries.info).then(function (countries) {
-								var ids = [];
-								angular.forEach(provinces.byId, function (history, id) {
-									if (history.data.data.owner)
+
+								angular.forEach(provinces.byId, function (province) {
+									if (province._country)
 									{
-										if (countryTags.byTag[history.data.data.owner] && countries.byPath['common/'+ countryTags.byTag[history.data.data.owner]])
-										{
-											country = countries.byPath['common/'+ countryTags.byTag[history.data.data.owner]];
-											mapDrawService.colorProvinces($scope.mapCanvas, [id], [country.data.data.color[0], country.data.data.color[1], country.data.data.color[2], 255], true);
-										}
+										mapDrawService.fillProvinces($scope.mapCanvas, [province], [province._country.data.data.color[0], province._country.data.data.color[1], province._country.data.data.color[2], 255], true);
 									}
 								})
 
-								return mapDrawService.colorProvinces($scope.mapCanvas, []).then(function () {
+								return mapDrawService.fillProvinces($scope.mapCanvas, []).then(function () {
 									$scope.loading = false;
 								});
 							});
 						});
 					});
-				});
+				}, modService.errorCallback);
+			}
+			else if (newValue == 'countryReligion')
+			{
+				modService.getData(modService.data.map.environment).then(function (dataNode) {
+					mapDrawService.colorCanvas($scope.mapCanvas, [200, 200, 200, 255]);
+					// CK2
+					if (dataNode.default.data.sea_zones)
+					{
+						for (var i; i < dataNode.default.data.sea_zones.length; i++)
+							mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+					}
+					if (dataNode.default.data.major_rivers)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+					// EU4
+					if (dataNode.default.data.sea_starts)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+					if (dataNode.default.data.lakes)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+
+					//mapDrawService.fillProvinces($scope.mapCanvas, []);
+				}).then(function () {
+					return modService.getData(modService.data.countries.tags).then(function (countryTags) {
+						return modService.getData(modService.data.history.provinces).then(function (provinces) {
+							return modService.getData(modService.data.countries.info).then(function (countries) {
+
+								angular.forEach(provinces.byId, function (province) {
+									if (province._country)
+									{
+										mapDrawService.fillProvinces($scope.mapCanvas, [province], [province._country.data.data.color[0], province._country.data.data.color[1], province._country.data.data.color[2], 255], true);
+									}
+								})
+
+								return mapDrawService.fillProvinces($scope.mapCanvas, []).then(function () {
+									$scope.loading = false;
+								});
+							});
+						});
+					});
+				}, modService.errorCallback);
+			}
+			else if (newValue == 'baseTax')
+			{
+				var baseTaxColors = [
+					'#7A0063',
+					'#6A0183',
+					'#3E038D',
+					'#0D0596',
+					'#0839A0',
+					'#0A7AA9',
+					'#0DB2A5',
+					'#11BC6E',
+					'#14C632',
+					'#3ECF18',
+					'#8AD91B',
+					'#DAE220',
+					'#ECA824',
+					'#F56329',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+				];
+
+				modService.getData(modService.data.map.environment).then(function (dataNode) {
+					mapDrawService.colorCanvas($scope.mapCanvas, [200, 200, 200, 255]);
+					// CK2
+					if (dataNode.default.data.sea_zones)
+					{
+						for (var i; i < dataNode.default.data.sea_zones.length; i++)
+							mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+					}
+					if (dataNode.default.data.major_rivers)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+					// EU4
+					if (dataNode.default.data.sea_starts)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+					if (dataNode.default.data.lakes)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+
+					//mapDrawService.fillProvinces($scope.mapCanvas, []);
+				}).then(function () {
+					return modService.getData(modService.data.countries.tags).then(function (countryTags) {
+						return modService.getData(modService.data.history.provinces).then(function (provinces) {
+							return modService.getData(modService.data.countries.info).then(function (countries) {
+
+								angular.forEach(provinces.byId, function (province) {
+									if (province.data.data.base_tax)
+									{
+										mapDrawService.fillProvinces($scope.mapCanvas, [province], baseTaxColors[province.data.data.base_tax], true);
+									}
+								})
+
+								return mapDrawService.fillProvinces($scope.mapCanvas, []).then(function () {
+									$scope.loading = false;
+								});
+							});
+						});
+					});
+				}, modService.errorCallback);
+			}
+			else if (newValue == 'manpower')
+			{
+				var baseTaxColors = [
+					'#7A0063',
+					'#6A0183',
+					'#3E038D',
+					'#0D0596',
+					'#0839A0',
+					'#0A7AA9',
+					'#0DB2A5',
+					'#11BC6E',
+					'#14C632',
+					'#3ECF18',
+					'#8AD91B',
+					'#DAE220',
+					'#ECA824',
+					'#F56329',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+					'#FF2E41',
+				];
+
+				modService.getData(modService.data.map.environment).then(function (dataNode) {
+					mapDrawService.colorCanvas($scope.mapCanvas, [200, 200, 200, 255]);
+					// CK2
+					if (dataNode.default.data.sea_zones)
+					{
+						for (var i; i < dataNode.default.data.sea_zones.length; i++)
+							mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+					}
+					if (dataNode.default.data.major_rivers)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+					// EU4
+					if (dataNode.default.data.sea_starts)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+					if (dataNode.default.data.lakes)
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+
+					//mapDrawService.fillProvinces($scope.mapCanvas, []);
+				}).then(function () {
+					return modService.getData(modService.data.countries.tags).then(function (countryTags) {
+						return modService.getData(modService.data.history.provinces).then(function (provinces) {
+							return modService.getData(modService.data.countries.info).then(function (countries) {
+
+								angular.forEach(provinces.byId, function (province) {
+									if (province.data.data.manpower)
+									{
+										mapDrawService.fillProvinces($scope.mapCanvas, [province], baseTaxColors[province.data.data.manpower], true);
+									}
+								})
+
+								return mapDrawService.fillProvinces($scope.mapCanvas, []).then(function () {
+									$scope.loading = false;
+								});
+							});
+						});
+					});
+				}, modService.errorCallback);
 			}
 			else if (newValue == 'climate')
 			{
@@ -887,15 +1204,15 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 					if (dataNode.default.data.sea_zones)
 					{
 						for (var i; i < dataNode.default.data.sea_zones.length; i++)
-							mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
+							mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_zones[i], [51, 157, 255, 255], true);
 					}
 					if (dataNode.default.data.major_rivers)
-						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.major_rivers, [6, 115, 249, 255], true);
 					// EU4
 					if (dataNode.default.data.sea_starts)
-						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.sea_starts, [51, 157, 255, 255], true);
 					if (dataNode.default.data.lakes)
-						mapDrawService.colorProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
+						mapDrawService.fillProvinces($scope.mapCanvas, dataNode.default.data.lakes, [6, 115, 249, 255], true);
 
 					var climateToColor = {
 						'tropical': [43, 251, 2, 255],
@@ -910,16 +1227,16 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 					{
 						var climate = dataNode.climate.subNodes[i];
 						if (climateToColor[climate.name])
-							mapDrawService.colorProvinces($scope.mapCanvas, climate.data, climateToColor[climate.name], true);
+							mapDrawService.fillProvinces($scope.mapCanvas, climate.data, climateToColor[climate.name], true);
 						else
 							console.log(climate.name)
 					}
 
-					mapDrawService.colorProvinces($scope.mapCanvas, []).then(function () {
+					mapDrawService.fillProvinces($scope.mapCanvas, []).then(function () {
 						$scope.loading = false;
 					});
 
-				});
+				}, modService.errorCallback);
 			}
 
 			if ($scope.options.highLight)
@@ -929,9 +1246,9 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 
 				modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
 					$scope.areaByProvinceId = dataNode.areaByProvinceId;
-				});
+				}, modService.errorCallback);
 			}
-		});
+		}, modService.errorCallback);
 	});
 	$scope.$watch('[options.showGrid, view]', function(newValue, oldValue) {
 		if ($scope.options.showGrid)
@@ -955,7 +1272,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 
 				$scope.loading = false;
 
-			});
+			}, modService.errorCallback);
 		}
 		else
 		{
@@ -973,11 +1290,50 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 			modService.getData(source).then(function (dataNode) {
 				$scope.analytics = dataNode.analytics;
 				$scope.loading = false;
-			});
+			}, modService.errorCallback);
 		}
 		else
 		{
 			$scope.analytics = null;
+		}
+	});
+
+	$scope.inverseMapCssScale = function (zoomLevel) {
+		return (1 / Math.pow(2, zoomLevel - 5))*1.5;
+	};
+
+	$scope.$watch('labelView', function(newValue, oldValue) {
+		if (newValue == 'none')
+		{
+			$scope.labels = [];
+		}
+		else if (newValue == 'provinceName')
+		{
+			modService.getDataMultiple([
+				modService.data.map.areas,
+				modService.data.history.provinces,
+				modService.data.countries.tags,
+				modService.data.countries.info,
+				modService.data.localisation,
+			]).then(function () {
+				$scope.labels = [];
+				var labelWidthAvg = 12;
+				var labelHeightAvg = 8;
+				angular.forEach(modService.data.map.areas.list, function (area) {
+					if (area._province && area._province._localisation)
+					{
+						$scope.labels.push({
+							x: area.extentMin[0] + (area.extentMax[0] - area.extentMin[0])/2 - labelWidthAvg,
+							y: area.extentMin[1] + (area.extentMax[1] - area.extentMin[1])/2 - labelHeightAvg,
+							width: 0,
+							height: 0,
+							area: area,
+							text: area._province && area._province._localisation ? area._province._localisation.l_english : '',
+							message: '',
+						});
+					};
+				});
+			}, modService.errorCallback);
 		}
 	});
 
@@ -1035,7 +1391,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 
 				$scope.loading = false;
 			});
-		});
+		}, modService.errorCallback);
 	};
 
 	$scope.loadNumberedMap = function () {
@@ -1070,7 +1426,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 			$scope.output = defs;
 
 			$scope.loading = false;
-		});
+		}, modService.errorCallback);
 	};
 
 	$scope.startDown = null;
@@ -1098,7 +1454,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 					// Select one
 					$scope.selectedAreas.length = 0;
 					for (var i = 0; i < $scope.selectedProvinces.length; i++)
-						mapDrawService.colorProvinceSolo($scope.selectCanvas, $scope.selectedProvinces[i], [0, 0, 0, 0]);
+						mapDrawService[$scope.selectEffectClear]($scope.selectCanvas, $scope.selectedProvinces[i], [0, 0, 0, 0]);
 					$scope.selectedProvinces.length = 0;
 				}
 
@@ -1113,70 +1469,141 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 				if (index != -1)
 				{
 					$scope.selectedProvinces.splice(index, 1);
-					mapDrawService.colorProvinceSolo($scope.selectCanvas, provinceId, [0, 0, 0, 0]);
+					mapDrawService[$scope.selectEffectClear]($scope.selectCanvas, provinceId, [0, 0, 0, 0]);
 				}
 				else
 				{
 					$scope.selectedProvinces.push(provinceId);
-					mapDrawService.outlineProvinceSolo($scope.selectCanvas, provinceId, [128, 0, 0, 200]);
+					mapDrawService[$scope.selectEffect]($scope.selectCanvas, provinceId, [128, 0, 0, 256]);
 				}
 
-				if ($scope.selectedProvinces.length == 1)
-				{
-					modService.getData(modService.data.history.provinces).then(function (provinces) {
-						return modService.getData(modService.data.map.provinceMapping).then(function (mapping) {
+				$scope.refreshSelection();
+			}, modService.errorCallback);
+		}
+	};
 
-							var provinceId = $scope.selectedProvinces[0];
-							var province = provinces.byId[provinceId];
+	$scope.refreshSelection = function () {
+		if ($scope.selectedProvinces.length > 0)
+		{
+			$scope.dataViewLeft.multiProvinces = $scope.selectedProvinces;
 
-							$scope.dataViewInfo.history = province;
-							modService.getData(modService.data.localisation).then(function (localisation) {
-								$scope.dataViewInfo.provinceLocalisationLanguage = 'l_english';
-								$scope.dataViewInfo.provinceLocalisationId = 'PROV'+ provinceId;
-								if (localisation.byLanguage['l_english'])
-									$scope.dataViewInfo.provinceLocalisation = localisation.byLanguage['l_english']['PROV'+ provinceId];
-							});
+			modService.getData(modService.data.history.provinces).then(function (provinces) {
+				return modService.getData(modService.data.map.provinceMapping).then(function (mapping) {
 
+					var provinceId = $scope.selectedProvinces[0];
+					var province = provinces.byId[provinceId];
 
-							if (province)
-							{
-								modService.getFileText(province.file.path).then(function (text) {
-									$scope.dataViewInfo.historyText = text;
-								});
-							}
-							else
-							{
-								$scope.dataViewInfo.historyText = '';
-							}
+					$scope.dataViewInfo.province = province;
+					modService.getData(modService.data.localisation);
 
-							if (!province || !province.data.data.owner)
-							{
-								$scope.dataViewInfo.country = null;
-								$scope.dataViewInfo.countryText = null;
-							}
-							else
-							{
-								modService.getCountryByTag(province.data.data.owner).then(function (country) {
-									$scope.dataViewInfo.country = country;
-									modService.getData(modService.data.localisation).then(function (localisation) {
-										$scope.dataViewInfo.countryLocalisationLanguage = 'l_english';
-										$scope.dataViewInfo.countryLocalisationId = province.data.data.owner;
-										if (localisation.byLanguage['l_english'])
-											$scope.dataViewInfo.countryLocalisation = localisation.byLanguage['l_english'][province.data.data.owner];
-									});
-									modService.getFileText(country.file.path).then(function (text) {
-										$scope.dataViewInfo.countryText = text;
-									});
-								});
-							}
+					if (province)
+					{
+						modService.getFileText(province.file.path).then(function (text) {
+							$scope.dataViewInfo.provinceText = text;
 						});
+					}
+					else
+					{
+						$scope.dataViewInfo.provinceText = '';
+					}
+
+					var multiProvince = {
+						data: {},
+						multiData: {},
+						provinces: [],
+						provinceIds: [],
+						provinceNames: [],
+						hasData: {},
+					};
+
+					angular.forEach($scope.selectedProvinces, function (provinceId) {
+						var province = provinces.byId[provinceId];
+						if (province)
+						{
+							multiProvince.provinces.push(province);
+							multiProvince.provinceIds.push(provinceId);
+							if (province._localisation && province._localisation.l_english)
+								multiProvince.provinceNames.push(province._localisation.l_english);
+
+							angular.forEach(province.data.data, function (value, key) {
+								if (!multiProvince.multiData[key])
+									multiProvince.multiData[key] = [];
+
+								multiProvince.multiData[key].push(value);
+
+								if (multiProvince.data[key] == undefined)
+									multiProvince.data[key] = value;
+								else if (multiProvince.data[key] != value)
+									multiProvince.data[key] = null;
+
+								if (multiProvince.multiData[key].length != multiProvince.provinces.length)
+									multiProvince.data[key] = null;
+
+								if (multiProvince.data[key] != null && multiProvince.data[key] != undefined)
+									multiProvince.hasData[key] = true;
+								else
+									multiProvince.hasData[key] = false;
+							});
+							angular.forEach(province, function (value, key) {
+								if (key[0] != '_')
+									return;
+
+								if (angular.isObject(value) && !('_type' in value))
+									return;
+
+								if (!multiProvince.multiData[key])
+									multiProvince.multiData[key] = [];
+
+								if (!angular.isObject(value))
+									value = null;
+								else if (value._type == 'boolean')
+									value = 1;
+								else if (value._type == 'namedSet')
+									value = value.name;
+								else if (value._type == 'multipleNamed')
+								{
+									var newValue = [];
+									for (var i = 0; i < value.length; i++)
+										newValue.push(value[i].name);
+									value = newValue.join(' ');
+								}
+
+								multiProvince.multiData[key].push(value);
+
+								if (multiProvince.data[key] === undefined)
+									multiProvince.data[key] = value;
+								else if (multiProvince.data[key] != value)
+									multiProvince.data[key] = null;
+
+								if (multiProvince.multiData[key].length != multiProvince.provinces.length)
+									multiProvince.data[key] = null;
+
+								if (multiProvince.data[key] != null && multiProvince.data[key] != undefined)
+									multiProvince.hasData[key] = true;
+								else
+									multiProvince.hasData[key] = false;
+							});
+						}
 					});
-				}
-				else
-				{
-					$scope.selectedProvinceHistory = null;
-				}
+
+					$scope.dataViewLeft.multiProvince = multiProvince;
+
+					if ($scope.selectedProvinces.length > 1)
+					{
+						if ($scope.dataViewLeft.type == 'province')
+							$scope.dataViewLeft.type = 'multiProvince';
+					}
+					else
+					{
+						if ($scope.dataViewLeft.type == 'multiProvince')
+							$scope.dataViewLeft.type = 'province';
+					}
+				});
 			});
+		}
+		else
+		{
+			$scope.selectedProvinceHistory = null;
 		}
 	};
 
@@ -1203,7 +1630,10 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 		{
 			// Remove current
 			if ($scope.hoverArea)
-				mapDrawService.colorAreaSolo($scope.hoverCanvas, $scope.hoverArea, [0, 0, 0, 0]);
+			{
+				mapDrawService[$scope.hoverEffectClear]($scope.hoverCanvas, $scope.hoverArea, [0, 0, 0, 0]);
+				$scope.hoverArea._hovered = false;
+			}
 
 			// Highlight new
 			$scope.hoverArea = currentArea;
@@ -1212,9 +1642,12 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 				$scope.mapHint = '';
 				$scope.hoveredProvinceHistory = null;
 			}
+			else
+			{
+				$scope.hoverArea._hovered = true;
+			}
 
-			mapDrawService.outlineAreaSolo($scope.hoverCanvas, $scope.hoverArea, [0, 0, 128, 128]);
-
+			mapDrawService[$scope.hoverEffect]($scope.hoverCanvas, $scope.hoverArea, [0, 0, 128, 256]);
 
 			modService.getProvinceByArea(currentArea).then(function (province) {
 				if (province)
@@ -1224,9 +1657,184 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 		}
 	};
 
-	$scope.saveProvinceLocalisation = function () {
-		modService.saveData(modService.data.localization);
+	$scope.saveDataNode = function (dataNode) {
+		modService.saveData(dataNode).then(function () {
+			if ($scope.labelView != 'none')
+			{
+				var currentView = $scope.labelView;
+				$scope.labelView = 'none';
+				$timeout(function() {
+					$scope.labelView = currentView;
+				});
+			}
+			if ($scope.view != 'none')
+			{
+				var currentView = $scope.view;
+				$scope.view = 'none';
+				$timeout(function() {
+					$scope.view = currentView;
+				});
+			}
+			$scope.refreshSelection();
+		}, modService.errorCallback);
 	};
+
+	$scope.saveMultiDataNode = function (multiData) {
+		var promises = [];
+		var environmentData = modService.data.map.environment;
+		angular.forEach(multiData.provinces, function (province) {
+
+			var saveNodes = [];
+			angular.forEach(multiData.hasData, function (hasValue, key) {
+				if (hasValue)
+				{
+					if (key[0] == '_')
+					{
+						if (!environmentData[key])
+							return;
+
+						if (environmentData[key]._type == 'boolean')
+						{
+							var index = environmentData[key]._provinces.indexOf(province);
+							if (index == -1 && multiData.data[key])
+							{
+								environmentData[key]._provinces.push(province);
+								province[key] = environmentData[key];
+
+								if (saveNodes.indexOf(environmentData) == -1)
+									saveNodes.push(environmentData);
+							}
+							else if (index != -1 && !multiData.data[key])
+							{
+								environmentData[key]._provinces.splice(index, 1);
+								province[key] = null;
+
+								if (saveNodes.indexOf(environmentData) == -1)
+									saveNodes.push(environmentData);
+							}
+						}
+						else if (environmentData[key]._type == 'namedSet')
+						{
+							// Remove from current
+							if (province[key])
+							{
+								var index = province[key]._provinces.indexOf(province);
+								if (index != -1)
+								{
+									province[key]._provinces.splice(index, 1);
+								}
+
+								if (saveNodes.indexOf(environmentData) == -1)
+									saveNodes.push(environmentData);
+							}
+
+							if (!multiData.data[key])
+							{
+								// Empty name = not longer in this set
+								province[key] = null;
+							}
+							else
+							{
+								var node = environmentData[key]._nodeByName[multiData.data[key]];
+
+								if (!node)
+								{
+									node = {type: 'property', name: multiData.data[key], value: []};
+									environmentData[key].data[node.name] = node.value;
+									node._provinces = [];
+									node._node = environmentData[key]._node;
+									environmentData[key]._nodeByName[node.name] = node;
+								}
+
+								node._provinces.push(province);
+
+								if (saveNodes.indexOf(environmentData) == -1)
+									saveNodes.push(environmentData);
+							}
+						}
+						else if (environmentData[key]._type == 'multipleNamed')
+						{
+							var values = multiData.data[key].split(' ');
+
+							for (var i = 0; i < values.length; i++)
+							{
+								var operator = values[i][0];
+								var value = values[i].substr(1);
+
+								if (operator != '+' && operator != '-')
+								{
+									operator = '+';
+									value = values[i];
+								}
+
+								if (value === '')
+									continue;
+
+								var node = environmentData[key]._nodeByName[value];
+
+								if (!node)
+								{
+									node = {type: 'property', name: value, value: []};
+									environmentData[key].data[node.name] = node.value;
+									node._provinces = [];
+									node._node = environmentData[key]._node;
+									environmentData[key]._nodeByName[node.name] = node;
+								}
+
+								if (operator == '+')
+								{
+									if (node._provinces.indexOf(province) == -1)
+										node._provinces.push(province);
+								}
+								else if (operator == '-')
+								{
+									var index = node._provinces.indexOf(province);
+									if (index != -1)
+										node._provinces.splice(index, 1)
+								}
+							}
+							if (saveNodes.indexOf(environmentData) == -1)
+								saveNodes.push(environmentData);
+						}
+					}
+					else
+					{
+						if (province.data.data[key] != multiData.data[key])
+							changed = true
+
+						province.data.data[key] = multiData.data[key];
+
+						if (saveNodes.indexOf(province) == -1)
+							saveNodes.push(province);
+					}
+				}
+			}.bind(this));
+
+			for (var i = 0; i < saveNodes.length; i++)
+				promises.push(modService.saveData(saveNodes[i]));
+		});
+
+		$q.all(promises).then(function () {
+			if ($scope.labelView != 'none')
+			{
+				var currentView = $scope.labelView;
+				$scope.labelView = 'none';
+				$timeout(function() {
+					$scope.labelView = currentView;
+				});
+			}
+			if ($scope.view != 'none')
+			{
+				var currentView = $scope.view;
+				$scope.view = 'none';
+				$timeout(function() {
+					$scope.view = currentView;
+				});
+			}
+			$scope.refreshSelection();
+		});
+	};
+
 
 	$scope.compareWithDefinitions = function () {
 		$scope.loading = true;
@@ -1348,7 +1956,7 @@ myMod.controller('MapCheck', ['$scope', 'modService', 'mapDrawService', '$timeou
 
 			$scope.output = defs;
 			$scope.loading = false;
-		});
+		}, modService.errorCallback);
 	};
 }]);
 

@@ -57,7 +57,10 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 				if (base.data[varScope.name])
 				{
 					if (!angular.isArray(base.data[varScope.name]))
+					{
 						base.data[varScope.name] = [base.data[varScope.name]];
+						base.data[varScope.name].multipleKeys = true;
+					}
 
 					base.data[varScope.name].push(varScope.data);
 				}
@@ -110,7 +113,10 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 					if (scope.data[propertyScope.name])
 					{
 						if (!angular.isArray(scope.data[propertyScope.name]))
+						{
 							scope.data[propertyScope.name] = [scope.data[propertyScope.name]];
+							scope.data[propertyScope.name].multipleKeys = true;
+						}
 
 						scope.data[propertyScope.name].push(propertyScope.data);
 					}
@@ -277,8 +283,136 @@ module.factory('pdxScriptService', ['$rootScope', function($rootScope) {
 				fromScope.comments[startline] = null;
 				startline--;
 			}
-		}
+		},
+		'writeData': function (data, indent) {
+			if (indent == undefined)
+				indent = -1;
 
+			var indentTxt = this.repeatString("\t", indent);
+
+			var txt = '';
+
+			if (angular.isArray(data))
+			{
+				txt += '{' + "\n";
+				txt += indentTxt + "\t";
+				var lineLength = 0;
+				for (var i = 0; i < data.length; i++)
+				{
+					var valueTxt = this.writeData(data[i]);
+
+					lineLength += valueTxt.length + 1;
+
+					if (lineLength + indentTxt.length*4 > 80)
+					{
+						txt += valueTxt + "\n" + indentTxt + "\t";
+						lineLength = 0;
+					}
+					else
+					{
+						txt += valueTxt + ' ';
+					}
+				}
+				txt += "\n" + indentTxt + '}';
+			}
+			else if (angular.isObject(data))
+			{
+				if (indent != -1)
+					txt += '{' + "\n";
+
+				var indentTxtProp = this.repeatString("\t", indent + 1);
+
+				angular.forEach(data, function (value, key) {
+
+					// Array of non-strings = same key used multiple times
+					if (angular.isArray(value) && 'multipleKeys' in value)
+					{
+						for (var i = 0; i < value.length; i++)
+						{
+							if (value[i] !== '')
+								txt += indentTxtProp + key + ' = ' + this.writeData(value[i], indent + 1) + "\n";
+						}
+					}
+					else
+					{
+						if (value !== '')
+							txt += indentTxtProp + key + ' = ' + this.writeData(value, indent + 1) + "\n";
+					}
+				}.bind(this))
+
+				if (indent != -1)
+					txt += indentTxt + '}';
+			}
+			else
+			{
+				if (isNaN(data) && (data.toString().indexOf(' ') != -1) || (data.toString().indexOf('"') != -1) || (data.toString().indexOf('\'') != -1) || (data.toString().indexOf("\n") != -1))
+					txt += '"'+ data.replace('"', '\\"') + '"';
+				else
+					txt += data;
+			}
+
+			return txt;
+		},
+		'repeatString': function (string, num)
+		{
+			return new Array(num + 1).join(string);
+		},
+/*		'writePdxData': function (data, valueData) {
+			if (data.type == 'rootScope')
+				return this.writePdxRootScope(data);
+			else if (data.type == 'object')
+				return this.writePdxObject(data);
+			else if (data.type == 'property')
+				return this.writePdxProperty(data);
+			else
+				console.log('Unknown PDX data type '+ data.type);
+		},
+		'writePdxRootScope': function (data) {
+
+			var txt = '';
+			for (var i = 0; i < data.subNodes.length; i++)
+			{
+				txt += this.writePdxData(data.subNodes[i]);
+				txt += "\n";
+			}
+
+			return txt;
+		},
+		'writePdxObject': function (data) {
+			var indent = this.repeatString("\t", data.depth - 1);
+
+			var txt = indent + data.name + ' = {' + "\n";
+			for (var i = 0; i < data.subNodes.length; i++)
+			{
+				txt += this.writePdxData(data.subNodes[i]);
+				txt += "\n";
+			}
+			txt += indent + '}' + "\n";
+
+			return txt;
+		},
+		'writePdxProperty': function (data) {
+			var indent = this.repeatString("\t", data.depth - 1);
+
+			var txt = '';
+
+			if (angular.isArray(data.value))
+			{
+				txt = indent + data.name + ' = {' + "\n";
+				for (var i = 0; i < data.value.length; i++)
+				{
+					txt += indent + "\t" + data.value[i] +"\n";
+				}
+				txt += indent + '}' + "\n";
+			}
+			else
+			{
+				txt = indent + data.name + ' = ' + data.value + "\n";
+			}
+
+			return txt;
+		},
+*/
 	};
   	return pdxScriptService;
 }]);

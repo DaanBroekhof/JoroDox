@@ -1,8 +1,9 @@
 <h2>{{node.name}} <span class="loading-icon" ng-class="{'icon-animate': loading}"></h2>
 
-<div ng-if="node.fileType == 'collada' || node.fileType == 'json'">
+<div ng-if="node.fileType == 'collada' || node.fileType == 'pdx-mesh'">
 	<p>
-		<button type="button" class="btn btn-primary" ng-click="convertToPdxmesh()">Convert to .mesh</button>
+		<button ng-if="node.fileType == 'collada'" type="button" class="btn btn-primary" ng-click="convertToPdxmesh()">Convert to PdxMesh (.mesh)</button>
+		<button ng-if="node.fileType == 'pdx-mesh'" type="button" class="btn btn-primary" ng-click="convertToCollada()">Convert to Collada (.dae)</button></p>
 	</p>
 </div>
 
@@ -66,6 +67,7 @@
 		</tbody>
 		</table>
 	</div>
+
 	<div ng-if="meshes">
 		<h3>Meshes</h3>
 		<table class="table mesh-list">

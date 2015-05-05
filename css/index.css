@@ -183,12 +183,25 @@ div.window-body div.window-box h2 {
 .map-label {
 	position: absolute;
 	color: black;
-	xtransform: translate(-100%, -100%);
-	text-shadow: 0.5px 0.5px white;
+	text-shadow: 0.5px 0.5px rgba(255,255, 255, 0.5);
 	text-align: center;
-	display: table-cell;
-	z-index: 4;
+	display: inline !important;
+	background-color: rgba(225,255, 255, 0.2) !important;
+	width: auto !important;
+	height: auto !important;
+	font-size: 11px;
+	border-radius: 3px;
+	padding-left: 2px;
+	padding-right: 2px;
+	border: 1px solid rgba(255,255, 255, 0.3);
 }
+
+.map-label.hovered {
+	border-color: rgba(230, 100, 100, 0.3) !important;
+	background-color: rgba(225,255, 255, 0.6) !important;
+	z-index: 8;
+}
+
 
 .map-window {
 	width: 100%;
@@ -328,17 +341,35 @@ h5 {
 	top: 0;
 	left: 0;
 }
+.pan-zoom-contents img {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.pan-zoom-contents .map-labels {
+	z-index: 6;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
 
 
-.pan-zoom-contents img#gridImage {
-	z-index: 4;
+.pan-zoom-contents img#overlayImage {
+	z-index: 5;
+	opacity: 0.75;
 }
 .pan-zoom-contents canvas#PanZoomCanvasHover {
+	z-index: 4;
+}
+.pan-zoom-contents img#gridImage {
 	z-index: 3;
 }
 .pan-zoom-contents canvas#PanZoomCanvasSelect {
 	z-index: 2;
 }
+
+
 .pan-zoom-contents canvas#PanZoomCanvas {
 	z-index: 1;
 }
@@ -346,27 +377,13 @@ h5 {
 	z-index: 0;
 }
 
-.pan-zoom-contents img#overlayImage {
-	z-index: 5;
-	opacity: 0.75;
-}
-
 .pan-zoom-contents .label-cover {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: 5;
-	width: 2816px;
-	height: 1024px;
+	z-index: 7;
 }
 
-
-
-.pan-zoom-contents img {
-	position: absolute;
-	top: 0;
-	left: 0;
-}
 
 .view3d-labels {
 	position: relative;
@@ -380,7 +397,6 @@ h5 {
 	left: -2px;
 	right: 0;
 	content: "x";
-	font-size: 10px;
 	color: red;
 	text-shadow: none;
 }

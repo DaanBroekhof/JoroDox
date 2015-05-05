@@ -1,0 +1,53 @@
+<div ng-controller="CountriesHistoryTool">
+<div ui-layout="{ flow : 'row'}">
+	<div ui-layout-container>
+		<div ui-layout="{ flow : 'row'}" style="overflow: hidden;">
+			<div ui-layout-container size="60px" style="overflow: hidden;">
+				<div class="window-box">
+					<h2>Province history tool <span class="loading-icon" ng-class="{'icon-animate': loading}"></span>
+
+						<button type="button" class="btn btn-primary" ng-click="updateCountriesFromCsv()">Sync countries CSV</button>
+						<button type="button" class="btn btn-primary" ng-click="updateProvincesFromCsv()">Sync provinces CSV</button>
+
+						<div class="map-action-bar">
+							Options
+							<div class="btn-group">
+								<label class="btn btn-success" ng-model="options.showGrid" btn-checkbox>Grid</label>
+								<label class="btn btn-success" ng-model="options.highLight" btn-checkbox>Highlight</label>
+								<label class="btn btn-success" ng-model="options.showLabels" btn-checkbox>Labels</label>
+							</div>
+							Views
+							<div class="btn-group">
+								<label class="btn btn-success" ng-model="view" btn-radio="'provinces'">Provinces</label>
+								<label ng-if="hasSeasPng" class="btn btn-success" ng-model="view" btn-radio="'seas'">Seas</label>
+								<label class="btn btn-success" ng-model="view" btn-radio="'countries'">Countries</label>
+							</div>
+						</div>
+					</h2>
+				</div>
+			</div>
+		 	<div ui-layout-container>
+				<div class="window-body">
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ui-layout-container size="200px" remember-size="true">
+		<div ui-layout="{ flow : 'column'}">
+			<div ui-layout-container class="text-output-window">
+				<h3>{{outputTitle}}</h3>
+				<div class="text-output-body">
+					<textarea ng-model="output"></textarea>
+				</div>
+			</div>
+			<div ui-layout-container class="text-output-window">
+				<h3>{{messagesTitle}}</h3>
+				<div class="text-output-body">
+					<textarea ng-model="messages"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>

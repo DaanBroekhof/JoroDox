@@ -5,7 +5,9 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 	var mapDrawServiceInstance = {
 		canvasCache: {},
 
-		'colorAreaSolo': function (canvas, area, color) {
+		'fillAreaSolo': function (canvas, area, color) {
+			color = this.getColor(color);
+
 			var context = canvas.getContext('2d');
 
 			var imageData = context.getImageData(area.extentMin[0], area.extentMin[1], 1 + area.extentMax[0] - area.extentMin[0], 1 + area.extentMax[1] - area.extentMin[1]);
@@ -29,10 +31,12 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 
 			return canvas;
 		},
-		'outlineAreaSolo': function (canvas, area, color, outlineWidth) {
+		'inlineAreaSolo': function (canvas, area, color, width) {
 
-			if (!outlineWidth)
-				outlineWidth = 4;
+			if (!width)
+				width = 4;
+
+			color = this.getColor(color);
 
 			var context = canvas.getContext('2d');
 
@@ -64,16 +68,16 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 			}
 
 			var len = area.offsetRanges.length;
-			var bottomY = area.extentMax[1] - area.extentMin[1] - outlineWidth;
+			var bottomY = area.extentMax[1] - area.extentMin[1] - width;
 			for (var i = 0; i < len; i++)
 			{
 				var y = area.offsetRanges[i][0] - area.extentMin[1];
 				var lastX = area.offsetRanges[i][2];
 				for (var x = area.offsetRanges[i][1]; x <= lastX; x++)
 				{
-					if (x < area.offsetRanges[i][1] + outlineWidth || x > lastX - outlineWidth
-						|| y < outlineWidth || y > bottomY
-						|| inEdgeRange(x, y + area.extentMin[1], outlineWidth))
+					if (x < area.offsetRanges[i][1] + width || x > lastX - width
+						|| y < width || y > bottomY
+						|| inEdgeRange(x, y + area.extentMin[1], width))
 					{
 						var offset = ((y * imageData.width) + (x - area.extentMin[0])) * 4;
 						imageData.data[offset] = color[0];
@@ -88,18 +92,68 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 
 			return canvas;
 		},
-		'colorProvinceSolo': function (canvas, provinceId, color) {
+		'outlineAreaSolo': function (canvas, area, color, width) {
+
+			if (!width)
+				width = 2;
+
+			color = this.getColor(color);
+
+			var context = canvas.getContext('2d');
+
+			var widthHalfLeft = Math.ceil((width - 1) / 2);
+			var widthHalfRight = Math.floor((width - 1) / 2);
+
+			var imageData = context.getImageData(area.extentMin[0] - widthHalfLeft, area.extentMin[1] - widthHalfLeft, (1 + area.extentMax[0] - area.extentMin[0]) + widthHalfLeft + widthHalfRight, (1 + area.extentMax[1] - area.extentMin[1]) + widthHalfLeft + widthHalfRight);
+
+
+			var len = area.outLine.length;
+			for (var i = 0; i < len; i++)
+			{
+				var offset = area.outLine[i];
+
+				var x = (offset % canvas.width) - (area.extentMin[0] - widthHalfLeft);
+				var y = Math.floor(offset / canvas.width) - (area.extentMin[1] - widthHalfLeft);
+
+				var localOffset = ((y * imageData.width) + x);
+
+				for (var w = -widthHalfLeft; w <= widthHalfRight; w++)
+				{
+					for (var h = -widthHalfLeft; h <= widthHalfRight; h++)
+					{
+						var widthOffset = (localOffset + w + h*imageData.width) * 4;
+
+						imageData.data[widthOffset + 0] = color[0];
+						imageData.data[widthOffset + 1] = color[1];
+						imageData.data[widthOffset + 2] = color[2];
+						imageData.data[widthOffset + 3] = color[3];
+					}
+				}
+			}
+
+			context.putImageData(imageData, area.extentMin[0] - widthHalfLeft, area.extentMin[1] - widthHalfLeft);
+
+			return canvas;
+		},
+		'fillProvinceSolo': function (canvas, provinceId, color) {
 			return modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
 				provinceId = parseInt(provinceId);
 				if (provinceId && dataNode.areaByProvinceId[provinceId])
-					this.colorAreaSolo(canvas, dataNode.areaByProvinceId[provinceId], color);
+					this.fillAreaSolo(canvas, dataNode.areaByProvinceId[provinceId], color);
 			}.bind(this));
 		},
-		'outlineProvinceSolo': function (canvas, provinceId, color, outlineWidth) {
+		'outlineProvinceSolo': function (canvas, provinceId, color, width) {
 			return modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
 				provinceId = parseInt(provinceId);
 				if (provinceId && dataNode.areaByProvinceId[provinceId])
-					this.outlineAreaSolo(canvas, dataNode.areaByProvinceId[provinceId], color, outlineWidth);
+					this.outlineAreaSolo(canvas, dataNode.areaByProvinceId[provinceId], color, width);
+			}.bind(this));
+		},
+		'inlineProvinceSolo': function (canvas, provinceId, color, width) {
+			return modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
+				provinceId = parseInt(provinceId);
+				if (provinceId && dataNode.areaByProvinceId[provinceId])
+					this.inlineAreaSolo(canvas, dataNode.areaByProvinceId[provinceId], color, width);
 			}.bind(this));
 		},
 		'cacheCanvas': function (canvas) {
@@ -122,9 +176,10 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 			if (this.canvasCache[canvas.id])
 				this.canvasCache[canvas.id] = null;
 		},
-		'colorArea': function (canvas, area, color) {
+		'fillArea': function (canvas, area, color) {
 			var cache = this.cacheCanvas(canvas);
 			var imageData = cache.imageData;
+			color = this.getColor(color);
 
 			var len = area.offsetRanges.length;
 			for (var i = 0; i < len; i++)
@@ -157,6 +212,8 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 
 			var imageData = cache.imageData;
 
+			color = this.getColor(color);
+
 			var len = imageData.data.length;
 			for (var i = 0; i < len; i += 4)
 			{
@@ -182,7 +239,8 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 
 			return null;
 		},
-		'colorProvinces': function (canvas, provinces, color, noDraw) {
+		'fillProvinces': function (canvas, provinces, color, noDraw) {
+			color = this.getColor(color);
 			return modService.getData(modService.data.map.provinceMapping).then(function (dataNode) {
 				if (provinces)
 				{
@@ -190,19 +248,21 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 					{
 						var provinceId = null;
 						if (!angular.isObject(provinces[i]))
-							provinceId = parseInt(provinces[i]);
+							provinceId = provinces[i];
 						else if ('nr' in provinces[i])
-							provinceId = provinces.nr;
+							provinceId = provinces[i].nr;
 						else if ('id' in provinces[i])
-							provinceId = provinces.id;
+							provinceId = provinces[i].id;
+						else if ('_id' in provinces[i])
+							provinceId = provinces[i]._id;
 						else
 						{
 							console.log('Unknown province type:')
 							console.log(provinces[i]);
 						}
 
-						if (provinceId && dataNode.areaByProvinceId[provinceId])
-							this.colorArea(canvas, dataNode.areaByProvinceId[provinceId], color);
+						if (provinceId && dataNode.areaByProvinceId[parseInt(provinceId)])
+							this.fillArea(canvas, dataNode.areaByProvinceId[parseInt(provinceId)], color);
 					}
 				}
 
@@ -210,6 +270,67 @@ module.factory('mapDrawService', ['$rootScope', 'modService', function($rootScop
 					this.drawCanvas(canvas);
 			}.bind(this));
 		},
+		'getColor': function (colorInput, opacity) {
+
+			if (opacity === undefined)
+				opacity = 1;
+
+			var colorOutput = [0, 0, 0, 256];
+
+			if (!colorInput)
+				return colorOutput;
+
+			if (angular.isArray(colorInput))
+			{
+				colorOutput = colorInput;
+				if (colorInput.length == 3)
+					colorInput.push(256 * opacity);
+
+				return colorInput;
+			}
+			else if (colorInput[0] == '#')
+			{
+				if (colorInput.length == 4)
+				{
+					colorOutput = [
+						256 * (16 / parseInt(colorInput[1], 16)),
+						256 * (16 / parseInt(colorInput[2], 16)),
+						256 * (16 / parseInt(colorInput[3], 16)),
+						256 * opacity,
+					];
+				}
+				else if (colorInput.length == 5)
+				{
+					colorOutput = [
+						256 * (16 / parseInt(colorInput[1], 16)),
+						256 * (16 / parseInt(colorInput[2], 16)),
+						256 * (16 / parseInt(colorInput[3], 16)),
+						256 * (16 / parseInt(colorInput[4], 16)),
+					];
+				}
+				else if (colorInput.length == 7)
+				{
+					colorOutput = [
+						parseInt(colorInput[1] + colorInput[2], 16),
+						parseInt(colorInput[3] + colorInput[4], 16),
+						parseInt(colorInput[5] + colorInput[6], 16),
+						256 * opacity,
+					];
+				}
+				else if (colorInput.length == 9)
+				{
+					colorOutput = [
+						parseInt(colorInput[1] + colorInput[2], 16),
+						parseInt(colorInput[3] + colorInput[4], 16),
+						parseInt(colorInput[5] + colorInput[6], 16),
+						parseInt(colorInput[7] + colorInput[8], 16),
+					];
+				}
+
+				return colorOutput;
+			}
+		}
+
 	};
   	return mapDrawServiceInstance;
 }]);

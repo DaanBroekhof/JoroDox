@@ -9,6 +9,5 @@
   "main": "index.js",
   "_source": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js",
   "_target": "*",
-  "_originalSource": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js",
-  "_direct": true
+  "_originalSource": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/loaders/ColladaLoader.js"
 }

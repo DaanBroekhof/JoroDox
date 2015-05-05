@@ -1,5 +1,6 @@
 {
   "name": "three.js",
+  "version": "0.70.0",
   "homepage": "http://threejs.org/",
   "authors": [
     "http://mrdoob.com"
@@ -19,10 +20,10 @@
     "test",
     "tests"
   ],
-  "_release": "6515b3d4a1",
+  "_release": "0.70.0",
   "_resolution": {
-    "type": "branch",
-    "branch": "master",
+    "type": "version",
+    "tag": "0.70.0",
     "commit": "6515b3d4a115303f02e1f0e737aaeddcc866688c"
   },
   "_source": "git://github.com/jiyinyiyong/three.js.git",

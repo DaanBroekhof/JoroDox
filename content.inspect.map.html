@@ -15,7 +15,10 @@
 								<label class="btn btn-success" ng-model="options.showGrid" btn-checkbox>Grid</label>
 								<label class="btn btn-success" ng-model="options.highLight" btn-checkbox>Highlight</label>
 								<label class="btn btn-success" ng-model="options.showLabels" btn-checkbox>Labels</label>
+								<label class="btn btn-success" ng-model="options.showTerrainOverlay" btn-checkbox>Terrain</label>
 							</div>
+							Labels
+							<select ng-model="labelView" ng-options="opt as opt for opt in labelViews"></select>
 							Views
 							<select ng-model="view" ng-options="opt as opt for opt in views"></select>
 							<div class="btn-group">
@@ -35,16 +38,14 @@
 					        <div class="map-hint" ng-show="mapHint">{{mapHint}}</div>
 					        <panzoom id="PanZoom" config="panzoomConfig" model="panzoomModel" style="width:100%;height: {{height}}px;">
 					        	<div class="map-contents" ng-mousedown="toggleAreaDown($event)" ng-mouseup="toggleAreaUp($event)" ng-mousemove="toggleAreaHover($event)">
-					        		<img ng-src="{{overlayImage}}" id="overlayImage" width="{{mapWidth}}" height="{{mapHeight}}">
+					        		<img ng-src="{{overlayImage}}" id="overlayImage" width="{{mapWidth}}" height="{{mapHeight}}" ng-show="options.showTerrainOverlay">
 					            	<canvas id="PanZoomCanvas" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
 					            	<canvas id="PanZoomCanvasSelect" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
 					            	<canvas id="PanZoomCanvasHover" width="{{mapWidth}}" height="{{mapHeight}}"></canvas>
-					            	<div>
-					            		<img ng-src="{{scrollImage}}" id="scollImage" width="{{mapWidth}}" height="{{mapHeight}}">
-					            		<img ng-src="{{gridImage}}" id="gridImage" ng-show="gridImage" width="{{mapWidth}}" height="{{mapHeight}}">
-					            	</div>
-					            	<div class="map-labels" ng-show="options.showLabels">
-					            		<div ng-repeat="label in labels" class="map-label" style="left:{{::label.extentMin[0]}}px; top: {{::label.extentMin[1]}}px; width: {{::label.extentSize[0]}}px; height: {{::label.extentSize[1]}}px; line-height: {{::label.extentSize[1]}}px;{{::label.message ? ' color: red; outline: 2px solid red;' : ''}};" title="{{::label.message}}">{{::label.text}}</div>
+				            		<img ng-src="{{scrollImage}}" id="scollImage" width="{{mapWidth}}" height="{{mapHeight}}">
+				            		<img ng-src="{{gridImage}}" id="gridImage" ng-show="gridImage" width="{{mapWidth}}" height="{{mapHeight}}">
+					            	<div class="map-labels" ng-show="options.showLabels" xstyle="font-size: {{inverseMapCssScale(model.zoomLevel)}}em;">
+					            		<div ng-repeat="label in labels" class="map-label" ng-class="{'hovered': label.area._hovered}" style="left:{{::label.x}}px; top: {{::label.y}}px; width: {{::label.width}}px; height: {{::label.height}}px;{{::label.css ? label.css : ''}};" title="{{::label.message}}">{{label.text._text}}</div>
 					            	</div>
 					            	<div class="label-cover" style="width: {{mapWidth}}px; height:{{mapHeight}}px"></div>
 				            	</div>
@@ -84,6 +85,7 @@
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
 						</div>
 					</h3>
@@ -93,29 +95,32 @@
 				</div>
 				<div class="data-view-text" ng-if="dataViewLeft.type == 'text'">
 					<h3>
-						{{dataViewLeft.history.file.path}}
+						{{dataViewLeft.province.file.path}}
 
 						<div class="btn-group pull-right">
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'province'">Prov</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
 						</div>
 					</h3>
 					<div class="data-view-text-body">
-						<textarea ng-model="dataViewLeft.historyText"></textarea>
+						<textarea ng-model="dataViewLeft.provinceText"></textarea>
 					</div>
 				</div>
 				<div class="data-view-province" ng-if="dataViewLeft.type == 'province'">
 					<h3>
-						{{dataViewLeft.history.file.name}}
+						{{dataViewLeft.province.file.name}}
+						<button type="button" class="btn btn-primary btn-xs" ng-click="saveDataNode(dataViewLeft.province)">Save</button>
 
 						<div class="btn-group pull-right">
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'province'">Prov</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
 						</div>
 					</h3>
@@ -124,31 +129,143 @@
 						<tbody>
 							<tr>
 								<td>Name</td>
-								<td><input ng-model="dataViewLeft.provinceLocalisation[dataViewInfo.provinceLocalisationLanguage][dataViewInfo.provinceLocalisationId]"></td>
+								<td>
+									<input ng-model="dataViewLeft.province._localisation['l_english']._text">
+								</td>
 							</tr>
 							<tr>
 								<td>Owner</td>
-								<td><input ng-model="dataViewLeft.history.data.data.owner"></td>
+								<td><input ng-model="dataViewLeft.province.data.data.owner"></td>
 							</tr>
 							<tr>
 								<td>Controller</td>
-								<td><input ng-model="dataViewLeft.history.data.data.controller"></td>
+								<td><input ng-model="dataViewLeft.province.data.data.controller"></td>
 							</tr>
 							<tr>
 								<td>Base tax</td>
-								<td><input ng-model="dataViewLeft.history.data.data.base_tax"></td>
+								<td><input ng-model="dataViewLeft.province.data.data.base_tax"></td>
 							</tr>
 							<tr>
 								<td>Manpower</td>
-								<td><input ng-model="dataViewLeft.history.data.data.manpower"></td>
+								<td><input ng-model="dataViewLeft.province.data.data.manpower"></td>
+							</tr>
+							<tr>
+								<td>Trade goods</td>
+								<td><input ng-model="dataViewLeft.province.data.data.trade_goods"></td>
 							</tr>
 							<tr>
 								<td>Culture</td>
-								<td><input ng-model="dataViewLeft.history.data.data.culture"></td>
+								<td><input ng-model="dataViewLeft.province.data.data.culture"></td>
 							</tr>
 							<tr>
 								<td>Religion</td>
-								<td><input ng-model="dataViewLeft.history.data.data.religion"></td>
+								<td><input ng-model="dataViewLeft.province.data.data.religion"></td>
+							</tr>
+						</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="data-view-province" ng-if="dataViewLeft.type == 'multiEnvironment'">
+					<h3>
+						Environment {{dataViewLeft.multiProvince.provinces.length}} provinces
+						<button type="button" class="btn btn-primary btn-xs" ng-click="saveMultiDataNode(dataViewLeft.multiProvince)">Save</button>
+
+						<div class="btn-group pull-right">
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'province'">Prov</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
+						</div>
+					</h3>
+					<div class="data-view-province-body">
+						<table class="table">
+						<tbody>
+							<tr>
+								<td>Provinces</td>
+								<td>{{dataViewLeft.multiProvince.provinceNames}}</td>
+							</tr>
+							<tr>
+								<td>Continent</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._continent"> <input ng-model="dataViewLeft.multiProvince.data._continent"> {{dataViewLeft.multiProvince.multiData._continent}}</td>
+							</tr>
+							<tr>
+								<td>Climate</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._climate"> <input ng-model="dataViewLeft.multiProvince.data._climate"> {{dataViewLeft.multiProvince.multiData._climate}}</td>
+							</tr>
+							<tr>
+								<td>Is sea start</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._isSeaStart"> <input ng-model="dataViewLeft.multiProvince.data._isSeaStart"> {{dataViewLeft.multiProvince.multiData._isSeaStart}}</td>
+							</tr>
+							<tr>
+								<td>Is lake</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._isLake"> <input ng-model="dataViewLeft.multiProvince.data._isLake"> {{dataViewLeft.multiProvince.multiData._isLake}}</td>
+							</tr>
+							<tr>
+								<td>Force coastal</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._isForcedCoastal"> <input ng-model="dataViewLeft.multiProvince.data._isForcedCoastal"> {{dataViewLeft.multiProvince.multiData._isForcedCoastal}}</td>
+							</tr>
+							<tr>
+								<td>Regions</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._regions"> <input ng-model="dataViewLeft.multiProvince.data._regions"> {{dataViewLeft.multiProvince.multiData._regions}}</td>
+							</tr>
+						</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="data-view-province" ng-if="dataViewLeft.type == 'multiProvince'">
+					<h3>
+						{{dataViewLeft.multiProvince.provinces.length}} provinces
+						<button type="button" class="btn btn-primary btn-xs" ng-click="saveMultiDataNode(dataViewLeft.multiProvince)">Save</button>
+
+						<div class="btn-group pull-right">
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'province'">Prov</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
+						</div>
+					</h3>
+					<div class="data-view-province-body">
+						<table class="table">
+						<tbody>
+							<tr>
+								<td>Provinces</td>
+								<td>{{dataViewLeft.multiProvince.provinceNames}}</td>
+							</tr>
+							<tr>
+								<td>Owner</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.owner"> <input ng-model="dataViewLeft.multiProvince.data.owner"> {{dataViewLeft.multiProvince.multiData.owner}}</td>
+							</tr>
+							<tr>
+								<td>Controller</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.controller"> <input ng-model="dataViewLeft.multiProvince.data.controller"> {{dataViewLeft.multiProvince.multiData.controller}}</td>
+							</tr>
+							<tr>
+								<td>Base tax</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.base_tax"> <input ng-model="dataViewLeft.multiProvince.data.base_tax"> {{dataViewLeft.multiProvince.multiData.base_tax}}</td>
+							</tr>
+							<tr>
+								<td>Manpower</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.manpower"> <input ng-model="dataViewLeft.multiProvince.data.manpower"> {{dataViewLeft.multiProvince.multiData.manpower}}</td>
+							</tr>
+							<tr>
+								<td>Trade goods</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.trade_goods"> <input ng-model="dataViewLeft.multiProvince.data.trade_goods"> {{dataViewLeft.multiProvince.multiData.trade_goods}}</td>
+							</tr>
+							<tr>
+								<td>Culture</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.culture"> <input ng-model="dataViewLeft.multiProvince.data.culture"> {{dataViewLeft.multiProvince.multiData.culture}}</td>
+							</tr>
+							<tr>
+								<td>Religion</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData.religion"> <input ng-model="dataViewLeft.multiProvince.data.religion"> {{dataViewLeft.multiProvince.multiData.religion}}</td>
+							</tr>
+							<tr>
+								<td>Cores</td>
+								<td><input type="checkbox" ng-model="dataViewLeft.multiProvince.hasData._addCores"> <input ng-model="dataViewLeft.multiProvince.data._addCores"> {{dataViewLeft.multiProvince.multiData._addCores}}</td>
 							</tr>
 						</tbody>
 						</table>
@@ -163,6 +280,7 @@
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
 						</div>
 					</h3>
@@ -171,11 +289,15 @@
 						<tbody>
 							<tr>
 								<td>Name</td>
-								<td><input ng-model="dataViewLeft.countryLocalisation[dataViewInfo.countryLocalisationLanguage][dataViewInfo.countryLocalisationId]"></td>
+								<td><input ng-model="dataViewLeft.province._country._localisation['l_english']"></td>
 							</tr>
 							<tr>
-								<td>Owner</td>
-								<td><input ng-model="dataViewLeft.country.data.data.color"></td>
+								<td>Tag</td>
+								<td><input ng-model="dataViewLeft.province._country._tag.name"></td>
+							</tr>
+							<tr>
+								<td>Color</td>
+								<td><input ng-model="dataViewLeft.province._country.color"></td>
 							</tr>
 						</tbody>
 						</table>
@@ -190,6 +312,7 @@
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'text'">Txt</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'country'">Country</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'localisation'">Loc</label>
+							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'multiEnvironment'">Env</label>
 							<label class="btn btn-success btn-xs" ng-model="dataViewLeft.type" btn-radio="'output'">Output</label>
 						</div>
 					</h3>
@@ -199,14 +322,15 @@
 							<tr>
 								<td>Province name</td>
 								<td>
-									<input ng-model="dataViewLeft.provinceLocalisation.data[dataViewLeft.provinceLocalisationLanguage][dataViewLeft.provinceLocalisationId]">
-									<button type="button" class="btn btn-primary btn-xs" ng-click="modService.saveData(dataViewLeft.provinceLocalisation)">Save</button>
+									<input ng-model="dataViewLeft.province._localisation['l_english']._text">
+									<button type="button" class="btn btn-primary btn-xs" ng-click="saveDataNode(dataViewLeft.province._localisation['l_english']._node)">Save</button>
 								</td>
 							</tr>
 							<tr>
 								<td>Country name</td>
 								<td>
-									<input ng-model="dataViewLeft.countryLocalisation.data[dataViewLeft.countryLocalisationLanguage][dataViewLeft.countryLocalisationId]">
+									<input ng-model="dataViewLeft.province._country._tag._localisation['l_english']._text">
+									<button type="button" class="btn btn-primary btn-xs" ng-click="saveDataNode(dataViewLeft.province._country._tag._localisation['l_english']._node)">Save</button>
 								</td>
 							</tr>
 						</tbody>

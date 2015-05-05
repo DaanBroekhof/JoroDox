@@ -12,7 +12,8 @@
     "fonts/glyphicons-halflings-regular.eot",
     "fonts/glyphicons-halflings-regular.svg",
     "fonts/glyphicons-halflings-regular.ttf",
-    "fonts/glyphicons-halflings-regular.woff"
+    "fonts/glyphicons-halflings-regular.woff",
+    "fonts/glyphicons-halflings-regular.woff2"
   ],
   "homepage": "http://getbootstrap.com/",
   "author": {
@@ -22,12 +23,12 @@
     "type": "git",
     "url": "git://github.com/fyockm/bootstrap-css-only.git"
   },
-  "version": "3.3.2",
-  "_release": "3.3.2",
+  "version": "3.3.4",
+  "_release": "3.3.4",
   "_resolution": {
     "type": "version",
-    "tag": "3.3.2",
-    "commit": "a6bc7ff9fd8427698ab0e9819dcd1f696ce29762"
+    "tag": "3.3.4",
+    "commit": "864be89965524149864ddce14f42cdd559093707"
   },
   "_source": "git://github.com/fyockm/bootstrap-css-only.git",
   "_target": "~3.3.1",

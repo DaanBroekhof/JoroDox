@@ -1,6 +1,6 @@
 var module = angular.module('rendererService', ['modService']);
 
-module.factory('rendererService', ['$rootScope', '$q', 'modService', function($rootScope, $q, modService) {
+module.factory('rendererService', ['$rootScope', '$q', 'modService', '$filter', function($rootScope, $q, modService, $filter) {
 
 	var rendererService = {
 		'handlerAdded': false,
@@ -35,9 +35,19 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 			if (boneList.length > 0)
 			{
 				var multipleRootBones = false;
+				var filteredBoneList = [];
+				var boneByName = {};
 				for (var i = 0; i < boneList.length; i++)
 				{
-					boneList[i].boneNr = i;
+					// Skip double bones by name
+					if (boneByName[boneList[i].name])
+						continue;
+
+					boneByName[boneList[i].name] = boneList[i];
+
+					filteredBoneList.push(boneList[i]);
+					boneList[i].boneNr = filteredBoneList.length - 1;
+
 					if (!(boneList[i].parent instanceof THREE.Bone) && i != 0)
 					{
 						multipleRootBones = true;
@@ -50,8 +60,9 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					var newRoot = new THREE.Bone();
 					newRoot.name = 'AddedRoot';
 					object.add(newRoot);
-					boneList.unshift(newRoot);
+					filteredBoneList.unshift(newRoot);
 				}
+				return filteredBoneList;
 			}
 
 			return boneList;
@@ -537,6 +548,608 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 			return pdxDataRoot;
 		},
+		'flipMatrixArray': function (data) {
+			return [
+				data[0], data[4], data[8], data[12],
+				data[1], data[5], data[9], data[13],
+				data[2], data[6], data[10], data[14],
+				data[3], data[7], data[11], data[15]
+			];
+		},
+		'convertToColladaData': function (viewObject, options) {
+
+			if (!options)
+				options = {
+					textureBaseName: 'unknown',
+					pdxShader: 'PdxMeshStandard',
+				};
+
+			var colladaData = {
+				'images': [],
+				//'effects': [],
+				'materials': [],
+				'geometries': [],
+				'animations': [],
+				'controllers': [],
+				'geometryInstance': [],
+				'scene': [],
+				'skeleton': null,
+				'nodeCount': 0,
+			}
+
+			var rootObject = {
+				'name': 'Scene',
+				'type': 'SCENE',
+				'threeJs': viewObject.object,
+				'children': [],
+			};
+
+			colladaData.scene = rootObject;
+
+			// 'internal' function
+			var getVertexNrForUniqueData = function (vertNr, uv, normal, vertexToUniqueData, verts, skinIds, skinWeights)
+			{
+				if (!vertexToUniqueData[vertNr])
+				{
+					vertexToUniqueData[vertNr] = [{'uv': uv, 'normal': normal, v: vertNr}];
+					return vertNr;
+				}
+
+				// See if we already mapped this UV before
+				var foundVertNr = false;
+				for (var j = 0, jl = vertexToUniqueData[vertNr].length; j < jl; j++)
+				{
+					foundVertNr = vertexToUniqueData[vertNr][j].v;
+
+					if (!vertexToUniqueData[vertNr][j].normal || !vertexToUniqueData[vertNr][j].normal.equals(normal))
+					{
+						foundVertNr = false;
+					}
+					else
+					{
+						for (var i = 0; i < vertexToUniqueData[vertNr][j].uv.length; i++)
+						{
+							if (!uv[i] || !vertexToUniqueData[vertNr][j].uv[i].equals(uv[i]))
+							{
+								foundVertNr = false;
+								break;
+							}
+						}
+					}
+
+					if (foundVertNr !== false)
+						return foundVertNr;
+				}
+
+				// Create new vert, copy of existing
+				verts.push(verts[vertNr*3]);
+				verts.push(verts[vertNr*3+1]);
+				verts.push(verts[vertNr*3+2]);
+
+				// Don't forget skin
+				skinIds.push(skinIds[vertNr*4]);
+				skinIds.push(skinIds[vertNr*4+1]);
+				skinIds.push(skinIds[vertNr*4+2]);
+				skinIds.push(skinIds[vertNr*4+2]);
+				skinWeights.push(skinWeights[vertNr*4]);
+				skinWeights.push(skinWeights[vertNr*4+1]);
+				skinWeights.push(skinWeights[vertNr*4+2]);
+				skinWeights.push(skinWeights[vertNr*4+2]);
+
+				var newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
+
+				vertexToUniqueData[vertNr].push({'uv': uv, 'normal': normal, v: newVert})
+
+				return newVert;
+			}
+
+
+
+			// find all geometry
+			angular.forEach(viewObject.meshes, function (subObject) {
+
+				var objectName = subObject.name +'-'+ colladaData.nodeCount;
+				var childNode = {
+					'name': objectName,
+					'type': 'NODE',
+					'matrix': subObject.matrixWorld,
+					'threeJs': subObject,
+					'controller': null,
+					'geometry' : null,
+					'children': [],
+					'isCollider': viewObject.colliders.indexOf(subObject) != -1,
+					'material': {
+						'name': objectName +'-material-'+ colladaData.materials.length,
+						'diff': subObject.material.map && subObject.material.map.fileName ? {'name': objectName +'-effect-'+ colladaData.materials.length +'-diff', 'fileName': subObject.material.map.fileName} : null,
+						'normal': subObject.material.normalMap && subObject.material.normalMap.fileName ? {'name': objectName +'-effect-'+ colladaData.materials.length +'-normal', 'fileName': subObject.material.normalMap.fileName } : null,
+						'spec': subObject.material.specularMap && subObject.material.specularMap.fileName ? {'name': objectName +'-effect-'+ colladaData.materials.length +'-spec', 'fileName': subObject.material.specularMap.fileName } : null,
+					}
+				}
+				childNode.material.node = childNode;
+				colladaData.nodeCount++;
+
+				rootObject.children.push(childNode);
+				colladaData.materials.push(childNode.material);
+				if (childNode.material.diff)
+					colladaData.images.push(childNode.material.diff);
+				if (childNode.material.normal)
+					colladaData.images.push(childNode.material.normal);
+				if (childNode.material.spec)
+					colladaData.images.push(childNode.material.spec);
+
+				if (childNode.isCollider)
+					childNode.material.transparency = 0.5;
+
+				if (!childNode.isCollider && subObject.skeleton && subObject.skeleton.bones.length > 0)
+				{
+					// Skin controller
+					var controller = {
+						'name': objectName +'-skin',
+
+						'object': childNode,
+
+						'skinSource': childNode.mesh,
+						'bindShapeMatrix': subObject.bindMatrix.toArray(),
+						'jointNameList': [],
+						'jointPoseList': [],
+
+						'skinWeights': [],
+						'skinVertexInfluenceCount': [],
+						'skinVertexInfluences': [],
+					};
+					// Weightcount always 4
+
+					colladaData.controllers.push(controller);
+					childNode.controller = controller;
+
+					var flip = this.flipMatrixArray;
+					function loadBone(bone)
+					{
+						controller.jointNameList.push(bone.name);
+						controller.jointPoseList.push.apply(controller.jointPoseList, flip(new THREE.Matrix4().getInverse(bone.matrixWorld).toArray()));
+						//controller.jointPoseList.push.apply(controller.jointPoseList, [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
+
+						angular.forEach(bone.children, loadBone);
+					}
+					loadBone(subObject.skeleton.bones[0]);
+					if (!colladaData.skeleton || colladaData.skeleton.bones[0] != subObject.skeleton.bones[0])
+					{
+						colladaData.skeleton = subObject.skeleton;
+						colladaData.scene.children.unshift(subObject.skeleton.bones[0]);
+					}
+				}
+
+
+				// Vertices
+				var verts = [];
+				for (var k = 0, l = subObject.geometry.vertices.length; k < l; k++)
+				{
+					verts.push.apply(verts, subObject.geometry.vertices[k].toArray());
+				}
+
+				// Face-stored data
+				var tri = [];
+				var normals = [];
+				var tangents = [];
+				var uvs = [];
+
+				if (!subObject.geometry.hasTangents && subObject.geometry.faceVertexUvs[0].length)
+					subObject.geometry.computeTangents();
+
+				// Assume skinIds as long as skinWeights
+				var skinIds = [];
+				var skinWeights = [];
+				var bonesUsed = 0;
+				for (var k = 0, l = subObject.geometry.skinIndices.length; k < l; k++)
+				{
+					skinIds.push(
+						subObject.geometry.skinWeights[k].x ? subObject.geometry.skinIndices[k].x : -1,
+						subObject.geometry.skinWeights[k].y ? subObject.geometry.skinIndices[k].y : -1,
+						subObject.geometry.skinWeights[k].z ? subObject.geometry.skinIndices[k].z : -1,
+						subObject.geometry.skinWeights[k].w ? subObject.geometry.skinIndices[k].w : -1
+					);
+					skinWeights.push(
+						subObject.geometry.skinWeights[k].x,
+						subObject.geometry.skinWeights[k].y,
+						subObject.geometry.skinWeights[k].z,
+						subObject.geometry.skinWeights[k].w
+					);
+
+					var used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil(subObject.geometry.skinWeights[k].y) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
+
+					bonesUsed = Math.max(used, bonesUsed);
+				}
+
+				// See if we have any multi-UV vertices, split those
+				var vertexToUniqueData = [];
+				var uvCount = subObject.geometry.faceVertexUvs.length;
+				if (subObject.geometry.faceVertexUvs[0].length == 0)
+					uvCount--;
+				for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
+				{
+					var face = subObject.geometry.faces[k];
+					var faceUvs = [];
+					for (var j = 0; j < 3; j++)
+					{
+						faceUvs[j] = [];
+						for (var i = 0; i < uvCount; i++)
+							if (subObject.geometry.faceVertexUvs[i][k])
+								faceUvs[j][i] = subObject.geometry.faceVertexUvs[i][k][j];
+					}
+
+					face.a = getVertexNrForUniqueData(face.a, faceUvs[0], face.vertexNormals[0], vertexToUniqueData, verts, skinIds, skinWeights);
+					face.b = getVertexNrForUniqueData(face.b, faceUvs[1], face.vertexNormals[1], vertexToUniqueData, verts, skinIds, skinWeights);
+					face.c = getVertexNrForUniqueData(face.c, faceUvs[2], face.vertexNormals[2], vertexToUniqueData, verts, skinIds, skinWeights);
+				}
+
+
+				// Process all faces
+				for (var k = 0, l = subObject.geometry.faces.length; k < l; k++)
+				{
+					var face = subObject.geometry.faces[k];
+					tri.push(face.a, face.b, face.c);
+
+					if (!face.vertexNormals[0])
+						this.insertValues(normals, face.a*3, [0, 0, 0]);
+					else
+						this.insertValues(normals, face.a*3, face.vertexNormals[0].toArray());
+					if (!face.vertexNormals[1])
+						this.insertValues(normals, face.b*3, [0, 0, 0]);
+					else
+						this.insertValues(normals, face.b*3, face.vertexNormals[1].toArray());
+					if (!face.vertexNormals[2])
+						this.insertValues(normals, face.c*3, [0, 0, 0]);
+					else
+						this.insertValues(normals, face.c*3, face.vertexNormals[2].toArray());
+
+					if (face.vertexTangents.length)
+					{
+						this.insertValues(tangents, face.a*4, face.vertexTangents[0].toArray());
+						this.insertValues(tangents, face.b*4, face.vertexTangents[1].toArray());
+						this.insertValues(tangents, face.c*4, face.vertexTangents[2].toArray());
+					}
+					else
+					{
+						this.insertValues(tangents, face.a*4, new THREE.Vector4().toArray());
+						this.insertValues(tangents, face.b*4, new THREE.Vector4().toArray());
+						this.insertValues(tangents, face.c*4, new THREE.Vector4().toArray());
+					}
+
+
+					for (var i = 0; i < uvCount; i++)
+					{
+						if (!uvs[i])
+							uvs[i] = [];
+						if (subObject.geometry.faceVertexUvs[i])
+						{
+							var uv = subObject.geometry.faceVertexUvs[i][k];
+
+							if (uv)
+							{
+								var flipY = true;
+
+								uvs[i][face.a*2] = uv[0].x;
+								uvs[i][face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
+								uvs[i][face.b*2] = uv[1].x;
+								uvs[i][face.b*2+1] = flipY? 1 - uv[1].y : uv[1].y;
+								uvs[i][face.c*2] = uv[2].x;
+								uvs[i][face.c*2+1] = flipY? 1 - uv[2].y : uv[2].y;
+							}
+							else
+							{
+								uvs[i][face.a*2] = 0;
+								uvs[i][face.a*2+1] = 0;
+								uvs[i][face.b*2] = 0;
+								uvs[i][face.b*2+1] = 0;
+								uvs[i][face.c*2] = 0;
+								uvs[i][face.c*2+1] = 0;
+							}
+						}
+					}
+				}
+
+				var polylist = [];
+				// Vertex position, Vertex normal + UVs count
+				// Polylist can be mixed indices for each, but we have flattened them already
+				var inputCount = uvCount + 2;
+				//var inputCount = 2;
+				for (var i = 0, l = tri.length; i < l; i++)
+				{
+					for (var j = 0; j < inputCount; j++)
+						polylist.push(tri[i]);
+				}
+
+				// Geometry load
+				var geometry = {
+					'name': objectName +'-geometry',
+					'vertices': verts,
+					'normals': normals,
+					'uvs': uvs,
+					'polylist': polylist,
+					'polycount': tri.length / 3,
+				};
+				// Polysize always 3
+
+
+				colladaData.geometries.push(geometry);
+				childNode.geometry = geometry;
+				if (childNode.controller)
+					childNode.controller
+
+				if (childNode.controller)
+				{
+					// Convert influences & weights
+
+					for (var i = 0; i < skinIds.length; i += 4)
+					{
+						var influenceCount = 0;
+
+						for (var j = 0; j < 4; j++)
+						{
+							if (skinIds[i+j] != -1)
+							{
+								influenceCount = j+1;
+								childNode.controller.skinWeights.push(skinWeights[i+j]);
+								childNode.controller.skinVertexInfluences.push(skinIds[i+j]);
+								childNode.controller.skinVertexInfluences.push(childNode.controller.skinWeights.length - 1);
+							}
+						}
+						childNode.controller.skinVertexInfluenceCount.push(influenceCount)
+					}
+				}
+
+				/*
+				var mesh = {name: 'mesh', type: 'object', subNodes: []};
+				mesh.subNodes.push({name: 'p', type: 'float', data: verts});
+				mesh.subNodes.push({name: 'n', type: 'float', data: normals});
+				mesh.subNodes.push({name: 'ta', type: 'float', data: tangents});
+				for (var i = 0; i < uvCount; i++)
+					mesh.subNodes.push({name: 'u' + i, type: 'float', data: uvs[i]});
+				mesh.subNodes.push({name: 'tri', type: 'int', data: tri});
+				mesh.subNodes.push({name: 'aabb', type: 'object', subNodes: [
+					{name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z]},
+					{name: 'max', type: 'float', data: [bb.max.x, bb.max.y, bb.max.z]},
+				]});
+				mesh.subNodes.push({name: 'material', type: 'object', subNodes: [
+					{name: 'shader', type: 'string', data: options.pdxShader ? options.pdxShader : 'PdxMeshStandard', nullByteString: true},
+					{name: 'diff', type: 'string', data: options.textureBaseName +'_diffuse.dds', nullByteString: true},
+					{name: 'n', type: 'string', data: options.textureBaseName +'_normal.dds', nullByteString: true},
+					{name: 'spec', type: 'string', data: options.textureBaseName +'_spec.dds', nullByteString: true},
+				]});
+				shapeRoot.subNodes.push(mesh);
+				*/
+
+			}.bind(this));
+
+			//if (boneData.length)
+			//	shapeRoot.subNodes.push({name: 'skeleton', type: 'object', subNodes: boneData});
+
+			console.log(colladaData);
+
+			return colladaData;
+		},
+		'convertToColladaXml': function (colladaData) {
+
+			var xml = '<?xml version="1.0" encoding="utf-8"?>'+ "\n";
+			xml += '<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">'+ "\n";
+			xml += '  <asset>'+ "\n";
+			xml += '    <contributor>'+ "\n";
+			xml += '      <author>Jorodox User</author>'+ "\n";
+			xml += '      <authoring_tool>Jorodox Tool</authoring_tool>'+ "\n";
+			xml += '    </contributor>'+ "\n";
+			xml += '    <created>'+ $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss') +'</created>'+ "\n";
+			xml += '    <modified>'+ $filter('date')(new Date(), 'yyyy-MM-ddTHH:mm:ss') +'</modified>'+ "\n";
+			xml += '    <unit name="meter" meter="1"/>'+ "\n";
+			xml += '    <up_axis>Y_UP</up_axis>'+ "\n";
+			xml += '  </asset>'+ "\n";
+			xml += '  <library_images>'+ "\n";
+			angular.forEach(colladaData.images, function (image) {
+				xml += '    <image id="'+ image.name +'" name="'+ image.name +'"><init_from>'+ image.fileName +'</init_from></image>'+ "\n";
+			});
+			xml += '  </library_images>'+ "\n";
+
+
+			xml += '  <library_effects>'+ "\n";
+			angular.forEach(colladaData.materials, function (material) {
+
+				xml += '    <effect id="'+ material.name +'-effect"><profile_COMMON>' + "\n";
+				if (material.diff)
+				{
+					xml += '      <newparam sid="'+ material.diff.name +'-diff-surface"><surface type="2D"><init_from>'+ material.diff.name +'</init_from></surface></newparam>' + "\n";
+					xml += '      <newparam sid="'+ material.diff.name +'-diff-sampler"><sampler2D><source>'+ material.diff.name +'-diff-surface</source></sampler2D></newparam>' + "\n";
+				}
+				if (material.normal)
+				{
+					xml += '      <newparam sid="'+ material.normal.name +'-normal-surface"><surface type="2D"><init_from>'+ material.normal.name +'</init_from></surface></newparam>' + "\n";
+					xml += '      <newparam sid="'+ material.normal.name +'-normal-sampler"><sampler2D><source>'+ material.normal.name +'-normal-surface</source></sampler2D></newparam>' + "\n";
+				}
+				if (material.spec)
+				{
+					xml += '      <newparam sid="'+ material.spec.name +'-spec-surface"><surface type="2D"><init_from>'+ material.spec.name +'</init_from></surface></newparam>' + "\n";
+					xml += '      <newparam sid="'+ material.spec.name +'-spec-sampler"><sampler2D><source>'+ material.spec.name +'-spec-surface</source></sampler2D></newparam>' + "\n";
+				}
+				xml += '      <technique sid="common">' + "\n";
+				xml += '        <blinn>' + "\n";
+				xml += '          <emission><color sid="emission">0 0 0 1</color></emission>' + "\n";
+				xml += '          <ambient><color sid="ambient">0 0 0 1</color></ambient>' + "\n";
+				if (material.diff)
+					xml += '          <diffuse><texture texture="'+ material.diff.name +'-diff-sampler" texcoord="'+ material.node.geometry.name +'-channel1"/></diffuse>' + "\n";
+				else
+					xml += '          <diffuse><color sid="diffuse">0 0 0 1</color></diffuse>' + "\n";
+				if (material.normal)
+					xml += '          <bump bumptype="NORMALMAP"><texture texture="'+ material.normal.name +'-normal-sampler" texcoord="'+ material.node.geometry.name +'-channel1"/></bump>' + "\n";
+				if (material.spec)
+					xml += '          <specular><texture texture="'+ material.spec.name +'-spec-sampler" texcoord="'+ material.node.geometry.name +'-channel1"/></specular>' + "\n";
+				else
+					xml += '          <specular><color sid="specular">0 0 0 1</color></specular>' + "\n";
+
+				if (material.transparency)
+				{
+					xml += '          <transparent><color sid="transparent">1 1 1 1</color></transparent>' + "\n";
+					xml += '          <transparency><float sid="transparency">'+ material.transparency +'</float></transparency>' + "\n";
+				}
+
+				xml += '          <shininess><float sid="shininess">0</float></shininess>' + "\n";
+				xml += '          <index_of_refraction><float sid="index_of_refraction">1</float></index_of_refraction>' + "\n";
+				xml += '        </blinn>' + "\n";
+				xml += '      </technique>' + "\n";
+				xml += '  </profile_COMMON></effect>' + "\n";
+			});
+
+			xml += '  </library_effects>'+ "\n";
+
+			xml += '  <library_materials>'+ "\n";
+			angular.forEach(colladaData.materials, function (material) {
+				xml += '   <material id="'+ material.name +'" name="'+ material.name +'"><instance_effect url="#'+ material.name +'-effect"/></material>'+ "\n";
+			});
+			xml += '  </library_materials>'+ "\n";
+
+			xml += '  <library_geometries>'+ "\n";
+			angular.forEach(colladaData.geometries, function (geometry) {
+				xml += '   <geometry id="'+ geometry.name +'" name="'+ geometry.name +'-model">'+ "\n";
+				xml += '   <mesh>'+ "\n";
+
+				xml += '     <source id="'+ geometry.name +'-positions" name="'+ geometry.name +'-positions">'+ "\n";
+				xml += '       <float_array id="'+ geometry.name +'-positions-array" count="'+ geometry.vertices.length +'">'+ geometry.vertices.join(' ') +'</float_array>'+ "\n";
+				xml += '       <technique_common><accessor source="#'+ geometry.name +'-positions-array" count="'+ (geometry.vertices.length/3) +'" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common>'+ "\n";
+				xml += '     </source>'+ "\n";
+
+				xml += '     <source id="'+ geometry.name +'-normals" name="'+ geometry.name +'-normals">'+ "\n";
+				xml += '       <float_array id="'+ geometry.name +'-normals-array" count="'+ geometry.normals.length +'">'+ geometry.normals.join(' ') +'</float_array>'+ "\n";
+				xml += '       <technique_common><accessor source="#'+ geometry.name +'-normals-array" count="'+ (geometry.normals.length/3) +'" stride="3"><param name="X" type="float"/><param name="Y" type="float"/><param name="Z" type="float"/></accessor></technique_common>'+ "\n";
+				xml += '     </source>'+ "\n";
+
+				angular.forEach(geometry.uvs, function (uv, uvNr) {
+					xml += '     <source id="'+ geometry.name +'-uv-'+ uvNr +'" name="'+ geometry.name +'-uv-'+ uvNr +'">'+ "\n";
+					xml += '       <float_array id="'+ geometry.name +'-uv-'+ uvNr +'-array" count="'+ uv.length +'">'+ uv.join(' ') +'</float_array>'+ "\n";
+					xml += '       <technique_common><accessor source="#'+ geometry.name +'-uv-'+ uvNr +'-array" count="'+ (uv.length/2) +'" stride="2"><param name="S" type="float"/><param name="T" type="float"/></accessor></technique_common>'+ "\n";
+					xml += '     </source>'+ "\n";
+				});
+
+				xml += '     <vertices id="'+ geometry.name +'-vertices">'+ "\n";
+				xml += '       <input semantic="POSITION" source="#'+ geometry.name +'-positions"/>'+ "\n";
+				xml += '     </vertices>'+ "\n";
+
+				xml += '     <polylist material="'+ geometry.name +'-material" count="'+ geometry.polycount +'">'+ "\n";
+				xml += '       <input semantic="VERTEX" source="#'+ geometry.name +'-vertices" offset="0"/>'+ "\n";
+				xml += '       <input semantic="NORMAL" source="#'+ geometry.name +'-normals" offset="1"/>'+ "\n";
+				angular.forEach(geometry.uvs, function (uv, uvNr) {
+					xml += '       <input semantic="TEXCOORD" source="#'+ geometry.name +'-uv-'+ uvNr +'" offset="2" set="0"/>'+ "\n";
+				});
+				xml += '       <vcount>'+ (new Array(geometry.polycount + 1).join('3 ').trim()) +'</vcount>'+ "\n";
+				xml += '       <p>'+ geometry.polylist.join(' ') +'</p>'+ "\n";
+				xml += '     </polylist>'+ "\n";
+				xml += '   </mesh>'+ "\n";
+				xml += '   </geometry>'+ "\n";
+
+			});
+			xml += '  </library_geometries>'+ "\n";
+
+			xml += '  <library_animations>'+ "\n";
+			xml += '  </library_animations>'+ "\n";
+
+			xml += '  <library_controllers>'+ "\n";
+			angular.forEach(colladaData.controllers, function (controller) {
+				xml += '   <controller id="'+ controller.name +'" name="'+ controller.name +'-name">'+ "\n";
+				xml += '     <skin source="#'+ controller.object.geometry.name +'">'+ "\n";
+				xml += '       <bind_shape_matrix>'+ controller.bindShapeMatrix.join(' ') +'</bind_shape_matrix>'+ "\n";
+				xml += '       <source id="'+ controller.name +'-joints">'+ "\n";
+				xml += '         <Name_array id="'+ controller.name +'-joints-array" count="'+ controller.jointNameList.length +'">'+ controller.jointNameList.join(' ') +'</Name_array>'+ "\n";
+				xml += '         <technique_common><accessor source="#'+ controller.name +'-joints-array" count="'+ controller.jointNameList.length +'" stride="1"><param name="JOINT" type="name"/></accessor></technique_common>'+ "\n";
+				xml += '       </source>'+ "\n";
+				xml += '       <source id="'+ controller.name +'-bindposes">'+ "\n";
+				xml += '         <float_array id="'+ controller.name +'-bindposes-array" count="'+ controller.jointPoseList.length +'">'+ controller.jointPoseList.join(' ') +'</float_array>'+ "\n";
+				xml += '         <technique_common><accessor source="#'+ controller.name +'-bindposes-array" count="'+ (controller.jointPoseList.length / 16) +'" stride="16"><param name="TRANSFORM" type="float4x4"/></accessor></technique_common>'+ "\n";
+				xml += '       </source>'+ "\n";
+				xml += '       <source id="'+ controller.name +'-skinweights">'+ "\n";
+				xml += '         <float_array id="'+ controller.name +'-skinweights-array" count="'+ controller.skinWeights.length +'">'+ controller.skinWeights.join(' ') +'</float_array>'+ "\n";
+				xml += '         <technique_common><accessor source="#'+ controller.name +'-skinweights-array" count="'+ (controller.skinWeights.length) +'" stride="1"><param name="WEIGHT" type="float"/></accessor></technique_common>'+ "\n";
+				xml += '       </source>'+ "\n";
+
+				xml += '       <joints>'+ "\n";
+				xml += '         <input semantic="JOINT" source="#'+ controller.name +'-joints"/>'+ "\n";
+				xml += '         <input semantic="INV_BIND_MATRIX" source="#'+ controller.name +'-bindposes"/>'+ "\n";
+				xml += '       </joints>'+ "\n";
+				xml += '       <vertex_weights count="'+ controller.skinWeights.length +'">'+ "\n";
+				xml += '         <input semantic="JOINT" source="#'+ controller.name +'-joints" offset="0"/>'+ "\n";
+				xml += '         <input semantic="WEIGHT" source="#'+ controller.name +'-skinweights" offset="1"/>'+ "\n";
+				xml += '         <vcount>'+ controller.skinVertexInfluenceCount.join(' ') +'</vcount>'+ "\n";
+				xml += '         <v>'+ controller.skinVertexInfluences.join(' ') +'</v>'+ "\n";
+				xml += '       </vertex_weights>'+ "\n";
+				xml += '     </skin>'+ "\n";
+				xml += '   </controller>'+ "\n";
+			});
+			xml += '  </library_controllers>'+ "\n";
+
+			var flip = this.flipMatrixArray;
+			function printNode(node, indent) {
+				var xml = '';
+
+				if (node.type && node.type == 'SCENE')
+					xml += indent +'<visual_scene id="'+ node.name +'" name="'+ node.name +'">'+ "\n";
+				else if (node.type && node.type == 'NODE')
+					xml += indent +'<node id="'+ node.name +'" name="'+ node.name +'" type="NODE">'+ "\n";
+				else // Bone
+					xml += indent +'<node id="'+ node.name +'" name="'+ node.name +'" sid="'+ node.name +'" type="JOINT">'+ "\n";
+
+				if (node.matrix)
+					xml += indent +'  <matrix sid="transform">'+ flip(node.matrix.toArray()).join(' ') +'</matrix>'+ "\n";
+
+				if (node.controller)
+				{
+					xml += indent +'  <instance_controller url="#'+ node.controller.name +'">'+ "\n";
+					xml += indent +'    <skeleton>#'+ colladaData.skeleton.bones[0].name +'</skeleton>'+ "\n";
+					xml += indent +'    <bind_material><technique_common>'+ "\n";
+					xml += indent +'      <instance_material symbol="'+ node.material.name +'" target="#'+ node.material.name +'">'+ "\n";
+					xml += indent +'        <bind_vertex_input semantic="'+ node.geometry.name +'-channel1" input_semantic="TEXCOORD" input_set="0"/>'+ "\n";
+					xml += indent +'      </instance_material>'+ "\n";
+					xml += indent +'     </technique_common></bind_material>'+ "\n";
+					xml += indent +'  </instance_controller>'+ "\n";
+				}
+				else if (node.material && node.material.diff)
+				{
+					xml += indent +'  <instance_geometry url="#'+ node.geometry.name +'">'+ "\n";
+					xml += indent +'    <bind_material><technique_common>'+ "\n";
+					xml += indent +'      <instance_material symbol="'+ node.material.name +'" target="#'+ node.material.name +'">'+ "\n";
+					xml += indent +'        <bind_vertex_input semantic="'+ node.geometry.name +'-channel1" input_semantic="TEXCOORD" input_set="0"/>'+ "\n";
+					xml += indent +'      </instance_material>'+ "\n";
+					xml += indent +'    </technique_common></bind_material>'+ "\n";
+					xml += indent +'  </instance_geometry>'+ "\n";
+				}
+				else if (node.geometry)
+				{
+					xml += indent +'  <instance_geometry url="#'+ node.geometry.name +'">'+ "\n";
+					xml += indent +'    <bind_material><technique_common>'+ "\n";
+					xml += indent +'      <instance_material symbol="'+ node.material.name +'" target="#'+ node.material.name +'"></instance_material>'+ "\n";
+					xml += indent +'    </technique_common></bind_material>'+ "\n";
+					xml += indent +'  </instance_geometry>'+ "\n";
+				}
+
+				if (node.children)
+				{
+					angular.forEach(node.children, function (subNode) {
+						xml += printNode(subNode, indent + '  ');
+					})
+				}
+
+				if (node.type && node.type == 'SCENE')
+					xml += indent +'</visual_scene>'+ "\n";
+				else
+					xml += indent +'</node>'+ "\n";
+
+				return xml;
+			}
+
+			xml += '  <library_visual_scenes>'+ "\n";
+			xml += printNode(colladaData.scene, '    ');
+			xml += '  </library_visual_scenes>'+ "\n";
+
+			xml += '  <scene><instance_visual_scene url="#Scene"/></scene>'+ "\n";
+
+			xml += '</COLLADA>'+ "\n";
+
+			return xml;
+		},
 		'setThreeJsLoaderHandlers': function () {
 			if (this.handlerAdded)
 				return;
@@ -549,7 +1162,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 					if (modPath.substr(-4) == '.dds')
 					{
-						this.loadDdsToTexture(modService.getFileBuffer(modPath));
+						texture = this.loadDdsToTexture(modService.getFileBuffer(modPath));
 					}
 					else
 					{
@@ -562,7 +1175,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 					}
 
 					return texture;
-				}
+				}.bind(this)
 			});
 			this.handlerAdded = true;
 		},
@@ -1043,6 +1656,7 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 				'meshCount': meshes.length,
 				'meshes': meshes,
 				'animations': [],
+				'colliders': colliders,
 			})
 
 			return deferred.promise;
@@ -1079,11 +1693,20 @@ module.factory('rendererService', ['$rootScope', '$q', 'modService', function($r
 
 				material = new THREE.MeshPhongMaterial();
 				if ('diff' in pdxMaterial)
+				{
 					material.map = this.loadDdsToTexture(modService.getFileBuffer(mesh.pdxPath + pdxMaterial.diff)); //THREE.ImageUtils.loadTexture('img/barque_diffuse.png');
+					material.map.fileName = pdxMaterial.diff;
+				}
 				if ('n' in pdxMaterial)
+				{
 					material.normalMap = this.loadDdsToTexture(modService.getFileBuffer(mesh.pdxPath + pdxMaterial.n));
+					material.normalMap.fileName = pdxMaterial.n;
+				}
 				if ('spec' in pdxMaterial)
+				{
 					material.specularMap = this.loadDdsToTexture(modService.getFileBuffer(mesh.pdxPath + pdxMaterial.spec));
+					material.specularMap.fileName = pdxMaterial.spec;
+				}
 
 				if (pdxMaterial.shader == 'PdxMeshAlphaBlendNoZWrite')
 				{
