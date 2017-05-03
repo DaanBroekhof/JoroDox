@@ -6,6 +6,7 @@ import MainSection from '../components/MainSection';
 import * as TodoActions from '../actions/todos';
 import style from './App.css';
 import FileTree from '../components/FileTree';
+import SplitterLayout from 'react-splitter-layout';
 
 @connect(
   state => ({
@@ -26,11 +27,16 @@ export default class App extends Component {
     const { todos, actions } = this.props;
 
     return (
-      <div className={style.normal}>
-        <FileTree />
-        <Header addTodo={actions.addTodo} />
-        <MainSection todos={todos} actions={actions} />
-      </div>
+        <SplitterLayout vertical>
+            <div>Header</div>
+            <SplitterLayout horizontal>
+                <FileTree />
+                <div>
+                    <Header addTodo={actions.addTodo} />
+                    <MainSection todos={todos} actions={actions} />
+                </div>
+            </SplitterLayout>
+        </SplitterLayout>
     );
   }
 }
