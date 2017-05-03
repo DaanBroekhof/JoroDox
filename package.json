@@ -74,6 +74,7 @@
     "react-dock": "^0.2.3",
     "react-dom": "^15.0.2",
     "react-redux": "^4.3.0",
+    "react-treebeard": "^1.1.4",
     "redux": "^3.2.1",
     "redux-thunk": "^2.0.1"
   }

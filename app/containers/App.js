@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import MainSection from '../components/MainSection';
 import * as TodoActions from '../actions/todos';
 import style from './App.css';
+import FileTree from '../components/FileTree';
 
 @connect(
   state => ({
@@ -26,6 +27,7 @@ export default class App extends Component {
 
     return (
       <div className={style.normal}>
+        <FileTree />
         <Header addTodo={actions.addTodo} />
         <MainSection todos={todos} actions={actions} />
       </div>
