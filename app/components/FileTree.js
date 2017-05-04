@@ -49,6 +49,7 @@ export default class FileTree extends React.Component {
             <Treebeard
                 data={treeData}
                 onToggle={this.onToggle}
+                animations={false}
             />
         );
     }

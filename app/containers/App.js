@@ -27,9 +27,9 @@ export default class App extends Component {
     const { todos, actions } = this.props;
 
     return (
-        <SplitterLayout vertical>
+        <SplitterLayout vertical primaryIndex={1} secondaryInitialSize={100}>
             <div>Header</div>
-            <SplitterLayout horizontal>
+            <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
                 <FileTree />
                 <div>
                     <Header addTodo={actions.addTodo} />
