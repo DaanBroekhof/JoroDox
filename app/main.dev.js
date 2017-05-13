@@ -61,8 +61,8 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728
+    width: 2048,
+    height: 1024,
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -79,6 +79,13 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  mainWindow.on('app-command', (e, cmd) => {
+      // Navigate the window back when the user hits their mouse back button
+      if (cmd === 'browser-backward' && mainWindow.webContents.canGoBack()) {
+          mainWindow.webContents.goBack();
+      }
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
