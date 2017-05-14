@@ -1,5 +1,6 @@
 // @flow
-import { app, Menu, shell, BrowserWindow } from 'electron';
+import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
+import jetpack from 'fs-jetpack';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -121,7 +122,13 @@ export default class MenuBuilder {
       label: '&File',
       submenu: [{
         label: '&Open',
-        accelerator: 'Ctrl+O'
+        accelerator: 'Ctrl+O',
+        click: () => {
+            let options = {properties: ['openDirectory']};
+            let parentWindow = (process.platform === 'darwin') ? null : BrowserWindow.getFocusedWindow();
+
+            dialog.showOpenDialog(parentWindow, options, function(f) { if (f) {console.log("Directory contents: ", jetpack.inspect(f[0], {'times': true}), jetpack.list(f[0]))} });
+        }
       }, {
         label: '&Close',
         accelerator: 'Ctrl+W',

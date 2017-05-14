@@ -192,6 +192,8 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "electron-debug": "^1.1.0",
     "font-awesome": "^4.7.0",
+    "fs-jetpack": "^0.13.3",
+    "graceful-fs": "^4.1.11",
     "history": "^4.6.1",
     "infinite-tree": "^1.10.0",
     "react": "^15.5.4",

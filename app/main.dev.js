@@ -12,6 +12,9 @@
  */
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
+import { fs } from 'graceful-fs';
+import { jetpack } from 'fs-jetpack';
+
 
 let mainWindow = null;
 

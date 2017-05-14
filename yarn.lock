@@ -3810,6 +3810,12 @@ fs-extra@^2.0.0, fs-extra@^2.1.2:
     graceful-fs "^4.1.2"
     jsonfile "^2.1.0"
 
+fs-jetpack@^0.13.3:
+  version "0.13.3"
+  resolved "https://registry.yarnpkg.com/fs-jetpack/-/fs-jetpack-0.13.3.tgz#9e6c47118f0bb3d880cc88f9f8a7d25863f4fb15"
+  dependencies:
+    minimatch "^3.0.2"
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"

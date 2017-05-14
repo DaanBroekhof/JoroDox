@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
+const jetpack = require('electron').remote.require('fs-jetpack');
+import { Route } from 'react-router';
 
 const data = {
     id: 'fruit',
@@ -20,204 +22,50 @@ const data = {
     }]
 };
 
-@injectSheet(styles)
 export default class FileTree extends React.Component {
     tree = null;
+    treeData = null;
+
+    constructor(props) {
+        super(props);
+
+        let rootInfo = jetpack.inspect(this.props.root, {absolutePath: true});
+
+        this.treeData = {
+            id: rootInfo.absolutePath,
+            name: rootInfo.name,
+            loadOnDemand: true,
+            info: rootInfo,
+        };
+
+        console.log(props)
+    }
 
     componentDidMount() {
-        this.tree.loadData(data);
+        this.tree.loadData(this.treeData);
 
         // Select the first node
         this.tree.selectNode(this.tree.getChildNodes()[0]);
     }
     render(){
         return (
-            <InfiniteTree
+            <Route render={({ history}) => (<InfiniteTree
+                style={{display: 'flex', flex: 1, backgroundColor: 'white'}}
                 ref={(c) => this.tree = c ? c.tree : null}
                 autoOpen={true}
                 loadNodes={(parentNode, done) => {
-                    const suffix = parentNode.id.replace(/(\w)+/, '');
-                    const nodes = [
-                        {
-                            id: 'node1' + suffix,
-                            name: 'Node 1'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        }
-                    ];
-                    setTimeout(() => {
-                        done(null, nodes);
-                    }, 1000);
+                    let childNodes = jetpack.list(parentNode.id).map((name) => {
+                        let fileInfo = jetpack.inspect(parentNode.id +"/"+ name, {absolutePath: true});
+                        return {
+                            id: parentNode.id +"/"+ name,
+                            name: name,
+                            loadOnDemand: fileInfo.type === 'dir',
+                            info: fileInfo,
+                        };
+                    }).sort((a,b) => {
+                        return a.info.type === b.info.type ? 0 : (a.info.type === 'dir'?-1:1);
+                    });
+                    done(null, childNodes);
                 }}
                 rowRenderer={(node, treeOptions) => {
                     const { id, name, loadOnDemand = false, children, state, props = {} } = node;
@@ -249,7 +97,7 @@ export default class FileTree extends React.Component {
                                 {!more && !loadOnDemand &&
                                 <span className={classNames(treeOptions.togglerClass)}> </span>
                                 }
-                                <span className={classNames(["infinite-tree-type", more ? 'infinite-tree-type-more' : ''])}>{more ? '🖿' : '🗎'}</span>
+                                <span className={classNames(["infinite-tree-type", more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? '🖿' : '🗎'}</span>
                                 <span className="infinite-tree-title">{name}</span>
                             </div>
                         </div>
@@ -265,7 +113,7 @@ export default class FileTree extends React.Component {
                 onClick={(event) => {
                     // click event
                     const target = event.target || event.srcElement; // IE8
-                    console.log('click:', target);
+                    //history.push('/fileview/')
                 }}
                 onDoubleClick={(event) => {
                     // dblclick event
@@ -284,6 +132,8 @@ export default class FileTree extends React.Component {
                 }}
                 onSelectNode={(node) => {
                     console.log('select node:', node);
+                    console.log(history);
+                    history.push('/fileview/'+ node.info.absolutePath);
                 }}
                 onClusterWillChange={() => {
                 }}
@@ -293,7 +143,7 @@ export default class FileTree extends React.Component {
                 }}
                 onContentDidUpdate={() => {
                 }}
-            />
+            />)} />
         );
     }
 }
