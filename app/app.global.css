@@ -30,7 +30,7 @@ html, body, #root {
 .infinite-tree-scroll {
   display: flex;
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .infinite-tree-content {
@@ -92,6 +92,15 @@ html, body, #root {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.pdx-script-node {
+    width: 300px;
+    display: inline-flex;
+}
+.pdx-script-value {
+    color: darkgreen;
+    display: inline-flex;
 }
 
 

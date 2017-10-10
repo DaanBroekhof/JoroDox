@@ -130,7 +130,7 @@ export default class FileTree extends React.Component {
                 shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
                         if (node && node.info.type == 'dir') {
-                            this.tree.toggleNode(node);
+                            this.tree.toggleNode(node, {async: true});
                         }
                         return false; // Prevent from deselecting the current node
                     }
@@ -157,7 +157,7 @@ export default class FileTree extends React.Component {
                 }}
                 onSelectNode={(node) => {
                     if (node.info.type == 'dir') {
-                        this.tree.openNode(node);
+                        this.tree.openNode(node, {async: true});
                     }
                     history.push('/fileview/'+ node.info.absolutePath);
                 }}
