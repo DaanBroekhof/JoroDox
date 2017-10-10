@@ -129,6 +129,9 @@ export default class FileTree extends React.Component {
                 selectable={true}
                 shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
+                        if (node && node.info.type == 'dir') {
+                            this.tree.toggleNode(node);
+                        }
                         return false; // Prevent from deselecting the current node
                     }
                     return true;
@@ -137,6 +140,7 @@ export default class FileTree extends React.Component {
                     // click event
                     const target = event.target || event.srcElement; // IE8
                     //history.push('/fileview/')
+
                 }}
                 onDoubleClick={(event) => {
                     // dblclick event
@@ -148,14 +152,13 @@ export default class FileTree extends React.Component {
                     // keyup event
                 }}
                 onOpenNode={(node) => {
-                    console.log('open node:', node);
                 }}
                 onCloseNode={(node) => {
-                    console.log('close node:', node);
                 }}
                 onSelectNode={(node) => {
-                    console.log('select node:', node);
-                    console.log(history);
+                    if (node.info.type == 'dir') {
+                        this.tree.openNode(node);
+                    }
                     history.push('/fileview/'+ node.info.absolutePath);
                 }}
                 onClusterWillChange={() => {

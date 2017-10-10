@@ -7,7 +7,7 @@
     "stage-0",
     "react"
   ],
-  "plugins": ["transform-decorators-legacy", "add-module-exports", "dynamic-import-webpack", ["import", { "libraryName": "antd", "style": "css" }]],
+  "plugins": ["add-module-exports", "dynamic-import-webpack"],
   "env": {
     "production": {
       "presets": ["react-optimize"],

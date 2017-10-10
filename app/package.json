@@ -14,28 +14,5 @@
   },
   "license": "MIT",
   "dependencies": {
-    "antd": "^2.10.1",
-    "babel-plugin-import": "^1.1.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "electron-debug": "^1.1.0",
-    "font-awesome": "^4.7.0",
-    "fs-jetpack": "^0.13.3",
-    "graceful-fs": "^4.1.11",
-    "history": "^4.6.1",
-    "infinite-tree": "^1.10.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "react-hot-loader": "3.0.0-beta.6",
-    "react-infinite-tree": "^0.6.1",
-    "react-jss": "^6.1.1",
-    "react-redux": "^5.0.4",
-    "react-router": "^4.1.1",
-    "react-router-dom": "^4.1.1",
-    "react-router-redux": "^5.0.0-alpha.6",
-    "react-splitter-layout": "^0.2.1",
-    "react-treebeard": "^1.1.4",
-    "redux": "^3.6.0",
-    "redux-thunk": "^2.2.0",
-    "source-map-support": "^0.4.15"
   }
 }
