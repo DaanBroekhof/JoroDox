@@ -54,18 +54,41 @@ export default class FileTree extends React.Component {
                 ref={(c) => this.tree = c ? c.tree : null}
                 autoOpen={true}
                 loadNodes={(parentNode, done) => {
-                    let childNodes = jetpack.list(parentNode.id).map((name) => {
-                        let fileInfo = jetpack.inspect(parentNode.id +"/"+ name, {absolutePath: true});
+                    let dirs = jetpack.find(parentNode.id, {matching: '*', recursive: false, files: false, directories: true});
+                    let files = jetpack.find(parentNode.id, {matching: '*', recursive: false});
+
+                    let dirNodes = dirs.map((name) => {
+                        name = name.substring(parentNode.id.length + 4);
                         return {
-                            id: parentNode.id +"/"+ name,
+                            id: parentNode.id + "/" + name,
                             name: name,
-                            loadOnDemand: fileInfo.type === 'dir',
-                            info: fileInfo,
+                            loadOnDemand: true,
+                            info: {
+                                'name': name,
+                                type: 'dir',
+                                absolutePath: parentNode.id + "/" + name,
+                            },
                         };
-                    }).sort((a,b) => {
-                        return a.info.type === b.info.type ? 0 : (a.info.type === 'dir'?-1:1);
+                    }).sort((a, b) => {
+                        return a.name.localeCompare(b.name);
                     });
-                    done(null, childNodes);
+                    let fileNodes = files.map((name) => {
+                        name = name.substring(parentNode.id.length + 4);
+                        return {
+                            id: parentNode.id + "/" + name,
+                            name: name,
+                            loadOnDemand: false,
+                            info: {
+                               'name': name,
+                                type: 'file',
+                                absolutePath: parentNode.id + "/" + name,
+                            },
+                        };
+                    }).sort((a, b) => {
+                        return a.name.localeCompare(b.name);
+                    });
+
+                    done(null, dirNodes.concat(fileNodes));
                 }}
                 rowRenderer={(node, treeOptions) => {
                     const { id, name, loadOnDemand = false, children, state, props = {} } = node;

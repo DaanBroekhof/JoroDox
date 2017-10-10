@@ -12,6 +12,13 @@ html, body, #root {
   height: 100%;
 }
 
+.splitter-layout .layout-pane:first-child {
+  display: flex;
+}
+
+.splitter-layout .layout-pane:first-child > div {
+  overflow-x: hidden;
+}
 
 .infinite-tree {
   padding-top: 5px;
@@ -20,8 +27,13 @@ html, body, #root {
 }
 
 .infinite-tree-scroll {
+  display: flex;
   flex: 1;
-  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.infinite-tree-content {
+  min-width: 100%;
 }
 
 .infinite-tree-toggler {

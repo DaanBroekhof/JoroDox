@@ -9,12 +9,13 @@ import FileView from '../components/FileView';
 import HomePage from '../containers/HomePage';
 import CounterPage from '../containers/CounterPage';
 
-import { Layout, Menu, Breadcrumb, Icon } from 'antd';
+import { Layout, Menu as AntdMenu, Breadcrumb, Icon } from 'antd';
 import { Row, Col, Button } from 'antd';
 import { Tree } from 'antd';
 const TreeNode = Tree.TreeNode;
 
 const { Header, Content, Sider } = Layout;
+const { Item } = AntdMenu;
 
 export default class App extends Component {
     constructor(props) {
@@ -32,16 +33,16 @@ export default class App extends Component {
     <Layout style={{ height: '100%' }}>
       <Header className="header">
         <div className="logo" />
-        <Menu
+        <AntdMenu
             theme="dark"
             mode="horizontal"
             defaultSelectedKeys={['2']}
             style={{ lineHeight: '64px' }}
         >
-          <Menu.Item key="1"><Link to="/">Explore</Link></Menu.Item>
-          <Menu.Item key="2">Settings</Menu.Item>
-          <Menu.Item key="3">About</Menu.Item>
-        </Menu>
+          <Item key="1"><Link to="/">Explore</Link></Item>
+          <Item key="2">Settings</Item>
+          <Item key="3">About</Item>
+        </AntdMenu>
       </Header>
       <Layout>
         <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={200}>
