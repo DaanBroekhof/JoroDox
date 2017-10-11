@@ -96,11 +96,11 @@ html, body, #root {
 
 .pdx-script-node {
     width: 300px;
-    display: inline-flex;
+    display: inline-block;
 }
 .pdx-script-value {
     color: darkgreen;
-    display: inline-flex;
+    display: inline-block;
 }
 
 

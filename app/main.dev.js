@@ -15,7 +15,6 @@ import MenuBuilder from './menu';
 import { fs } from 'graceful-fs';
 import { jetpack } from 'fs-jetpack';
 
-
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -61,11 +60,13 @@ app.on('ready', async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
+    const path = require('path');
 
   mainWindow = new BrowserWindow({
-    show: false,
-    width: 2048,
-    height: 1024,
+      show: false,
+      width: 2048,
+      height: 1024,
+      icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
