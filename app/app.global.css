@@ -22,7 +22,6 @@ html, body, #root {
 }
 
 .infinite-tree {
-  padding-top: 5px;
   font-size: 90%;
   outline: 0;
 }
@@ -35,6 +34,7 @@ html, body, #root {
 
 .infinite-tree-content {
   min-width: 100%;
+  padding: 4px;
 }
 
 .infinite-tree-toggler {
@@ -44,6 +44,7 @@ html, body, #root {
   transform: rotate(90deg);
   color: black;
   font-weight: bold;
+  vertical-align: middle;
 }
 
 .infinite-tree-closed {
@@ -55,20 +56,19 @@ html, body, #root {
   display: inline-block;
   text-align: center;
   font-size: 20px;
+  vertical-align: middle;
 }
 
 .infinite-tree-type-more {
-  font-size: 120%;
+  font-size: 125%;
 }
 
 .infinite-tree-item {
-  height: 22px;
   font-size: 80%;
   line-height: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
   border-radius: 4px;
   overflow: hidden;
+  display: flex;
 }
 
 .infinite-tree-item:hover {
@@ -84,6 +84,7 @@ html, body, #root {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  vertical-align: -10%;
 }
 
 .infinite-tree-node {
@@ -92,15 +93,17 @@ html, body, #root {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  line-height: 20px;
 }
 
 .pdx-script-node {
-    width: 300px;
-    display: inline-block;
+  width: 300px;
+  flex-shrink: 0;
 }
 .pdx-script-value {
-    color: darkgreen;
-    display: inline-block;
+  color: darkgreen;
+  flex-grow: 1;
+  line-height: 22px;
 }
 
 

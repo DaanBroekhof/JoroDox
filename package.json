@@ -190,6 +190,7 @@
     "antd": "^2.13.4",
     "devtron": "^1.4.0",
     "electron-debug": "^1.2.0",
+    "filesize": "^3.5.10",
     "font-awesome": "^4.7.0",
     "fs-jetpack": "^0.13.3",
     "history": "^4.6.3",
