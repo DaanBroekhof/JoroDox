@@ -96,11 +96,17 @@ html, body, #root {
   line-height: 20px;
 }
 
-.pdx-script-node {
+.pdx-script-node, .pdx-script-value {
   width: 300px;
   flex-shrink: 0;
 }
-.pdx-script-value {
+.pdx-data-type {
+  color: darkgreen;
+  width: 100px;
+  flex-shrink: 0;
+  line-height: 22px;
+}
+.pdx-script-value, .pdx-data-value {
   color: darkgreen;
   flex-grow: 1;
   line-height: 22px;

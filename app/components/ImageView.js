@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 const jetpack = require('electron').remote.require('fs-jetpack');
+const TGA = require('../utils/TGA');
 
 export default class ImageView extends Component {
 
@@ -10,6 +11,12 @@ export default class ImageView extends Component {
         let imgSrc = null;
         if (this.props.file.path.match(/\.png$|.jpg|.bmp$/i)) {
             imgSrc = 'file:///' + this.props.file.path;
+        }
+        else if (this.props.file.path.match(/\.tga$/i)) {
+            let tgaImage = new TGA();
+            let buf = jetpack.read(this.props.file.path, 'buffer');
+            tgaImage.load(buf);
+            imgSrc = tgaImage.getDataURL('image/png');
         }
 
         return (
