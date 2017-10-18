@@ -4,6 +4,7 @@ import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 const jetpack = require('electron').remote.require('fs-jetpack');
 import { Route } from 'react-router';
+import FileView from './FileView';
 
 const data = {
     id: 'fruit',
@@ -121,7 +122,7 @@ export default class FileTree extends React.Component {
                                 <span className={classNames(treeOptions.togglerClass)}> </span>
                                 }
                                 <span className={classNames(["infinite-tree-type", more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? '🖿' : '🗎'}</span>
-                                <span className="infinite-tree-title">{name}</span>
+                                <span className={classNames(["infinite-tree-title", FileView.getFileType(node) !== 'unknown' ? 'filetree-known-type' : ''])}>{name}</span>
                             </div>
                         </div>
                     );
@@ -129,7 +130,7 @@ export default class FileTree extends React.Component {
                 selectable={true}
                 shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
-                        if (node && node.info.type == 'dir') {
+                        if (node && node.info.type === 'dir') {
                             this.tree.toggleNode(node, {async: true});
                         }
                         return false; // Prevent from deselecting the current node

@@ -2,16 +2,27 @@
 import React, { Component } from 'react';
 const jetpack = require('electron').remote.require('fs-jetpack');
 import PdxScriptView from "./PdxScriptView";
+import ImageView from "./ImageView";
 let filesize = require('filesize');
 
 export default class FileView extends Component {
     static getFileType(file) {
+        if (file.type === 'dir')
+            return 'directory';
         let extension = file.name.match(/\.([^.]+)$/);
 
-        switch (extension ? extension[1] : null) {
-            case 'asset': return 'pdx-script';
-            case 'txt': return 'pdx-script';
-            default : return null;
+        switch (extension ? extension[1].toLowerCase() : null) {
+            case 'asset':
+            case 'gfx':
+            case 'txt':
+            case 'gui':
+                return 'pdx-script';
+            case 'png':
+            case 'jpg':
+            case 'bmp':
+                return 'image';
+            default :
+                return 'unknown';
         }
     }
 
@@ -23,8 +34,10 @@ export default class FileView extends Component {
         return (
             <div>
                 <h2>{file.name}</h2>
-                {file.type === 'file' && <p>Size: {filesize(file.size)}</p>}
+                <p>Type: {fileType} {file.type === 'file' && <span>- Size: {filesize(file.size)}</span>}</p>
                 {fileType === 'pdx-script' && <PdxScriptView file={file} />}
+                {fileType === 'image' && <ImageView file={file} />}
+
             </div>
         );
     }

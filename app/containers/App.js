@@ -45,7 +45,7 @@ export default class App extends Component {
         </AntdMenu>
       </Header>
       <Layout>
-        <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={200}>
+        <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
           <FileTree root={this.state.rootPath}/>
           <Layout style={{ padding: '0 24px 24px' }}>
             <Breadcrumb style={{ margin: '12px 0' }} />

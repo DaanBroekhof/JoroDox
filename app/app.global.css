@@ -106,6 +106,9 @@ html, body, #root {
   line-height: 22px;
 }
 
+.filetree-known-type {
+  color: #006400;
+}
 
 .splitter-layout {
   position: relative;

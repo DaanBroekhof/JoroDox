@@ -21,12 +21,6 @@ export default class PdxScriptView extends Component {
                 fileTreeData: this.parseFile(nextProps.file.path)
             });
         }
-
-        if (this.tree) {
-            this.tree.loadData(this.state.fileTreeData);
-            if (this.tree.getChildNodes())
-                this.tree.selectNode(this.tree.getChildNodes()[0]);
-        }
     }
 
     parseFile(path) {
@@ -36,6 +30,12 @@ export default class PdxScriptView extends Component {
     }
 
     componentDidMount() {
+        this.tree.loadData(this.state.fileTreeData);
+        if (this.tree.getChildNodes())
+            this.tree.selectNode(this.tree.getChildNodes()[0]);
+    }
+
+    componentDidUpdate() {
         this.tree.loadData(this.state.fileTreeData);
         if (this.tree.getChildNodes())
             this.tree.selectNode(this.tree.getChildNodes()[0]);
