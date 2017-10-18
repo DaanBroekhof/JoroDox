@@ -1,11 +1,13 @@
 // @flow
-import { app, Menu, shell, BrowserWindow, dialog } from 'electron';
-import jetpack from 'fs-jetpack';
+const app = require('electron').app;
+const Menu = require('electron').Menu;
+const shell = require('electron').shell;
+const BrowserWindow = require('electron').BrowserWindow;
+const dialog = require('electron').dialog;
+const jetpack = require('fs-jetpack').jetpack;
 
-export default class MenuBuilder {
-  mainWindow: BrowserWindow;
-
-  constructor(mainWindow: BrowserWindow) {
+class MenuBuilder {
+  constructor(mainWindow) {
     this.mainWindow = mainWindow;
   }
 
@@ -197,3 +199,5 @@ export default class MenuBuilder {
     return templateDefault;
   }
 }
+
+module.exports = MenuBuilder;

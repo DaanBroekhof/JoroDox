@@ -10,10 +10,14 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
-import MenuBuilder from './menu';
-import { fs } from 'graceful-fs';
-import { jetpack } from 'fs-jetpack';
+
+const app = require('electron').app;
+const BrowserWindow = require('electron').BrowserWindow;
+const MenuBuilder = require('./menu');
+const jetpack = require('fs-jetpack').jetpack;
+
+const {ipcMain, protocol} = require('electron');
+const BmpConvert = require('./utils/BmpConvert');
 
 let mainWindow = null;
 
@@ -60,7 +64,7 @@ app.on('ready', async () => {
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
-    const path = require('path');
+  const path = require('path');
 
   mainWindow = new BrowserWindow({
       show: false,
