@@ -14,10 +14,6 @@
 const app = require('electron').app;
 const BrowserWindow = require('electron').BrowserWindow;
 const MenuBuilder = require('./menu');
-const jetpack = require('fs-jetpack').jetpack;
-
-const {ipcMain, protocol} = require('electron');
-const BmpConvert = require('./utils/BmpConvert');
 
 let mainWindow = null;
 
