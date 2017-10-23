@@ -4,7 +4,8 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 import PdxScriptView from "./PdxScriptView";
 import PdxDataView from "./PdxDataView";
 import ImageView from "./ImageView";
-let filesize = require('filesize');
+import {Paper, Typography} from "material-ui";
+import filesize from 'filesize';
 
 export default class FileView extends Component {
     static getFileType(file) {
@@ -37,14 +38,15 @@ export default class FileView extends Component {
         let fileType = FileView.getFileType(file);
 
         return (
-            <div>
-                <h2>{file.name}</h2>
+            <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
+                <Typography type="display2" gutterBottom>{file.name}</Typography>
+                <Typography type="caption">{file.path}</Typography>
                 <p>Type: {fileType} {file.type === 'file' && <span>- Size: {filesize(file.size)}</span>}</p>
                 {fileType === 'pdx-script' && <PdxScriptView file={file} />}
                 {fileType === 'pdx-data' && <PdxDataView file={file} />}
                 {fileType === 'image' && <ImageView file={file} />}
 
-            </div>
+            </Paper>
         );
     }
 }

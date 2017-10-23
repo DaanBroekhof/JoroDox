@@ -4,6 +4,7 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 import InfiniteTree from 'react-infinite-tree';
 import classNames from 'classnames';
 import PdxScript from '../utils/PdxScript';
+import * as iconv from "iconv-lite";
 
 export default class PdxScriptView extends Component {
 
@@ -25,7 +26,7 @@ export default class PdxScriptView extends Component {
 
     parseFile(path) {
         let parser = new PdxScript();
-        let data = parser.readFile(jetpack.read(path));
+        let data = parser.readFile(iconv.decode(jetpack.read(path, 'buffer'), 'win1252'));
         return parser.errors.length ? null : data;
     }
 
@@ -45,6 +46,7 @@ export default class PdxScriptView extends Component {
         return (
             <InfiniteTree
                 ref={(c) => this.tree = c ? c.tree : null}
+                style={{display: 'flex', flex: 1, border : '1px solid #eee'}}
                 autoOpen={false}
                 loadNodes={(parentNode, done) => {
                 }}
@@ -53,6 +55,11 @@ export default class PdxScriptView extends Component {
                     const droppable = treeOptions.droppable;
                     const { depth, open, path, total, selected = false } = state;
                     const more = node.hasChildren();
+
+                    // Do not show root node
+                    if (depth === 0) {
+                        return <div />;
+                    }
 
                     return (
                         <div
@@ -64,7 +71,7 @@ export default class PdxScriptView extends Component {
                         >
                             <div
                                 className="infinite-tree-node pdx-script-node"
-                                style={{ paddingLeft: depth * 18 }}
+                                style={{ paddingLeft: (depth - 1) * 18 }}
                             >
                                 {!more && loadOnDemand &&
                                 <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
@@ -81,7 +88,8 @@ export default class PdxScriptView extends Component {
                                 <span className={classNames(["infinite-tree-type", more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? '🖿' : '🗎'}</span>
                                 <span className="infinite-tree-title">{name}</span>
                             </div>
-                            <div className="pdx-script-value">{node.value}</div>
+                            <div className="pdx-script-count">{children.length ? children.length : ''}</div>
+                            <div className="pdx-script-value">{Array.isArray(node.value) ? '[' + node.value.join(', ') + ']' : node.value}</div>
                         </div>
                     );
                 }}

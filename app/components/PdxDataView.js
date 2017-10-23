@@ -60,6 +60,7 @@ export default class PdxDataView extends Component {
         return (
             <InfiniteTree
                 ref={(c) => this.tree = c ? c.tree : null}
+                style={{display: 'flex', flex: 1, border : '1px solid #eee'}}
                 autoOpen={false}
                 loadNodes={(parentNode, done) => {
                 }}

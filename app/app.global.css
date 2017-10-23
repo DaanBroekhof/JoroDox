@@ -1,5 +1,6 @@
-@import '~antd/dist/antd.css';
+/*@import '~antd/dist/antd.css';*/
 
+/* General styling */
 
 body {
   padding: 0;
@@ -7,12 +8,18 @@ body {
   font-size: 130%;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   color: black;
+  background-color: #eee;
 }
 
 html, body, #root {
   height: 100%;
 }
 
+.layout-pane.layout-pane-primary {
+  display: flex;
+}
+
+/* File tree scroll-fixes */
 .splitter-layout .layout-pane:first-child {
   display: flex;
 }
@@ -34,8 +41,22 @@ html, body, #root {
 
 .infinite-tree-content {
   min-width: 100%;
-  padding: 4px;
+  padding: 10px;
+  box-sizing: border-box;
 }
+
+.splitter-layout {
+  position: relative;
+  height: auto;
+  flex: 1;
+}
+
+.splitter-layout>.layout-splitter {
+  min-height: 100%;
+  height: auto;
+}
+
+/* File tree styling */
 
 .infinite-tree-toggler {
   width: 18px;
@@ -96,9 +117,22 @@ html, body, #root {
   line-height: 20px;
 }
 
+.filetree-known-type {
+  color: #006400;
+}
+
+/* PDX script/data File view tree styling */
+
 .pdx-script-node, .pdx-script-value {
   width: 300px;
   flex-shrink: 0;
+  box-sizing: border-box;
+}
+.pdx-script-count {
+  color: grey;
+  flex-shrink: 0;
+  width: 30px;
+  line-height: 22px;
 }
 .pdx-data-type {
   color: darkgreen;
@@ -110,20 +144,4 @@ html, body, #root {
   color: darkgreen;
   flex-grow: 1;
   line-height: 22px;
-}
-
-.filetree-known-type {
-  color: #006400;
-}
-
-.splitter-layout {
-  position: relative;
-  height: auto;
-  min-height: 100%;
-  flex: 1;
-}
-
-.splitter-layout>.layout-splitter {
-  min-height: 100%;
-  height: auto;
 }

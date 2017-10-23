@@ -6,23 +6,6 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 import { Route } from 'react-router';
 import FileView from './FileView';
 
-const data = {
-    id: 'fruit',
-    name: 'Fruit',
-    children: [{
-        id: 'apple',
-        name: 'Apple'
-    }, {
-        id: 'banana',
-        name: 'Banana',
-        children: [{
-            id: 'cherry',
-            name: 'Cherry',
-            loadOnDemand: true
-        }]
-    }]
-};
-
 export default class FileTree extends React.Component {
     tree = null;
     treeData = null;
@@ -30,24 +13,40 @@ export default class FileTree extends React.Component {
     constructor(props) {
         super(props);
 
-        let rootInfo = jetpack.inspect(this.props.root, {absolutePath: true});
-
-        this.treeData = {
-            id: rootInfo.absolutePath,
-            name: rootInfo.name,
-            loadOnDemand: true,
-            info: rootInfo,
+        this.state = {
+            treeData: null,
         };
-
-        console.log(props)
     }
 
     componentDidMount() {
-        this.tree.loadData(this.treeData);
-
-        // Select the first node
-        this.tree.selectNode(this.tree.getChildNodes()[0]);
+        this.setTreeState(this.props.root);
     }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.root !== this.props.root) {
+            this.setTreeState(nextProps.root);
+        }
+    }
+
+    setTreeState(root) {
+        let rootInfo = jetpack.inspect(root, {absolutePath: true});
+
+        this.setState({
+            treeData: {
+                id: rootInfo.absolutePath,
+                name: rootInfo.name,
+                loadOnDemand: true,
+                info: rootInfo,
+            }
+        }, function() {
+            this.tree.loadData(this.state.treeData);
+
+            // Select the first node
+            this.tree.selectNode(this.tree.getChildNodes()[0]);
+        });
+    }
+
+
     render(){
         return (
             <Route render={({ history}) => (<InfiniteTree
@@ -55,11 +54,11 @@ export default class FileTree extends React.Component {
                 ref={(c) => this.tree = c ? c.tree : null}
                 autoOpen={true}
                 loadNodes={(parentNode, done) => {
-                    let dirs = jetpack.find(parentNode.id, {matching: '*', recursive: false, files: false, directories: true});
-                    let files = jetpack.find(parentNode.id, {matching: '*', recursive: false});
+                    let localJetpack = jetpack.cwd(parentNode.id);
+                    let dirs = localJetpack.find('.', {matching: '*', recursive: false, files: false, directories: true});
+                    let files = localJetpack.find('.', {matching: '*', recursive: false});
 
                     let dirNodes = dirs.map((name) => {
-                        name = name.substring(parentNode.id.length + 4);
                         return {
                             id: parentNode.id + "/" + name,
                             name: name,
@@ -74,7 +73,6 @@ export default class FileTree extends React.Component {
                         return a.name.localeCompare(b.name);
                     });
                     let fileNodes = files.map((name) => {
-                        name = name.substring(parentNode.id.length + 4);
                         return {
                             id: parentNode.id + "/" + name,
                             name: name,
@@ -107,7 +105,7 @@ export default class FileTree extends React.Component {
                         >
                             <div
                                 className="infinite-tree-node"
-                                style={{ marginLeft: depth * 18 }}
+                                style={{ marginLeft: (depth-1) * 18 }}
                             >
                                 {!more && loadOnDemand &&
                                 <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>

@@ -14,7 +14,7 @@ export default function Root({ store, history }: RootType) {
   return (
     <Provider store={store}>
       <ConnectedRouter history={history}>
-          <Route name="home" breadcrumbName="Home"  component={App} />
+          <Route name="home" breadcrumbName="Home" component={App} />
       </ConnectedRouter>
     </Provider>
   );

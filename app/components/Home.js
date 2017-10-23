@@ -1,18 +1,16 @@
 // @flow
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import styles from './Home.css';
+import {Paper, Typography} from "material-ui";
 
 export default class Home extends Component {
-  render() {
-    return (
-      <div>
-        <div className={styles.container} data-tid="container">
-          <h2>Home</h2>
-          <Link to="/counter">to Counter</Link>
-          <Link to="/fileview/D:/Tmp/the-real-bfgs.jpg">to FileView</Link>
-        </div>
-      </div>
-    );
-  }
+    render() {
+        return (
+            <Paper style={{flex: 1, margin: 20, padding: 20}}>
+                <Typography type="display2" gutterBottom>Home page</Typography>
+                <p>It's just a start...</p>
+            </Paper>
+        );
+    }
 }

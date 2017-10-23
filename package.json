@@ -187,7 +187,6 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
-    "antd": "^2.13.7",
     "bmp-js": "^0.0.3",
     "devtron": "^1.4.0",
     "electron-debug": "^1.2.0",
@@ -195,7 +194,10 @@
     "font-awesome": "^4.7.0",
     "fs-jetpack": "^1.2.0",
     "history": "^4.6.3",
+    "iconv-lite": "^0.4.19",
     "infinite-tree": "^1",
+    "material-ui": "next",
+    "project-version": "^1.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-hot-loader": "^3.1.1",
@@ -208,7 +210,8 @@
     "redux": "^3.7.1",
     "redux-thunk": "^2.2.0",
     "source-map-support": "^0.5.0",
-    "tga": "^1.0.2"
+    "tga": "^1.0.2",
+    "typeface-roboto": "^0.0.41"
   },
   "devEngines": {
     "node": ">=7.x",
