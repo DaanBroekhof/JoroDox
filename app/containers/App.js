@@ -34,8 +34,6 @@ export default class App extends Component {
         this.state = {
             rootPath: "F:\\Games\\Steam\\steamapps\\common\\Europa Universalis IV",
         };
-
-        //this.openDirectory = this.openDirectory.bind(this);
     }
 
     openDirectory = () => {
@@ -43,8 +41,9 @@ export default class App extends Component {
 
         console.log(dir);
 
-        if (dir && dir.length > 0)
+        if (dir && dir.length > 0) {
             this.setState({rootPath: dir[0]});
+        }
     };
 
     render() {
@@ -64,7 +63,10 @@ export default class App extends Component {
                         </Toolbar>
                     </AppBar>
                     <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
-                        <FileTree root={this.state.rootPath}/>
+                        <Switch>
+                            <Route path="/fileview/:path*" render={(props) => <FileTree root={this.state.rootPath}  {...props}/>} />
+                            <Route path="/" render={(props) => <FileTree root={this.state.rootPath}  {...props}/>} />
+                        </Switch>
                         <Switch>
                             <Route path="/fileview/:path*" component={FileView}/>
                             <Route path="/settings" component={SettingsPage}/>

@@ -6,6 +6,7 @@ import PdxDataView from "./PdxDataView";
 import ImageView from "./ImageView";
 import {Paper, Typography} from "material-ui";
 import filesize from 'filesize';
+import PdxMeshView from "./PdxMeshView";
 
 export default class FileView extends Component {
     static getFileType(file) {
@@ -20,6 +21,7 @@ export default class FileView extends Component {
             case 'gui':
                 return 'pdx-script';
             case 'mesh':
+                return 'pdx-mesh';
             case 'anim':
                 return 'pdx-data';
             case 'png':
@@ -38,12 +40,13 @@ export default class FileView extends Component {
         let fileType = FileView.getFileType(file);
 
         return (
-            <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
+            <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
                 <Typography type="display2" gutterBottom>{file.name}</Typography>
                 <Typography type="caption">{file.path}</Typography>
                 <p>Type: {fileType} {file.type === 'file' && <span>- Size: {filesize(file.size)}</span>}</p>
                 {fileType === 'pdx-script' && <PdxScriptView file={file} />}
                 {fileType === 'pdx-data' && <PdxDataView file={file} />}
+                {fileType === 'pdx-mesh' && <PdxMeshView file={file} width={800} height={600} />}
                 {fileType === 'image' && <ImageView file={file} />}
 
             </Paper>

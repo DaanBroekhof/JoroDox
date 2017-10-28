@@ -41,11 +41,18 @@ export default class FileTree extends React.Component {
         }, function() {
             this.tree.loadData(this.state.treeData);
 
-            // Select the first node
-            this.tree.selectNode(this.tree.getChildNodes()[0]);
+            if (this.props.match.params.path) {
+                this.openToPath = this.props.match.params.path;
+            }
+
+            // Open the dir, if present
+            this.tree.openNode(this.tree.getChildNodes()[0]);
+
+            if (this.tree.getChildNodes()[0].id === this.openToPath) {
+                history.push('/fileview/'+ this.tree.getChildNodes()[0].info.absolutePath);
+            }
         });
     }
-
 
     render(){
         return (
@@ -151,6 +158,19 @@ export default class FileTree extends React.Component {
                     // keyup event
                 }}
                 onOpenNode={(node) => {
+                    if (this.openToPath) {
+                        for (let child of node.children) {
+                            if (this.openToPath === child.id) {
+                                this.openToPath = null;
+                                this.tree.selectNode(child);
+                                break;
+                            }
+                            else if (this.openToPath.startsWith(child.id)) {
+                                this.tree.openNode(child, {async: true});
+                                break;
+                            }
+                        }
+                    }
                 }}
                 onCloseNode={(node) => {
                 }}
@@ -158,7 +178,8 @@ export default class FileTree extends React.Component {
                     if (node.info.type == 'dir') {
                         this.tree.openNode(node, {async: true});
                     }
-                    history.push('/fileview/'+ node.info.absolutePath);
+                    if (history.location.pathname !== '/fileview/'+ node.info.absolutePath)
+                        history.push('/fileview/'+ node.info.absolutePath);
                 }}
                 onClusterWillChange={() => {
                 }}
