@@ -8994,6 +8994,12 @@ theming@^1.1.0:
     prop-types "^15.5.8"
     react "^15.5.4"
 
+three-addons@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/three-addons/-/three-addons-1.1.0.tgz#e4c4b7e673f658434b0b8823914d4b057c7d890a"
+  dependencies:
+    three "^0.87.1"
+
 three@^0.87.1:
   version "0.87.1"
   resolved "https://registry.yarnpkg.com/three/-/three-0.87.1.tgz#466a34edc4543459ced9b9d7d276b65216fe2ba8"
