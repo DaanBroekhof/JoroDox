@@ -5965,6 +5965,12 @@ map-obj@^1.0.0, map-obj@^1.0.1:
     buffers "~0.1.1"
     readable-stream "~1.0.0"
 
+material-ui-icons@next:
+  version "1.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/material-ui-icons/-/material-ui-icons-1.0.0-beta.17.tgz#5f19af54a2d99eeef347a55414a6853e1c850dc3"
+  dependencies:
+    recompose "^0.26.0"
+
 material-ui@next:
   version "1.0.0-beta.18"
   resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-beta.18.tgz#844330a88d04366ac4aab37e3f0a2592e5988981"

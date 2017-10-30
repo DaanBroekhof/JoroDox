@@ -6,7 +6,8 @@ import PdxData from '../utils/PdxData';
 import PdxDataView from "./PdxDataView";
 import * as THREE from 'three';
 import PdxMesh from '../utils/PdxMesh';
-import {Button} from "material-ui";
+import {Button, Checkbox, FormControlLabel, FormGroup, Icon, IconButton} from "material-ui";
+import DeleteIcon from 'material-ui-icons/Delete';
 
 export default class PdxMeshView extends Component {
 
@@ -15,6 +16,18 @@ export default class PdxMeshView extends Component {
 
         this.state = {
             fileTreeData: this.parseFile(props.file.path)
+        };
+
+        this.viewConfig = {
+            distance: 20,
+            update: null,
+            showSkeletons: true,
+            showWireframes: false,
+            showColliders: true,
+            showMeshes: true,
+            showSpotlights: true,
+            rotate: true,
+            rotation: 0,
         };
     }
 
@@ -84,11 +97,11 @@ export default class PdxMeshView extends Component {
         directionalLight.position.normalize();
         this.scene.add( directionalLight );
 
+
         this.objectScene = PdxMesh.convertToThreeJsScene(this.state.fileTreeData, path.resolve(this.props.file.path, '..'));
         this.scene.add(this.objectScene.object);
-
         this.viewConfig = {
-            distance: 20,
+            distance: this.objectScene.distance * 4,
             update: null,
             showSkeletons: true,
             showWireframes: false,
@@ -101,6 +114,11 @@ export default class PdxMeshView extends Component {
         this.clock = new THREE.Clock();
 
         this.animateScene();
+
+        if (this.currentObject !== this.props.file.path) {
+            this.currentObject = this.props.file.path;
+            this.forceUpdate();
+        }
     }
 
     animateScene()
@@ -108,16 +126,16 @@ export default class PdxMeshView extends Component {
         requestAnimationFrame(this.animateScene.bind(this));
 
         // Rotate camera
+        let delta = this.clock.getDelta();
         if (this.viewConfig.rotate) {
-            let delta = this.clock.getDelta();
             this.viewConfig.rotation += delta * 0.5;
-
-            this.camera.position.x = Math.cos(this.viewConfig.rotation) * this.viewConfig.distance;
-            this.camera.position.y = this.viewConfig.distance / 4;
-            this.camera.position.z = Math.sin(this.viewConfig.rotation) * this.viewConfig.distance;
-
-            this.camera.lookAt(this.scene.position);
         }
+
+        this.camera.position.x = Math.cos(this.viewConfig.rotation) * this.viewConfig.distance;
+        this.camera.position.y = this.viewConfig.distance / 4;
+        this.camera.position.z = Math.sin(this.viewConfig.rotation) * this.viewConfig.distance;
+        this.camera.lookAt(new THREE.Vector3(0, this.objectScene.maxExtentHeight / 2, 0));
+
 
         // Rotate particle lights
         let timer = Date.now() * 0.0005;
@@ -126,23 +144,73 @@ export default class PdxMeshView extends Component {
         this.particleLight.position.y = Math.cos(timer * 5) * 40000;
         this.particleLight.position.z = Math.cos(timer * 4) * 30009;
 
+        if (this.objectScene) {
+
+            for (let i = 0; i < this.objectScene.skeletons.length; i++) {
+                this.objectScene.skeletons[i].visible = this.viewConfig.showSkeletons;
+            }
+            for (let i = 0; i < this.objectScene.wireframes.length; i++) {
+                this.objectScene.wireframes[i].visible = this.viewConfig.showWireframes;
+            }
+            for (let i = 0; i < this.objectScene.meshes.length; i++) {
+                this.objectScene.meshes[i].material.visible = this.viewConfig.showMeshes;
+            }
+            for (let i = 0; i < this.objectScene.colliders.length; i++) {
+                this.objectScene.colliders[i].material.visible = this.viewConfig.showColliders;
+            }
+        }
 
         this.renderer.render(this.scene, this.camera);
+    }
+
+    toggleValue(name) {
+        return (event, checked) => {
+            this.viewConfig[name] = !this.viewConfig[name];
+        }
+    }
+
+    clickZoomOut() {
+        return () => {
+            this.viewConfig.distance = this.viewConfig.distance * 1.1;
+        };
+    }
+
+    clickZoomIn() {
+        return () => {
+            this.viewConfig.distance = this.viewConfig.distance * 0.9;
+        };
     }
 
     render() {
         return (
             <div>
-                <div>
-                    <Button raised>Skeleton</Button>
-                    <Button raised>Mesh</Button>
-                    <Button raised>Colliders</Button>
-                    <Button raised>Spotlights</Button>
-                    <Button raised>+</Button>
-                    <Button raised>-</Button>
+                <FormGroup row style={{alignItems: 'center'}}>
+                    <FormControlLabel label="Skeletons" control={<Checkbox defaultChecked={this.viewConfig.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
+                    <FormControlLabel label="Mesh" control={<Checkbox defaultChecked={this.viewConfig.showMeshes} onChange={this.toggleValue('showMeshes')} />} />
+                    <FormControlLabel label="Colliders" control={<Checkbox defaultChecked={this.viewConfig.showColliders} onChange={this.toggleValue('showColliders')} />} />
+                    <FormControlLabel label="Spotlights" control={<Checkbox defaultChecked={this.viewConfig.showSpotlights} onChange={this.toggleValue('showSpotlights')} />} />
+
+                    <FormControlLabel label="Rotate" control={<Checkbox defaultChecked={this.viewConfig.rotate} onChange={this.toggleValue('rotate')} />} />
+
+                </FormGroup>
+
+                <div style={{position: 'relative', display: 'inline-block'}}>
+                    <canvas ref={canvas => this.canvas = canvas} style={{width: 800, height: 600}} />
+                    <div style={{position: 'absolute', right: 10, top: 10}}>
+                        <Button fab color="accent" aria-label="Zoom in" style={{marginRight: 5, width: 36, height: 36}} onClick={this.clickZoomIn()}>
+                            <Icon>zoom_in</Icon>
+                        </Button>
+                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 0, width: 36, height: 36}} onClick={this.clickZoomOut()}>
+                            <Icon>zoom_out</Icon>
+                        </Button>
+                    </div>
+                    <div style={{position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'}}>
+                        Meshes: {this.objectScene ? this.objectScene.meshCount : '-'}<br />
+                        Triangles: {this.objectScene ? this.objectScene.triangleCount : '-'}<br />
+                        Bones: {this.objectScene ? this.objectScene.boneCount : '-'}<br />
+                    </div>
                 </div>
-                <canvas ref={canvas => this.canvas = canvas} style={{width: 800, height: 600}} />
-                <PdxDataView file={this.props.file} />
+                <PdxDataView file={this.props.file} style={{maxHeight: 800}} />
             </div>
         );
     }

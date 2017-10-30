@@ -197,6 +197,7 @@
     "iconv-lite": "^0.4.19",
     "infinite-tree": "^1",
     "material-ui": "next",
+    "material-ui-icons": "next",
     "project-version": "^1.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",

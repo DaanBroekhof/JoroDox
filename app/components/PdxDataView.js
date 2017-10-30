@@ -15,6 +15,10 @@ export default class PdxDataView extends Component {
         };
     }
 
+    static defaultProps = {
+        style: {},
+    };
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.file.path !== this.props.file.path) {
             this.setState({
@@ -60,7 +64,7 @@ export default class PdxDataView extends Component {
         return (
             <InfiniteTree
                 ref={(c) => this.tree = c ? c.tree : null}
-                style={{display: 'flex', flex: 1, border : '1px solid #eee'}}
+                style={{display: 'flex', flex: 1, border : '1px solid #eee', ...this.props.style}}
                 autoOpen={false}
                 loadNodes={(parentNode, done) => {
                 }}
@@ -97,8 +101,8 @@ export default class PdxDataView extends Component {
                                 <span className={classNames(["infinite-tree-type", more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? '🖿' : '🗎'}</span>
                                 <span className="infinite-tree-title">{name}</span>
                             </div>
-                            <div className="pdx-data-type">{node.type}</div>
-                            <div className="pdx-data-value">{Array.isArray(node.value) ? '[' + node.value.join(', ') + ']' : node.value}</div>
+                            <div className="pdx-data-type">{node.type} ({Array.isArray(node.value) ? node.value.length : (node.value ? '1' : node.children.length)})</div>
+                            <div className="pdx-data-value">{Array.isArray(node.value) ? '[' + node.value.slice(0, 50).join(', ') + (node.value.length > 50 ? ' ...'+ (node.value.length - 50) + ' more...' : '') + ']' : node.value}</div>
                         </div>
                     );
                 }}

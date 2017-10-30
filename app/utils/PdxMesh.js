@@ -12,28 +12,8 @@ export default class PdxMesh {
         let meshes = [];
         let labels = [];
 
-        let update = function (viewScene) {
-            for (let i = 0; i < skeletons.length; i++)
-            {
-                skeletons[i].visible = viewScene.viewConfig.showSkeletons;
-                skeletons[i].update();
-            }
-            for (let i = 0; i < wireframes.length; i++)
-            {
-                wireframes[i].visible = viewScene.viewConfig.showWireframes;
-            }
-            for (let i = 0; i < meshes.length; i++)
-            {
-                meshes[i].material.visible = viewScene.viewConfig.showMeshes;
-            }
-            for (let i = 0; i < colliders.length; i++)
-            {
-                colliders[i].material.visible = viewScene.viewConfig.showColliders;
-            }
-        };
-
-
         let maxExtent = 0;
+        let maxExtentHeight = 0;
 
         path += (path === '' ? '' : '/');
 
@@ -139,6 +119,7 @@ export default class PdxMesh {
                 {
                     maxExtent = Math.max(maxExtent, -pdxMesh.aabb.props.min[0], -pdxMesh.aabb.props.min[1], -pdxMesh.aabb.props.min[2]);
                     maxExtent = Math.max(maxExtent, pdxMesh.aabb.props.max[0], pdxMesh.aabb.props.max[1], pdxMesh.aabb.props.max[2]);
+                    maxExtentHeight = Math.max(maxExtentHeight, pdxMesh.aabb.props.max[1]);
                 }
 
                 if ('p' in pdxMesh)
@@ -237,11 +218,6 @@ export default class PdxMesh {
 
                     scene.add(mesh);
 
-                    /*let wireframeHelper = new THREE.WireframeHelper(mesh, 0xff0000);
-                    mesh.add(wireframeHelper);
-                    wireframes.push(wireframeHelper);
-*/
-
                     let wireframeGeometry = new THREE.WireframeGeometry(mesh);
                     let wireframe = new THREE.LineSegments( wireframeGeometry );
                     wireframe.material.depthTest = false;
@@ -270,14 +246,16 @@ export default class PdxMesh {
         return {
             'object': scene,
             'distance': maxExtent,
+            'maxExtentHeight': maxExtentHeight,
             'labels': labels,
-            'update': update,
             'triangleCount': triangleCount,
             'boneCount': boneCount,
             'meshCount': meshes.length,
             'meshes': meshes,
             'animations': [],
             'colliders': colliders,
+            'skeletons': skeletons,
+            'wireframes': wireframes,
         };
     }
 
@@ -552,162 +530,5 @@ export default class PdxMesh {
         });
 
         return texture;
-    }
-
-    createViewScene(container, width, height, viewConfig) {
-        let deferred = $q.defer();
-
-        let scene, camera, renderer;
-
-        if (!viewConfig)
-        {
-            viewConfig = {
-                distance: 20,
-                update: null,
-                showSkeletons: true,
-                showWireframes: false,
-                showColliders: true,
-                showMeshes: true,
-                showSpotlights: true,
-                rotate: true,
-                rotation: 0,
-            };
-        }
-
-        camera = new THREE.PerspectiveCamera( 45, width / height, 1, 10000);
-        camera.position.set(0, 6, 0);
-
-        scene = new THREE.Scene();
-
-        // Grid
-        let size = 100, step = 1;
-        let geometry = new THREE.Geometry();
-        let material = new THREE.LineBasicMaterial( { color: 0x303030 } );
-        for ( let i = - size; i <= size; i += step )
-        {
-            geometry.vertices.push( new THREE.Vector3( - size, - 0.04, i ) );
-            geometry.vertices.push( new THREE.Vector3(   size, - 0.04, i ) );
-            geometry.vertices.push( new THREE.Vector3( i, - 0.04, - size ) );
-            geometry.vertices.push( new THREE.Vector3( i, - 0.04,   size ) );
-        }
-        let line = new THREE.Line( geometry, material, THREE.LinePieces );
-        scene.add( line );
-
-        // Some particle lights
-        let particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
-        scene.add(particleLight);
-
-        // General lights
-        scene.add( new THREE.AmbientLight( 0xcccccc ) );
-
-        let directionalLight = new THREE.DirectionalLight(0xeeeeee);
-        directionalLight.position.x = Math.random() - 0.5;
-        directionalLight.position.y = Math.random() - 0.5;
-        directionalLight.position.z = Math.random() - 0.5;
-        directionalLight.position.normalize();
-        scene.add( directionalLight );
-
-        let pointLight = new THREE.PointLight( 0xffffff, 4 );
-        particleLight.add( pointLight );
-
-        // Prime the renderer & place in DOM
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize(width, height);
-        container.appendChild(renderer.domElement);
-
-        renderer.render(scene, camera);
-
-        let clock = new THREE.Clock();
-
-        let viewerDestroyed = false;
-
-        let halfWidth = width / 2;
-        let halfHeight = height / 2;
-
-        function render()
-        {
-            // Crappy detection if view is destroyed...
-            if (viewerDestroyed || !renderer.domElement.parentNode.baseURI)
-            {
-                viewerDestroyed = true;
-                return;
-            }
-
-            let delta = clock.getDelta();
-
-            if (viewConfig.rotate)
-                viewConfig.rotation += delta * 0.5;
-
-            camera.position.x = Math.cos(viewConfig.rotation) * viewConfig.distance;
-            camera.position.y = viewConfig.distance / 4;
-            camera.position.z = Math.sin(viewConfig.rotation) * viewConfig.distance;
-
-            camera.lookAt(scene.position);
-
-            let timer = Date.now() * 0.0005;
-
-            particleLight.visible = viewConfig.showSpotlights;
-
-            particleLight.position.x = Math.sin(timer * 4) * 30009;
-            particleLight.position.y = Math.cos(timer * 5) * 40000;
-            particleLight.position.z = Math.cos(timer * 4) * 30009;
-
-            THREE.AnimationHandler.update(delta);
-
-            if (viewConfig.viewObject && viewConfig.viewObject.labels)
-            {
-                for (let i = 0; i < viewConfig.viewObject.labels.length; i++)
-                {
-                    let label = viewConfig.viewObject.labels[i];
-
-                    if (!label.div)
-                    {
-                        label.div = document.createElement('div');
-                        label.div.innerHTML = label.text;
-                        label.div.style.position = 'absolute';
-                        container.children[0].appendChild(label.div);
-                    }
-
-                    let pos = label.pos3d.clone().project(camera);
-
-                    label.div.style.left = Math.round(pos.x * halfWidth + halfWidth) +'px';
-                    label.div.style.top = Math.round(-pos.y * halfHeight + halfHeight) +'px';
-                }
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        let viewScene = {
-            'scene': scene,
-            'renderer': renderer,
-            'camera': camera,
-            'viewConfig': viewConfig,
-        };
-
-        function animate()
-        {
-            if (viewerDestroyed)
-                return;
-
-            requestAnimationFrame( animate );
-
-            if (viewConfig.update)
-                viewConfig.update(viewScene);
-
-            render();
-        }
-
-        animate();
-
-        /*
-        stats = new Stats();
-        stats.domElement.style.position = 'absolute';
-        stats.domElement.style.top = '0px';
-        container.appendChild( stats.domElement );
-        */
-        deferred.resolve(viewScene);
-
-        return deferred.promise;
     }
 }
