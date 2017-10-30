@@ -69,25 +69,25 @@ export default class PdxMeshView extends Component {
         // Grid
         let size = 100, step = 1;
         let geometry = new THREE.Geometry();
-        let material = new THREE.LineBasicMaterial( { color: 0x303030 } );
-        for ( let i = - size; i <= size; i += step )
+        let material = new THREE.LineBasicMaterial({color: 0x303030});
+        for (let i = - size; i <= size; i += step)
         {
-            geometry.vertices.push( new THREE.Vector3( - size, - 0.04, i ) );
-            geometry.vertices.push( new THREE.Vector3(   size, - 0.04, i ) );
-            geometry.vertices.push( new THREE.Vector3( i, - 0.04, - size ) );
-            geometry.vertices.push( new THREE.Vector3( i, - 0.04,   size ) );
+            geometry.vertices.push(new THREE.Vector3( - size, - 0.04, i ));
+            geometry.vertices.push(new THREE.Vector3(   size, - 0.04, i ));
+            geometry.vertices.push(new THREE.Vector3( i, - 0.04, - size ));
+            geometry.vertices.push(new THREE.Vector3( i, - 0.04,   size ));
         }
-        let line = new THREE.Line( geometry, material, THREE.LinePieces );
-        this.scene.add( line );
+        let line = new THREE.Line(geometry, material, THREE.LineSegments);
+        this.scene.add(line);
 
         // Some particle lights
-        this.particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
+        this.particleLight = new THREE.Mesh(new THREE.SphereGeometry(4, 8, 8), new THREE.MeshBasicMaterial({color: 0xffffff }));
         this.scene.add(this.particleLight);
         let pointLight = new THREE.PointLight( 0xffffff, 4 );
         this.particleLight.add( pointLight );
 
         // General lights
-        this.scene.add( new THREE.AmbientLight( 0xcccccc ) );
+        this.scene.add(new THREE.AmbientLight(0xcccccc ));
 
         // Some directional lights
         let directionalLight = new THREE.DirectionalLight(0xeeeeee);
@@ -181,9 +181,19 @@ export default class PdxMeshView extends Component {
         };
     }
 
+    convertToCollada() {
+        return () => {
+          //  PdxMesh.convertToThreeJsScene()
+        };
+    }
+
     render() {
         return (
             <div>
+                <div>
+                    <Button raised onClick={this.convertToCollada()}>Convert to .collada</Button>
+                </div>
+
                 <FormGroup row style={{alignItems: 'center'}}>
                     <FormControlLabel label="Skeletons" control={<Checkbox defaultChecked={this.viewConfig.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
                     <FormControlLabel label="Mesh" control={<Checkbox defaultChecked={this.viewConfig.showMeshes} onChange={this.toggleValue('showMeshes')} />} />

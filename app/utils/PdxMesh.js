@@ -290,19 +290,19 @@ export default class PdxMesh {
             }
 
             let material = new THREE.MeshPhongMaterial();
-            if ('diff' in pdxMaterial)
+            if ('diff' in pdxMaterial && pdxMaterial.diff !== 'nodiff.dds')
             {
-                material.map = PdxMesh.loadDdsToTexture(jetpack.readAsync(mesh.pdxPath + pdxMaterial.diff, 'buffer'));
+                material.map = PdxMesh.loadDdsToTexture(mesh.pdxPath + pdxMaterial.diff);
                 material.map.fileName = pdxMaterial.diff;
             }
-            if ('n' in pdxMaterial)
+            if ('n' in pdxMaterial && pdxMaterial.n !== 'nonormal.dds')
             {
-                material.normalMap = this.loadDdsToTexture(jetpack.readAsync(mesh.pdxPath + pdxMaterial.n, 'buffer'));
+                material.normalMap = this.loadDdsToTexture(mesh.pdxPath + pdxMaterial.n);
                 material.normalMap.fileName = pdxMaterial.n;
             }
-            if ('spec' in pdxMaterial)
+            if ('spec' in pdxMaterial && pdxMaterial.spec !== 'nospec.dds')
             {
-                material.specularMap = this.loadDdsToTexture(jetpack.readAsync(mesh.pdxPath + pdxMaterial.spec, 'buffer'));
+                material.specularMap = this.loadDdsToTexture(mesh.pdxPath + pdxMaterial.spec);
                 material.specularMap.fileName = pdxMaterial.spec;
             }
 
@@ -463,7 +463,7 @@ export default class PdxMesh {
     }
 
 
-    static loadDdsToTexture(bufferPromise, geometry)
+    static loadDdsToTexture(file, geometry)
     {
         let ddsLoader = new DDSLoader();
 
@@ -471,9 +471,9 @@ export default class PdxMesh {
         let images = [];
         texture.image = images;
 
-        bufferPromise.then(function (buffer) {
+        jetpack.readAsync(file, 'buffer').then(function (buffer) {
             if (!buffer) {
-                console.error('Could not load DDS texture');
+                console.error('Could not load DDS texture `'+ file +'`');
                 return;
             }
 
