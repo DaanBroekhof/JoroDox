@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 const jetpack = require('electron').remote.require('fs-jetpack');
+const path = require('electron').remote.require('path');
 import { Route } from 'react-router';
 import FileView from './FileView';
 
@@ -26,6 +27,32 @@ export default class FileTree extends React.Component {
         if (nextProps.root !== this.props.root) {
             this.setTreeState(nextProps.root);
         }
+        if (!this.tree.getSelectedNode() || nextProps.match.params.path !== this.tree.getSelectedNode().id) {
+            if (nextProps.match)
+                this.doOpenToPath(this.tree.getRootNode(), nextProps.match.params.path);
+        }
+    }
+
+    doOpenToPath(node, path = null) {
+        if (path)
+            this.openToPath = path;
+        if (!this.openToPath)
+            return;
+
+        for (let child of node.children) {
+            if (this.openToPath === child.id) {
+                this.openToPath = null;
+                this.tree.selectNode(child);
+                break;
+            }
+            else if (this.openToPath.startsWith(child.id)) {
+                if (!child.state.open)
+                    this.tree.openNode(child, {async: true});
+                else
+                    this.doOpenToPath(child);
+                break;
+            }
+        }
     }
 
     setTreeState(root) {
@@ -41,20 +68,17 @@ export default class FileTree extends React.Component {
         }, function() {
             this.tree.loadData(this.state.treeData);
 
-            if (this.props.match.params.path) {
-                this.openToPath = this.props.match.params.path;
+            if (this.props.match.params.path && this.props.match.params.path.startsWith(root)) {
+                this.doOpenToPath(this.tree.getRootNode(), this.props.match.params.path);
             }
-
-            // Open the dir, if present
-            this.tree.openNode(this.tree.getChildNodes()[0]);
-
-            if (this.tree.getChildNodes()[0].id === this.openToPath) {
-                history.push('/fileview/'+ this.tree.getChildNodes()[0].info.absolutePath);
+            else {
+                this.doOpenToPath(this.tree.getRootNode(), root);
             }
         });
     }
 
     render(){
+        let fileTree = this;
         return (
             <Route render={({ history}) => (<InfiniteTree
                 style={{display: 'flex', flex: 1, backgroundColor: 'white'}}
@@ -67,13 +91,13 @@ export default class FileTree extends React.Component {
 
                     let dirNodes = dirs.map((name) => {
                         return {
-                            id: parentNode.id + "/" + name,
+                            id: parentNode.id + path.sep + name,
                             name: name,
                             loadOnDemand: true,
                             info: {
                                 'name': name,
                                 type: 'dir',
-                                absolutePath: parentNode.id + "/" + name,
+                                absolutePath: parentNode.id + path.sep + name,
                             },
                         };
                     }).sort((a, b) => {
@@ -81,13 +105,13 @@ export default class FileTree extends React.Component {
                     });
                     let fileNodes = files.map((name) => {
                         return {
-                            id: parentNode.id + "/" + name,
+                            id: parentNode.id + path.sep + name,
                             name: name,
                             loadOnDemand: false,
                             info: {
                                'name': name,
                                 type: 'file',
-                                absolutePath: parentNode.id + "/" + name,
+                                absolutePath: parentNode.id + path.sep + name,
                             },
                         };
                     }).sort((a, b) => {
@@ -158,24 +182,12 @@ export default class FileTree extends React.Component {
                     // keyup event
                 }}
                 onOpenNode={(node) => {
-                    if (this.openToPath) {
-                        for (let child of node.children) {
-                            if (this.openToPath === child.id) {
-                                this.openToPath = null;
-                                this.tree.selectNode(child);
-                                break;
-                            }
-                            else if (this.openToPath.startsWith(child.id)) {
-                                this.tree.openNode(child, {async: true});
-                                break;
-                            }
-                        }
-                    }
+                    fileTree.doOpenToPath(node);
                 }}
                 onCloseNode={(node) => {
                 }}
                 onSelectNode={(node) => {
-                    if (node.info.type == 'dir') {
+                    if (node.info.type === 'dir') {
                         this.tree.openNode(node, {async: true});
                     }
                     if (history.location.pathname !== '/fileview/'+ node.info.absolutePath)

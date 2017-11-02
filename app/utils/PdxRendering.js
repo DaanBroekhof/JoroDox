@@ -645,7 +645,7 @@ export default class PdxRendering {
 
             let newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
 
-            vertexToUniqueData[vertNr].push({'uv': uv, 'normal': normal, v: newVert})
+            vertexToUniqueData[vertNr].push({'uv': uv, 'normal': normal, v: newVert});
 
             return newVert;
         };
@@ -671,7 +671,7 @@ export default class PdxRendering {
                     'normal': subObject.material.normalMap && subObject.material.normalMap.fileName ? {'name': objectName +'-effect-'+ colladaData.materials.length +'-normal', 'fileName': subObject.material.normalMap.fileName } : null,
                     'spec': subObject.material.specularMap && subObject.material.specularMap.fileName ? {'name': objectName +'-effect-'+ colladaData.materials.length +'-spec', 'fileName': subObject.material.specularMap.fileName } : null,
                 }
-            }
+            };
             childNode.material.node = childNode;
             colladaData.nodeCount++;
 

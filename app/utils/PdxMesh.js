@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { DDSLoader } from 'three-addons';
+import ThreeJS from "./ThreeJS";
 const jetpack = require('electron').remote.require('fs-jetpack');
 
 export default class PdxMesh {
@@ -218,6 +219,10 @@ export default class PdxMesh {
 
                     scene.add(mesh);
 
+                    let wireframeHelper = new THREE.WireframeHelper(mesh, 0xff0000);
+                    mesh.add(wireframeHelper);
+                    wireframes.push(wireframeHelper);
+                    /*
                     let wireframeGeometry = new THREE.WireframeGeometry(mesh);
                     let wireframe = new THREE.LineSegments( wireframeGeometry );
                     wireframe.material.depthTest = false;
@@ -226,6 +231,7 @@ export default class PdxMesh {
                     wireframe.material.color = new THREE.Color( 0xff0000 );
                     mesh.add(wireframe);
                     wireframes.push(wireframe);
+                    */
 
                     if (scene.bones && scene.bones.length)
                     {
@@ -292,17 +298,17 @@ export default class PdxMesh {
             let material = new THREE.MeshPhongMaterial();
             if ('diff' in pdxMaterial && pdxMaterial.diff !== 'nodiff.dds')
             {
-                material.map = PdxMesh.loadDdsToTexture(mesh.pdxPath + pdxMaterial.diff);
+                material.map = ThreeJS.loadDdsToTexture(mesh.pdxPath + pdxMaterial.diff);
                 material.map.fileName = pdxMaterial.diff;
             }
             if ('n' in pdxMaterial && pdxMaterial.n !== 'nonormal.dds')
             {
-                material.normalMap = this.loadDdsToTexture(mesh.pdxPath + pdxMaterial.n);
+                material.normalMap = ThreeJS.loadDdsToTexture(mesh.pdxPath + pdxMaterial.n);
                 material.normalMap.fileName = pdxMaterial.n;
             }
             if ('spec' in pdxMaterial && pdxMaterial.spec !== 'nospec.dds')
             {
-                material.specularMap = this.loadDdsToTexture(mesh.pdxPath + pdxMaterial.spec);
+                material.specularMap = ThreeJS.loadDdsToTexture(mesh.pdxPath + pdxMaterial.spec);
                 material.specularMap.fileName = pdxMaterial.spec;
             }
 
@@ -462,73 +468,368 @@ export default class PdxMesh {
         }
     }
 
+    createFromThreeJsObject(object, options) {
+        if (!options)
+            options = {
+                textureBaseName: 'unknown',
+                pdxShader: 'PdxMeshStandard',
+            };
 
-    static loadDdsToTexture(file, geometry)
-    {
-        let ddsLoader = new DDSLoader();
+        let pdxDataRoot = {name: 'pdxData', type: 'object', children: []};
+        pdxDataRoot.children.push({name: 'pdxasset', type: 'int', data: [1, 0]});
 
-        let texture = new THREE.CompressedTexture();
-        let images = [];
-        texture.image = images;
+        let objectsRoot = {name: 'object', type: 'object', children: []};
+        pdxDataRoot.children.push(objectsRoot);
+        pdxDataRoot.children.push({name: 'locator', type: 'object', children: []});
 
-        jetpack.readAsync(file, 'buffer').then(function (buffer) {
-            if (!buffer) {
-                console.error('Could not load DDS texture `'+ file +'`');
-                return;
+        let shapeRoot = {name: 'jorodoxShape', type: 'object', children: []};
+        objectsRoot.children.push(shapeRoot);
+
+        // 'internal' function
+        let getVertexNrForUniqueData = function (vertNr, uv, normal, vertexToUniqueData, verts, skinIds, skinWeights)
+        {
+            if (!vertexToUniqueData[vertNr])
+            {
+                vertexToUniqueData[vertNr] = [{'uv': uv, 'normal': normal, v: vertNr}];
+                return vertNr;
             }
 
-            let texDatas = ddsLoader._parser(buffer.buffer, true);
-
-            if ( texDatas.isCubemap )
+            // See if we already mapped this UV before
+            let foundVertNr = false;
+            for (let j = 0, jl = vertexToUniqueData[vertNr].length; j < jl; j++)
             {
-                let faces = texDatas.mipmaps.length / texDatas.mipmapCount;
+                foundVertNr = vertexToUniqueData[vertNr][j].v;
 
-                for ( let f = 0; f < faces; f ++ )
+                if (!vertexToUniqueData[vertNr][j].normal.equals(normal))
                 {
-                    images[ f ] = { mipmaps : [] };
-
-                    for ( let i = 0; i < texDatas.mipmapCount; i ++ )
+                    foundVertNr = false;
+                }
+                else
+                {
+                    for (let i = 0; i < vertexToUniqueData[vertNr][j].uv.length; i++)
                     {
-                        images[ f ].mipmaps.push( texDatas.mipmaps[ f * texDatas.mipmapCount + i ] );
-                        images[ f ].format = texDatas.format;
-                        images[ f ].width = texDatas.width;
-                        images[ f ].height = texDatas.height;
+                        if (!uv[i] || !vertexToUniqueData[vertNr][j].uv[i].equals(uv[i]))
+                        {
+                            foundVertNr = false;
+                            break;
+                        }
                     }
                 }
+
+                if (foundVertNr !== false)
+                    return foundVertNr;
             }
-            else
+
+            // Create new vert, copy of existing
+            verts.push(verts[vertNr*3]);
+            verts.push(verts[vertNr*3+1]);
+            verts.push(verts[vertNr*3+2]);
+
+            // Don't forget skin
+            skinIds.push(skinIds[vertNr*4]);
+            skinIds.push(skinIds[vertNr*4+1]);
+            skinIds.push(skinIds[vertNr*4+2]);
+            skinIds.push(skinIds[vertNr*4+2]);
+            skinWeights.push(skinWeights[vertNr*4]);
+            skinWeights.push(skinWeights[vertNr*4+1]);
+            skinWeights.push(skinWeights[vertNr*4+2]);
+            skinWeights.push(skinWeights[vertNr*4+2]);
+
+            let newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
+
+            vertexToUniqueData[vertNr].push({'uv': uv, 'normal': normal, v: newVert});
+
+            return newVert;
+        };
+
+        // Get bones
+        let boneList = this.getBoneListRooted(object);
+        let boneData = [];
+        let boneNrToHeirarchyBoneNr = [];
+        boneNrToHeirarchyBoneNr[-1] = -1;
+        if (boneList.length > 0)
+        {
+            let multipleRootBones = (boneList[0].name === 'AddedRoot');
+
+            for (let i = 0; i < boneList.length; i++)
             {
-                texture.image.width = texDatas.width;
-                texture.image.height = texDatas.height;
-                texture.mipmaps = texDatas.mipmaps;
-            }
+                // pdxmesh uses a 3x4 transform matrix for bones in the world space, whereas Three.js uses a 4x4 matrix (local&world space)
+                // we have to transform it and snip off the 'skew' row
 
-            if ( texDatas.mipmapCount === 1 )
+                boneList[i].updateMatrix();
+                boneList[i].updateMatrixWorld(true);
+                boneList[i].parent.updateMatrix();
+                boneList[i].parent.updateMatrixWorld(true);
+
+                // Get matrix of bone in world matrix
+                let pdxMatrix = new THREE.Matrix4().multiplyMatrices(boneList[i].parent.matrixWorld, boneList[i].matrix);
+                pdxMatrix = new THREE.Matrix4().getInverse(pdxMatrix, true);
+                let m = pdxMatrix.elements;
+
+                let parentBoneNr = boneList[i].parent.boneNr;
+
+                // Set to added root bone
+                if (!(boneList[i].parent instanceof THREE.Bone) && multipleRootBones && i !== 0)
+                    parentBoneNr = 0;
+
+                // NOTE: m is in COLUMN-major order
+                boneData.push({
+                    name: boneList[i].name,
+                    type: 'object',
+                    children: [
+                        {name: 'ix', type: 'int', data: [i]},
+                        {name: 'pa', type: 'int', data: [boneList[i].parent.boneNr]},
+                        {name: 'tx', type: 'float', data: [
+                                m[0], m[1], m[2],
+                                m[4], m[5], m[6],
+                                m[8], m[9], m[10],
+                                m[12], m[13], m[14],
+                            ]},
+                    ]
+                });
+
+                if (parentBoneNr === undefined)
+                {
+                    // Remove 'pa' at root node
+                    boneData[i].children = [boneData[i].children[0], boneData[i].children[2]];
+                }
+            }
+        }
+
+        // find all geometry
+        object.traverse(function (subObject) {
+            if (subObject instanceof THREE.Mesh)
             {
-                texture.minFilter = THREE.LinearFilter;
+                if (subObject.geometry.bones)
+                {
+                    for (let i = 0; i < subObject.geometry.bones.length; i++)
+                    {
+                        for (let k = 0; k < boneList.length; k++)
+                        {
+                            if (subObject.geometry.bones[i].name === boneList[k].name)
+                            {
+                                boneNrToHeirarchyBoneNr[i] = k;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Bounding box
+                let bb = new THREE.Box3();
+                bb.setFromObject(subObject);
+
+                // Scale / rotate to world
+                subObject.geometry.applyMatrix(subObject.matrixWorld);
+
+                // Vertices
+                let verts = [];
+                for (let k = 0, l = subObject.geometry.vertices.length; k < l; k++)
+                {
+                    verts.push.apply(verts, subObject.geometry.vertices[k].toArray());
+                }
+
+                // Face-stored data
+                let tri = [];
+                let normals = [];
+                let tangents = [];
+                let uvs = [];
+
+                if (!subObject.geometry.hasTangents && subObject.geometry.faceVertexUvs[0].length)
+                    subObject.geometry.computeTangents();
+
+                // Assume skinIds as long as skinWeights
+                let skinIds = [];
+                let skinWeights = [];
+                let bonesUsed = 0;
+                for (let k = 0, l = subObject.geometry.skinIndices.length; k < l; k++)
+                {
+                    skinIds.push(
+                        subObject.geometry.skinWeights[k].x ? boneNrToHeirarchyBoneNr[subObject.geometry.skinIndices[k].x] : -1,
+                        subObject.geometry.skinWeights[k].y ? boneNrToHeirarchyBoneNr[subObject.geometry.skinIndices[k].y] : -1,
+                        subObject.geometry.skinWeights[k].z ? boneNrToHeirarchyBoneNr[subObject.geometry.skinIndices[k].z] : -1,
+                        subObject.geometry.skinWeights[k].w ? boneNrToHeirarchyBoneNr[subObject.geometry.skinIndices[k].w] : -1
+                    );
+                    skinWeights.push(
+                        subObject.geometry.skinWeights[k].x,
+                        subObject.geometry.skinWeights[k].y,
+                        subObject.geometry.skinWeights[k].z,
+                        subObject.geometry.skinWeights[k].w
+                    );
+
+                    let used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil(subObject.geometry.skinWeights[k].y) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
+
+                    bonesUsed = Math.max(used, bonesUsed);
+                }
+
+                // See if we have any multi-UV vertices, split those
+                let vertexToUniqueData = [];
+                let uvCount = subObject.geometry.faceVertexUvs.length;
+                for (let k = 0, l = subObject.geometry.faces.length; k < l; k++)
+                {
+                    let face = subObject.geometry.faces[k];
+                    let faceUvs = [];
+                    for (let j = 0; j < 3; j++)
+                    {
+                        faceUvs[j] = [];
+                        for (let i = 0; i < uvCount; i++)
+                            if (subObject.geometry.faceVertexUvs[i][k])
+                                faceUvs[j][i] = subObject.geometry.faceVertexUvs[i][k][j];
+                    }
+
+                    face.a = getVertexNrForUniqueData(face.a, faceUvs[0], face.vertexNormals[0], vertexToUniqueData, verts, skinIds, skinWeights);
+                    face.b = getVertexNrForUniqueData(face.b, faceUvs[1], face.vertexNormals[1], vertexToUniqueData, verts, skinIds, skinWeights);
+                    face.c = getVertexNrForUniqueData(face.c, faceUvs[2], face.vertexNormals[2], vertexToUniqueData, verts, skinIds, skinWeights);
+                }
+
+
+                // Process all faces
+                for (let k = 0, l = subObject.geometry.faces.length; k < l; k++)
+                {
+                    let face = subObject.geometry.faces[k];
+                    tri.push(face.a, face.b, face.c);
+
+                    this.insertValues(normals, face.a*3, face.vertexNormals[0].toArray());
+                    this.insertValues(normals, face.b*3, face.vertexNormals[1].toArray());
+                    this.insertValues(normals, face.c*3, face.vertexNormals[2].toArray());
+
+                    if (face.vertexTangents.length)
+                    {
+                        this.insertValues(tangents, face.a*4, face.vertexTangents[0].toArray());
+                        this.insertValues(tangents, face.b*4, face.vertexTangents[1].toArray());
+                        this.insertValues(tangents, face.c*4, face.vertexTangents[2].toArray());
+                    }
+                    else
+                    {
+                        this.insertValues(tangents, face.a*4, new THREE.Vector4().toArray());
+                        this.insertValues(tangents, face.b*4, new THREE.Vector4().toArray());
+                        this.insertValues(tangents, face.c*4, new THREE.Vector4().toArray());
+                    }
+
+
+                    for (let i = 0; i < uvCount; i++)
+                    {
+                        if (!uvs[i])
+                            uvs[i] = [];
+                        if (subObject.geometry.faceVertexUvs[i])
+                        {
+                            let uv = subObject.geometry.faceVertexUvs[i][k];
+
+                            if (uv)
+                            {
+                                let flipY = !subObject.material.map || subObject.material.map.flipY;
+
+                                uvs[i][face.a*2] = uv[0].x;
+                                uvs[i][face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
+                                uvs[i][face.b*2] = uv[1].x;
+                                uvs[i][face.b*2+1] = flipY? 1 - uv[1].y : uv[1].y;
+                                uvs[i][face.c*2] = uv[2].x;
+                                uvs[i][face.c*2+1] = flipY? 1 - uv[2].y : uv[2].y;
+                            }
+                            else
+                            {
+                                uvs[i][face.a*2] = 0;
+                                uvs[i][face.a*2+1] = 0;
+                                uvs[i][face.b*2] = 0;
+                                uvs[i][face.b*2+1] = 0;
+                                uvs[i][face.c*2] = 0;
+                                uvs[i][face.c*2+1] = 0;
+                            }
+                        }
+                    }
+                }
+
+                let mesh = {name: 'mesh', type: 'object', children: []};
+                mesh.children.push({name: 'p', type: 'float', data: verts});
+                mesh.children.push({name: 'n', type: 'float', data: normals});
+                mesh.children.push({name: 'ta', type: 'float', data: tangents});
+                for (let i = 0; i < uvCount; i++)
+                    mesh.children.push({name: 'u' + i, type: 'float', data: uvs[i]});
+                mesh.children.push({name: 'tri', type: 'int', data: tri});
+                mesh.children.push({name: 'aabb', type: 'object', children: [
+                        {name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z]},
+                        {name: 'max', type: 'float', data: [bb.max.x, bb.max.y, bb.max.z]},
+                    ]});
+                mesh.children.push({name: 'material', type: 'object', children: [
+                        {name: 'shader', type: 'string', data: options.pdxShader ? options.pdxShader : 'PdxMeshStandard', nullByteString: true},
+                        {name: 'diff', type: 'string', data: options.textureBaseName +'_diffuse.dds', nullByteString: true},
+                        {name: 'n', type: 'string', data: options.textureBaseName +'_normal.dds', nullByteString: true},
+                        {name: 'spec', type: 'string', data: options.textureBaseName +'_spec.dds', nullByteString: true},
+                    ]});
+                shapeRoot.children.push(mesh);
+
+                if (boneData.length)
+                {
+                    mesh.children.push({name: 'skin', type: 'object', children: [
+                        {name: 'bones', type: 'int', data: [bonesUsed]},
+                        {name: 'ix', type: 'int', data: skinIds},
+                        {name: 'w', type: 'float', data: skinWeights},
+                    ]});
+                }
             }
+        }.bind(this));
 
-            texture.format = texDatas.format;
-            texture.needsUpdate = true;
+        if (boneData.length)
+            shapeRoot.children.push({name: 'skeleton', type: 'object', children: boneData});
 
-            if (geometry)
+        return pdxDataRoot;
+    }
+
+    getBoneListRooted(object) {
+
+        let boneList = this.getBoneList(object);
+
+        if (boneList.length > 0)
+        {
+            let multipleRootBones = false;
+            let filteredBoneList = [];
+            let boneByName = {};
+            for (let i = 0; i < boneList.length; i++)
             {
-                geometry.buffersNeedUpdate = true;
-                geometry.uvsNeedUpdate = true;
+                // Skip double bones by name
+                if (boneByName[boneList[i].name])
+                    continue;
+
+                boneByName[boneList[i].name] = boneList[i];
+
+                filteredBoneList.push(boneList[i]);
+                boneList[i].boneNr = filteredBoneList.length - 1;
+
+                if (!(boneList[i].parent instanceof THREE.Bone) && i !== 0)
+                {
+                    multipleRootBones = true;
+                }
             }
-        }, function () {
-            let greyTexture = new Uint8Array(4);
-            greyTexture[0] = 128;
-            greyTexture[1] = 128;
-            greyTexture[2] = 128;
-            greyTexture[3] = 255;
 
-            texture.mipmaps = [
-                { "data": greyTexture, "width": 1, "height": 1 }
-            ];
-            texture.needsUpdate = true;
-        });
+            // Multiple roots - add a new single root
+            if (multipleRootBones)
+            {
+                let newRoot = new THREE.Bone();
+                newRoot.name = 'AddedRoot';
+                object.add(newRoot);
+                filteredBoneList.unshift(newRoot);
+            }
+            return filteredBoneList;
+        }
 
-        return texture;
+        return boneList;
+    }
+
+    getBoneList(object, parentNr) {
+
+        let boneList = [];
+
+        if (object instanceof THREE.Bone)
+        {
+            boneList.push(object);
+            object.boneParentNr = parentNr;
+        }
+
+        for (let i = 0; i < object.children.length; i++)
+        {
+            boneList.push.apply(boneList, this.getBoneList(object.children[i]));
+        }
+
+        return boneList;
     }
 }

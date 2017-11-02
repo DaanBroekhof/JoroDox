@@ -7,6 +7,7 @@ import ImageView from "./ImageView";
 import {Paper, Typography} from "material-ui";
 import filesize from 'filesize';
 import PdxMeshView from "./PdxMeshView";
+import ColladaView from "./ColladaView";
 
 export default class FileView extends Component {
     static getFileType(file) {
@@ -29,6 +30,8 @@ export default class FileView extends Component {
             case 'bmp':
             case 'tga':
                 return 'image';
+            case 'dae':
+                return 'collada';
             default :
                 return 'unknown';
         }
@@ -36,6 +39,11 @@ export default class FileView extends Component {
 
     render() {
         let file = jetpack.inspect(this.props.match.params.path);
+
+        if (!file) {
+            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>File could not be found</p></Paper>;
+        }
+
         file.path = this.props.match.params.path;
         let fileType = FileView.getFileType(file);
 
@@ -46,7 +54,8 @@ export default class FileView extends Component {
                 <p>Type: {fileType} {file.type === 'file' && <span>- Size: {filesize(file.size)}</span>}</p>
                 {fileType === 'pdx-script' && <PdxScriptView file={file} />}
                 {fileType === 'pdx-data' && <PdxDataView file={file} />}
-                {fileType === 'pdx-mesh' && <PdxMeshView file={file} width={800} height={600} />}
+                {fileType === 'pdx-mesh' && <PdxMeshView file={file} />}
+                {fileType === 'collada' && <ColladaView file={file} />}
                 {fileType === 'image' && <ImageView file={file} />}
 
             </Paper>
