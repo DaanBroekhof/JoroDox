@@ -15,7 +15,7 @@ export default class ThreeJsViewer extends Component {
     constructor(props) {
         super(props);
 
-        this.viewConfig = {
+        this.state = {
             distance: 20,
             update: null,
             showSkeletons: true,
@@ -24,8 +24,9 @@ export default class ThreeJsViewer extends Component {
             showMeshes: true,
             showSpotlights: true,
             rotate: true,
-            rotation: 0,
         };
+
+        this.rotation = 0;
     }
 
     componentDidMount () {
@@ -37,6 +38,9 @@ export default class ThreeJsViewer extends Component {
     }
 
     createScene() {
+        if (this.props.objectScene === this.objectScene)
+            return;
+
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
         this.camera.position.set(10,10,0);
@@ -85,17 +89,7 @@ export default class ThreeJsViewer extends Component {
             return;
 
         this.scene.add(this.objectScene.object);
-        this.viewConfig = {
-            distance: this.objectScene.distance * 4,
-            update: null,
-            showSkeletons: true,
-            showWireframes: false,
-            showColliders: true,
-            showMeshes: true,
-            showSpotlights: true,
-            rotate: true,
-            rotation: 0,
-        };
+        this.setState({distance: this.objectScene.distance * 4});
         this.clock = new THREE.Clock();
 
         this.animateScene();
@@ -107,19 +101,19 @@ export default class ThreeJsViewer extends Component {
 
         // Rotate camera
         let delta = this.clock.getDelta();
-        if (this.viewConfig.rotate) {
-            this.viewConfig.rotation += delta * 0.5;
+        if (this.state.rotate) {
+            this.rotation += delta * 0.5;
         }
 
-        this.camera.position.x = Math.cos(this.viewConfig.rotation) * this.viewConfig.distance;
-        this.camera.position.y = this.viewConfig.distance / 4;
-        this.camera.position.z = Math.sin(this.viewConfig.rotation) * this.viewConfig.distance;
+        this.camera.position.x = Math.cos(this.rotation) * this.state.distance;
+        this.camera.position.y = this.state.distance / 4;
+        this.camera.position.z = Math.sin(this.rotation) * this.state.distance;
         this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? this.objectScene.maxExtentHeight / 2 : 0, 0));
 
 
         // Rotate particle lights
         let timer = Date.now() * 0.0005;
-        this.particleLight.visible = this.viewConfig.showSpotlights;
+        this.particleLight.visible = this.state.showSpotlights;
         this.particleLight.position.x = Math.sin(timer * 4) * 30009;
         this.particleLight.position.y = Math.cos(timer * 5) * 40000;
         this.particleLight.position.z = Math.cos(timer * 4) * 30009;
@@ -128,22 +122,22 @@ export default class ThreeJsViewer extends Component {
 
             if (this.objectScene.skeletons) {
                 for (let i = 0; i < this.objectScene.skeletons.length; i++) {
-                    this.objectScene.skeletons[i].visible = this.viewConfig.showSkeletons;
+                    this.objectScene.skeletons[i].visible = this.state.showSkeletons;
                 }
             }
             if (this.objectScene.wireframes) {
                 for (let i = 0; i < this.objectScene.wireframes.length; i++) {
-                    this.objectScene.wireframes[i].visible = this.viewConfig.showWireframes;
+                    this.objectScene.wireframes[i].visible = this.state.showWireframes;
                 }
             }
             if (this.objectScene.meshes) {
                 for (let i = 0; i < this.objectScene.meshes.length; i++) {
-                    this.objectScene.meshes[i].material.visible = this.viewConfig.showMeshes;
+                    this.objectScene.meshes[i].material.visible = this.state.showMeshes;
                 }
             }
             if (this.objectScene.colliders) {
                 for (let i = 0; i < this.objectScene.colliders.length; i++) {
-                    this.objectScene.colliders[i].material.visible = this.viewConfig.showColliders;
+                    this.objectScene.colliders[i].material.visible = this.state.showColliders;
                 }
             }
         }
@@ -153,32 +147,32 @@ export default class ThreeJsViewer extends Component {
 
     toggleValue(name) {
         return (event, checked) => {
-            this.viewConfig[name] = !this.viewConfig[name];
+            this.setState({[name]: checked});
         }
     }
 
     clickZoomOut() {
         return () => {
-            this.viewConfig.distance = this.viewConfig.distance * 1.1;
+            this.setState({distance: this.state.distance * 1.1});
         };
     }
 
     clickZoomIn() {
         return () => {
-            this.viewConfig.distance = this.viewConfig.distance * 0.9;
+            this.setState({distance: this.state.distance * 0.9});
         };
     }
     render() {
         return (
             <div>
                 <FormGroup row style={{alignItems: 'center'}}>
-                    <FormControlLabel label="Skeletons" control={<Checkbox defaultChecked={this.viewConfig.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
-                    <FormControlLabel label="Mesh" control={<Checkbox defaultChecked={this.viewConfig.showMeshes} onChange={this.toggleValue('showMeshes')} />} />
-                    <FormControlLabel label="Wireframes" control={<Checkbox defaultChecked={this.viewConfig.showWireframes} onChange={this.toggleValue('showWireframes')} />} />
-                    <FormControlLabel label="Colliders" control={<Checkbox defaultChecked={this.viewConfig.showColliders} onChange={this.toggleValue('showColliders')} />} />
-                    <FormControlLabel label="Spotlights" control={<Checkbox defaultChecked={this.viewConfig.showSpotlights} onChange={this.toggleValue('showSpotlights')} />} />
+                    <FormControlLabel label="Skeletons" control={<Checkbox checked={this.state.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
+                    <FormControlLabel label="Mesh" control={<Checkbox checked={this.state.showMeshes} onChange={this.toggleValue('showMeshes')} />} />
+                    <FormControlLabel label="Wireframes" control={<Checkbox checked={this.state.showWireframes} onChange={this.toggleValue('showWireframes')} />} />
+                    <FormControlLabel label="Colliders" control={<Checkbox checked={this.state.showColliders} onChange={this.toggleValue('showColliders')} />} />
+                    <FormControlLabel label="Spotlights" control={<Checkbox checked={this.state.showSpotlights} onChange={this.toggleValue('showSpotlights')} />} />
 
-                    <FormControlLabel label="Rotate" control={<Checkbox defaultChecked={this.viewConfig.rotate} onChange={this.toggleValue('rotate')} />} />
+                    <FormControlLabel label="Rotate" control={<Checkbox defaultChecked={this.state.rotate} onChange={this.toggleValue('rotate')} />} />
 
                 </FormGroup>
 
