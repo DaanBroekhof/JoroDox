@@ -46,7 +46,7 @@ export default class ImageView extends Component {
     render() {
         let imgInfo = null;
         let imgSrc = null;
-        if (this.props.file.path.match(/\.png$|.jpg$/i)) {
+        if (this.props.file.path.match(/\.png$|.jpg$|.gif$/i)) {
             imgInfo = nativeImage.createFromPath(this.props.file.path).getSize();
             imgSrc = 'file:///' + this.props.file.path;
         }

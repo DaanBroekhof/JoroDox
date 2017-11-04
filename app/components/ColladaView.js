@@ -10,8 +10,9 @@ import {Button, Checkbox, FormControlLabel, FormGroup, Icon, IconButton} from "m
 import DeleteIcon from 'material-ui-icons/Delete';
 import ColladaData from "../utils/ColladaData";
 import ThreeJsViewer from "./ThreeJsViewer";
+import {withRouter} from "react-router";
 
-export default class ColladaView extends Component {
+export default withRouter(class ColladaView extends Component {
 
     constructor(props) {
         super(props);
@@ -35,10 +36,11 @@ export default class ColladaView extends Component {
 
     convertToPdxMesh() {
         return () => {
-            let colladaData = new ColladaData();
-            let data = colladaData.createFromThreeJsObject(this.objectScene);
-            let newFile = this.props.file.path.replace(/.mesh$/, '.dae');
-            jetpack.writeAsync(newFile, data).then(() => {
+            let pdxMesh = new PdxMesh();
+            let pdxData = pdxMesh.createFromThreeJsObject(this.state.objectScene.object);
+            let data = (new PdxData).writeToBuffer(pdxData);
+            let newFile = this.props.file.path.replace(/.dae/, '-copy.mesh');
+            jetpack.writeAsync(newFile, new Buffer(data)).then(() => {
                 this.props.history.push('/fileview/'+ newFile);
             });
         };
@@ -55,4 +57,4 @@ export default class ColladaView extends Component {
             </div>
         );
     }
-}
+});

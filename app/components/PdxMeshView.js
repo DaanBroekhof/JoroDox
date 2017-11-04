@@ -57,7 +57,7 @@ export default withRouter(class PdxMeshView extends Component {
         return (
             <div>
                 <div>
-                    <Button raised onClick={this.convertToCollada()}>Convert to .collada</Button>
+                    <Button raised onClick={this.convertToCollada()}>Convert to Collada (.dae)</Button>
                 </div>
 
                 <ThreeJsViewer ref={(ref) => this.threeJsViewer = ref} objectScene={this.state.objectScene}/>

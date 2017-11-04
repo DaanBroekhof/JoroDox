@@ -216,7 +216,7 @@ export default class ColladaData {
                     subObject.geometry.skinWeights[k].w
                 );
 
-                let used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil(subObject.geometry.skinWeights[k].y) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
+                let used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil((subObject.geometry.skinWeights[k].y)) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
 
                 bonesUsed = Math.max(used, bonesUsed);
             }
@@ -263,7 +263,7 @@ export default class ColladaData {
                 else
                     this.insertValues(normals, face.c*3, face.vertexNormals[2].toArray());
 
-                if (face.vertexTangents.length)
+                if (face.vertexTangents && face.vertexTangents.length)
                 {
                     this.insertValues(tangents, face.a*4, face.vertexTangents[0].toArray());
                     this.insertValues(tangents, face.b*4, face.vertexTangents[1].toArray());
@@ -287,7 +287,7 @@ export default class ColladaData {
 
                         if (uv)
                         {
-                            let flipY = true;
+                            let flipY = subObject.material.map.flipY;
 
                             uvs[i][face.a*2] = uv[0].x;
                             uvs[i][face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;
@@ -626,17 +626,22 @@ export default class ColladaData {
                 if (modPath.substr(-4) === '.dds')
                 {
                     texture = ThreeJS.loadDdsToTexture(modPath);
+                    texture.filePath = modPath;
+                    texture.flipY = false;
                 }
                 else
                 {
-                    /*
-                    modService.getFile(modPath).then(function (file) {
-                        loadImage(file, function (img) {
-                            texture.image = img;
+                    let imageLoader = new THREE.ImageLoader();
+
+                    imageLoader.load(
+                        'file:///'+ modPath,
+                        (image) => {
+                            texture.image = image;
                             texture.needsUpdate = true;
-                        });
-                    });
-                    */
+                            texture.filePath = modPath;
+                            texture.flipY = true;
+                        }
+                    );
                 }
 
                 return texture;
@@ -668,21 +673,6 @@ export default class ColladaData {
             let meshes = [];
             let animations = [];
             let wireframes = [];
-            let update = function (viewScene) {
-                for (let i = 0; i < skeletons.length; i++)
-                {
-                    skeletons[i].visible = viewScene.viewConfig.showSkeletons;
-                    skeletons[i].update();
-                }
-                for (let i = 0; i < wireframes.length; i++)
-                {
-                    wireframes[i].visible = viewScene.viewConfig.showWireframes;
-                }
-                for (let i = 0; i < meshes.length; i++)
-                {
-                    meshes[i].material.visible = viewScene.viewConfig.showMeshes;
-                }
-            };
 
             collada.scene.traverse(function (node)
             {
@@ -724,6 +714,17 @@ export default class ColladaData {
                     skeletons.push(skeletonHelper);
 
                     boneCount += skeletonHelper.bones.length + 1;
+
+                    // Flip the Y of texture UVs, because DDS textures are not flipped in WebGL :/
+                    if (node.material.specularMap instanceof THREE.CompressedTexture) {
+                        node.geometry.faceVertexUvs.forEach(function (v, k) {
+                            v.forEach(function (vv, kk) {
+                                node.geometry.faceVertexUvs[k][kk][0].y = 1 - node.geometry.faceVertexUvs[k][kk][0].y;
+                                node.geometry.faceVertexUvs[k][kk][1].y = 1 - node.geometry.faceVertexUvs[k][kk][1].y;
+                                node.geometry.faceVertexUvs[k][kk][2].y = 1 - node.geometry.faceVertexUvs[k][kk][2].y;
+                            });
+                        });
+                    }
                 }
             });
 
@@ -736,7 +737,7 @@ export default class ColladaData {
                 'object': collada.scene,
                 'collada': collada,
                 'distance': distance,
-                'update': update,
+                'update': null,
                 'triangleCount': triangleCount,
                 'boneCount': boneCount,
                 'meshes': meshes,

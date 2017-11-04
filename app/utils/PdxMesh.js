@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { DDSLoader } from 'three-addons';
 import ThreeJS from "./ThreeJS";
+import ComputeTangents from './threejs/ComputeTangents';
 const jetpack = require('electron').remote.require('fs-jetpack');
+const path = require('electron').remote.require('path');
 
 export default class PdxMesh {
     static convertToThreeJsScene(pdxData, path) {
@@ -208,7 +210,7 @@ export default class PdxMesh {
                     triangleCount += geometry.faces.length + 1;
 
                     // Material
-                    let material = new THREE.MeshDepthMaterial();
+                    let material = new THREE.Material();
 
                     let mesh = new THREE.SkinnedMesh(geometry, material);
                     mesh.name = pdxShape.children[j].name;
@@ -468,7 +470,8 @@ export default class PdxMesh {
         }
     }
 
-    createFromThreeJsObject(object, options) {
+   createFromThreeJsObject(object, options) {
+
         if (!options)
             options = {
                 textureBaseName: 'unknown',
@@ -635,8 +638,11 @@ export default class PdxMesh {
                 let tangents = [];
                 let uvs = [];
 
-                if (!subObject.geometry.hasTangents && subObject.geometry.faceVertexUvs[0].length)
-                    subObject.geometry.computeTangents();
+                /*let bufferGeometry = new THREE.BufferGeometry().fromGeometry( subObject.geometry );
+                if (!bufferGeometry.hasTangents && bufferGeometry.faceVertexUvs[0].length) {
+                    THREE.BufferGeometryUtils.computeTangents( bufferGeometry );
+                }
+                */
 
                 // Assume skinIds as long as skinWeights
                 let skinIds = [];
@@ -657,7 +663,7 @@ export default class PdxMesh {
                         subObject.geometry.skinWeights[k].w
                     );
 
-                    let used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil(subObject.geometry.skinWeights[k].y) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
+                    let used = Math.ceil(subObject.geometry.skinWeights[k].x) + Math.ceil((subObject.geometry.skinWeights[k].y)) + Math.ceil(subObject.geometry.skinWeights[k].z) + Math.ceil(subObject.geometry.skinWeights[k].w);
 
                     bonesUsed = Math.max(used, bonesUsed);
                 }
@@ -693,7 +699,7 @@ export default class PdxMesh {
                     this.insertValues(normals, face.b*3, face.vertexNormals[1].toArray());
                     this.insertValues(normals, face.c*3, face.vertexNormals[2].toArray());
 
-                    if (face.vertexTangents.length)
+                    if (face.vertexTangents && face.vertexTangents.length)
                     {
                         this.insertValues(tangents, face.a*4, face.vertexTangents[0].toArray());
                         this.insertValues(tangents, face.b*4, face.vertexTangents[1].toArray());
@@ -739,6 +745,21 @@ export default class PdxMesh {
                     }
                 }
 
+                let textureFiles = {
+                    diffuse: options.textureBaseName +'_diffuse.dds',
+                    normal: options.textureBaseName +'_normal.dds',
+                    specular: options.textureBaseName +'_spec.dds',
+                };
+                if (subObject.material.map && subObject.material.map.filePath) {
+                    textureFiles.diffuse = path.basename(subObject.material.map.filePath);
+                }
+                if (subObject.material.specularMap && subObject.material.specularMap.filePath) {
+                    textureFiles.specular = path.basename(subObject.material.specularMap.filePath);
+                }
+                if (subObject.material.normalMap && subObject.material.normalMap.filePath) {
+                    textureFiles.normal = path.basename(subObject.material.normalMap.filePath);
+                }
+
                 let mesh = {name: 'mesh', type: 'object', children: []};
                 mesh.children.push({name: 'p', type: 'float', data: verts});
                 mesh.children.push({name: 'n', type: 'float', data: normals});
@@ -752,9 +773,9 @@ export default class PdxMesh {
                     ]});
                 mesh.children.push({name: 'material', type: 'object', children: [
                         {name: 'shader', type: 'string', data: options.pdxShader ? options.pdxShader : 'PdxMeshStandard', nullByteString: true},
-                        {name: 'diff', type: 'string', data: options.textureBaseName +'_diffuse.dds', nullByteString: true},
-                        {name: 'n', type: 'string', data: options.textureBaseName +'_normal.dds', nullByteString: true},
-                        {name: 'spec', type: 'string', data: options.textureBaseName +'_spec.dds', nullByteString: true},
+                        {name: 'diff', type: 'string', data: textureFiles.diffuse, nullByteString: true},
+                        {name: 'n', type: 'string', data: textureFiles.normal, nullByteString: true},
+                        {name: 'spec', type: 'string', data: textureFiles.specular, nullByteString: true},
                     ]});
                 shapeRoot.children.push(mesh);
 
@@ -831,5 +852,13 @@ export default class PdxMesh {
         }
 
         return boneList;
+    }
+
+    insertValues(array, offset, values) {
+        for (let i = 0; i < values.length; i++)
+        {
+            array[offset + i] = values[i];
+        }
+        return array;
     }
 }
