@@ -33,16 +33,18 @@ export default class FileTree extends React.Component {
         }
     }
 
-    doOpenToPath(node, path = null) {
+    doOpenToPath(node, path = null, updated = false) {
         if (path)
             this.openToPath = path;
         if (!this.openToPath)
             return;
 
+        let found = false;
         for (let child of node.children) {
             if (this.openToPath === child.id) {
                 this.openToPath = null;
                 this.tree.selectNode(child);
+                found = true;
                 break;
             }
             else if (this.openToPath.startsWith(child.id)) {
@@ -50,9 +52,76 @@ export default class FileTree extends React.Component {
                     this.tree.openNode(child, {async: true});
                 else
                     this.doOpenToPath(child);
+                found = true;
                 break;
             }
         }
+
+        if (!found && !updated) {
+            this.updateNode(node);
+            this.doOpenToPath(node, path, true);
+        }
+    }
+
+    updateNode(node) {
+        let localJetpack = jetpack.cwd(node.id);
+        let dirs = localJetpack.find('.', {matching: '*', recursive: false, files: false, directories: true});
+        let files = localJetpack.find('.', {matching: '*', recursive: false, files: true, directories: false});
+
+        let nodeIds = [];
+        let newNodes = {};
+        for (let dirName of dirs) {
+            let id = node.id + path.sep + dirName;
+            nodeIds.push('D:'+id);
+            if (!this.tree.getNodeById(id)) {
+                newNodes['D:'+id] = {
+                    id: id,
+                    name: dirName,
+                    loadOnDemand: true,
+                    info: {
+                        name: dirName,
+                        type: 'dir',
+                        absolutePath: id,
+                    },
+                };
+            }
+        }
+        for (let fileName of files) {
+            let id = node.id + path.sep + fileName;
+            nodeIds.push('F:'+id);
+            if (!this.tree.getNodeById(id)) {
+                newNodes['F:'+id] = {
+                    id: id,
+                    name: fileName,
+                    loadOnDemand: false,
+                    info: {
+                        name: fileName,
+                        type: 'file',
+                        absolutePath: id,
+                    },
+                };
+            }
+        }
+
+        nodeIds.sort((a, b) => {
+            return a.localeCompare(b);
+        });
+
+        // Remove all nodes that no longer exist
+        for (let c of node.children) {
+            if (!nodeIds.includes((c.info.type === 'dir' ? 'D:' : 'F:') + c.id)) {
+                this.tree.removeNode(c);
+            }
+        }
+
+        // Insert new nodes
+        let index = 0;
+        for (let nodeId of nodeIds) {
+            if (newNodes[nodeId]) {
+                this.tree.addChildNodes([newNodes[nodeId]], index, node)
+            }
+            index++;
+       }
     }
 
     setTreeState(root) {
