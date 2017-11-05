@@ -326,6 +326,8 @@ export default class PdxMesh {
             if (mesh.geometry.skinIndices.length)
                 material.skinning = true;
             mesh.material = material;
+
+            mesh.pdxShader = pdxMaterial.shader;
         }
 
     }
@@ -638,12 +640,6 @@ export default class PdxMesh {
                 let tangents = [];
                 let uvs = [];
 
-                /*let bufferGeometry = new THREE.BufferGeometry().fromGeometry( subObject.geometry );
-                if (!bufferGeometry.hasTangents && bufferGeometry.faceVertexUvs[0].length) {
-                    THREE.BufferGeometryUtils.computeTangents( bufferGeometry );
-                }
-                */
-
                 // Assume skinIds as long as skinWeights
                 let skinIds = [];
                 let skinWeights = [];
@@ -688,6 +684,9 @@ export default class PdxMesh {
                     face.c = getVertexNrForUniqueData(face.c, faceUvs[2], face.vertexNormals[2], vertexToUniqueData, verts, skinIds, skinWeights);
                 }
 
+                // Calculate vertex tangents
+                let bufferGeometry = new THREE.BufferGeometry().fromGeometry( subObject.geometry );
+                ComputeTangents.computeTangents( bufferGeometry );
 
                 // Process all faces
                 for (let k = 0, l = subObject.geometry.faces.length; k < l; k++)
@@ -699,11 +698,11 @@ export default class PdxMesh {
                     this.insertValues(normals, face.b*3, face.vertexNormals[1].toArray());
                     this.insertValues(normals, face.c*3, face.vertexNormals[2].toArray());
 
-                    if (face.vertexTangents && face.vertexTangents.length)
+                    if (true)
                     {
-                        this.insertValues(tangents, face.a*4, face.vertexTangents[0].toArray());
-                        this.insertValues(tangents, face.b*4, face.vertexTangents[1].toArray());
-                        this.insertValues(tangents, face.c*4, face.vertexTangents[2].toArray());
+                        this.insertValues(tangents, face.a*4, bufferGeometry.attributes.tangent.array.slice((k*12)    , (k*12) + 4));
+                        this.insertValues(tangents, face.b*4, bufferGeometry.attributes.tangent.array.slice((k*12) + 4, (k*12) + 8));
+                        this.insertValues(tangents, face.c*4, bufferGeometry.attributes.tangent.array.slice((k*12) + 8, (k*12) + 12));
                     }
                     else
                     {

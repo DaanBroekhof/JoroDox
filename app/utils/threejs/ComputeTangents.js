@@ -8,7 +8,7 @@ export default class ComputeTangents {
         // based on http://www.terathon.com/code/tangent.html
         // (per vertex tangents)
 
-        if (index === null ||
+        if (/*index === null ||*/
             attributes.position === undefined ||
             attributes.normal === undefined ||
             attributes.uv === undefined) {
@@ -18,7 +18,7 @@ export default class ComputeTangents {
 
         }
 
-        var indices = index.array;
+        var indices = index ? index.array : [ ...Array(attributes.position.array.length).keys() ];
         var positions = attributes.position.array;
         var normals = attributes.normal.array;
         var uvs = attributes.uv.array;

@@ -11,7 +11,7 @@ export default class PdxDataView extends Component {
         super(props);
 
         this.state = {
-            fileTreeData: this.parseFile(props.file.path)
+            fileTreeData: this.addTreeIds(props.data ? props.data : this.parseFile(props.file.path)),
         };
     }
 
@@ -19,10 +19,19 @@ export default class PdxDataView extends Component {
         style: {},
     };
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return (nextProps.file && nextProps.file.path !== this.props.file.path);
+    }
+
     componentWillReceiveProps(nextProps) {
-        if (nextProps.file.path !== this.props.file.path) {
+        if (nextProps.data !== this.props.data) {
             this.setState({
-                fileTreeData: this.parseFile(nextProps.file.path)
+                fileTreeData: this.addTreeIds(nextProps.data),
+            });
+        }
+        else if (nextProps.file && nextProps.file.path !== this.props.file.path) {
+            this.setState({
+                fileTreeData: this.addTreeIds(this.parseFile(nextProps.file.path)),
             });
         }
     }
@@ -30,7 +39,10 @@ export default class PdxDataView extends Component {
     parseFile(path) {
         let parser = new PdxData();
         let data = parser.readFromBuffer(new Uint8Array(jetpack.read(path, 'buffer')).buffer);
+        return data;
+    }
 
+    addTreeIds(data) {
         let id = 1;
         let addIdsToTree = function (node) {
             node.id = id;
@@ -49,12 +61,14 @@ export default class PdxDataView extends Component {
 
 
     componentDidMount() {
+        this.tree.clear();
         this.tree.loadData(this.state.fileTreeData);
         if (this.tree.getChildNodes())
             this.tree.selectNode(this.tree.getChildNodes()[0]);
     }
 
     componentDidUpdate() {
+        this.tree.clear();
         this.tree.loadData(this.state.fileTreeData);
         if (this.tree.getChildNodes())
             this.tree.selectNode(this.tree.getChildNodes()[0]);

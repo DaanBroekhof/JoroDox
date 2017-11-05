@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 const jetpack = require('electron').remote.require('fs-jetpack');
-const path = require('electron').remote.require('path');
+const syspath = require('electron').remote.require('path');
 import { Route } from 'react-router';
 import FileView from './FileView';
 
@@ -47,7 +47,7 @@ export default class FileTree extends React.Component {
                 found = true;
                 break;
             }
-            else if (this.openToPath.startsWith(child.id)) {
+            else if (this.openToPath.startsWith(child.id + syspath.sep)) {
                 if (!child.state.open)
                     this.tree.openNode(child, {async: true});
                 else
@@ -64,6 +64,9 @@ export default class FileTree extends React.Component {
     }
 
     updateNode(node) {
+        if (!node.id)
+            return;
+
         let localJetpack = jetpack.cwd(node.id);
         let dirs = localJetpack.find('.', {matching: '*', recursive: false, files: false, directories: true});
         let files = localJetpack.find('.', {matching: '*', recursive: false, files: true, directories: false});
@@ -71,7 +74,7 @@ export default class FileTree extends React.Component {
         let nodeIds = [];
         let newNodes = {};
         for (let dirName of dirs) {
-            let id = node.id + path.sep + dirName;
+            let id = node.id + syspath.sep + dirName;
             nodeIds.push('D:'+id);
             if (!this.tree.getNodeById(id)) {
                 newNodes['D:'+id] = {
@@ -87,7 +90,7 @@ export default class FileTree extends React.Component {
             }
         }
         for (let fileName of files) {
-            let id = node.id + path.sep + fileName;
+            let id = node.id + syspath.sep + fileName;
             nodeIds.push('F:'+id);
             if (!this.tree.getNodeById(id)) {
                 newNodes['F:'+id] = {
@@ -160,13 +163,13 @@ export default class FileTree extends React.Component {
 
                     let dirNodes = dirs.map((name) => {
                         return {
-                            id: parentNode.id + path.sep + name,
+                            id: parentNode.id + syspath.sep + name,
                             name: name,
                             loadOnDemand: true,
                             info: {
                                 'name': name,
                                 type: 'dir',
-                                absolutePath: parentNode.id + path.sep + name,
+                                absolutePath: parentNode.id + syspath.sep + name,
                             },
                         };
                     }).sort((a, b) => {
@@ -174,13 +177,13 @@ export default class FileTree extends React.Component {
                     });
                     let fileNodes = files.map((name) => {
                         return {
-                            id: parentNode.id + path.sep + name,
+                            id: parentNode.id + syspath.sep + name,
                             name: name,
                             loadOnDemand: false,
                             info: {
                                'name': name,
                                 type: 'file',
-                                absolutePath: parentNode.id + path.sep + name,
+                                absolutePath: parentNode.id + syspath.sep + name,
                             },
                         };
                     }).sort((a, b) => {

@@ -31,8 +31,10 @@ export default class App extends Component {
     constructor(props) {
         super(props);
 
+        let rootPath = localStorage.getItem('rootPath');
+
         this.state = {
-            rootPath: "F:\\Games\\Steam\\steamapps\\common\\Europa Universalis IV",
+            rootPath: rootPath === null ? "F:\\Games\\Steam\\steamapps\\common\\Europa Universalis IV" : rootPath,
         };
     }
 
@@ -42,7 +44,9 @@ export default class App extends Component {
         console.log(dir);
 
         if (dir && dir.length > 0) {
-            this.setState({rootPath: dir[0]});
+            this.setState({rootPath: dir[0]}, () => {
+                localStorage.setItem('rootPath', this.state.rootPath);
+            });
         }
     };
 

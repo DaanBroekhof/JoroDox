@@ -40,7 +40,7 @@ export default class FileView extends Component {
     }
 
     render() {
-        let file = jetpack.inspect(this.props.match.params.path);
+        let file = jetpack.inspect(this.props.match.params.path, {times: true});
 
         if (!file) {
             return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>File could not be found</p></Paper>;
