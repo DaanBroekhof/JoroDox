@@ -332,16 +332,11 @@ export default class PdxMesh {
 
     }
 
-    setPdxAnimation(viewScene, pdxAnimationData)
+    static setPdxAnimation(scene, pdxAnimationData)
     {
-        let deferred = $q.defer();
-
-        let scene = viewScene.viewConfig.viewObject.object;
-
-        if (!scene.bones || !scene.bones.length)
+        if (!scene.object.bones || !scene.object.bones.length)
         {
-            deferred.reject('Object does not contain bones.');
-            return deferred.promise;
+            return;
         }
 
         let animationData = null;
@@ -377,10 +372,10 @@ export default class PdxMesh {
 
                 let bone = null;
                 // Assign 'base' animation state
-                if (scene.bonesByName[pdxAnimBone.name])
-                    bone = scene.bonesByName[pdxAnimBone.name];
-                if (!bone && alternativeNames[pdxAnimBone.name] && scene.bonesByName[alternativeNames[pdxAnimBone.name]])
-                    bone = scene.bonesByName[alternativeNames[pdxAnimBone.name]];
+                if (scene.object.bonesByName[pdxAnimBone.name])
+                    bone = scene.object.bonesByName[pdxAnimBone.name];
+                if (!bone && alternativeNames[pdxAnimBone.name] && scene.object.bonesByName[alternativeNames[pdxAnimBone.name]])
+                    bone = scene.object.bonesByName[alternativeNames[pdxAnimBone.name]];
 
                 if (bone)
                 {
@@ -452,23 +447,38 @@ export default class PdxMesh {
             }
         }
 
+        /*
+        if (!scene.object.animations)
+            scene.object.animations = new Array();
+
         // Stop any existing animations
-        for (let i = 0; i < viewScene.viewConfig.viewObject.animations.length; i++)
+        for (let i = 0; i < scene.object.animations.length; i++)
         {
-            viewScene.viewConfig.viewObject.animations[i].stop();
+            scene.object.animations[i].stop();
         }
-        viewScene.viewConfig.viewObject.animations = [];
+        scene.object.animations = [];
+        */
+        if (scene.object.animationMixer)
+            scene.object.animationMixer.stop();
 
         // 'Reset' skeleton and start new animation (if set)
-        scene.traverse(function (subObject) {
-            if (subObject instanceof THREE.SkinnedMesh)
+        let subSkinnedMeshes = [];
+        scene.object.traverse(function (subObject) {
+            if (subObject instanceof THREE.SkinnedMesh) {
+                subSkinnedMeshes.push(subObject);
                 subObject.pose();
+            }
         });
+
         if (animationData)
         {
-            let animation = new THREE.Animation(viewScene.viewConfig.viewObject.object.bones[0], animationData);
-            animation.play();
-            viewScene.viewConfig.viewObject.animations.push(animation);
+            let animationClip = THREE.AnimationClip.parseAnimation(animationData, scene.object.bones);
+            //scene.object.animations.push(animationClip);
+
+            let mixer = new THREE.AnimationMixer(new THREE.AnimationObjectGroup(...subSkinnedMeshes));
+            let action = mixer.clipAction(animationClip)
+            action.play();
+            scene.animationMixer = mixer;
         }
     }
 

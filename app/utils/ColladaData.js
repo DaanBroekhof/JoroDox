@@ -24,6 +24,7 @@ export default class ColladaData {
             options = {
                 textureBaseName: 'unknown',
                 pdxShader: 'PdxMeshStandard',
+                flipY: true,
             };
 
         let colladaData = {
@@ -287,7 +288,7 @@ export default class ColladaData {
 
                         if (uv)
                         {
-                            let flipY = subObject.material.map.flipY;
+                            let flipY = options.flipY;//subObject.material.map.flipY;
 
                             uvs[i][face.a*2] = uv[0].x;
                             uvs[i][face.a*2+1] = flipY? 1 - uv[0].y : uv[0].y;

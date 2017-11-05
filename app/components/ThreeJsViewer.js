@@ -17,6 +17,7 @@ export default class ThreeJsViewer extends Component {
 
         this.state = {
             distance: 20,
+            cameraFocusHeight: 0,
             update: null,
             showSkeletons: true,
             showWireframes: false,
@@ -88,6 +89,9 @@ export default class ThreeJsViewer extends Component {
         if (!this.objectScene)
             return;
 
+        if (!this.objectScene.maxExtentHeight)
+            this.objectScene.maxExtentHeight = 0;
+
         this.scene.add(this.objectScene.object);
         this.setState({distance: this.objectScene.distance * 4});
         this.clock = new THREE.Clock();
@@ -106,9 +110,9 @@ export default class ThreeJsViewer extends Component {
         }
 
         this.camera.position.x = Math.cos(this.rotation) * this.state.distance;
-        this.camera.position.y = this.state.distance / 4;
+        this.camera.position.y = (this.state.distance + this.state.cameraFocusHeight) / 4;
         this.camera.position.z = Math.sin(this.rotation) * this.state.distance;
-        this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? this.objectScene.maxExtentHeight / 2 : 0, 0));
+        this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? (this.objectScene.maxExtentHeight + this.state.cameraFocusHeight) / 2 : 0, 0));
 
 
         // Rotate particle lights
@@ -142,6 +146,9 @@ export default class ThreeJsViewer extends Component {
             }
         }
 
+        if (this.objectScene.animationMixer)
+            this.objectScene.animationMixer.update(delta);
+
         this.renderer.render(this.scene, this.camera);
     }
 
@@ -153,15 +160,28 @@ export default class ThreeJsViewer extends Component {
 
     clickZoomOut() {
         return () => {
-            this.setState({distance: this.state.distance * 1.1});
+            this.setState({distance: this.state.distance * 1.2});
         };
     }
 
     clickZoomIn() {
         return () => {
-            this.setState({distance: this.state.distance * 0.9});
+            this.setState({distance: this.state.distance * 0.8});
         };
     }
+
+    clickMoveUp() {
+        return () => {
+            this.setState({cameraFocusHeight: this.state.cameraFocusHeight + (Math.max(this.objectScene.maxExtentHeight ? this.objectScene.maxExtentHeight : 0, 1))});
+        };
+    }
+    clickMoveDown() {
+        return () => {
+            this.setState({cameraFocusHeight: this.state.cameraFocusHeight - (Math.max(this.objectScene.maxExtentHeight ? this.objectScene.maxExtentHeight : 0, 1))});
+        };
+    }
+
+
     render() {
         return (
             <div>
@@ -179,11 +199,18 @@ export default class ThreeJsViewer extends Component {
                 <div style={{position: 'relative', display: 'inline-block'}}>
                     <canvas ref={canvas => this.canvas = canvas} style={{width: 900, height: 600}} />
                     <div style={{position: 'absolute', right: 10, top: 10}}>
-                        <Button fab color="accent" aria-label="Zoom in" style={{marginRight: 5, width: 36, height: 36}} onClick={this.clickZoomIn()}>
+                        <Button fab color="accent" aria-label="Zoom in" style={{marginRight: 5, marginBottom: 5, width: 36, height: 36}} onClick={this.clickZoomIn()}>
                             <Icon>zoom_in</Icon>
                         </Button>
-                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 0, width: 36, height: 36}} onClick={this.clickZoomOut()}>
+                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 0, marginBottom: 5, width: 36, height: 36}} onClick={this.clickMoveUp()}>
+                            <Icon>keyboard_arrow_up</Icon>
+                        </Button>
+                        <br />
+                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 5, width: 36, height: 36}} onClick={this.clickZoomOut()}>
                             <Icon>zoom_out</Icon>
+                        </Button>
+                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 0, width: 36, height: 36}} onClick={this.clickMoveDown()}>
+                            <Icon>keyboard_arrow_down</Icon>
                         </Button>
                     </div>
                     <div style={{position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'}}>

@@ -53,6 +53,7 @@ export default withRouter(class PdxMeshView extends Component {
             fileTreeData: fileTreeData,
             editFileTreeData: fileTreeData,
             textureFiles: this.findTextureFiles(path.dirname(props.file.path)),
+            animationFiles: this.findAnimationFiles(path.dirname(props.file.path)),
             objectScene:  fileTreeData ? PdxMesh.convertToThreeJsScene(fileTreeData, path.resolve(this.props.file.path, '..')) : null,
         };
     }
@@ -64,6 +65,7 @@ export default withRouter(class PdxMeshView extends Component {
                 fileTreeData: fileTreeData,
                 editFileTreeData: fileTreeData,
                 textureFiles: this.findTextureFiles(path.dirname(nextProps.file.path)),
+                animationFiles: this.findAnimationFiles(path.dirname(nextProps.file.path)),
                 objectScene: fileTreeData ? PdxMesh.convertToThreeJsScene(fileTreeData, path.resolve(nextProps.file.path, '..')) : null,
             });
         }
@@ -73,6 +75,11 @@ export default withRouter(class PdxMeshView extends Component {
         let localJetpack = jetpack.cwd(path);
 
         return localJetpack.find('.', {matching: '*.dds', recursive: false, files: true, directories: false});
+    }
+
+    findAnimationFiles(path) {
+        let localJetpack = jetpack.cwd(path);
+        return localJetpack.find('.', {matching: '*.anim', recursive: true, files: true, directories: false});
     }
 
     parseFile(path) {
@@ -111,10 +118,15 @@ export default withRouter(class PdxMeshView extends Component {
     }
 
     setMeshProperty(mesh, propName, value) {
-
         mesh.props.material.props[propName] = value;
 
         this.setState({editFileTreeData: this.state.editFileTreeData});
+    }
+
+    setAnimation(animationFile) {
+        let animationData = this.parseFile(path.dirname(this.props.file.path) + path.sep + animationFile);
+
+        PdxMesh.setPdxAnimation(this.state.objectScene, animationData);
     }
 
     render() {
@@ -146,11 +158,11 @@ export default withRouter(class PdxMeshView extends Component {
                         </TableCell>
                         <TableCell style={{minWidth: 300}}>
                             <span style={{display: 'inline-block', width: 100}}>Diffuse:</span>
-                            <Select value={meshObjectPart.props.material.props.diff} onChange={(event) => this.setMeshProperty(meshObjectPart, 'diff', event.target.value)} native><option key={null} value={'nodiffuse.dss'}>- none -</option> {textureFilesOptions}</Select><br />
+                            <Select value={meshObjectPart.props.material.props.diff} onChange={(event) => this.setMeshProperty(meshObjectPart, 'diff', event.target.value)} native><option key={null} value={'nodiffuse.dds'}>- none -</option> {textureFilesOptions}</Select><br />
                             <span style={{display: 'inline-block', width: 100}}>Normal:</span>
-                            <Select value={meshObjectPart.props.material.props.n} onChange={(event) => this.setMeshProperty(meshObjectPart, 'n', event.target.value)} native><option key={null} value={'nonormal.dss'}>- none -</option>{textureFilesOptions}</Select><br />
+                            <Select value={meshObjectPart.props.material.props.n} onChange={(event) => this.setMeshProperty(meshObjectPart, 'n', event.target.value)} native><option key={null} value={'nonormal.dds'}>- none -</option>{textureFilesOptions}</Select><br />
                             <span style={{display: 'inline-block', width: 100}}>Specular:</span>
-                            <Select value={meshObjectPart.props.material.props.spec} onChange={(event) => this.setMeshProperty(meshObjectPart, 'spec' ,event.target.value)} native><option key={null} value={'nospec.dss'}>- none -</option>{textureFilesOptions}</Select><br />
+                            <Select value={meshObjectPart.props.material.props.spec} onChange={(event) => this.setMeshProperty(meshObjectPart, 'spec' ,event.target.value)} native><option key={null} value={'nospec.dds'}>- none -</option>{textureFilesOptions}</Select><br />
                         </TableCell>
                     </TableRow>
                 );
@@ -165,6 +177,14 @@ export default withRouter(class PdxMeshView extends Component {
 
                 <ThreeJsViewer ref={(ref) => this.threeJsViewer = ref} objectScene={this.state.objectScene}/>
 
+                <br />
+                <Typography type="headline">Animation</Typography>
+                <Select value={this.state.animationRun} onChange={(event) => this.setAnimation(event.target.value)} native>
+                    <option key={0} value={null}>- None -</option>
+                    {this.state.animationFiles.map((animationFile) =>
+                        <option key={animationFile} value={animationFile}>{animationFile}</option>
+                    )}
+                </Select>
                 <br />
                 <Typography type="headline">Meshes</Typography>
                 <Table>
