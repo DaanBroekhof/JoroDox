@@ -164,6 +164,9 @@ export default function () {
         visualScene = parseScene();
         scene = new THREE.Group();
 
+        if (!visualScene)
+            return;
+
         for ( var i = 0; i < visualScene.nodes.length; i ++ ) {
 
             scene.add( createSceneGraph( visualScene.nodes[ i ] ) );
@@ -697,31 +700,39 @@ export default function () {
         }
 
         var animationBounds = calcAnimationBounds();
-        var skeleton = visualScene.getChildById( instanceCtrl.skeleton[0], true ) || visualScene.getChildBySid( instanceCtrl.skeleton[0], true );
+		var skeleton = null;
+		var sortedbones = [];
+		for (var k = 0; k < instanceCtrl.skeleton.length; k++)
+		{
+			skeleton = visualScene.getChildById( instanceCtrl.skeleton[k], true ) ||
+				visualScene.getChildBySid( instanceCtrl.skeleton[k], true );
 
-        //flatten the skeleton into a list of bones
-        var bonelist = flattenSkeleton(skeleton);
-        var joints = skinController.skin.joints;
+            //flatten the skeleton into a list of bones
+            var bonelist = flattenSkeleton(skeleton);
+            var joints = skinController.skin.joints;
 
-        //sort that list so that the order reflects the order in the joint list
-        var sortedbones = [];
-        for (var i = 0; i < joints.length; i ++) {
+            //sort that list so that the order reflects the order in the joint list
+            sortedbones = [];
+            for (var i = 0; i < joints.length; i ++) {
 
-            for (var j = 0; j < bonelist.length; j ++) {
+                for (var j = 0; j < bonelist.length; j ++) {
 
-                if (bonelist[j].name === joints[i]) {
+                    if (bonelist[j].name === joints[i]) {
 
-                    sortedbones[i] = bonelist[j];
+                        sortedbones[i] = bonelist[j];
+
+                    }
 
                 }
-
-            }
-
+			}
+			if (sortedbones.length > 0)
+				break;
         }
 
         //hook up the parents by index instead of name
         for (var i = 0; i < sortedbones.length; i ++) {
 
+			var oldParent = sortedbones[i].parent;
             for (var j = 0; j < sortedbones.length; j ++) {
 
                 if (sortedbones[i].parent === sortedbones[j].name) {
@@ -731,6 +742,9 @@ export default function () {
                 }
 
             }
+			// Parent bone not in current list, assume stand-alone bone
+			if (oldParent == sortedbones[i].parent)
+				sortedbones[i].parent = -1;
 
         }
 

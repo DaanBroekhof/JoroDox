@@ -458,8 +458,8 @@ export default class PdxMesh {
         }
         scene.object.animations = [];
         */
-        if (scene.object.animationMixer)
-            scene.object.animationMixer.stop();
+        if (scene.animationMixer)
+            scene.animationMixer.stopAllAction();
 
         // 'Reset' skeleton and start new animation (if set)
         let subSkinnedMeshes = [];

@@ -9,6 +9,7 @@ import PdxMesh from '../utils/PdxMesh';
 import {Button, Checkbox, FormControlLabel, FormGroup, Icon, IconButton} from "material-ui";
 import DeleteIcon from 'material-ui-icons/Delete';
 import ColladaData from "../utils/ColladaData";
+const OrbitControls = require('../utils/threejs/OrbitControls')(THREE);
 
 export default class ThreeJsViewer extends Component {
 
@@ -24,7 +25,7 @@ export default class ThreeJsViewer extends Component {
             showColliders: true,
             showMeshes: true,
             showSpotlights: true,
-            rotate: true,
+            rotate: false,
         };
 
         this.rotation = 0;
@@ -44,9 +45,13 @@ export default class ThreeJsViewer extends Component {
 
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
-        this.camera.position.set(10,10,0);
         this.camera.up = new THREE.Vector3(0,1,0);
-        this.camera.lookAt(new THREE.Vector3(0,0,0));
+        this.camera.position.x = Math.cos(this.rotation) * this.state.distance;
+        this.camera.position.y = (this.state.distance + this.state.cameraFocusHeight) / 4;
+        this.camera.position.z = Math.sin(this.rotation) * this.state.distance;
+        this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? (this.objectScene.maxExtentHeight + this.state.cameraFocusHeight) / 2 : 0, 0));
+
+        let c = new OrbitControls(this.camera, this.canvas);
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
@@ -107,13 +112,11 @@ export default class ThreeJsViewer extends Component {
         let delta = this.clock.getDelta();
         if (this.state.rotate) {
             this.rotation += delta * 0.5;
+            this.camera.position.x = Math.cos(this.rotation) * this.state.distance;
+            this.camera.position.y = (this.state.distance + this.state.cameraFocusHeight) / 4;
+            this.camera.position.z = Math.sin(this.rotation) * this.state.distance;
+            this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? (this.objectScene.maxExtentHeight + this.state.cameraFocusHeight) / 2 : 0, 0));
         }
-
-        this.camera.position.x = Math.cos(this.rotation) * this.state.distance;
-        this.camera.position.y = (this.state.distance + this.state.cameraFocusHeight) / 4;
-        this.camera.position.z = Math.sin(this.rotation) * this.state.distance;
-        this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? (this.objectScene.maxExtentHeight + this.state.cameraFocusHeight) / 2 : 0, 0));
-
 
         // Rotate particle lights
         let timer = Date.now() * 0.0005;
@@ -158,30 +161,6 @@ export default class ThreeJsViewer extends Component {
         }
     }
 
-    clickZoomOut() {
-        return () => {
-            this.setState({distance: this.state.distance * 1.2});
-        };
-    }
-
-    clickZoomIn() {
-        return () => {
-            this.setState({distance: this.state.distance * 0.8});
-        };
-    }
-
-    clickMoveUp() {
-        return () => {
-            this.setState({cameraFocusHeight: this.state.cameraFocusHeight + (Math.max(this.objectScene.maxExtentHeight ? this.objectScene.maxExtentHeight : 0, 1))});
-        };
-    }
-    clickMoveDown() {
-        return () => {
-            this.setState({cameraFocusHeight: this.state.cameraFocusHeight - (Math.max(this.objectScene.maxExtentHeight ? this.objectScene.maxExtentHeight : 0, 1))});
-        };
-    }
-
-
     render() {
         return (
             <div>
@@ -198,21 +177,7 @@ export default class ThreeJsViewer extends Component {
 
                 <div style={{position: 'relative', display: 'inline-block'}}>
                     <canvas ref={canvas => this.canvas = canvas} style={{width: 900, height: 600}} />
-                    <div style={{position: 'absolute', right: 10, top: 10}}>
-                        <Button fab color="accent" aria-label="Zoom in" style={{marginRight: 5, marginBottom: 5, width: 36, height: 36}} onClick={this.clickZoomIn()}>
-                            <Icon>zoom_in</Icon>
-                        </Button>
-                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 0, marginBottom: 5, width: 36, height: 36}} onClick={this.clickMoveUp()}>
-                            <Icon>keyboard_arrow_up</Icon>
-                        </Button>
-                        <br />
-                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 5, width: 36, height: 36}} onClick={this.clickZoomOut()}>
-                            <Icon>zoom_out</Icon>
-                        </Button>
-                        <Button fab color="accent" aria-label="Zoom out" style={{marginRight: 0, width: 36, height: 36}} onClick={this.clickMoveDown()}>
-                            <Icon>keyboard_arrow_down</Icon>
-                        </Button>
-                    </div>
+
                     <div style={{position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'}}>
                         Meshes: {this.props.objectScene ? this.props.objectScene.meshCount : '-'}<br />
                         Triangles: {this.props.objectScene ? this.props.objectScene.triangleCount : '-'}<br />
