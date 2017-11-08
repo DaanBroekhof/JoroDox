@@ -322,6 +322,30 @@ export default class PdxMesh {
             {
                 material.transparent = true;
             }
+            if (pdxMaterial.shader === 'PdxMeshPortrait')
+            {
+                material.transparent = true;
+            }
+            if (pdxMaterial.shader === 'PdxMeshNavigationButton')
+            {
+                material.transparent = true;
+            }
+            if (pdxMaterial.shader === 'PdxMeshAtmosphere' || pdxMaterial.pdxShader === 'PdxMeshAtmosphereStar' || pdxMaterial.shader === 'PdxMeshStar')
+            {
+                material.transparent = true;
+                material.blending = THREE['MultiplyBlending'];
+
+            }
+            if (pdxMaterial.shader === 'PdxMeshClouds')
+            {
+                material.transparent = true;
+
+            }
+            if (pdxMaterial.shader.startsWith('PdxMeshAlphaAdditive')) {
+                material.transparent = true;
+                material.blending = THREE['AdditiveBlending'];
+            }
+
 
             if (mesh.geometry.skinIndices.length)
                 material.skinning = true;

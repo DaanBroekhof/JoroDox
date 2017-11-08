@@ -29,6 +29,18 @@ export default withRouter(class PdxMeshView extends Component {
         'Collision',
         'JdxMeshShield',
         'JdxMeshShieldTextureAtlas',
+
+        'PdxMeshStandardSkinned',
+        'PdxMeshStandardShadow',
+        'PdxMeshAlphaAdditive',
+        'PdxMeshAlphaAdditiveSkinned',
+        'PdxMeshAdvanced',
+        'PdxMeshAdvancedSkinned',
+        'PdxMeshAdvancedShadow',
+        'PdxMeshTilingAO',
+        'PdxMeshPortrait',
+
+
     ];
 
     pdxShaderDescriptions = {
@@ -139,6 +151,9 @@ export default withRouter(class PdxMeshView extends Component {
         let meshConfig = [];
         for (let [key, meshObject] of Object.entries(this.state.editFileTreeData.props.object.props)) {
             let nr = 0;
+            if (!meshObject.children)
+                continue;
+
             for (let meshObjectPart of meshObject.children) {
                 if (meshObjectPart.name !== 'mesh')
                     continue;
