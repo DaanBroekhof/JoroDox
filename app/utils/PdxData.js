@@ -258,7 +258,12 @@ export default class PdxData {
 
         this.writeChar(buffer, 'i');
 
-        let data = [].concat(propertyData.data);
+        let data = [];
+        if (propertyData.data instanceof Int32Array)
+            data = propertyData.data;
+        else
+            data = data.concat(propertyData.data);
+
         let l = data.length;
         this.writeUint32(buffer, l);
         for (let i = 0; i < l; i++)
@@ -272,7 +277,12 @@ export default class PdxData {
 
         this.writeChar(buffer, 'f');
 
-        let data = [].concat(propertyData.data);
+        let data = [];
+        if (propertyData.data instanceof Float32Array)
+            data = propertyData.data;
+        else
+            data = data.concat(propertyData.data);
+
         let l = data.length;
         this.writeUint32(buffer, l);
         for (let i = 0; i < l; i++)

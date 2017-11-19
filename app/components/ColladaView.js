@@ -77,9 +77,16 @@ export default withRouter(class ColladaView extends Component {
     }
 
     convertToPdxAnimation(animation) {
-
+        return () => {
+            let pdxMesh = new PdxMesh();
+            let pdxData = pdxMesh.convertToPdxAnim(animation, this.state.objectScene.object);
+            let data = (new PdxData).writeToBuffer(pdxData);
+            let newFile = this.props.file.path.replace(/.dae/, '_'+ animation.name +'.anim');
+            jetpack.writeAsync(newFile, new Buffer(data)).then(() => {
+                this.props.history.push('/fileview/'+ newFile);
+            });
+        };
     }
-
 
     render() {
 
@@ -95,6 +102,7 @@ export default withRouter(class ColladaView extends Component {
                         <TableCell>{animation.fps}</TableCell>
                         <TableCell>{animation.tracks.length}</TableCell>
                         <TableCell>{animation.duration}</TableCell>
+                        <TableCell><Button raised onClick={this.convertToPdxAnimation(animation)}>Convert to .anim</Button></TableCell>
                     </TableRow>
                 );
             }
@@ -115,6 +123,7 @@ export default withRouter(class ColladaView extends Component {
                             <TableCell>FPS</TableCell>
                             <TableCell>Tracks</TableCell>
                             <TableCell>Duration</TableCell>
+                            <TableCell>Convert</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

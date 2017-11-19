@@ -506,7 +506,7 @@ export default class PdxMesh {
         }
     }
 
-   createFromThreeJsObject(object, options) {
+    createFromThreeJsObject(object, options) {
 
         if (!options)
             options = {
@@ -781,5 +781,200 @@ export default class PdxMesh {
             array[offset + i] = values[i];
         }
         return array;
+    }
+
+    convertToPdxAnim(animation, viewObject) {
+        let pdxDataRoot = {
+            name: 'pdxData',
+            type: 'object',
+            children: [
+                {name: 'pdxasset', type: 'int', data: [1, 0]},
+            ]
+        };
+
+        // Re-order tracks by boneList order
+        let tracksPerBone = [];
+        let boneList = this.getBoneListRooted(viewObject);
+        let sampleCount = 0;
+        let trackCount = 0;
+        let fps = 0;
+        for (let i = 0; i < boneList.length; i++)
+        {
+            tracksPerBone[i] = [];
+            for (let k = 0; k < animation.tracks.length; k++)
+            {
+                let trackFps = animation.tracks[k].times.length / animation.tracks[k].times[animation.tracks[k].times.length - 1];
+
+                if (animation.tracks[k].name === boneList[i].uuid +'.position')
+                {
+                    tracksPerBone[i]['position'] = animation.tracks[k];
+                    animation.tracks[k].found = true;
+                }
+                else if (animation.tracks[k].name === boneList[i].uuid +'.scale')
+                {
+                    tracksPerBone[i]['scale'] = animation.tracks[k];
+                    animation.tracks[k].found = true;
+                }
+                else if (animation.tracks[k].name === boneList[i].uuid +'.quaternion')
+                {
+                    tracksPerBone[i]['quaternion'] = animation.tracks[k];
+                    animation.tracks[k].found = true;
+                }
+                else {
+                    continue;
+                }
+                trackCount++;
+                sampleCount = Math.max(sampleCount, animation.tracks[k].times.length);
+                fps = Math.max(fps, trackFps)
+            }
+        }
+        for (let k = 0; k < animation.tracks.length; k++) {
+            if (!animation.tracks[k].found)
+                console.log('Could not find bone for track `' + animation.tracks[k].name + '`.');
+        }
+
+        let trackArray = [trackCount];
+        let pdxInfo = {name: 'info', type: 'object', children: [
+                {name: 'fps', type: 'float', data: [fps]},
+                {name: 'sa', type: 'int', data: [sampleCount]},
+                {name: 'j', type: 'int', data: trackArray},
+            ]};
+        pdxDataRoot.children.push(pdxInfo);
+
+        // Set the 'start' positions of the animation, and detect if there are any changed from that start-position,
+        // for each animation type (position, rotation and/or scale)
+        let boneData = [];
+        for (let i = 0; i < tracksPerBone.length; i++)
+        {
+            boneData[i] = {
+                name: boneList[i].name,
+                hasTransformChange: false,
+                hasRotationChange: false,
+                hasScaleChange: false,
+                startPos: [0, 0, 0],
+                startQuat: [0, 0, 0, 1],
+                startScale: [1],
+            };
+
+            if (tracksPerBone[i]['position']) {
+                boneData[i].startPos = tracksPerBone[i]['position'].values.slice(0, 3);
+                for (let j = 0; j < tracksPerBone[i]['position'].values.length; j += 3) {
+                    if (!this.epsilonArrayEquals(boneData[i].startPos, tracksPerBone[i]['position'].values.slice(j, j + 3))) {
+                        boneData[i].hasTransformChange = true;
+                        break;
+                    }
+                }
+                if (!boneData[i].hasTransformChange)
+                    trackArray[0]--;
+            }
+            if (tracksPerBone[i]['quaternion']) {
+                boneData[i].startQuat = tracksPerBone[i]['quaternion'].values.slice(0, 4);
+                for (let j = 0; j < tracksPerBone[i]['quaternion'].values.length; j += 4) {
+                    if (!this.epsilonArrayEquals(boneData[i].startQuat, tracksPerBone[i]['quaternion'].values.slice(j, j + 4))) {
+                        boneData[i].hasRotationChange = true;
+                        break;
+                    }
+                }
+                if (!boneData[i].hasRotationChange)
+                    trackArray[0]--;
+            }
+            if (tracksPerBone[i]['scale']) {
+                boneData[i].startScale = tracksPerBone[i]['scale'].values.slice(0, 1);
+                for (let j = 0; j < tracksPerBone[i]['scale'].values.length; j += 3) {
+                    if (!this.epsilonArrayEquals(boneData[i].startScale, tracksPerBone[i]['quaternion'].values.slice(j, j + 3))) {
+                        boneData[i].hasScaleChange = true;
+                        break;
+                    }
+                }
+                if (!boneData[i].hasScaleChange)
+                    trackArray[0]--;
+            }
+
+            let sampleFrom = '';
+            if (boneData[i].hasTransformChange)
+                sampleFrom += 't';
+            if (boneData[i].hasRotationChange)
+                sampleFrom += 'q';
+            if (boneData[i].hasScaleChange)
+                sampleFrom += 's';
+
+            let pdxBoneData = {
+                name: boneData[i].name,
+                type: 'object',
+                children: [
+                    {name: 'sa', type: 'string', data: sampleFrom, nullByteString: true},
+                    {name: 't', type: 'float', data: boneData[i].startPos},
+                    {name: 'q', type: 'float', data: boneData[i].startQuat},
+                    {name: 's', type: 'float', data: boneData[i].startScale},
+                ]
+            };
+
+            pdxInfo.children.push(pdxBoneData);
+        }
+
+        // Collect all samples. We assume a smooth time-step, and no missing 'keys'.
+        // (this is what the collada importer currently does)
+        // (we could expand this to support interpolation, etc - but too much work)
+
+        let pdxSamples = {name: 'samples', type: 'object', children: []};
+        pdxDataRoot.children.push(pdxSamples);
+        let samples = {
+            t: [],
+            q: [],
+            s: [],
+        };
+
+        // We can interpolate values according to the highest fps & sample count
+        for (let k = 0; k < sampleCount; k++)
+        {
+            let keyTime = k * (1 / fps);
+
+            for (let i = 0; i < tracksPerBone.length; i++)
+            {
+                if (boneData[i].hasTransformChange) {
+                    samples.t.push(...tracksPerBone[i]['position'].createInterpolant().evaluate(keyTime));
+                }
+                if (boneData[i].hasRotationChange) {
+                    samples.q.push(...tracksPerBone[i]['quaternion'].createInterpolant().evaluate(keyTime));
+                }
+                if (boneData[i].hasScaleChange) {
+                    let scaleValues = tracksPerBone[i]['scale'].createInterpolant().evaluate(keyTime);
+                    samples.s.push(scaleValues[0]);
+
+                    if (!this.epsilonEquals(scaleValues[0], scaleValues[1])
+                        || !this.epsilonEquals(scaleValues[0], scaleValues[2]))
+                    {
+                        console.log('Usage of non-cubic scale!');
+                    }
+                }
+            }
+        }
+
+        if (samples.t.length > 0)
+            pdxSamples.children.push({name: 't', type: 'float', data: samples.t});
+        if (samples.q.length > 0)
+            pdxSamples.children.push({name: 'q', type: 'float', data: samples.q});
+        if (samples.s.length > 0)
+            pdxSamples.children.push({name: 's', type: 'float', data: samples.s});
+
+        return pdxDataRoot;
+    }
+
+
+    epsilonEquals(a, b) {
+        let epsilon = 0.00001;
+
+        return (Math.abs(a - b) < epsilon);
+    }
+
+    epsilonArrayEquals(a, b) {
+        let epsilon = 0.00001;
+
+        for (let i = 0, l = a.length; i < l; i++)
+        {
+            if (Math.abs(a[i] - b[i]) > epsilon)
+                return false;
+        }
+        return true;
     }
 }

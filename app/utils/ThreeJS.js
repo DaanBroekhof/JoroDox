@@ -20,6 +20,17 @@ export default class ThreeJS {
             let texDatas = ddsLoader._parser(buffer.buffer, true);
 
             if (texDatas.width === 0 && texDatas.height === 0) {
+                let greyTexture = new Uint8Array(4);
+                greyTexture[0] = 128;
+                greyTexture[1] = 128;
+                greyTexture[2] = 128;
+                greyTexture[3] = 255;
+
+                texture.mipmaps = [
+                    { "data": greyTexture, "width": 1, "height": 1 }
+                ];
+                texture.needsUpdate = true;
+
                 console.error('Could not parse DDS texture `'+ file +'`');
                 return;
             }
@@ -63,6 +74,16 @@ export default class ThreeJS {
             }
         }, function () {
             // do error
+            let greyTexture = new Uint8Array(4);
+            greyTexture[0] = 128;
+            greyTexture[1] = 128;
+            greyTexture[2] = 128;
+            greyTexture[3] = 255;
+
+            texture.mipmaps = [
+                { "data": greyTexture, "width": 1, "height": 1 }
+            ];
+            texture.needsUpdate = true;
         });
 
         return texture;
