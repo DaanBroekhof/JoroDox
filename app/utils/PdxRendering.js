@@ -1,3 +1,4 @@
+import ColladaLoader from 'threejs/ColladaLoader';
 
 export default class PdxRendering {
 
@@ -1191,7 +1192,7 @@ export default class PdxRendering {
 
     loadCollada(string, path) {
         let deferred = $q.defer();
-        let loader = new THREE.ColladaLoader();
+        let loader = new ColladaLoader();
         loader.options.convertUpAxis = true;
 
         let boneCount = 0;

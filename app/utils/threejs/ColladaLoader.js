@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87
@@ -1392,7 +1394,8 @@ THREE.ColladaLoader.prototype = {
 
                     var surface = effect.profile.surfaces[ sampler.source ];
 
-                    var texture = textureLoader.load( getImage( surface.init_from ) );
+                    var url = path + getImage( surface.init_from );
+                    var texture = textureLoader.get(url).load(url);
 
                     var extra = textureObject.extra;
 
@@ -3359,9 +3362,9 @@ THREE.ColladaLoader.prototype = {
         console.log( 'THREE.ColladaLoader: File version', version );
 
         var asset = parseAsset( getElementsByTagName( collada, 'asset' )[ 0 ] );
-        var textureLoader = new THREE.TextureLoader( this.manager );
-        textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
-
+        var textureLoader = THREE.Loader.Handlers;
+//        var textureLoader = new THREE.TextureLoader( this.manager );
+//        textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
         //
 
         var animations = [];
@@ -3444,3 +3447,12 @@ THREE.ColladaLoader.prototype = {
     }
 
 };
+
+class ColladaLoader {
+    constructor(manager) {
+        this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+    }
+}
+ColladaLoader.prototype = THREE.ColladaLoader.prototype;
+
+export default ColladaLoader;

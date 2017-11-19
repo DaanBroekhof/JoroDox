@@ -24,16 +24,26 @@ export default withRouter(class ColladaView extends Component {
             objectScene: null,
         };
 
-        (new ColladaData()).convertToThreeJsScene(jetpack.read(this.props.file.path), path.resolve(this.props.file.path, '..')).then((objectScene) => {
-            this.setState({objectScene: objectScene});
-        });
+        try {
+            (new ColladaData()).convertToThreeJsScene(jetpack.read(this.props.file.path), path.resolve(this.props.file.path, '..')).then((objectScene) => {
+                this.setState({objectScene: objectScene});
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.file.path !== this.props.file.path) {
-            (new ColladaData()).convertToThreeJsScene(jetpack.read(nextProps.file.path), path.resolve(nextProps.file.path, '..')).then((objectScene) => {
-                this.setState({objectScene: objectScene});
-            });
+            try {
+                (new ColladaData()).convertToThreeJsScene(jetpack.read(nextProps.file.path), path.resolve(nextProps.file.path, '..')).then((objectScene) => {
+                    this.setState({objectScene: objectScene});
+                });
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
     }
 
@@ -53,16 +63,7 @@ export default withRouter(class ColladaView extends Component {
         if (this.state.objectScene.animationMixer)
             this.state.objectScene.animationMixer.stopAllAction();
 
-        // 'Reset' skeleton and start new animation (if set)
-        let subSkinnedMeshes = [];
-        this.state.objectScene.object.traverse(function (subObject) {
-            if (subObject instanceof THREE.SkinnedMesh) {
-                subSkinnedMeshes.push(subObject);
-                subObject.pose();
-            }
-        });
-
-        let mixer = new THREE.AnimationMixer(new THREE.AnimationObjectGroup(...subSkinnedMeshes));
+        let mixer = new THREE.AnimationMixer(this.state.objectScene.object);
         let action = mixer.clipAction(animation);
         action.play();
         this.state.objectScene.animationMixer = mixer;
@@ -72,11 +73,7 @@ export default withRouter(class ColladaView extends Component {
         if (this.state.objectScene.animationMixer)
             this.state.objectScene.animationMixer.stopAllAction();
 
-        this.state.objectScene.object.traverse(function (subObject) {
-            if (subObject instanceof THREE.SkinnedMesh) {
-                subObject.pose();
-            }
-        });
+        this.state.objectScene.skeletons[0].pose();
     }
 
     convertToPdxAnimation(animation) {

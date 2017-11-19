@@ -507,9 +507,24 @@ export default class ColladaData {
         }
         xml += '  </library_geometries>'+ "\n";
 
+        /*
         xml += '  <library_animations>'+ "\n";
+        colladaData.animations.forEach(function (animation) {
+
+        });
         xml += '  </library_animations>'+ "\n";
 
+        xml += '  </library_animations>'+ "\n";
+        xml += '  <library_animation_clips>'+ "\n";
+        colladaData.animations.forEach(function (animation) {
+            xml += '   <animation_clip id="AnimationClip" start="0" end="'+ animation.duration +'">'+ "\n";
+            animation.transforms.forEach(function (transform) {
+                xml += '     <instance_animation url="#'+transform.name+'"/>'+ "\n";
+            });
+            xml += '   </animation_clip>'+ "\n";
+        });
+        xml += '  </library_animation_clips>'+ "\n";
+*/
         xml += '  <library_controllers>'+ "\n";
         for (let controller of colladaData.controllers) {
             xml += '   <controller id="'+ controller.name +'" name="'+ controller.name +'-name">'+ "\n";
@@ -562,7 +577,7 @@ export default class ColladaData {
                 xml += indent +'  <instance_controller url="#'+ node.controller.name +'">'+ "\n";
                 xml += indent +'    <skeleton>#'+ colladaData.skeleton.bones[0].name +'</skeleton>'+ "\n";
                 xml += indent +'    <bind_material><technique_common>'+ "\n";
-                xml += indent +'      <instance_material symbol="'+ node.material.name +'" target="#'+ node.material.name +'">'+ "\n";
+                xml += indent +'      <instance_material symbol="'+ node.geometry.name +'-material" target="#'+ node.material.name +'">'+ "\n";
                 xml += indent +'        <bind_vertex_input semantic="'+ node.geometry.name +'-channel1" input_semantic="TEXCOORD" input_set="0"/>'+ "\n";
                 xml += indent +'      </instance_material>'+ "\n";
                 xml += indent +'     </technique_common></bind_material>'+ "\n";
@@ -623,11 +638,11 @@ export default class ColladaData {
                 let texture = new THREE.Texture();
 
                 let modPath = path.substr(6);
+                texture.filePath = modPath;
 
                 if (modPath.substr(-4) === '.dds')
                 {
                     texture = ThreeJS.loadDdsToTexture(modPath);
-                    texture.filePath = modPath;
                     texture.flipY = false;
                 }
                 else
@@ -639,8 +654,18 @@ export default class ColladaData {
                         (image) => {
                             texture.image = image;
                             texture.needsUpdate = true;
-                            texture.filePath = modPath;
                             texture.flipY = true;
+                        },
+                        (progress) => {},
+                        (errorEvent) => {
+
+                            // Load 1x1 white pixel texture when no texture is found
+                            imageLoader.load('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=', (image) => {
+                                texture.image = image;
+                                texture.needsUpdate = true;
+                                texture.flipY = true;
+                            });
+                            texture.loadError = errorEvent;
                         }
                     );
                 }
@@ -660,94 +685,80 @@ export default class ColladaData {
             rejectPromise = reject;
         });
 
-        let loader = ColladaLoader();
-        loader.options.convertUpAxis = true;
+        this.setThreeJsLoaderHandlers();
+
+        let loader = new ColladaLoader(THREE.DefaultLoadingManager);
 
         let boneCount = 0;
         let triangleCount = 0;
 
-        this.setThreeJsLoaderHandlers();
+        let collada = loader.parse(xmlString, 'mod://' + path.replace(/\\/g, '/')+'/');
 
-        loader.parse(xmlString, function (collada) {
+        let skeletons = [];
+        let meshes = [];
+        let animations = [];
+        let wireframes = [];
 
-            let skeletons = [];
-            let meshes = [];
-            let animations = [];
-            let wireframes = [];
-
-            collada.scene.traverse(function (node)
+        collada.scene.traverse(function (node)
+        {
+            if (node instanceof THREE.Mesh)
             {
-                if (node instanceof THREE.Mesh)
-                {
-                    meshes.push(node);
-                    triangleCount += node.geometry.faces.length + 1;
+                meshes.push(node);
+                triangleCount += node.geometry.attributes.position.count / 3;
 
-                    let wireframeHelper = new THREE.WireframeHelper(node, 0xff0000);
-                    node.add(wireframeHelper);
-                    wireframes.push(wireframeHelper);
-                    /*
-                    let wireframeGeometry = new THREE.WireframeGeometry(node);
-                    let wireframe = new THREE.LineSegments( wireframeGeometry );
-                    wireframe.material.depthTest = false;
-                    wireframe.material.opacity = 1;
-                    wireframe.material.transparent = true;
-                    wireframe.material.color = new THREE.Color( 0xff0000 );
-                    node.add(wireframe);
-                    wireframes.push(wireframe);
-                    */
-                }
-                if (node instanceof THREE.SkinnedMesh)
-                {
-                    if (node.geometry.animation)
-                    {
-                        //let animation = new THREE.Animation(node, node.geometry.animation);
-                        //animations.push(animation);
-                    }
+                let wireframeGeometry = new THREE.WireframeGeometry(node.geometry);
+                let wireframe = new THREE.LineSegments( wireframeGeometry );
+                wireframe.material.depthTest = false;
+                wireframe.material.opacity = 1;
+                wireframe.material.transparent = true;
+                wireframe.material.color = new THREE.Color( 0xff0000 );
+                collada.scene.add(wireframe);
+                wireframes.push(wireframe);
+            }
+            if (node instanceof THREE.SkinnedMesh)
+            {
+                skeletons.push(node.skeleton);
 
-                    let skeletonHelper = new THREE.SkeletonHelper(node);
-                    for (let k = 0; k < skeletonHelper.geometry.attributes.color.count; k += 2)
-                    {
-                        skeletonHelper.geometry.attributes.color[k] = new THREE.Color( 1, 0, 0 );
-                        skeletonHelper.geometry.attributes.color[k+1] = new THREE.Color( 1, 1, 1 );
-                    }
+                // Flip the Y of texture UVs, because DDS textures are not flipped in WebGL :/
+                if (node.material.specularMap instanceof THREE.CompressedTexture) {
 
-                    node.add(skeletonHelper);
-                    skeletons.push(skeletonHelper);
-
-                    boneCount += skeletonHelper.bones.length + 1;
-
-                    // Flip the Y of texture UVs, because DDS textures are not flipped in WebGL :/
-                    if (node.material.specularMap instanceof THREE.CompressedTexture) {
-                        node.geometry.faceVertexUvs.forEach(function (v, k) {
-                            v.forEach(function (vv, kk) {
-                                node.geometry.faceVertexUvs[k][kk][0].y = 1 - node.geometry.faceVertexUvs[k][kk][0].y;
-                                node.geometry.faceVertexUvs[k][kk][1].y = 1 - node.geometry.faceVertexUvs[k][kk][1].y;
-                                node.geometry.faceVertexUvs[k][kk][2].y = 1 - node.geometry.faceVertexUvs[k][kk][2].y;
-                            });
-                        });
+                    for (let i = 1; i < node.geometry.attributes.uv.array.length; i += 2) {
+                        node.geometry.attributes.uv.array[i] = 1 - node.geometry.attributes.uv.array[i];
                     }
                 }
-            });
+            }
+        });
 
-            // Bounding box
-            let bb = new THREE.Box3();
-            bb.setFromObject(collada.scene);
-            let distance = Math.max(-bb.min.x, -bb.min.y, -bb.min.z, bb.max.x, bb.max.y, bb.max.z);
+        let skeletonHelper = new THREE.SkeletonHelper(collada.scene);
+        for (let k = 0; k < skeletonHelper.geometry.attributes.color.count; k += 2)
+        {
+            skeletonHelper.geometry.attributes.color[k] = new THREE.Color( 1, 0, 0 );
+            skeletonHelper.geometry.attributes.color[k+1] = new THREE.Color( 1, 1, 1 );
+        }
+        boneCount += skeletonHelper.bones.length + 1;
+        //skeletons[0].pose();
 
-            resolvePromise({
-                'object': collada.scene,
-                'collada': collada,
-                'distance': distance,
-                'update': null,
-                'triangleCount': triangleCount,
-                'boneCount': boneCount,
-                'meshes': meshes,
-                'meshCount':  meshes.length,
-                'animations': animations,
-                'skeletons': skeletons,
-                'wireframes': wireframes,
-            });
-        }, 'mod://' + path.replace(/\\/g, '/') +'/thefile.dae');
+        // Bounding box
+        let bb = new THREE.Box3();
+        bb.setFromObject(collada.scene);
+        let distance = Math.max(-bb.min.x, -bb.min.y, -bb.min.z, bb.max.x, bb.max.y, bb.max.z);
+        let maxExtentHeight = bb.max.y + bb.min.y;
+
+        resolvePromise({
+            'object': collada.scene,
+            'collada': collada,
+            'distance': distance,
+            'update': null,
+            'triangleCount': triangleCount,
+            'boneCount': boneCount,
+            'meshes': meshes,
+            'meshCount':  meshes.length,
+            'animations': collada.animations,
+            'skeletons': skeletons,
+            'skeletonHelper': skeletonHelper,
+            'wireframes': wireframes,
+            'maxExtentHeight': maxExtentHeight,
+        });
 
         return promise;
     }

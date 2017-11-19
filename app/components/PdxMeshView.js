@@ -61,24 +61,43 @@ export default withRouter(class PdxMeshView extends Component {
 
         let fileTreeData = this.parseFile(props.file.path);
 
+        let objectScene = null;
+        if (fileTreeData) {
+            try {
+                objectScene = PdxMesh.convertToThreeJsScene(fileTreeData, path.resolve(this.props.file.path, '..'));
+            }
+            catch (exception) {
+                console.log(exception);
+            }
+        }
         this.state = {
             fileTreeData: fileTreeData,
             editFileTreeData: fileTreeData,
             textureFiles: this.findTextureFiles(path.dirname(props.file.path)),
             animationFiles: this.findAnimationFiles(path.dirname(props.file.path)),
-            objectScene:  fileTreeData ? PdxMesh.convertToThreeJsScene(fileTreeData, path.resolve(this.props.file.path, '..')) : null,
+            objectScene: objectScene,
         };
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.file.path !== this.props.file.path || nextProps.file.changeTime !== this.props.file.changeTime) {
             let fileTreeData = this.parseFile(nextProps.file.path);
+
+            let objectScene = null;
+            if (fileTreeData) {
+                try {
+                    objectScene = PdxMesh.convertToThreeJsScene(fileTreeData, path.resolve(nextProps.file.path, '..'));
+                }
+                catch (exception) {
+                    console.log(exception);
+                }
+            }
             this.setState({
                 fileTreeData: fileTreeData,
                 editFileTreeData: fileTreeData,
                 textureFiles: this.findTextureFiles(path.dirname(nextProps.file.path)),
                 animationFiles: this.findAnimationFiles(path.dirname(nextProps.file.path)),
-                objectScene: fileTreeData ? PdxMesh.convertToThreeJsScene(fileTreeData, path.resolve(nextProps.file.path, '..')) : null,
+                objectScene: objectScene,
             });
         }
     }

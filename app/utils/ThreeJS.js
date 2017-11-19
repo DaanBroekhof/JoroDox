@@ -13,11 +13,16 @@ export default class ThreeJS {
 
         jetpack.readAsync(file, 'buffer').then(function (buffer) {
             if (!buffer) {
-                console.error('Could not load DDS texture `'+ file +'`');
+                console.error('Could not load DDS texture file `'+ file +'`');
                 return;
             }
 
             let texDatas = ddsLoader._parser(buffer.buffer, true);
+
+            if (texDatas.width === 0 && texDatas.height === 0) {
+                console.error('Could not parse DDS texture `'+ file +'`');
+                return;
+            }
 
             if ( texDatas.isCubemap )
             {
@@ -57,16 +62,7 @@ export default class ThreeJS {
                 geometry.uvsNeedUpdate = true;
             }
         }, function () {
-            let greyTexture = new Uint8Array(4);
-            greyTexture[0] = 128;
-            greyTexture[1] = 128;
-            greyTexture[2] = 128;
-            greyTexture[3] = 255;
-
-            texture.mipmaps = [
-                { "data": greyTexture, "width": 1, "height": 1 }
-            ];
-            texture.needsUpdate = true;
+            // do error
         });
 
         return texture;

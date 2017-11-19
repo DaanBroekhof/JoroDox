@@ -43,15 +43,19 @@ export default class ThreeJsViewer extends Component {
         if (this.props.objectScene === this.objectScene)
             return;
 
+        this.objectScene = this.props.objectScene;
+        let distance = (this.objectScene ? this.objectScene.distance * 4 : this.state.distance);
+
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
         this.camera.up = new THREE.Vector3(0,1,0);
-        this.camera.position.x = Math.cos(this.rotation) * this.state.distance;
-        this.camera.position.y = (this.state.distance + this.state.cameraFocusHeight) / 4;
-        this.camera.position.z = Math.sin(this.rotation) * this.state.distance;
-        this.camera.lookAt(new THREE.Vector3(0, this.objectScene ? (this.objectScene.maxExtentHeight + this.state.cameraFocusHeight) / 2 : 0, 0));
+        this.camera.position.x = Math.cos(this.rotation) * distance;
+        this.camera.position.y = distance / 4;
+        this.camera.position.z = Math.sin(this.rotation) * distance;
 
         let c = new OrbitControls(this.camera, this.canvas);
+        c.target = new THREE.Vector3(0, this.objectScene ? (this.objectScene.maxExtentHeight + this.state.cameraFocusHeight) / 2 : 0, 0);
+        c.update();
 
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
@@ -89,15 +93,12 @@ export default class ThreeJsViewer extends Component {
         directionalLight.position.normalize();
         this.scene.add( directionalLight );
 
-        this.objectScene = this.props.objectScene;
-
         if (!this.objectScene)
             return;
 
-        if (!this.objectScene.maxExtentHeight)
-            this.objectScene.maxExtentHeight = 0;
-
         this.scene.add(this.objectScene.object);
+        if (this.objectScene.skeletonHelper)
+            this.scene.add(this.objectScene.skeletonHelper);
         this.setState({distance: this.objectScene.distance * 4});
         this.clock = new THREE.Clock();
 
