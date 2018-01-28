@@ -8,7 +8,7 @@ import { Route } from 'react-router';
 import FileView from './FileView';
 import {Icon} from "material-ui";
 
-export default class FileTree extends React.Component {
+export default class StructureTree extends React.Component {
     tree = null;
     treeData = null;
 
@@ -128,24 +128,27 @@ export default class FileTree extends React.Component {
        }
     }
 
-    setTreeState(root) {
-        let rootInfo = jetpack.inspect(root, {absolutePath: true});
+    setTreeState() {
 
         this.setState({
             treeData: {
-                id: rootInfo.absolutePath,
-                name: rootInfo.name,
+                id: 'root:0',
+                name: 'Types',
                 loadOnDemand: true,
-                info: rootInfo,
+                info: {
+                    view: 'types',
+                },
             }
         }, function() {
             this.tree.loadData(this.state.treeData);
 
+            this.tree.openNode(this.tree.getRootNode().children[0]);
+
             if (this.props.match.params.path && this.props.match.params.path.startsWith(root)) {
-                this.doOpenToPath(this.tree.getRootNode(), this.props.match.params.path);
+//                this.doOpenToPath(this.tree.getRootNode(), this.props.match.params.path);
             }
             else {
-                this.doOpenToPath(this.tree.getRootNode(), root);
+//                this.doOpenToPath(this.tree.getRootNode(), root);
             }
         });
     }
@@ -158,40 +161,20 @@ export default class FileTree extends React.Component {
                 ref={(c) => this.tree = c ? c.tree : null}
                 autoOpen={true}
                 loadNodes={(parentNode, done) => {
-                    let localJetpack = jetpack.cwd(parentNode.id);
-                    let dirs = localJetpack.find('.', {matching: '*', recursive: false, files: false, directories: true});
-                    let files = localJetpack.find('.', {matching: '*', recursive: false});
 
-                    let dirNodes = dirs.map((name) => {
-                        return {
-                            id: parentNode.id + syspath.sep + name,
-                            name: name,
-                            loadOnDemand: true,
+                    if (parentNode.id === 'root:0') {
+                        done(null, [{
+                            id: 'type:files',
+                            name: 'Files',
                             info: {
-                                'name': name,
-                                type: 'dir',
-                                absolutePath: parentNode.id + syspath.sep + name,
+                                view: 'type',
+                                type: 'files',
                             },
-                        };
-                    }).sort((a, b) => {
-                        return a.name.localeCompare(b.name);
-                    });
-                    let fileNodes = files.map((name) => {
-                        return {
-                            id: parentNode.id + syspath.sep + name,
-                            name: name,
-                            loadOnDemand: false,
-                            info: {
-                               'name': name,
-                                type: 'file',
-                                absolutePath: parentNode.id + syspath.sep + name,
-                            },
-                        };
-                    }).sort((a, b) => {
-                        return a.name.localeCompare(b.name);
-                    });
-
-                    done(null, dirNodes.concat(fileNodes));
+                        }]);
+                    }
+                    else {
+                        done(null, []);
+                    }
                 }}
                 rowRenderer={(node, treeOptions) => {
                     const { id, name, loadOnDemand = false, children, state, props = {} } = node;
@@ -261,10 +244,22 @@ export default class FileTree extends React.Component {
                 }}
                 onSelectNode={(node) => {
                     if (node.info.type === 'dir') {
-                        this.tree.openNode(node, {async: true});
+                        //this.tree.openNode(node, {async: true});
                     }
-                    if (history.location.pathname !== '/fileview/'+ node.info.absolutePath)
-                        history.push('/fileview/'+ node.info.absolutePath);
+
+
+                    if (node.info.view === 'types') {
+                        if (history.location.pathname !== '/structure')
+                            history.push('/structure');
+                    }
+                    if (node.info.view === 'type') {
+                        if (history.location.pathname !== '/structure/' + node.info.type)
+                            history.push('/structure/' + node.info.type);
+                    }
+                    if (node.info.view === 'item') {
+                        if (history.location.pathname !== '/structure/' + node.info.type +'/'+ node.info.id)
+                            history.push('/structure/' + node.info.type +'/'+ node.info.id);
+                    }
                 }}
                 onClusterWillChange={() => {
                 }}

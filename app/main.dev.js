@@ -12,10 +12,12 @@
  */
 
 const app = require('electron').app;
+const ipc = require('electron').ipcMain;
 const BrowserWindow = require('electron').BrowserWindow;
 const MenuBuilder = require('./menu');
 
 let mainWindow = null;
+let backgroundWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
     const sourceMapSupport = require('source-map-support');
@@ -62,6 +64,10 @@ app.on('ready', async () => {
     }
     const path = require('path');
 
+    backgroundWindow = new BrowserWindow({
+        show: true
+    });
+
     mainWindow = new BrowserWindow({
         show: false,
         width: 2048,
@@ -70,6 +76,7 @@ app.on('ready', async () => {
     });
 
     mainWindow.loadURL(`file://${__dirname}/app.html`);
+    backgroundWindow.loadURL(`file://${__dirname}/background.html`);
 
     // @TODO: Use 'ready-to-show' event
     //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -92,8 +99,21 @@ app.on('ready', async () => {
         }
     });
 
+
+    ipc.on('background-request', function(event, data) {
+        backgroundWindow.webContents.send('background-request', data);
+    });
+    ipc.on('background-response', function(event, data) {
+        mainWindow.webContents.send('background-response', data);
+    });
+
+
     const menuBuilder = new MenuBuilder(mainWindow);
     menuBuilder.buildMenu();
+
+    const backgroundMenuBuilder = new MenuBuilder(backgroundWindow);
+    backgroundMenuBuilder.buildMenu();
+
 
     let handleExternalUrls = (e, url) => {
         if (url !== mainWindow.webContents.getURL()) {

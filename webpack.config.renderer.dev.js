@@ -193,6 +193,11 @@ export default merge.smart(baseConfig, {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
+      },
+      // Support for web worker scripts
+      {
+          test: /\.worker\.js$/,
+          use: { loader: 'worker-loader' }
       }
     ]
   },

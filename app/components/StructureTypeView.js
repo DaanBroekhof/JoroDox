@@ -11,38 +11,12 @@ import filesize from 'filesize';
 import PdxMeshView from "./PdxMeshView";
 import ColladaView from "./ColladaView";
 
-export default class FileView extends Component {
-    static getFileType(file) {
-        if (file.type === 'dir')
-            return 'directory';
-        let extension = file.name.match(/\.([^.]+)$/);
-
-        switch (extension ? extension[1].toLowerCase() : null) {
-            case 'asset':
-            case 'gfx':
-            case 'txt':
-            case 'gui':
-                return 'pdx-script';
-            case 'mesh':
-                return 'pdx-mesh';
-            case 'anim':
-                return 'pdx-data';
-            case 'png':
-            case 'jpg':
-            case 'bmp':
-            case 'tga':
-                return 'image';
-            case 'dae':
-                return 'collada';
-            default :
-                return 'unknown';
-        }
-    }
+export default class StructureTypeView extends Component {
 
     render() {
 
         if (!this.props.match.params.path) {
-            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during file load.</p></Paper>;
+            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>;
         }
 
         let file = jetpack.inspect(this.props.match.params.path, {times: true});
