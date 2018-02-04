@@ -65,7 +65,10 @@ app.on('ready', async () => {
     const path = require('path');
 
     backgroundWindow = new BrowserWindow({
-        show: true
+        show: true,
+        webPreferences: {
+            nodeIntegrationInWorker: true
+        },
     });
 
     mainWindow = new BrowserWindow({
@@ -73,6 +76,9 @@ app.on('ready', async () => {
         width: 2048,
         height: 1024,
         icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
+        webPreferences: {
+            nodeIntegrationInWorker: true
+        },
     });
 
     mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -109,10 +115,10 @@ app.on('ready', async () => {
 
 
     const menuBuilder = new MenuBuilder(mainWindow);
-    menuBuilder.buildMenu();
+    menuBuilder.buildMenu(false);
 
     const backgroundMenuBuilder = new MenuBuilder(backgroundWindow);
-    backgroundMenuBuilder.buildMenu();
+    backgroundMenuBuilder.buildMenu(true);
 
 
     let handleExternalUrls = (e, url) => {

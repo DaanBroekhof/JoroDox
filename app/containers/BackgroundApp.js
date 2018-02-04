@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 const ipc = require('electron').ipcRenderer;
 import FileLoaderTask from "../utils/tasks/FileLoaderTask";
+import PdxScriptParserTask from "../utils/tasks/PdxScriptParserTask";
+import PdxDataParserTask from "../utils/tasks/PdxDataParserTask";
 
 export default class BackgroundApp extends Component {
     constructor(props) {
@@ -13,6 +15,12 @@ export default class BackgroundApp extends Component {
             {
                 case FileLoaderTask.getTaskType():
                     FileLoaderTask.handle(request);
+                    break;
+                case PdxScriptParserTask.getTaskType():
+                    PdxScriptParserTask.handle(request);
+                    break;
+                case PdxDataParserTask.getTaskType():
+                    PdxDataParserTask.handle(request);
                     break;
                 default:
                     handler.fail('No task handler found.');

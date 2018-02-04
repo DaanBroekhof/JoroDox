@@ -11,7 +11,7 @@ class MenuBuilder {
         this.mainWindow = mainWindow;
     }
 
-    buildMenu() {
+    buildMenu(windowSpecific) {
         if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
             this.setupDevelopmentEnvironment();
         }
@@ -25,7 +25,12 @@ class MenuBuilder {
         }
 
         const menu = Menu.buildFromTemplate(template);
-        Menu.setApplicationMenu(menu);
+        if (windowSpecific) {
+            this.mainWindow.setMenu(menu);
+        }
+        else {
+            Menu.setApplicationMenu(menu);
+        }
 
         return menu;
     }
