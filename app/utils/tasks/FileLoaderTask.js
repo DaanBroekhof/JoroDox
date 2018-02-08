@@ -78,57 +78,28 @@ export default class FileLoaderTask extends BackgroundTask {
         }).then(files => {
             this.progress(0, files.length, 'Writing to DB...');
 
-            let progress = 0;
+            //let progress = 0;
             db.files.clear().then(() => {
 
-                /*
-                let fullFiles = filesRemapped.value();
-                this.progress(0, fullFiles.length, 'Writing to DB...');
-                for (let i = 0; i < fullFiles.length; i += 1000) {
-                    db.files.bulkAdd(fullFiles.slice(i, 1000));
-                    this.progress(i, fullFiles.length, 'Writing to DB...');
-                }
-                */
 
-                /*
-                filesRemapped.forEach(file => {
-                    db.files.add(file);
-                    progress++;
-                });
-                */
-
-                /*
-
-                let chunks = filesRemapped.chunk(1000).value();
-                let chunkNr = 0;
-                let writeChunk = (chunkNr, maxChunk) => {
-                    db.files.bulkAdd(chunks[chunkNr]).then(lastkey => {
-                        progress += chunks[chunkNr].length;
-                        this.progress(progress, filesRemapped.size(), 'Writing to DB...');
-                        if (chunkNr < chunks.length - 1 && chunkNr < maxChunk) {
-                            writeChunk(chunkNr + 1)
-                        }
-                        else {
+                let totalCount = 0;
+                let saveChunk = (data, chunkNr, chunkSize) => {
+                    let slice = data.slice(chunkNr*chunkSize, (chunkNr+1)*chunkSize);
+                    db.files.bulkPut(slice).then(lastkey => {
+                        totalCount += slice.length;
+                        this.progress(totalCount, data.length, 'Saving file data to DB...');
+                        if (totalCount >= data.length || chunkNr*chunkSize >= data.length)
                             this.finish(lastkey);
-                        }
+                        else
+                            saveChunk(data, chunkNr+1, chunkSize);
                     }).catch(reason => {
-                        this.error(reason.toString())
+                        this.fail(reason.toString())
                     }).catch(Dexie.BulkError, (e) => {
-                        this.error(e.toString())
+                        this.fail(e.toString())
                     });
                 };
-                writeChunk(0, chunks.length);
-                //writeChunk(Math.floor(chunks.length / 2), chunks.length);
-                */
 
-                db.files.bulkPut(files).then(lastkey => {
-                    this.progress(files.length, files.length, 'Saving file data to DB...');
-                    this.finish(lastkey);
-                }).catch(reason => {
-                    this.fail(reason.toString())
-                }).catch(Dexie.BulkError, (e) => {
-                    this.fail(e.toString())
-                });
+                saveChunk(files, 0, 1000);
             }).catch(reason => {
                 this.fail(reason.toString());
             });

@@ -16,12 +16,9 @@ export default class PdxScriptParserTask extends BackgroundTask {
     execute(args) {
         let db = JdxDatabase.get();
 
-        let nr = 0;
         db.files.where('type').equals('pdx-script').toArray(files => {
 
             let filesList = _(files);
-
-            this.progress(0, filesList.size(), 'Parsing PDX scripts...');
 
             let scripts = [];
             filesList.each(file => {

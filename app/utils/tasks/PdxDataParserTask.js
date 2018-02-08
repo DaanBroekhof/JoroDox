@@ -26,8 +26,8 @@ export default class PdxDataParserTask extends BackgroundTask {
 
             let datafiles = [];
             filesList.each(file => {
-                let parser = new PdxScript();
-                let data = parser.readFile(iconv.decode(jetpack.read(args.root + syspath.sep + file.name, 'buffer'), 'win1252'));
+                let parser = new PdxData();
+                let data = parser.readFromBuffer(new Uint8Array(jetpack.read(args.root + syspath.sep + file.name, 'buffer')).buffer);
 
                 if (datafiles.length % 50 === 0)
                     this.progress(datafiles.length, filesList.size(), 'Parsing PDX binary data objects...');
@@ -37,16 +37,27 @@ export default class PdxDataParserTask extends BackgroundTask {
 
             return Promise.resolve(datafiles);
         }).then(datafiles => {
-            db.pdxData.bulkPut(datafiles).then(lastkey => {
-                this.progress(datafiles.length, datafiles.length, 'Saving PDX binary data to DB...');
-                this.finish(lastkey);
-            }).catch(reason => {
-                //console.trace(reason.toString());
-                this.fail(reason.toString())
-            }).catch(Dexie.BulkError, (e) => {
-                //console.trace(reason.toString());
-                this.fail(e.toString())
-            });
+            let totalCount = 0;
+
+            let saveChunk = (data, chunkNr, chunkSize) => {
+                let slice = data.slice(chunkNr*chunkSize, (chunkNr+1)*chunkSize);
+                db.pdxData.bulkPut(slice).then(lastkey => {
+                    totalCount += slice.length;
+                    this.progress(totalCount, data.length, 'Saving PDX binary data to DB...');
+                    if (totalCount >= data.length || chunkNr*chunkSize >= data.length)
+                        this.finish(lastkey);
+                    else
+                        saveChunk(data, chunkNr+1, chunkSize);
+                }).catch(reason => {
+                    //console.trace(reason.toString());
+                    this.fail(reason.toString())
+                }).catch(Dexie.BulkError, (e) => {
+                    //console.trace(reason.toString());
+                    this.fail(e.toString())
+                });
+            };
+
+            saveChunk(datafiles, 0, 100);
         });
     }
 }
