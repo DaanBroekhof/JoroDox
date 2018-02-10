@@ -145,3 +145,9 @@ html, body, #root {
   flex-grow: 1;
   line-height: 22px;
 }
+
+/* react-redux-grid */
+.react-grid-container {
+  display: flex;
+  flex-direction: column;
+}

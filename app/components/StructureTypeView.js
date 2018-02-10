@@ -1,52 +1,95 @@
 // @flow
-import React, { Component } from 'react';
-const jetpack = require('electron').remote.require('fs-jetpack');
-const OperatingSystem = require('electron').remote.require('./utils/background/OperatingSystem');
-
-import PdxScriptView from "./PdxScriptView";
-import PdxDataView from "./PdxDataView";
-import ImageView from "./ImageView";
+import React, {Component} from 'react';
+import {Grid, applyGridConfig} from 'react-redux-grid';
 import {Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import filesize from 'filesize';
-import PdxMeshView from "./PdxMeshView";
-import ColladaView from "./ColladaView";
+import JdxDatabase from "../utils/JdxDatabase";
+import {grey} from 'material-ui/colors';
+import _ from 'lodash';
+import Eu4Definition from '../definitions/eu4';
 
 export default class StructureTypeView extends Component {
 
     render() {
 
-        if (!this.props.match.params.path) {
-            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>;
+        if (!this.props.match.params.type) {
+            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view
+                load.</p></Paper>;
         }
 
-        let file = jetpack.inspect(this.props.match.params.path, {times: true});
-
-        if (!file) {
-            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>File could not be found</p></Paper>;
+        let typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
+        if (!typeDefinition) {
+            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type
+                definition.</p></Paper>;
         }
 
-        file.path = this.props.match.params.path;
-        let fileType = FileView.getFileType(file);
+        let rootPath = this.props.root;
+        let dataSource = function getData({pageIndex, pageSize}) {
+
+            if (!pageIndex)
+                pageIndex = 0;
+            if (!pageSize)
+                pageSize = typeDefinition.listView.pageSize;
+
+            return new Promise((resolve) => {
+                JdxDatabase.get(rootPath)[typeDefinition.id].count((total) => {
+                    JdxDatabase.get(rootPath)[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
+
+                        if (typeDefinition.listView.unsetKeys) {
+                            result = result.map(x => {
+                                typeDefinition.listView.unsetKeys.forEach(keys => {
+                                    _.unset(x, keys);
+                                });
+                                return x;
+                            });
+                        }
+
+
+                        resolve({
+                            data: result,
+                            total: total,
+                        });
+                    });
+                });
+            });
+        };
+
+        let gridSettings = {
+            height: false,
+            columns: typeDefinition.listView.columns,
+            plugins: {
+                PAGER: {
+                    enabled: true,
+                    pagingType: 'remote',
+                    toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => {
+                        return `${pageIndex * pageSize} - ${pageIndex * pageSize + currentRecords} of ${total}`;
+                    },
+                    pagerComponent: false
+                },
+                COLUMN_MANAGER: {
+                    resizable: true,
+                    minColumnWidth: 10,
+                    moveable: true,
+                },
+                LOADER: {
+                    enabled: true
+                },
+            },
+            dataSource: dataSource,
+            stateKey: "typeList-" + this.props.match.params.type,
+            pageSize: typeDefinition.listView.pageSize,
+            style: {
+                display: 'flex',
+                flexDirection: 'column',
+            }
+        };
 
         return (
-            <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display2" gutterBottom>{file.name}
-                    <span style={{marginLeft: 20}}>
-                        <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
-                            <IconButton onClick={() => OperatingSystem.showItemInFolder(file.path)}><Icon color="action">pageview</Icon></IconButton>
-                        </Tooltip>
-                        <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-                            <IconButton onClick={() => OperatingSystem.openItem(file.path)}><Icon color="action">open_in_new</Icon></IconButton>
-                        </Tooltip>
-                    </span>
+            <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
+                <Typography type="display2" gutterBottom>Type: {this.props.match.params.type}
                 </Typography>
-                <Typography type="caption">{file.path}</Typography>
-                <p>Type: {fileType} {file.type === 'file' && <span>- Size: {filesize(file.size)}</span>}</p>
-                {fileType === 'pdx-script' && <PdxScriptView file={file} />}
-                {fileType === 'pdx-data' && <PdxDataView file={file} />}
-                {fileType === 'pdx-mesh' && <PdxMeshView file={file} />}
-                {fileType === 'collada' && <ColladaView file={file} />}
-                {fileType === 'image' && <ImageView file={file} />}
+
+                <Grid {...gridSettings}></Grid>
 
             </Paper>
         );
