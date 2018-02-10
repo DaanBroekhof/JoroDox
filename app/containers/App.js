@@ -22,6 +22,7 @@ import {Button, Card, MuiThemeProvider, createMuiTheme, Toolbar, Typography} fro
 import blueGrey from 'material-ui/colors/blueGrey';
 import red from 'material-ui/colors/red';
 import grey from 'material-ui/colors/grey';
+import ProgressInfo from "../components/ProgressInfo";
 
 const {dialog} = require('electron').remote;
 
@@ -67,13 +68,14 @@ export default class App extends Component {
                             <Typography type="title" color="inherit" style={{paddingRight: 40}}>
                                 Jorodox Tool
                             </Typography>
-                            <div style={{alignItems: 'right'}}>
-                                <Button color="primary" style={{margin: '10px'}} onClick={this.openDirectory} raised>Explore</Button>
-                                <Button color="primary" style={{margin: '10px'}} component={Link} to="/settings" raised>Settings</Button>
-                                <Button color="primary" style={{margin: '10px'}} component={Link} to="/about" raised>About</Button>
-                                <Button color="primary" style={{margin: '10px'}} component={Link} to="/structure" raised>Structure View</Button>
-                                <Button color="primary" style={{margin: '10px'}} component={Link} to="/fileview" raised>File View</Button>
-                                <Button color="primary" style={{margin: '10px'}} component={Link} to="/home" raised>Home</Button>
+                            <div style={{display: 'flex', padding: 10, flexGrow: 1}}>
+                                <Button color="primary" style={{marginRight: '10px'}} onClick={this.openDirectory} raised>Explore</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/settings" raised>Settings</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/about" raised>About</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/structure" raised>Structure View</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/fileview" raised>File View</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/home" raised>Home</Button>
+                                <ProgressInfo style={{marginLeft: '40px'}} />
                             </div>
                         </Toolbar>
                     </AppBar>
