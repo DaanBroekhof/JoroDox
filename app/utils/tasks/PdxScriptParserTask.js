@@ -4,45 +4,54 @@ import PdxScript from "../PdxScript";
 import Dexie from "dexie/dist/dexie";
 import FileView from "../../components/FileView";
 import * as iconv from "iconv-lite";
+import DbBackgroundTask from "./DbBackgroundTask";
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
+const _ = require('lodash');
+const minimatch = require("minimatch");
 
-export default class PdxScriptParserTask extends BackgroundTask {
+export default class PdxScriptParserTask extends DbBackgroundTask {
 
     static getTaskType() {
         return 'PdxScriptParserTask';
     }
 
     execute(args) {
-        let db = JdxDatabase.get();
+        let db = JdxDatabase.get(args.root);
 
-        db.files.where('type').equals('pdx-script').toArray(files => {
+        this.progress(0, 1, 'Finding PDX scripts...');
+
+        let patterns = [];
+        _(args.definition.types).forOwn((typeDefinition) => {
+            if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxScript" && typeDefinition.sourceType.pathPattern) {
+                 patterns.push(typeDefinition.sourceType.pathPattern);
+            }
+        });
+
+        db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
 
             let filesList = _(files);
 
             let scripts = [];
+            let relations = [];
             filesList.each(file => {
                 let parser = new PdxScript();
-                let data = parser.readFile(iconv.decode(jetpack.read(args.root + syspath.sep + file.name, 'buffer'), 'win1252'));
+                let data = parser.readFile(iconv.decode(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer'), 'win1252'));
 
-                if (scripts.length % 1000 === 0)
-                    this.progress(scripts.length, filesList.size(), 'Parsing PDX scripts...');
+                if (scripts.length % 500 === 0)
+                    this.progress(scripts.length, filesList.size(), 'Parsing '+ filesList.size() +' PDX scripts...');
 
-                scripts.push({name: file.name, data: data});
+                scripts.push({path: file.path, data: data});
+                relations.push({fromKey: 'pdxScript', fromType: 'pdxScript', fromId: file.path, toKey: 'file', toType: 'file', toId: file.path})
             });
 
-            return Promise.resolve(scripts);
-        }).then(scripts => {
-            this.progress(0, scripts.length, 'Saving PDX script data to DB...');
-            db.pdxScripts.bulkPut(scripts).then(lastkey => {
-                this.progress(scripts.length, scripts.length, 'Saving PDX script data to DB...');
-                this.finish(lastkey);
+            Promise.all([
+                this.saveChunked(scripts, db.pdxScripts, 0, 500),
+                this.saveChunked(relations, db.relations, 0, 500),
+            ]).then(result => {
+                this.finish(result);
             }).catch(reason => {
-                console.trace(reason.toString());
                 this.fail(reason.toString())
-            }).catch(Dexie.BulkError, (e) => {
-                console.trace(reason.toString());
-                this.fail(e.toString())
             });
         });
     }

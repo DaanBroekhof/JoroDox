@@ -7,6 +7,7 @@ const syspath = require('electron').remote.require('path');
 import { Route } from 'react-router';
 import FileView from './FileView';
 import {Icon} from "material-ui";
+import Eu4Definition from '../definitions/eu4';
 
 export default class StructureTree extends React.Component {
     tree = null;
@@ -133,12 +134,12 @@ export default class StructureTree extends React.Component {
         this.setState({
             treeData: {
                 id: 'root:0',
-                name: 'Types',
+                name: 'Structure',
                 loadOnDemand: true,
                 info: {
                     view: 'types',
                 },
-            }
+            },
         }, function() {
             this.tree.loadData(this.state.treeData);
 
@@ -163,14 +164,20 @@ export default class StructureTree extends React.Component {
                 loadNodes={(parentNode, done) => {
 
                     if (parentNode.id === 'root:0') {
-                        done(null, [{
-                            id: 'type:files',
-                            name: 'Files',
-                            info: {
-                                view: 'type',
-                                type: 'files',
-                            },
-                        }]);
+
+                        let items = [];
+                        _(Eu4Definition.types).forEach(type => {
+                            items.push({
+                                id: 'type:'+ type.id,
+                                name: type.title,
+                                info: {
+                                    view: 'type',
+                                    type: type.id,
+                                },
+                            });
+                        });
+
+                        done(null, items);
                     }
                     else {
                         done(null, []);

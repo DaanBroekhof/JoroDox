@@ -1,22 +1,23 @@
-import Dexie from "dexie/dist/dexie";
-import BackgroundTask from "./BackgroundTask";
 import JdxDatabase from "../JdxDatabase";
+import DbBackgroundTask from "./DbBackgroundTask";
 
+const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
+const _ = require('lodash');
+const minimatch = require("minimatch");
 
-
-export default class FileLoaderTask extends BackgroundTask {
+export default class FileLoaderTask extends DbBackgroundTask {
 
     static getFileType(info) {
 
         let fileTypeRegexes = {
-            'pdx-script': [
+            'pdxScript': [
                 /\.(asset|gfx|txt|gui)$/i
             ],
-            'pdx-mesh': [
+            'pdxMesh': [
                 /\.mesh$/i
             ],
-            'pdx-anim': [
+            'pdxAnim': [
                 /\.anim$/i
             ],
             'image': [
@@ -42,11 +43,13 @@ export default class FileLoaderTask extends BackgroundTask {
     }
 
     execute(args) {
-        let db = JdxDatabase.get();
+        let db = JdxDatabase.get(args.root);
 
-        this.progress(0, 2, 'Reading directory data...')
+        this.progress(0, 1, 'Reading directory data...');
 
         let localJetpack = jetpack.cwd(args.root);
+
+        let typeDefinition = args.typeDefinition;
 
         localJetpack.findAsync('.', {
             matching: '*',
@@ -54,54 +57,33 @@ export default class FileLoaderTask extends BackgroundTask {
             files: true,
             directories: true
         }).then(files => {
-            let filesList = _(files);
-            this.progress(0, filesList.size(), 'Adding file meta data...');
+            let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
+
+            this.progress(0, filesList.size(), 'Adding '+ filesList.size() +' file meta data items...');
 
             let nr = 0;
             let filesRemapped = filesList.map(file => {
 
                 nr += 1;
-                if (nr % 2000 === 0)
-                    this.progress(nr, filesList.size(), 'Adding file meta data...');
+                if (nr % 1000 === 0)
+                    this.progress(nr, filesList.size(), 'Adding '+ filesList.size() +' file meta data items...');
 
                 //TODO: Make this async as well!
                 let info = localJetpack.inspect(file, {times: true});
 
                 return {
-                    name: file,
+                    path: file.replace(new RegExp('\\'+ syspath.sep, 'g'), '/'),
                     info: info,
-                    type: FileLoaderTask.getFileType(info),
+                    //type: FileLoaderTask.getFileType(info),
                 };
             });
 
-            return Promise.resolve(filesRemapped.value());
-        }).then(files => {
-            this.progress(0, files.length, 'Writing to DB...');
-
-            //let progress = 0;
-            db.files.clear().then(() => {
-
-
-                let totalCount = 0;
-                let saveChunk = (data, chunkNr, chunkSize) => {
-                    let slice = data.slice(chunkNr*chunkSize, (chunkNr+1)*chunkSize);
-                    db.files.bulkPut(slice).then(lastkey => {
-                        totalCount += slice.length;
-                        this.progress(totalCount, data.length, 'Saving file data to DB...');
-                        if (totalCount >= data.length || chunkNr*chunkSize >= data.length)
-                            this.finish(lastkey);
-                        else
-                            saveChunk(data, chunkNr+1, chunkSize);
-                    }).catch(reason => {
-                        this.fail(reason.toString())
-                    }).catch(Dexie.BulkError, (e) => {
-                        this.fail(e.toString())
-                    });
-                };
-
-                saveChunk(files, 0, 1000);
+            Promise.all([
+                this.saveChunked(filesRemapped.value(), db.files, 0, 500),
+            ]).then(result => {
+                this.finish(result);
             }).catch(reason => {
-                this.fail(reason.toString());
+                this.fail(reason.toString())
             });
         });
     }

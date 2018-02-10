@@ -202,6 +202,7 @@
     "material-ui": "next",
     "material-ui-icons": "^1.0.0-beta.17",
     "mime": "^2.2.0",
+    "minimatch": "^3.0.4",
     "project-version": "^1.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",

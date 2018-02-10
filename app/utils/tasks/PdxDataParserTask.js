@@ -1,63 +1,64 @@
-import BackgroundTask from "./BackgroundTask";
 import JdxDatabase from "../JdxDatabase";
-import PdxScript from "../PdxScript";
-import Dexie from "dexie/dist/dexie";
-import FileView from "../../components/FileView";
 import PdxData from "../PdxData";
-import * as iconv from "iconv-lite";
+import DbBackgroundTask from "./DbBackgroundTask";
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
+const _ = require('lodash');
+const minimatch = require("minimatch");
 
-export default class PdxDataParserTask extends BackgroundTask {
+export default class PdxDataParserTask extends DbBackgroundTask {
 
     static getTaskType() {
         return 'PdxDataParserTask';
     }
 
     execute(args) {
-        let db = JdxDatabase.get();
+        let db = JdxDatabase.get(args.root);
 
-        let nr = 0;
-        db.files.where('type').equals('pdx-mesh').toArray(files => {
+        this.progress(0, 1, 'Finding PDX data files...');
+
+        let patterns = [];
+        _(args.definition.types).forOwn((typeDefinition) => {
+            if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxData" && typeDefinition.sourceType.pathPattern) {
+                patterns.push(typeDefinition.sourceType.pathPattern);
+            }
+        });
+
+        db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
 
             let filesList = _(files);
 
-            this.progress(0, filesList.size(), 'Parsing PDX data files...');
+            this.progress(0, filesList.size(), 'Parsing '+ filesList.size() +' PDX binary data files...');
 
             let datafiles = [];
+            let relations = [];
             filesList.each(file => {
                 let parser = new PdxData();
-                let data = parser.readFromBuffer(new Uint8Array(jetpack.read(args.root + syspath.sep + file.name, 'buffer')).buffer);
+                let data = parser.readFromBuffer(new Uint8Array(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer')).buffer);
 
                 if (datafiles.length % 50 === 0)
-                    this.progress(datafiles.length, filesList.size(), 'Parsing PDX binary data objects...');
+                    this.progress(datafiles.length, filesList.size(), 'Parsing '+ filesList.size() +' PDX binary data objects...');
 
-                datafiles.push({name: file.name, data: data});
+                datafiles.push({path: file.path, data: data});
+                relations.push({fromKey: 'pdxData', fromType: 'pdxData', fromId: file.path, toKey: 'file', toType: 'file', toId: file.path})
             });
 
-            return Promise.resolve(datafiles);
-        }).then(datafiles => {
-            let totalCount = 0;
-
-            let saveChunk = (data, chunkNr, chunkSize) => {
-                let slice = data.slice(chunkNr*chunkSize, (chunkNr+1)*chunkSize);
-                db.pdxData.bulkPut(slice).then(lastkey => {
-                    totalCount += slice.length;
-                    this.progress(totalCount, data.length, 'Saving PDX binary data to DB...');
-                    if (totalCount >= data.length || chunkNr*chunkSize >= data.length)
-                        this.finish(lastkey);
-                    else
-                        saveChunk(data, chunkNr+1, chunkSize);
-                }).catch(reason => {
-                    //console.trace(reason.toString());
-                    this.fail(reason.toString())
-                }).catch(Dexie.BulkError, (e) => {
-                    //console.trace(reason.toString());
-                    this.fail(e.toString())
-                });
-            };
-
-            saveChunk(datafiles, 0, 100);
+            Promise.all([
+                this.saveChunked(datafiles, db.pdxData, 0, 500),
+                this.saveChunked(relations, db.relations, 0, 500),
+            ]).then(result => {
+                this.finish(result);
+            }).catch(reason => {
+                this.fail(reason.toString())
+            });
         });
+    }
+
+    static parseFile(root, path)
+    {
+        let parser = new PdxData();
+        let data = parser.readFromBuffer(new Uint8Array(jetpack.read(root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer')).buffer);
+
+        return {path: path, data: data};
     }
 }
