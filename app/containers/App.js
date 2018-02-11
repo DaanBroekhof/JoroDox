@@ -80,12 +80,12 @@ export default class App extends Component {
                                 <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta</span>
                             </Typography>
                             <div style={{display: 'flex', padding: 10, flexGrow: 1}}>
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/" raised>Files</Button>
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/structure" raised>Structure</Button>
-                                {/*<Button color="primary" style={{marginRight: '10px'}} component={Link} to="/settings" raised>Settings</Button>*/}
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/about" raised>About</Button>
+                                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/">Files</Button>
+                                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/structure">Structure</Button>
+                                {/*<Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/settings">Settings</Button>*/}
+                                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/about">About</Button>
                                 <ProgressInfo style={{marginLeft: '40px'}} />
-                                <Button color="primary" style={{marginRight: '10px'}} onClick={this.openDirectory} raised>Open...</Button>
+                                <Button color="primary" variant="raised" style={{marginRight: '10px'}} onClick={this.openDirectory}>Open...</Button>
                             </div>
                         </Toolbar>
                     </AppBar>

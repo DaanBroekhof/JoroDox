@@ -111,7 +111,7 @@ export default withRouter(class ColladaView extends Component {
         return (
             <div>
                 <div>
-                    <Button raised onClick={this.convertToPdxMesh()}>Convert to .mesh</Button>
+                    <Button variant="raised" onClick={this.convertToPdxMesh()}>Convert to .mesh</Button>
                 </div>
                 <ThreeJsViewer ref={(ref) => this.threeJsViewer = ref} objectScene={this.state.objectScene}/>
                 <br />

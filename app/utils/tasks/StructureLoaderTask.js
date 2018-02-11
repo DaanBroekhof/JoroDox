@@ -87,8 +87,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             }
 
             Promise.all([
-                this.saveChunked(items, db[definition.id], 0, 1000),
-                this.saveChunked(relations, db.relations, 0, 1000),
+                this.saveChunked(items, db[definition.id], 0, 100),
+                this.saveChunked(relations, db.relations, 0, 100),
             ]).then(result => {
                 this.finish(result);
             }).catch(reason => {

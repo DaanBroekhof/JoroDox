@@ -1,4 +1,4 @@
-/* eslint global-require: 1, flowtype-errors/show-errors: 0 */
+/* eslint global-require: 0, flowtype-errors/show-errors: 0 */
 
 /**
  * This module executes inside of electron's main process. You can start
@@ -15,7 +15,7 @@ const app = require('electron').app;
 const ipc = require('electron').ipcMain;
 const BrowserWindow = require('electron').BrowserWindow;
 const MenuBuilder = require('./menu');
-const WindowStateManager = require('electron-window-state-manager');
+//const WindowStateManager = require('electron-window-state-manager');
 
 let mainWindow = null;
 let backgroundWindow = null;
@@ -63,8 +63,9 @@ app.on('ready', async () => {
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
         await installExtensions();
     }
-    const path = require('path');
+//    const path = require('path');
 
+    /*
     let mainWindowState = new WindowStateManager('mainWindow', {
         defaultWidth: 1024,
         defaultHeight: 768
@@ -73,27 +74,30 @@ app.on('ready', async () => {
         defaultWidth: 1024,
         defaultHeight: 768
     });
+    */
 
     backgroundWindow = new BrowserWindow({
         show: true,
-        width: backgroundWindowState.width,
-        height: backgroundWindowState.height,
-        x: backgroundWindowState.x,
-        y: backgroundWindowState.y,
+        //width: backgroundWindowState.width,
+        //height: backgroundWindowState.height,
+        //x: backgroundWindowState.x,
+        //y: backgroundWindowState.y,
         webPreferences: {
-            nodeIntegrationInWorker: true
+            nodeIntegrationInWorker: true,
+            webSecurity: false,
         },
     });
 
     mainWindow = new BrowserWindow({
         show: false,
-        width: mainWindowState.width,
-        height: mainWindowState.height,
-        x: mainWindowState.x,
-        y: mainWindowState.y,
-        icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
+        // width: mainWindowState.width,
+        // height: mainWindowState.height,
+        // x: mainWindowState.x,
+        // y: mainWindowState.y,
+        //icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
         webPreferences: {
-            nodeIntegrationInWorker: true
+            nodeIntegrationInWorker: true,
+            webSecurity: false,
         },
     });
 
@@ -106,22 +110,22 @@ app.on('ready', async () => {
         if (!mainWindow) {
             throw new Error('"mainWindow" is not defined');
         }
-        if (mainWindowState.maximized) {
-            mainWindow.maximize();
-        }
+        // if (mainWindowState.maximized) {
+        //     mainWindow.maximize();
+        // }
         mainWindow.show();
         mainWindow.focus();
     });
 
     mainWindow.on('close', () => {
-        mainWindowState.saveState(mainWindow);
+        // mainWindowState.saveState(mainWindow);
     });
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
 
     backgroundWindow.on('close', () => {
-        backgroundWindowState.saveState(backgroundWindow);
+        // backgroundWindowState.saveState(backgroundWindow);
     });
     backgroundWindow.on('closed', () => {
         backgroundWindow = null;

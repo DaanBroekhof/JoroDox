@@ -3,7 +3,7 @@ import * as THREE from 'three';
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87
- */
+
 
 THREE.ColladaLoader = function ( manager ) {
 
@@ -3456,3 +3456,4 @@ class ColladaLoader {
 ColladaLoader.prototype = THREE.ColladaLoader.prototype;
 
 export default ColladaLoader;
+ */

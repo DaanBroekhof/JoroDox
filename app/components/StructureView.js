@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 const jetpack = require('electron').remote.require('fs-jetpack');
-const OperatingSystem = require('electron').remote.require('./utils/background/OperatingSystem');
+//const OperatingSystem = require('electron').remote.require('./utils/background/OperatingSystem');
 
 import {Button, Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import _ from "lodash";
@@ -95,10 +95,10 @@ export default class StructureView extends Component {
                 <Typography type="display2" gutterBottom>Structure</Typography>
 
                 <div style={{display: 'flex', flexDirection: 'row'}}>
-                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
-                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
-                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
-                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
+                    <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
+                    <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
+                    <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
+                    <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
                 </div>
 
             </Paper>

@@ -30,7 +30,7 @@ export default class ProgressInfo extends Component {
     render() {
         return (
             <div style={{display: 'flex', flexGrow: '1', alignItems: 'stretch', ...this.props.style}}>
-                {this.state.message && <CircularProgress mode={this.state.total === 0 || this.state.progress === 0 ? "indeterminate" : "determinate"} max={this.state.total} value={this.state.progress} color="secondary" ></CircularProgress>}
+                {this.state.message && <CircularProgress variant={this.state.total === 0 || this.state.progress === 0 ? "indeterminate" : "determinate"} max={this.state.total} value={this.state.progress} color="secondary" ></CircularProgress>}
                 {this.state.message && <div style={{display: 'flex', marginLeft: 10, flexGrow: 1, alignItems: 'center', fontSize: '70%', overflowY: 'hidden'}}>{this.state.message}</div>}
             </div>
         );

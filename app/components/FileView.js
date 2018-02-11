@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 const jetpack = require('electron').remote.require('fs-jetpack');
-const OperatingSystem = require('electron').remote.require('./utils/background/OperatingSystem');
+const OperatingSystem = require('electron').remote.require((process.env.NODE_ENV !== 'development' ? '../../' : './') +'utils/background/OperatingSystem');
 
 import PdxScriptView from "./PdxScriptView";
 import PdxDataView from "./PdxDataView";

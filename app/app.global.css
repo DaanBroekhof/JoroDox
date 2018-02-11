@@ -22,11 +22,11 @@ html, body, #root {
 
 /* File tree scroll-fixes */
 .splitter-layout .layout-pane:first-child {
-  display: flex;
+  display: flex !important;
 }
 
 .splitter-layout .layout-pane:first-child > div {
-  overflow-x: hidden;
+  overflow-x: hidden !important;;
 }
 
 .infinite-tree {
@@ -47,7 +47,7 @@ html, body, #root {
 }
 
 .splitter-layout {
-  position: relative;
+  position: relative !important;;
   height: auto;
   flex: 1;
 }
