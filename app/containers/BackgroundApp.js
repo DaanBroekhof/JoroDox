@@ -5,6 +5,7 @@ import FileLoaderTask from "../utils/tasks/FileLoaderTask";
 import PdxScriptParserTask from "../utils/tasks/PdxScriptParserTask";
 import PdxDataParserTask from "../utils/tasks/PdxDataParserTask";
 import StructureLoaderTask from "../utils/tasks/StructureLoaderTask";
+import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 
 export default class BackgroundApp extends Component {
     constructor(props) {

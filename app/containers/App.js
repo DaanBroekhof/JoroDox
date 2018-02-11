@@ -75,7 +75,7 @@ export default class App extends Component {
                 <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <AppBar position="static">
                         <Toolbar>
-                            <Typography type="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>
+                            <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>
                                 Jorodox Tool<br />
                                 <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta</span>
                             </Typography>

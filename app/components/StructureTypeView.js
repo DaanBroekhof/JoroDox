@@ -89,7 +89,7 @@ export default class StructureTypeView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
-                <Typography type="display2" gutterBottom>Type: {typeDefinition.title}</Typography>
+                <Typography variant="display2" gutterBottom>Type: {typeDefinition.title}</Typography>
 
                 <Grid {...gridSettings}></Grid>
             </Paper>

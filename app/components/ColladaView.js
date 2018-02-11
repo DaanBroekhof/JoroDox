@@ -115,7 +115,7 @@ export default withRouter(class ColladaView extends Component {
                 </div>
                 <ThreeJsViewer ref={(ref) => this.threeJsViewer = ref} objectScene={this.state.objectScene}/>
                 <br />
-                <Typography type="headline">Embedded animations</Typography>
+                <Typography variant="headline">Embedded animations</Typography>
                 <Table>
                     <TableHead>
                         <TableRow>

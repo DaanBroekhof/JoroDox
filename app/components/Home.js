@@ -8,7 +8,7 @@ export default class Home extends Component {
     render() {
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20}}>
-                <Typography type="display2" gutterBottom>Home page</Typography>
+                <Typography variant="display2" gutterBottom>Home page</Typography>
                 <p>It's just a start...</p>
             </Paper>
         );

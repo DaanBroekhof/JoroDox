@@ -179,7 +179,7 @@ class StructureItemView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display1" gutterBottom>{typeDefinition.title}: {this.props.match.params.id}</Typography>
+                <Typography variant="display1" gutterBottom>{typeDefinition.title}: {this.props.match.params.id}</Typography>
 
                 <Grid {...gridSettings}></Grid>
 

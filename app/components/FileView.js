@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 const jetpack = require('electron').remote.require('fs-jetpack');
-const OperatingSystem = require('electron').remote.require((process.env.NODE_ENV !== 'development' ? '../../' : './') +'utils/background/OperatingSystem');
+import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 
 import PdxScriptView from "./PdxScriptView";
 import PdxDataView from "./PdxDataView";
@@ -56,17 +56,18 @@ export default class FileView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display2" gutterBottom>{file.name}
+                <div style={{display: 'flex'}}>
+                    <Typography variant="display2" gutterBottom>{file.name}</Typography>
                     <span style={{marginLeft: 20}}>
                         <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
-                            <IconButton onClick={() => OperatingSystem.showItemInFolder(file.path)}><Icon color="action">pageview</Icon></IconButton>
+                            <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: file.path})}><Icon color="action">pageview</Icon></IconButton>
                         </Tooltip>
                         <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-                            <IconButton onClick={() => OperatingSystem.openItem(file.path)}><Icon color="action">open_in_new</Icon></IconButton>
+                            <IconButton onClick={() => OperatingSystemTask.start({openItem: file.path})}><Icon color="action">open_in_new</Icon></IconButton>
                         </Tooltip>
                     </span>
-                </Typography>
-                <Typography type="caption">{file.path}</Typography>
+                </div>
+                <Typography variant="caption">{file.path}</Typography>
                 <p>Type: {fileType} {file.type === 'file' && <span>- Size: {filesize(file.size)}</span>}</p>
                 {fileType === 'pdx-script' && <PdxScriptView file={file} />}
                 {fileType === 'pdx-data' && <PdxDataView file={file} />}

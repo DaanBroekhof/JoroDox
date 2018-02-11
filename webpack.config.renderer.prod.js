@@ -164,10 +164,12 @@ export default merge.smart(baseConfig, {
       NODE_ENV: 'production'
     }),
 
+      /*
     new UglifyJSPlugin({
       parallel: true,
       sourceMap: true
     }),
+    */
 
     new ExtractTextPlugin('style.css'),
 

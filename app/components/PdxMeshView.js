@@ -212,7 +212,7 @@ export default withRouter(class PdxMeshView extends Component {
                 <ThreeJsViewer ref={(ref) => this.threeJsViewer = ref} objectScene={this.state.objectScene}/>
 
                 <br />
-                <Typography type="headline">Animation</Typography>
+                <Typography variant="headline">Animation</Typography>
                 <Select value={this.state.animationRun} onChange={(event) => this.setAnimation(event.target.value)} native>
                     <option key={0} value={null}>- None -</option>
                     {this.state.animationFiles.map((animationFile) =>
@@ -220,7 +220,7 @@ export default withRouter(class PdxMeshView extends Component {
                     )}
                 </Select>
                 <br />
-                <Typography type="headline">Meshes</Typography>
+                <Typography variant="headline">Meshes</Typography>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -237,7 +237,7 @@ export default withRouter(class PdxMeshView extends Component {
                     <Button raised onClick={this.saveModifiedPdxMesh()}>Save changes</Button>
                 </div>
                 <br />
-                <Typography type="headline">PDX Mesh Data</Typography>
+                <Typography variant="headline">PDX Mesh Data</Typography>
                 <PdxDataView data={this.state.fileTreeData} file={this.props.file} style={{maxHeight: 800}} />
             </div>
         );

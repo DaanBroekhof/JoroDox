@@ -1,5 +1,7 @@
 /* eslint global-require: 0, flowtype-errors/show-errors: 0 */
 
+const OperatingSystemTask = require("./utils/tasks/OperatingSystemTask");
+
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -164,3 +166,11 @@ app.on('ready', async () => {
     mainWindow.webContents.on('new-window', handleExternalUrls);
 });
 
+ipc.on('background-request', (event, request) => {
+    switch (request.taskType)
+    {
+        case OperatingSystemTask.getTaskType():
+            OperatingSystemTask.handle(request);
+            break;
+    }
+});

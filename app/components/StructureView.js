@@ -1,7 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-const jetpack = require('electron').remote.require('fs-jetpack');
-//const OperatingSystem = require('electron').remote.require('./utils/background/OperatingSystem');
 
 import {Button, Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import _ from "lodash";
@@ -92,7 +90,7 @@ export default class StructureView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display2" gutterBottom>Structure</Typography>
+                <Typography variant="display2" gutterBottom>Structure</Typography>
 
                 <div style={{display: 'flex', flexDirection: 'row'}}>
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />

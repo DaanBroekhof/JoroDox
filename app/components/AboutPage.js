@@ -7,7 +7,7 @@ export default class AboutPage extends Component {
     render() {
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display2" gutterBottom>About the Jorodox Tool</Typography>
+                <Typography variant="display2" gutterBottom>About the Jorodox Tool</Typography>
 
                 <p>
                     The Jorodox Tool is an application to assist in the creation of user-made mods for <a

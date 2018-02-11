@@ -38,6 +38,7 @@
       "dist/",
       "node_modules/",
       "app.html",
+      "background.html",
       "main.prod.js",
       "main.prod.js.map",
       "package.json"
@@ -188,14 +189,12 @@
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
-    "bmp-js": "^0.0.3",
     "devtron": "^1.4.0",
-    "electron-debug": "^1.5.0",
     "dexie": "^2.0.1",
+    "electron-debug": "^1.5.0",
     "electron-window-state-manager": "^0.3.2",
     "filesize": "^3.5.11",
     "font-awesome": "^4.7.0",
-    "fs-jetpack": "^1.2.0",
     "history": "^4.7.2",
     "iconv-lite": "^0.4.19",
     "infinite-tree": "^1",
@@ -203,7 +202,6 @@
     "material-ui": "next",
     "material-ui-icons": "^1.0.0-beta.17",
     "mime": "^2.2.0",
-    "minimatch": "^3.0.4",
     "object-hash": "^1.2.0",
     "project-version": "^1.0.0",
     "react": "^16.2.0",
@@ -218,7 +216,7 @@
     "react-splitter-layout": "^3.0.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "source-map-support": "^0.5.3"
+    "source-map-support": "^0.5.3",
     "tga": "^1.0.2",
     "three": "^0.87.1",
     "three-addons": "^1.1.0",
