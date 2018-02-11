@@ -2,9 +2,7 @@
 import React, {Component} from 'react';
 import {Grid, applyGridConfig} from 'react-redux-grid';
 import {Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
-import filesize from 'filesize';
 import JdxDatabase from "../utils/JdxDatabase";
-import {grey} from 'material-ui/colors';
 import _ from 'lodash';
 import Eu4Definition from '../definitions/eu4';
 
@@ -81,16 +79,19 @@ export default class StructureTypeView extends Component {
             style: {
                 display: 'flex',
                 flexDirection: 'column',
+            },
+            events: {
+                HANDLE_ROW_CLICK: ({row}) => {
+                    this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
+                },
             }
         };
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
-                <Typography type="display2" gutterBottom>Type: {this.props.match.params.type}
-                </Typography>
+                <Typography type="display2" gutterBottom>Type: {typeDefinition.title}</Typography>
 
                 <Grid {...gridSettings}></Grid>
-
             </Paper>
         );
     }

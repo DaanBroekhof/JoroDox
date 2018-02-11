@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 const jetpack = require('electron').remote.require('fs-jetpack');
 const OperatingSystem = require('electron').remote.require('./utils/background/OperatingSystem');
 
-import {Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
+import {Button, Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import _ from "lodash";
 
 import FileLoaderTask from "../utils/tasks/FileLoaderTask";
@@ -92,37 +92,14 @@ export default class StructureView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display2" gutterBottom>Types
-                    <span style={{marginLeft: 20}}>
-                        <Tooltip id="tooltip-icon" title="Reload structure" placement="bottom">
-                            <IconButton onClick={() => this.reloadStructure()}><Icon color="action">autorenew</Icon></IconButton>
-                        </Tooltip>
-                        <Tooltip id="tooltip-icon" title="Clear structure" placement="bottom">
-                            <IconButton onClick={() => this.clearStructure()}><Icon color="action">delete</Icon></IconButton>
-                        </Tooltip>
-                        <Tooltip id="tooltip-icon" title="Load PDX scripts" placement="bottom">
-                            <IconButton onClick={() => this.loadPdxScripts()}><Icon color="action">info</Icon></IconButton>
-                        </Tooltip>
-                        <Tooltip id="tooltip-icon" title="Load PDX data" placement="bottom">
-                            <IconButton onClick={() => this.loadPdxData()}><Icon color="action">question</Icon></IconButton>
-                        </Tooltip>
-                        <Tooltip id="tooltip-icon" title="Load struct" placement="bottom">
-                            <IconButton onClick={() => this.loadStructureData()}><Icon color="action">question</Icon></IconButton>
-                        </Tooltip>
-                         <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-                            <IconButton onClick={() => OperatingSystem.openItem(file.path)}><Icon color="action">open_in_new</Icon></IconButton>
-                        </Tooltip>
-                    </span>
-                </Typography>
-                {this.state.files !== null &&
-                    <div>
-                        <Typography type="caption">{this.props.root}</Typography>
-                        <p>{this.state.filesList && (this.state.filesList.map(x => {
-                            return x.path;
-                        }).join(', '))}</p>
-                        <i>{this.state.filesCount}</i>
-                    </div>
-                }
+                <Typography type="display2" gutterBottom>Structure</Typography>
+
+                <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
+                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
+                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
+                    <Button raised={true} color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
+                </div>
 
             </Paper>
         );

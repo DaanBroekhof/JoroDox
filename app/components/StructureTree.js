@@ -12,6 +12,7 @@ import Eu4Definition from '../definitions/eu4';
 export default class StructureTree extends React.Component {
     tree = null;
     treeData = null;
+    openToType = null;
 
     constructor(props) {
         super(props);
@@ -29,39 +30,39 @@ export default class StructureTree extends React.Component {
         if (nextProps.root !== this.props.root) {
             this.setTreeState(nextProps.root);
         }
-        if (!this.tree.getSelectedNode() || nextProps.match.params.path !== this.tree.getSelectedNode().id) {
+        if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
             if (nextProps.match)
-                this.doOpenToPath(this.tree.getRootNode(), nextProps.match.params.path);
+                this.doOpenToType(this.tree.getRootNode(), nextProps.match.params.type);
         }
     }
 
-    doOpenToPath(node, path = null, updated = false) {
-        if (path)
-            this.openToPath = path;
-        if (!this.openToPath)
+    doOpenToType(node, type = null, updated = false) {
+        if (type)
+            this.openToType = type;
+        if (!this.openToType)
             return;
 
         let found = false;
         for (let child of node.children) {
-            if (this.openToPath === child.id) {
-                this.openToPath = null;
+            if (this.openToType === child.info.type) {
+                this.openToType = null;
                 this.tree.selectNode(child);
                 found = true;
                 break;
             }
-            else if (this.openToPath.startsWith(child.id + syspath.sep)) {
+            else if (child.info.type === 'typekind') {
                 if (!child.state.open)
                     this.tree.openNode(child, {async: true});
                 else
-                    this.doOpenToPath(child);
+                    this.doOpenToType(child, type);
                 found = true;
                 break;
             }
         }
 
         if (!found && !updated) {
-            this.updateNode(node);
-            this.doOpenToPath(node, path, true);
+            //this.updateNode(node);
+            //this.doOpenToPath(node, path, true);
         }
     }
 
@@ -145,8 +146,8 @@ export default class StructureTree extends React.Component {
 
             this.tree.openNode(this.tree.getRootNode().children[0]);
 
-            if (this.props.match.params.path && this.props.match.params.path.startsWith(root)) {
-//                this.doOpenToPath(this.tree.getRootNode(), this.props.match.params.path);
+            if (this.props.match.params.type) {
+                this.doOpenToType(this.tree.getRootNode(), this.props.match.params.type);
             }
             else {
 //                this.doOpenToPath(this.tree.getRootNode(), root);
@@ -154,19 +155,75 @@ export default class StructureTree extends React.Component {
         });
     }
 
+    navigateToNode(node, history) {
+        if (node.info.view === 'types') {
+            if (history.location.pathname !== '/structure')
+                history.push('/structure');
+        }
+        if (node.info.view === 'type') {
+            if (history.location.pathname !== '/structure/' + node.info.type)
+                history.push('/structure/' + node.info.type);
+        }
+        if (node.info.view === 'item') {
+            if (history.location.pathname !== '/structure/' + node.info.type +'/'+ node.info.id)
+                history.push('/structure/' + node.info.type +'/'+ node.info.id);
+        }
+    }
+
     render(){
         let fileTree = this;
         return (
-            <Route render={({ history}) => (<InfiniteTree
+            <Route render={({history}) => (<InfiniteTree
                 style={{display: 'flex', flex: 1, backgroundColor: 'white'}}
                 ref={(c) => this.tree = c ? c.tree : null}
                 autoOpen={true}
                 loadNodes={(parentNode, done) => {
 
                     if (parentNode.id === 'root:0') {
+                        done(null, [
+                            {
+                                id: 'typekind:raw',
+                                name: 'Raw data',
+                                loadOnDemand: true,
+                                info: {
+                                    view: 'typekind',
+                                    type: 'raw',
+                                },
+                            },
+                            {
+                                id: 'typekind:gamedata',
+                                name: 'Game structures',
+                                loadOnDemand: true,
+                                open: true,
+                                info: {
+                                    view: 'typekind',
+                                    type: 'gamedata',
+                                },
+                            }
+                        ], () => {
+                            this.tree.toggleNode(this.tree.getNodeById('typekind:gamedata'), {async: true});
+                        });
+                    }
+                    else if (parentNode.id === 'typekind:raw') {
 
                         let items = [];
-                        _(Eu4Definition.types).forEach(type => {
+                        _(Eu4Definition.types).filter(x => x.reader !== 'StructureLoader').forEach(type => {
+                            items.push({
+                                id: 'type:'+ type.id,
+                                name: type.title,
+                                info: {
+                                    view: 'type',
+                                    type: type.id,
+                                },
+                            });
+                        });
+
+                        done(null, items);
+                    }
+                    else if (parentNode.id === 'typekind:gamedata') {
+
+                        let items = [];
+                        _(Eu4Definition.types).filter(x => x.reader === 'StructureLoader').forEach(type => {
                             items.push({
                                 id: 'type:'+ type.id,
                                 name: type.title,
@@ -230,10 +287,17 @@ export default class StructureTree extends React.Component {
                     return true;
                 }}
                 onClick={(event) => {
-                    // click event
                     const target = event.target || event.srcElement; // IE8
-                    //history.push('/fileview/')
+                    let nodeTarget = target;
 
+                    // Find the node
+                    while (nodeTarget && nodeTarget.parentElement !== this.tree.contentElement) {
+                        nodeTarget = nodeTarget.parentElement;
+                    }
+
+                    const node = this.tree.getNodeById(nodeTarget.dataset.id);
+
+                    this.navigateToNode(node, history);
                 }}
                 onDoubleClick={(event) => {
                     // dblclick event
@@ -245,28 +309,15 @@ export default class StructureTree extends React.Component {
                     // keyup event
                 }}
                 onOpenNode={(node) => {
-                    fileTree.doOpenToPath(node);
+                    fileTree.doOpenToType(node);
                 }}
                 onCloseNode={(node) => {
                 }}
                 onSelectNode={(node) => {
-                    if (node.info.type === 'dir') {
-                        //this.tree.openNode(node, {async: true});
+                    if (node.info.view === 'typekind') {
+                        this.tree.openNode(node, {async: true});
                     }
-
-
-                    if (node.info.view === 'types') {
-                        if (history.location.pathname !== '/structure')
-                            history.push('/structure');
-                    }
-                    if (node.info.view === 'type') {
-                        if (history.location.pathname !== '/structure/' + node.info.type)
-                            history.push('/structure/' + node.info.type);
-                    }
-                    if (node.info.view === 'item') {
-                        if (history.location.pathname !== '/structure/' + node.info.type +'/'+ node.info.id)
-                            history.push('/structure/' + node.info.type +'/'+ node.info.id);
-                    }
+                    this.navigateToNode(node, history);
                 }}
                 onClusterWillChange={() => {
                 }}

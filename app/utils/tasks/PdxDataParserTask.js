@@ -24,7 +24,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
             }
         });
 
-        db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
+        db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys(files => {
 
             let filesList = _(files);
 
@@ -32,15 +32,15 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
             let datafiles = [];
             let relations = [];
-            filesList.each(file => {
+            filesList.each(filePath => {
                 let parser = new PdxData();
-                let data = parser.readFromBuffer(new Uint8Array(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer')).buffer);
+                let data = parser.readFromBuffer(new Uint8Array(jetpack.read(args.root + syspath.sep + filePath.replace(new RegExp('/', 'g'), syspath.sep), 'buffer')).buffer);
 
                 if (datafiles.length % 50 === 0)
                     this.progress(datafiles.length, filesList.size(), 'Parsing '+ filesList.size() +' PDX binary data objects...');
 
-                datafiles.push({path: file.path, data: data});
-                relations.push({fromKey: 'pdxData', fromType: 'pdxData', fromId: file.path, toKey: 'file', toType: 'file', toId: file.path})
+                datafiles.push({path: filePath, data: data});
+                relations.push(this.addRelationId({fromKey: 'pdxData', fromType: 'pdxData', fromId: filePath, toKey: 'file', toType: 'files', toId: filePath}));
             });
 
             Promise.all([

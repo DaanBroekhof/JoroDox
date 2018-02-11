@@ -1,4 +1,5 @@
 /*@import '~antd/dist/antd.css';*/
+@import url('../node_modules/font-awesome/css/font-awesome.min.css');
 
 /* General styling */
 
@@ -98,7 +99,7 @@ html, body, #root {
 }
 
 .infinite-tree-selected {
-  background-color: #d2eafb !important;
+  background-color: #fdd835 !important;
 }
 
 .infinite-tree-title {
@@ -150,4 +151,13 @@ html, body, #root {
 .react-grid-container {
   display: flex;
   flex-direction: column;
+}
+
+a {
+  color: #c6a700;
+}
+
+.react-grid-page-buttons {
+  background-color: #fdd835 !important;
+  color: black !important;
 }

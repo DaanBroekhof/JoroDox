@@ -1,5 +1,6 @@
 import BackgroundTask from "./BackgroundTask";
 import Dexie from "dexie";
+const hash = require('object-hash');
 
 export default class DbBackgroundTask extends BackgroundTask {
     saveChunked(data, store, chunkNr, chunkSize)
@@ -9,7 +10,7 @@ export default class DbBackgroundTask extends BackgroundTask {
         let task = this;
         return new Promise((resolve, reject) => {
             store.bulkPut(slice).then(lastkey => {
-                this.progress(Math.min(data.length, chunkNr*chunkSize), data.length, 'Saving '+ store.name +' data to DB...');
+                this.progress(Math.min(data.length, chunkNr*chunkSize), data.length, 'Saving '+ data.length +' '+ store.name +' data to DB...');
                 if (chunkNr*chunkSize >= data.length)
                     resolve(lastkey);
                 else
@@ -21,4 +22,9 @@ export default class DbBackgroundTask extends BackgroundTask {
             });
         });
     };
+
+    addRelationId(relationData) {
+        relationData.id = hash(relationData);
+        return relationData;
+    }
 }

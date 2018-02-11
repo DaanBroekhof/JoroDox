@@ -7,10 +7,10 @@ export default class AboutPage extends Component {
     render() {
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography type="display2" gutterBottom>About Jorodox</Typography>
+                <Typography type="display2" gutterBottom>About the Jorodox Tool</Typography>
 
                 <p>
-                    The JoroDox is a tool to assist in the creation of user-made mods for <a
+                    The Jorodox Tool is an application to assist in the creation of user-made mods for <a
                     href="https://www.paradoxplaza.com/paradox-development-studio" target="_blank">Paradox Development
                     Studio</a> games like <a href="https://www.paradoxplaza.com/europa-universalis-4" target="_blank">Europa
                     Universalis 4</a> and <a href="https://www.paradoxplaza.com/crusader-kings-2" target="_blank">Crusader
@@ -27,13 +27,13 @@ export default class AboutPage extends Component {
 
                 <h3>Changelog</h3>
 
-                <h4>v1.0.0 (2017-10-23)</h4>
+                <h4>v2.0.0-beta (from 2017-10-23)</h4>
                 <h5>Changes</h5>
                 <ul>
-                    <li>Switched to using Electron & React, because Chrome had stopped giving disk-access to
-                        extension.
-                    </li>
+                    <li>Switched to using Electron & React, because Chrome had stopped giving disk-access to Chrome extensions.</li>
                 </ul>
+
+                <hr />
 
                 <h4>v0.7.0 (2015-05-05)</h4>
                 <h5>Changes</h5>

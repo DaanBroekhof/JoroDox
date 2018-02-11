@@ -20,6 +20,7 @@ import StructureView from '../components/StructureView';
 import AppBar from 'material-ui/AppBar';
 import {Button, Card, MuiThemeProvider, createMuiTheme, Toolbar, Typography} from "material-ui";
 import blueGrey from 'material-ui/colors/blueGrey';
+import yellow from 'material-ui/colors/yellow';
 import red from 'material-ui/colors/red';
 import grey from 'material-ui/colors/grey';
 import ProgressInfo from "../components/ProgressInfo";
@@ -28,9 +29,18 @@ const {dialog} = require('electron').remote;
 
 const theme = createMuiTheme({
     palette: {
-        primary: blueGrey,
-        error: red,
-        canvasColor: grey,
+        primary: {
+            light: '#6d6d6d',
+            main: '#424242',
+            dark: '#1b1b1b',
+            contrastText: '#fff',
+        },
+        secondary: {
+            light: '#ffff6b',
+            main: '#fdd835',
+            dark: '#c6a700',
+            contrastText: '#000',
+        },
     },
 });
 
@@ -65,17 +75,17 @@ export default class App extends Component {
                 <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <AppBar position="static">
                         <Toolbar>
-                            <Typography type="title" color="inherit" style={{paddingRight: 40}}>
-                                Jorodox Tool
+                            <Typography type="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>
+                                Jorodox Tool<br />
+                                <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta</span>
                             </Typography>
                             <div style={{display: 'flex', padding: 10, flexGrow: 1}}>
-                                <Button color="primary" style={{marginRight: '10px'}} onClick={this.openDirectory} raised>Explore</Button>
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/settings" raised>Settings</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/" raised>Files</Button>
+                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/structure" raised>Structure</Button>
+                                {/*<Button color="primary" style={{marginRight: '10px'}} component={Link} to="/settings" raised>Settings</Button>*/}
                                 <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/about" raised>About</Button>
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/structure" raised>Structure View</Button>
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/fileview" raised>File View</Button>
-                                <Button color="primary" style={{marginRight: '10px'}} component={Link} to="/home" raised>Home</Button>
                                 <ProgressInfo style={{marginLeft: '40px'}} />
+                                <Button color="primary" style={{marginRight: '10px'}} onClick={this.openDirectory} raised>Open...</Button>
                             </div>
                         </Toolbar>
                     </AppBar>
@@ -86,15 +96,15 @@ export default class App extends Component {
                             <Route path="/" render={(props) => <FileTree root={this.state.rootPath}  {...props}/>} />
                         </Switch>
                         <Switch>
-                            <Route path="/structure/:type/:id" component={(props) => <StructureItemView root={this.state.rootPath}  {...props}/>}/>
+                            <Route path="/structure/:type/:id(.*)" component={(props) => <StructureItemView root={this.state.rootPath}  {...props}/>}/>
                             <Route path="/structure/:type" component={(props) => <StructureTypeView root={this.state.rootPath}  {...props}/>}/>
                             <Route path="/structure" component={(props) => <StructureView root={this.state.rootPath}  {...props}/>}/>
                             <Route path="/fileview/:path(.*)" component={FileView}/>
                             <Route path="/settings" component={SettingsPage}/>
-                            <Route path="/about" component={AboutPage}/>
                             <Route path="/" component={HomePage}/>
                         </Switch>
                     </SplitterLayout>
+                    <Route path="/about" component={AboutPage}/>
                 </div>
             </MuiThemeProvider>
         );

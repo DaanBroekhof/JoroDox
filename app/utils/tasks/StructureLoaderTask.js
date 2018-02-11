@@ -33,38 +33,55 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
             let items = [];
             let relations = [];
-            if (definition.transform.type === 'keyValues') {
+            if (definition.sourceTransform.type === 'keyValues') {
                 sourceItems.forEach(sourceItem => {
 
-                    _.forOwn(_.get(sourceItem, definition.transform.path), (value, key) => {
+                    _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
                         items.push({
-                            [definition.transform.keyName]: key,
-                            [definition.transform.valueName]: value,
+                            [definition.sourceTransform.keyName]: key,
+                            [definition.sourceTransform.valueName]: value,
                         });
-                        relations.push({
-                            fromKey: definition.transform.relationsFromName,
+                        relations.push(this.addRelationId({
+                            fromKey: definition.sourceTransform.relationsFromName,
                             fromType: definition.id,
                             fromId: key,
-                            toKey: definition.transform.relationsToName,
+                            toKey: definition.sourceTransform.relationsToName,
                             toType: definition.sourceType.id,
                             toId: sourceItem.path,
-                        });
+                        }));
                     });
                 });
             }
-            else if (definition.transform.type === 'fileData') {
+            else if (definition.sourceTransform.type === 'fileData') {
                 sourceItems.forEach(sourceItem => {
                     items.push({
                         path: sourceItem.path,
-                        data: sourceItem.data,
+                        data: definition.sourceTransform.dataPath ? _.get(sourceItem.data, definition.sourceTransform.dataPath): sourceItem.data,
                     });
-                    relations.push({
-                        fromKey: definition.transform.relationsFromName,
+                    relations.push(this.addRelationId({
+                        fromKey: definition.sourceTransform.relationsFromName,
                         fromType: definition.id,
                         fromId: sourceItem.path,
-                        toKey: definition.transform.relationsToName,
+                        toKey: definition.sourceTransform.relationsToName,
                         toType: definition.sourceType.id,
                         toId: sourceItem.path,
+                    }));
+                });
+            }
+
+            if (definition.relations) {
+                definition.relations.forEach(relation => {
+                    items.forEach(item => {
+                        if (relation.type === 'byPath') {
+                            relations.push(this.addRelationId({
+                                fromKey: relation.fromName,
+                                fromType: definition.id,
+                                fromId: item[definition.primaryKey],
+                                toKey: relation.toName,
+                                toType: relation.targetType,
+                                toId: relation.pathPrefix + item[relation.property],
+                            }));
+                        }
                     });
                 });
             }

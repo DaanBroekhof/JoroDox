@@ -57,14 +57,6 @@ export default {
                         dataIndex: ['path'],
                         width: '75%',
                     },
-                    {
-                        name: 'Data',
-                        dataIndex: 'data',
-                        moveable: true,
-                        renderer: ({ column, value, row }) => (
-                            <span>{_(value).size()}</span>
-                        ),
-                    },
                 ],
             }
         },
@@ -84,14 +76,6 @@ export default {
                         dataIndex: ['path'],
                         width: '75%',
                     },
-                    {
-                        name: 'Data',
-                        dataIndex: 'data',
-                        moveable: true,
-                        renderer: ({ column, value, row }) => (
-                            <span>{_(value).size()}</span>
-                        ),
-                    },
                 ],
             }
         },
@@ -106,7 +90,7 @@ export default {
                 pathPrefix: '',
                 pathPattern: '**/*.mesh',
             },
-            transform: {
+            sourceTransform: {
                 type: 'fileData',
                 path: ['data', 'data'],
                 keyName: 'path',
@@ -124,14 +108,6 @@ export default {
                         dataIndex: ['path'],
                         width: '75%',
                     },
-                    {
-                        name: 'Data',
-                        dataIndex: 'data',
-                        moveable: true,
-                        renderer: ({ column, value, row }) => (
-                            <span>{_(value).size()}</span>
-                        ),
-                    },
                 ],
             }
         },
@@ -139,27 +115,38 @@ export default {
             id: 'countryTags',
             title: 'Country tags',
             reader: 'StructureLoader',
-            primaryKey: 'id',
+            primaryKey: 'tag',
             sourceType: {
                 id: 'pdxScripts',
                 format: 'pdxScript',
                 pathPrefix: 'common/country_tags/',
                 pathPattern: 'common/country_tags/*.txt',
             },
-            transform: {
+            sourceTransform: {
                 type: 'keyValues',
                 path: ['data', 'data'],
-                keyName: 'id',
+                keyName: 'tag',
                 valueName: 'filePath',
                 relationsFromName: 'countryTags',
                 relationsToName: 'pdxScript',
             },
+            relations: [
+                {
+                    type: 'byPath',
+                    pathPrefix: 'common/',
+                    property: 'filePath',
+                    targetType: 'countries',
+                    fromName: 'tag',
+                    toName: 'country',
+                },
+            ],
             listView: {
                 pageSize: 100,
                 columns: [
                     {
-                        name: 'Id',
-                        dataIndex: ['id'],
+                        name: 'Tag',
+                        dataIndex: ['tag'],
+                        width: '10%',
                     },
                     {
                         name: 'Filepath',
@@ -172,25 +159,22 @@ export default {
             id: 'countries',
             title: 'Countries',
             reader: 'StructureLoader',
-            primaryKey: 'id',
+            primaryKey: 'path',
             sourceType: {
                 id: 'pdxScripts',
                 format: 'pdxScript',
                 pathPrefix: 'common/countries/',
                 pathPattern: 'common/countries/*.txt',
             },
-            transform: {
+            sourceTransform: {
                 type: 'fileData',
+                dataPath: ['data'],
                 relationsFromName: 'country',
                 relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
                 columns: [
-                    {
-                        name: 'Id',
-                        dataIndex: ['id'],
-                    },
                     {
                         name: 'Path',
                         dataIndex: 'path',

@@ -26,7 +26,7 @@ export default class JdxDatabase {
             stores[type.id] = '++'+ type.primaryKey + (type.indexedKeys ? ','+ type.indexedKeys.join(',') : '');
         });
 
-        stores['relations'] = '++,fromType,fromKey,[fromType+fromId],[fromType+fromId+fromKey],toType,toKey,[toType+toId],[toType+toId+toKey]';
+        stores['relations'] = '++id,fromType,fromKey,[fromType+fromId],[fromType+fromId+fromKey],toType,toKey,[toType+toId],[toType+toId+toKey]';
 
         /*
         let versionNr = 1;
