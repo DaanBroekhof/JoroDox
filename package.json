@@ -192,7 +192,7 @@
     "devtron": "^1.4.0",
     "dexie": "^2.0.1",
     "electron-debug": "^1.5.0",
-    "electron-window-state-manager": "^0.3.2",
+    "electron-window-state": "^4.1.1",
     "filesize": "^3.5.11",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",

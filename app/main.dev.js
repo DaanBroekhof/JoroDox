@@ -1,7 +1,5 @@
 /* eslint global-require: 0, flowtype-errors/show-errors: 0 */
 
-const OperatingSystemTask = require("./utils/tasks/OperatingSystemTask");
-
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -17,7 +15,8 @@ const app = require('electron').app;
 const ipc = require('electron').ipcMain;
 const BrowserWindow = require('electron').BrowserWindow;
 const MenuBuilder = require('./menu');
-//const WindowStateManager = require('electron-window-state-manager');
+const windowStateKeeper = require('electron-window-state');
+const OperatingSystemTask = require("./utils/tasks/OperatingSystemTask");
 
 let mainWindow = null;
 let backgroundWindow = null;
@@ -65,25 +64,27 @@ app.on('ready', async () => {
     if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
         await installExtensions();
     }
-//    const path = require('path');
+    const path = require('path');
 
-    /*
-    let mainWindowState = new WindowStateManager('mainWindow', {
+    let mainWindowState = windowStateKeeper({
         defaultWidth: 1024,
-        defaultHeight: 768
+        defaultHeight: 768,
+        file: 'main-window-state.json',
     });
-    let backgroundWindowState = new WindowStateManager('backgroundWindow', {
+    let backgroundWindowState = windowStateKeeper({
         defaultWidth: 1024,
-        defaultHeight: 768
+        defaultHeight: 768,
+        file: 'background-window-state.json',
     });
-    */
+
+    console.log(app.getPath('userData'));
 
     backgroundWindow = new BrowserWindow({
         show: true,
-        //width: backgroundWindowState.width,
-        //height: backgroundWindowState.height,
-        //x: backgroundWindowState.x,
-        //y: backgroundWindowState.y,
+        x: backgroundWindowState.x,
+        y: backgroundWindowState.y,
+        width: backgroundWindowState.width,
+        height: backgroundWindowState.height,
         webPreferences: {
             nodeIntegrationInWorker: true,
             webSecurity: false,
@@ -92,16 +93,19 @@ app.on('ready', async () => {
 
     mainWindow = new BrowserWindow({
         show: false,
-        // width: mainWindowState.width,
-        // height: mainWindowState.height,
-        // x: mainWindowState.x,
-        // y: mainWindowState.y,
-        //icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
+        x: mainWindowState.x,
+        y: mainWindowState.y,
+        width: mainWindowState.width,
+        height: mainWindowState.height,
+        icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
         webPreferences: {
             nodeIntegrationInWorker: true,
             webSecurity: false,
         },
     });
+
+    mainWindowState.manage(mainWindow);
+    backgroundWindowState.manage(backgroundWindow);
 
     mainWindow.loadURL(`file://${__dirname}/app.html`);
     backgroundWindow.loadURL(`file://${__dirname}/background.html`);
@@ -112,25 +116,25 @@ app.on('ready', async () => {
         if (!mainWindow) {
             throw new Error('"mainWindow" is not defined');
         }
-        // if (mainWindowState.maximized) {
-        //     mainWindow.maximize();
-        // }
+        if (mainWindowState.isMaximized) {
+            mainWindow.maximize();
+        }
         mainWindow.show();
         mainWindow.focus();
     });
 
     mainWindow.on('close', () => {
-        // mainWindowState.saveState(mainWindow);
+        mainWindowState.saveState(mainWindow);
     });
     mainWindow.on('closed', () => {
-        mainWindow = null;
+        //mainWindow = null;
     });
 
     backgroundWindow.on('close', () => {
-        // backgroundWindowState.saveState(backgroundWindow);
+        backgroundWindowState.saveState(backgroundWindow);
     });
     backgroundWindow.on('closed', () => {
-        backgroundWindow = null;
+        //backgroundWindow = null;
     });
 
     mainWindow.on('app-command', (e, cmd) => {
