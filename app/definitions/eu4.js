@@ -94,8 +94,6 @@ export default {
                 type: 'fileData',
                 path: ['data', 'data'],
                 keyName: 'path',
-                relationsFromName: 'pdxMesh',
-                relationsToName: 'pdxData',
             },
             listView: {
                 pageSize: 100,
@@ -128,17 +126,15 @@ export default {
                 path: ['data', 'data'],
                 keyName: 'tag',
                 valueName: 'filePath',
-                relationsFromName: 'countryTags',
-                relationsToName: 'pdxScript',
             },
             relations: [
                 {
                     type: 'byPath',
                     pathPrefix: 'common/',
                     property: 'filePath',
-                    targetType: 'countries',
                     fromName: 'tag',
                     toName: 'country',
+                    toType: 'countries',
                 },
             ],
             listView: {
@@ -172,7 +168,6 @@ export default {
                 type: 'fileData',
                 dataPath: ['data'],
                 relationsFromName: 'country',
-                relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
@@ -205,8 +200,6 @@ export default {
                 path: ['data', 'data'],
                 keyName: 'tag',
                 valueName: 'color',
-                relationsFromName: 'countryTags',
-                relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
@@ -239,8 +232,6 @@ export default {
                 path: ['data', 'data'],
                 keyName: 'name',
                 valueName: 'data',
-                relationsFromName: 'ages',
-                relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
@@ -273,8 +264,6 @@ export default {
                 path: ['data', 'data'],
                 keyName: 'name',
                 valueName: 'data',
-                relationsFromName: 'cultures',
-                relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
@@ -307,8 +296,6 @@ export default {
                 path: ['data', 'data'],
                 keyName: 'name',
                 valueName: 'data',
-                relationsFromName: 'advisortypes',
-                relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
@@ -341,8 +328,6 @@ export default {
                 path: ['data', 'data'],
                 keyName: 'name',
                 valueName: 'data',
-                relationsFromName: 'aiPersonalities',
-                relationsToName: 'pdxScript',
             },
             listView: {
                 pageSize: 100,
@@ -354,6 +339,283 @@ export default {
                     },
                 ],
             },
+        },
+        {
+            id: 'bookmarks',
+            title: 'Bookmarks',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/bookmarks/',
+                pathPattern: 'common/bookmarks/*.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                dataPath: ['data', 'bookmark'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: 'bookmarks',
+                    },
+                    {
+                        name: 'Name',
+                        dataIndex: ['data', 'name'],
+                    },
+                    {
+                        name: 'Date',
+                        dataIndex: ['data', 'date'],
+                    },
+                ],
+            },
+            relations: [
+                {
+                    type: 'arrayValuesByPath',
+                    dataPath: ['data', 'country'],
+                    fromName: 'bookmark',
+                    toType: 'countryTags',
+                    toName: 'countryTag',
+                },
+            ],
+        },
+        {
+            id: 'buildings',
+            title: 'Buildings',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/buildings/',
+                pathPattern: 'common/buildings/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'buildings',
+                    },
+                    {
+                        name: 'Cost',
+                        dataIndex: ['data', 'cost'],
+                    },
+                    {
+                        name: 'Time',
+                        dataIndex: ['data', 'time'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'cbTypes',
+            title: 'CB types',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/cb_types/',
+                pathPattern: 'common/cb_types/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'cbTypes',
+                    },
+                    {
+                        name: 'Months',
+                        dataIndex: ['data', 'months'],
+                    },
+                    {
+                        name: 'War goal',
+                        dataIndex: ['data', 'war_goal'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'churchAspects',
+            title: 'Church Aspects',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/church_aspects/',
+                pathPattern: 'common/church_aspects/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'churchAspects',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'clientStates',
+            title: 'Client states',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/client_states/',
+                pathPattern: 'common/client_states/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'clientStates',
+                    },
+                    {
+                        name: 'Region',
+                        dataIndex: 'region',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'colonialRegions',
+            title: 'Colonial regions',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/colonial_regions/',
+                pathPattern: 'common/colonial_regions/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'colonialRegions',
+                    },
+                    {
+                        name: 'Tax income',
+                        dataIndex: ['data', 'tax_income'],
+                    },
+                    {
+                        name: 'Native size',
+                        dataIndex: ['data', 'native_size'],
+                    },
+                    {
+                        name: 'Native ferocity',
+                        dataIndex: ['data', 'native_ferocity'],
+                    },
+                    {
+                        name: 'Native hostileness',
+                        dataIndex: ['data', 'native_hostileness'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'provinceHistory',
+            title: 'Province history',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'history/provinces/',
+                pathPattern: 'history/provinces/*.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                dataPath: ['data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: 'provinceHistory',
+                    },
+                    {
+                        name: 'Culture',
+                        dataIndex: ['data', 'culture'],
+                    },
+                    {
+                        name: 'Trade goods',
+                        dataIndex: ['data', 'trade_goods'],
+                    },
+                    {
+                        name: 'Owner',
+                        dataIndex: ['data', 'owner'],
+                    },
+                    {
+                        name: 'Controller',
+                        dataIndex: ['data', 'controller'],
+                    },
+                ],
+            },
+            relations: [
+                {
+                    type: 'valueByPath',
+                    dataPath: ['data', 'owner'],
+                    fromName: 'provinceHistoryOwner',
+                    toType: 'countryTags',
+                    toName: 'ownerCountryTag',
+                },
+                {
+                    type: 'valueByPath',
+                    dataPath: ['data', 'controller'],
+                    fromName: 'provinceHistoryController',
+                    toType: 'countryTags',
+                    toName: 'controllerCountryTag',
+                },
+            ],
         },
     ],
 };

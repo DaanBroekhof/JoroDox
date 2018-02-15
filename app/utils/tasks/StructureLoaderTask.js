@@ -41,10 +41,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                                 [definition.sourceTransform.valueName]: value,
                             });
                             relations.push(this.addRelationId({
-                                fromKey: definition.sourceTransform.relationsFromName,
+                                fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                                 fromType: definition.id,
                                 fromId: key,
-                                toKey: definition.sourceTransform.relationsToName,
+                                toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
                                 toType: definition.sourceType.id,
                                 toId: sourceItem.path,
                             }));
@@ -58,10 +58,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                             data: definition.sourceTransform.dataPath ? _.get(sourceItem.data, definition.sourceTransform.dataPath) : sourceItem.data,
                         });
                         relations.push(this.addRelationId({
-                            fromKey: definition.sourceTransform.relationsFromName,
+                            fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                             fromType: definition.id,
                             fromId: sourceItem.path,
-                            toKey: definition.sourceTransform.relationsToName,
+                            toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
                             toType: definition.sourceType.id,
                             toId: sourceItem.path,
                         }));
@@ -77,9 +77,34 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                                     fromType: definition.id,
                                     fromId: item[definition.primaryKey],
                                     toKey: relation.toName,
-                                    toType: relation.targetType,
+                                    toType: relation.toType,
                                     toId: relation.pathPrefix + item[relation.property],
                                 }));
+                            }
+                            else if (relation.type === 'valueByPath') {
+                                let value = _.get(item, relation.dataPath);
+                                if (value) {
+                                    relations.push(this.addRelationId({
+                                        fromKey: relation.fromName,
+                                        fromType: definition.id,
+                                        fromId: item[definition.primaryKey],
+                                        toKey: relation.toName,
+                                        toType: relation.toType,
+                                        toId: value,
+                                    }));
+                                }
+                            }
+                            else if (relation.type === 'arrayValuesByPath') {
+                                _.get(item, relation.dataPath).forEach(relationValue => {
+                                    relations.push(this.addRelationId({
+                                        fromKey: relation.fromName,
+                                        fromType: definition.id,
+                                        fromId: item[definition.primaryKey],
+                                        toKey: relation.toName,
+                                        toType: relation.toType,
+                                        toId: relationValue,
+                                    }));
+                                });
                             }
                         });
                     });
