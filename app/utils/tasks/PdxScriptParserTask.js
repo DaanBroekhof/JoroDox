@@ -17,41 +17,48 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
     }
 
     execute(args) {
-        let db = JdxDatabase.get(args.root);
+        JdxDatabase.get(args.root).then(db => {
+            this.progress(0, 1, 'Finding PDX scripts...');
 
-        this.progress(0, 1, 'Finding PDX scripts...');
-
-        let patterns = [];
-        _(args.definition.types).forOwn((typeDefinition) => {
-            if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxScript" && typeDefinition.sourceType.pathPattern) {
-                 patterns.push(typeDefinition.sourceType.pathPattern);
-            }
-        });
-
-        db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
-
-            let filesList = _(files);
-
-            let scripts = [];
-            let relations = [];
-            filesList.each(file => {
-                let parser = new PdxScript();
-                let data = parser.readFile(iconv.decode(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer'), 'win1252'));
-
-                if (scripts.length % 500 === 0)
-                    this.progress(scripts.length, filesList.size(), 'Parsing '+ filesList.size() +' PDX scripts...');
-
-                scripts.push({path: file.path, data: data});
-                relations.push(this.addRelationId({fromKey: 'pdxScript', fromType: 'pdxScripts', fromId: file.path, toKey: 'file', toType: 'files', toId: file.path}));
+            let patterns = [];
+            _(args.definition.types).forOwn((typeDefinition) => {
+                if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxScript" && typeDefinition.sourceType.pathPattern) {
+                    patterns.push(typeDefinition.sourceType.pathPattern);
+                }
             });
 
-            Promise.all([
-                this.saveChunked(scripts, db.pdxScripts, 0, 500),
-                this.saveChunked(relations, db.relations, 0, 500),
-            ]).then(result => {
-                this.finish(result);
-            }).catch(reason => {
-                this.fail(reason.toString())
+            db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
+
+                let filesList = _(files);
+
+                let scripts = [];
+                let relations = [];
+                filesList.each(file => {
+                    let parser = new PdxScript();
+                    let data = parser.readFile(iconv.decode(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer'), 'win1252'));
+
+                    if (scripts.length % 500 === 0)
+                        this.progress(scripts.length, filesList.size(), 'Parsing ' + filesList.size() + ' PDX scripts...');
+
+                    scripts.push({path: file.path, data: data});
+                    relations.push(this.addRelationId({
+                        fromKey: 'pdxScript',
+                        fromType: 'pdxScripts',
+                        fromId: file.path,
+                        toKey: 'file',
+                        toType: 'files',
+                        toId: file.path
+                    }));
+                });
+
+                Promise.all([
+                    this.saveChunked(scripts, db.pdxScripts, 0, 500),
+                    this.saveChunked(relations, db.relations, 0, 500),
+                ]).then(result => {
+                    this.finish(result);
+                }).catch(reason => {
+                    this.fail(reason.toString())
+                });
             });
         });
     }

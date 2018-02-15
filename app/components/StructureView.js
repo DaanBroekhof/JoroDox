@@ -25,10 +25,10 @@ export default class StructureView extends Component {
 
     clearStructure() {
 
-        let db = JdxDatabase.get(this.props.root);
-
-        db.files.clear().then(() => {
-            this.setState({files: null});
+        JdxDatabase.get(this.props.root).then(db => {
+            db.files.clear().then(() => {
+                this.setState({files: null});
+            });
         });
     }
 
@@ -72,18 +72,18 @@ export default class StructureView extends Component {
 
     reloadStructure() {
 
-        let db = JdxDatabase.get(this.props.root);
-
-        FileLoaderTask.start(
-            {root: this.props.root, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')},
-            (progress, total, message) => console.log('['+ progress +'/'+ total +'] '+ message),
-            (result) => {
-                this.setState({files: db.files});
-                db.files.limit(10).toArray(res => this.setState({filesList: _(res)}));
-                db.files.count(count => this.setState({filesCount: count}));
-            },
-            (error) => console.log(error)
-        );
+        JdxDatabase.get(this.props.root).then(db => {
+            FileLoaderTask.start(
+                {root: this.props.root, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')},
+                (progress, total, message) => console.log('['+ progress +'/'+ total +'] '+ message),
+                (result) => {
+                    this.setState({files: db.files});
+                    db.files.limit(10).toArray(res => this.setState({filesList: _(res)}));
+                    db.files.count(count => this.setState({filesCount: count}));
+                },
+                (error) => console.log(error)
+            );
+        });
     }
 
     render() {

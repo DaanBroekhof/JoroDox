@@ -43,47 +43,48 @@ export default class FileLoaderTask extends DbBackgroundTask {
     }
 
     execute(args) {
-        let db = JdxDatabase.get(args.root);
+        JdxDatabase.get(args.root).then(db => {
 
-        this.progress(0, 1, 'Reading directory data...');
+            this.progress(0, 1, 'Reading directory data...');
 
-        let localJetpack = jetpack.cwd(args.root);
+            let localJetpack = jetpack.cwd(args.root);
 
-        let typeDefinition = args.typeDefinition;
+            let typeDefinition = args.typeDefinition;
 
-        localJetpack.findAsync('.', {
-            matching: '*',
-            recursive: true,
-            files: true,
-            directories: true
-        }).then(files => {
-            let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
+            localJetpack.findAsync('.', {
+                matching: '*',
+                recursive: true,
+                files: true,
+                directories: true
+            }).then(files => {
+                let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
 
-            this.progress(0, filesList.size(), 'Adding '+ filesList.size() +' file meta data items...');
+                this.progress(0, filesList.size(), 'Adding ' + filesList.size() + ' file meta data items...');
 
-            let nr = 0;
-            let filesRemapped = filesList.map(file => {
+                let nr = 0;
+                let filesRemapped = filesList.map(file => {
 
-                nr += 1;
-                if (nr % 1000 === 0)
-                    this.progress(nr, filesList.size(), 'Adding '+ filesList.size() +' file meta data items...');
+                    nr += 1;
+                    if (nr % 1000 === 0)
+                        this.progress(nr, filesList.size(), 'Adding ' + filesList.size() + ' file meta data items...');
 
-                //TODO: Make this async as well!
-                let info = localJetpack.inspect(file, {times: true});
+                    //TODO: Make this async as well!
+                    let info = localJetpack.inspect(file, {times: true});
 
-                return {
-                    path: file.replace(new RegExp('\\'+ syspath.sep, 'g'), '/'),
-                    info: info,
-                    //type: FileLoaderTask.getFileType(info),
-                };
-            });
+                    return {
+                        path: file.replace(new RegExp('\\' + syspath.sep, 'g'), '/'),
+                        info: info,
+                        //type: FileLoaderTask.getFileType(info),
+                    };
+                });
 
-            Promise.all([
-                this.saveChunked(filesRemapped.value(), db.files, 0, 500),
-            ]).then(result => {
-                this.finish(result);
-            }).catch(reason => {
-                this.fail(reason.toString())
+                Promise.all([
+                    this.saveChunked(filesRemapped.value(), db.files, 0, 500),
+                ]).then(result => {
+                    this.finish(result);
+                }).catch(reason => {
+                    this.fail(reason.toString())
+                });
             });
         });
     }

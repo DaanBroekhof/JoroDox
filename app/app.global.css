@@ -161,3 +161,15 @@ a {
   background-color: #fdd835 !important;
   color: black !important;
 }
+
+.react-grid-table.structure-type-list .react-grid-cell span {
+  text-decoration: underline;
+}
+
+.react-grid-table.structure-type-list .react-grid-cell span:hover {
+  text-decoration: inherit;
+}
+
+.react-grid-cell a:hover {
+  text-decoration: none;
+}

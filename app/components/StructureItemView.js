@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import Eu4Definition from "../definitions/eu4";
 import JdxDatabase from "../utils/JdxDatabase";
-import {Grid} from 'react-redux-grid';
+import {applyGridConfig, Grid} from 'react-redux-grid';
 import _ from 'lodash';
 import {Link} from "react-router-dom";
 import {Actions} from "react-redux-grid";
@@ -33,48 +33,28 @@ class StructureItemView extends Component {
             depth = depth + 1;
         }
 
+        let isArray = _.isArray(item);
+
         let treeItem = {
             id: !parentId ? -1 : idCounter.id++,
             key: key,
+            value: isArray ? <i style={{color: 'lightgrey'}}>[{item.length} items]</i> : (_.isPlainObject(item) ? <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i> : <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>),
             parentId: parentId,
             _hideChildren: parentId && depth > 1 ? true : false,
             children: [],
         };
         idCounter.id++;
 
-        _(item).forOwn((value, key) => {
-            if (_.isObject(value) && !_.isArray(value) && !(value instanceof Date)) {
+        if (_.isArray(item)) {
+            _(item).forEach((value, key) => {
+                treeItem.children.push(this.createTreeItem(!isArray ? key : <i>{key}</i>, value, treeItem.id, idCounter, depth));
+            });
+        }
+        else if (_.isPlainObject(item)) {
+            _(item).forOwn((value, key) => {
                 treeItem.children.push(this.createTreeItem(key, value, treeItem.id, idCounter, depth));
-            }
-            else if (_.isArray(value)) {
-
-                let newParentId = idCounter.id++;
-
-                treeItem.children.push({
-                    id: newParentId,
-                    parentId: treeItem.id,
-                    key: key,
-                    value: _.isObject(value) ? <i>[{value.length}  items]</i> : value,
-                    _hideChildren: depth+1 > 1 ? true : false,
-                    children: _(value).map(x => {
-                        return {
-                            id: idCounter.id++,
-                            parentId: newParentId,
-                            key: '',
-                            value: _.isObject(x) ? '[Object]' : x,
-                        }
-                    }).value(),
-                });
-            }
-            else {
-                treeItem.children.push({
-                    id: idCounter.id++,
-                    parentId: treeItem.id,
-                    key: key,
-                    value: _.isObject(value) ? value.toString() : value,
-                });
-            }
-        });
+            });
+        }
 
         return !parentId ? {root: treeItem} : treeItem;
     }
@@ -91,11 +71,13 @@ class StructureItemView extends Component {
         let typeDefinition = _(Eu4Definition.types).find(x => x.id === props.match.params.type);
 
         if (typeDefinition) {
-            JdxDatabase.get(props.root).relations.where({fromType: typeDefinition.id, fromId: props.match.params.id}).toArray(relations => {
-                this.setState({relationsFrom: _.sortBy(relations, ['toKey', 'toType', 'toId'])});
-            });
-            JdxDatabase.get(props.root).relations.where({toType: typeDefinition.id, toId: props.match.params.id}).toArray(relations => {
-                this.setState({relationsTo: _.sortBy(relations, ['fromKey', 'fromType', 'fromId'])});
+            JdxDatabase.get(props.root).then(db => {
+                db.relations.where({fromType: typeDefinition.id, fromId: props.match.params.id}).toArray(relations => {
+                    this.setState({relationsFrom: _.sortBy(relations, ['toKey', 'toType', 'toId'])});
+                });
+                db.relations.where({toType: typeDefinition.id, toId: props.match.params.id}).toArray(relations => {
+                    this.setState({relationsTo: _.sortBy(relations, ['fromKey', 'fromType', 'fromId'])});
+                });
             });
         }
     }
@@ -125,12 +107,14 @@ class StructureItemView extends Component {
         let view = this;
         let dataSource = function getData({pageIndex, pageSize}) {
             return new Promise((resolve) => {
-                JdxDatabase.get(view.props.root)[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
-                    if (item) {
-                        let treeItem = view.createTreeItem('root', item);
-                        view.setState({item: item});
-                        resolve({data: treeItem, total: 1});
-                    }
+                JdxDatabase.get(view.props.root).then(db => {
+                    db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
+                        if (item) {
+                            let treeItem = view.createTreeItem('root', item);
+                            view.setState({item: item});
+                            resolve({data: treeItem, total: 1});
+                        }
+                    });
                 });
             });
         };
@@ -185,7 +169,7 @@ class StructureItemView extends Component {
 
                 {this.state.relationsFrom.length > 0 &&
                     <div>
-                        <h4>Links from</h4>
+                        <h4>Linked from</h4>
                         <ul>
                             {this.state.relationsFrom.map(r => <li key={r.id}>{r.toKey}: <Link
                                 to={`/structure/${r.toType}/${r.toId}`}>{r.toId}</Link></li>)}
@@ -194,7 +178,7 @@ class StructureItemView extends Component {
                 }
                 {this.state.relationsTo.length > 0 &&
                     <div>
-                        <h4>Links to</h4>
+                        <h4>Linked to</h4>
                         <ul>
                             {this.state.relationsTo.map(r => <li key={r.id}>{r.fromKey}: <Link
                                 to={`/structure/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>)}

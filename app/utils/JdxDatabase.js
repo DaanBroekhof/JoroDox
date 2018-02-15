@@ -10,14 +10,10 @@ export default class JdxDatabase {
     static get(root, definition) {
 
         if (this.db)
-            return this.db;
+            return Promise.resolve(this.db);
 
         if (!definition)
             definition = Eu4Definition;
-
-        let rootHash = crypto.createHash('md5').update(definition.name +'||'+ root).digest("hex").substring(0, 8);
-
-        let db = new Dexie("JdxDatabase-"+ rootHash);
 
         let stores = {
             settings: '++key',
@@ -28,25 +24,57 @@ export default class JdxDatabase {
 
         stores['relations'] = '++id,fromType,fromKey,[fromType+fromId],[fromType+fromId+fromKey],toType,toKey,[toType+toId],[toType+toId+toKey]';
 
-        /*
-        let versionNr = 1;
-        db.settings.where({key: 'lastVersion'}).first(setting => {
-            let currentStores = {};
+        stores = _(stores).mapValues(x => x.split(',').sort().join(',')).value();
 
-            _(setting).value.forOwn(value, key => {
-                db.version(++versionNr).stores(setting);
-                currentStores[key] = value;
+        let rootHash = crypto.createHash('md5').update(definition.name +'||'+ root).digest("hex").substring(0, 8);
+        let db = new Dexie("JdxDatabase-"+ rootHash);
+
+        let currentStores = [];
+        let currentVerNo = 0;
+
+        return db.open().then(() => {
+            currentVerNo = db.verno;
+            db.tables.forEach(table => {
+                let primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
+                let schemaSyntax = primKeyAndIndexes.map(index => index.src).join(',');
+                currentStores[table.name] = schemaSyntax.split(',').sort().join(',');
             });
+
+            db.close();
+
+            let newStores = {};
+            let deleteStores = {};
+            _(stores).forOwn((v, k) => {
+                if (!currentStores[k]) {
+                    newStores[k] = v;
+                }
+                else if (currentStores[k] !== v) {
+                    deleteStores[k] = null;
+                    newStores[k] = v;
+                }
+            });
+            _(currentStores).forOwn((v, k) => {
+                if (!stores[k]) {
+                    deleteStores[k] = null;
+                }
+            });
+
+            console.log(currentStores);
+            console.log(stores);
+            console.log(deleteStores);
+            console.log(newStores);
+
+            db.version(currentVerNo).stores(currentStores);
+            if (_(deleteStores).size()) {
+                db.version(++currentVerNo).stores(deleteStores);
+            }
+            if (_(newStores).size()) {
+                db.version(++currentVerNo).stores(newStores);
+            }
+
+            this.db = db;
+
+            return db.open();
         });
-        */
-
-
-        console.log(stores);
-
-        db.version(1).stores(stores);
-
-        this.db = db;
-
-        return db;
     }
 }

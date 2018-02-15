@@ -5,6 +5,7 @@ import {Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import JdxDatabase from "../utils/JdxDatabase";
 import _ from 'lodash';
 import Eu4Definition from '../definitions/eu4';
+import {Link} from "react-router-dom";
 
 export default class StructureTypeView extends Component {
 
@@ -30,31 +31,44 @@ export default class StructureTypeView extends Component {
                 pageSize = typeDefinition.listView.pageSize;
 
             return new Promise((resolve) => {
-                JdxDatabase.get(rootPath)[typeDefinition.id].count((total) => {
-                    JdxDatabase.get(rootPath)[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
+                JdxDatabase.get(rootPath).then(db => {
+                    db[typeDefinition.id].count((total) => {
+                        db[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
 
-                        if (typeDefinition.listView.unsetKeys) {
-                            result = result.map(x => {
-                                typeDefinition.listView.unsetKeys.forEach(keys => {
-                                    _.unset(x, keys);
+                            if (typeDefinition.listView.unsetKeys) {
+                                result = result.map(x => {
+                                    typeDefinition.listView.unsetKeys.forEach(keys => {
+                                        _.unset(x, keys);
+                                    });
+                                    return x;
                                 });
-                                return x;
+                            }
+
+
+                            resolve({
+                                data: result,
+                                total: total,
                             });
-                        }
-
-
-                        resolve({
-                            data: result,
-                            total: total,
                         });
                     });
                 });
             });
         };
 
+        let columns = typeDefinition.listView.columns.map(c => {
+            if (c.linkTo) {
+                c.renderer = ({value, column}) => {
+                    return <span><Link to={"/structure/"+ column.linkTo +"/"+ value}>{value}</Link></span>
+                };
+            }
+            return c;
+        });
+
+
+
         let gridSettings = {
             height: false,
-            columns: typeDefinition.listView.columns,
+            columns: columns,
             plugins: {
                 PAGER: {
                     enabled: true,
@@ -82,7 +96,7 @@ export default class StructureTypeView extends Component {
             },
             events: {
                 HANDLE_ROW_CLICK: ({row}) => {
-                    this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
+                    //this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
                 },
             }
         };
