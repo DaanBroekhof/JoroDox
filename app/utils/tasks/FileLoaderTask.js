@@ -51,13 +51,26 @@ export default class FileLoaderTask extends DbBackgroundTask {
 
             let typeDefinition = args.typeDefinition;
 
-            localJetpack.findAsync('.', {
-                matching: '*',
+            let searchPattern = '*';
+            if (args.searchPattern)
+                searchPattern = args.searchPattern;
+            let searchPath = '.';
+            if (args.searchPath) {
+                searchPath = args.searchPath;
+                searchPattern = searchPattern.replace(new RegExp('^'+ _.escapeRegExp(searchPath)), '');
+            }
+
+            localJetpack.findAsync(searchPath, {
+                matching: searchPattern,
                 recursive: true,
                 files: true,
                 directories: true
             }).then(files => {
                 let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
+
+                if (args.fileFilters) {
+                    filesList = filesList.filter(file => args.fileFilters.some(x => minimatch(file, x)));
+                }
 
                 this.progress(0, filesList.size(), 'Adding ' + filesList.size() + ' file meta data items...');
 

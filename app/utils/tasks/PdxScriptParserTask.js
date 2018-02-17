@@ -21,13 +21,17 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
             this.progress(0, 1, 'Finding PDX scripts...');
 
             let patterns = [];
+            let prefixes = [];
             _(args.definition.types).forOwn((typeDefinition) => {
+                if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id))
+                    return;
                 if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxScript" && typeDefinition.sourceType.pathPattern) {
                     patterns.push(typeDefinition.sourceType.pathPattern);
+                    prefixes.push(typeDefinition.sourceType.pathPrefix);
                 }
             });
 
-            db.files.filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
+            db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
 
                 let filesList = _(files);
 

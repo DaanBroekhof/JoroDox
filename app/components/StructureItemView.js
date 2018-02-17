@@ -22,7 +22,7 @@ class StructureItemView extends Component {
         };
     }
 
-    createTreeItem(key, item, parentId, idCounter, depth) {
+    createTreeItem(key, item, startAtParentId, parentId, idCounter, depth) {
         if (!idCounter) {
             idCounter = {id: 1};
         }
@@ -38,7 +38,9 @@ class StructureItemView extends Component {
         let treeItem = {
             id: !parentId ? -1 : idCounter.id++,
             key: key,
-            value: isArray ? <i style={{color: 'lightgrey'}}>[{item.length} items]</i> : (_.isPlainObject(item) ? <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i> : <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>),
+            value: isArray ? <i style={{color: 'lightgrey'}}>[{item.length} items]</i> : (_.isPlainObject(item) ?
+                <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i> :
+                <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>),
             parentId: parentId,
             _hideChildren: parentId && depth > 1 ? true : false,
             children: [],
@@ -47,16 +49,29 @@ class StructureItemView extends Component {
 
         if (_.isArray(item)) {
             _(item).forEach((value, key) => {
-                treeItem.children.push(this.createTreeItem(!isArray ? key : <i>{key}</i>, value, treeItem.id, idCounter, depth));
+                treeItem.children.push(this.createTreeItem(!isArray ? key :
+                    <i>{key}</i>, value, startAtParentId, treeItem.id, idCounter, depth));
             });
         }
         else if (_.isPlainObject(item)) {
             _(item).forOwn((value, key) => {
-                treeItem.children.push(this.createTreeItem(key, value, treeItem.id, idCounter, depth));
+                treeItem.children.push(this.createTreeItem(key, value, startAtParentId, treeItem.id, idCounter, depth));
             });
         }
 
-        return !parentId ? {root: treeItem} : treeItem;
+        if (treeItem.children.length > 200 && !startAtParentId) {
+            treeItem.children = [];
+            treeItem.leaf = false;
+            treeItem._hideChildren = false;
+        }
+
+        if (startAtParentId && idCounter.id > startAtParentId && treeItem.id !== startAtParentId) {
+            let found = treeItem.children.find(x => x && x.id === startAtParentId);
+            if (found)
+                treeItem = found;
+        }
+
+        return !parentId && !startAtParentId ? {root: treeItem} : treeItem;
     }
 
     componentDidMount() {
@@ -72,10 +87,10 @@ class StructureItemView extends Component {
 
         if (typeDefinition) {
             JdxDatabase.get(props.root).then(db => {
-                db.relations.where({fromType: typeDefinition.id, fromId: props.match.params.id}).toArray(relations => {
+                db.relations.where(['fromType', 'fromId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
                     this.setState({relationsFrom: _.sortBy(relations, ['toKey', 'toType', 'toId'])});
                 });
-                db.relations.where({toType: typeDefinition.id, toId: props.match.params.id}).toArray(relations => {
+                db.relations.where(['toType', 'toId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
                     this.setState({relationsTo: _.sortBy(relations, ['fromKey', 'fromType', 'fromId'])});
                 });
             });
@@ -105,18 +120,25 @@ class StructureItemView extends Component {
             });
         }*/
         let view = this;
-        let dataSource = function getData({pageIndex, pageSize}) {
-            return new Promise((resolve) => {
+        let dataSource = function getData({pageIndex, pageSize, parentId}) {
+            let x = new Promise((resolve) => {
                 JdxDatabase.get(view.props.root).then(db => {
                     db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
                         if (item) {
-                            let treeItem = view.createTreeItem('root', item);
+                            let treeItem = view.createTreeItem('root', item, parentId);
                             view.setState({item: item});
-                            resolve({data: treeItem, total: 1});
+                            if (parentId) {
+                                resolve({data: treeItem.children, partial: true});
+                                //this.props.setTreeNodeVisibility(row.id, !row._isExpanded, "typeView-" + this.props.match.params.type +"-" + this.props.match.params.id, true);
+                            }
+                            else
+                                resolve({data: treeItem, total: 1});
                         }
                     });
                 });
             });
+
+            return x;
         };
 
         let gridSettings = {
@@ -156,16 +178,27 @@ class StructureItemView extends Component {
             },
             events: {
                 HANDLE_ROW_CLICK: ({row}) => {
-                    this.props.setTreeNodeVisibility(row._id, !row._isExpanded, "typeView-" + this.props.match.params.type +"-" + this.props.match.params.id, false);
+                    if (row.leaf === false && row._hasChildren === false) {
+                        dataSource({parentId: row._id}).then((result) => {
+                            this.props.setPartialTreeData(result.data, "typeView-" + this.props.match.params.type + "-" + this.props.match.params.id, row._id);
+                        })
+                    }
+                    else {
+                        this.props.setTreeNodeVisibility(row._id, !row._isExpanded, "typeView-" + this.props.match.params.type + "-" + this.props.match.params.id, false);
+                    }
                 },
             },
+            ref2: (grid) => {
+                let x= 34234;
+                this.grid = grid;
+            }
         };
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography variant="display1" gutterBottom>{typeDefinition.title}: {this.props.match.params.id}</Typography>
+                <Typography variant="display1" gutterBottom><Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}</Typography>
 
-                <Grid {...gridSettings}></Grid>
+                <Grid ref={(input) => { this.grid = input; }} {...gridSettings}></Grid>
 
                 {this.state.relationsFrom.length > 0 &&
                     <div>
@@ -195,6 +228,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         setTreeNodeVisibility: (id, visible, stateKey, showTreeRootNode) => {
             dispatch(Actions.GridActions.setTreeNodeVisibility({id, visible, stateKey, showTreeRootNode}))
+        },
+        setPartialTreeData: (data, stateKey, parentId) => {
+            dispatch(Actions.GridActions.setTreeData({partial: true, data, parentId, stateKey}));
         },
     }
 }

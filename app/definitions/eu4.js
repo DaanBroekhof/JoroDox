@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import filesize from 'filesize';
 
 export default {
@@ -6,7 +6,7 @@ export default {
     types: [
         {
             id: 'files',
-            title: 'Files',
+            title: 'Files & Directories',
             reader: 'FileLoader',
             readerFileIgnore: [
                 '.*',
@@ -45,7 +45,7 @@ export default {
         },
         {
             id: 'pdxScripts',
-            title: 'PDX scripts',
+            title: 'PDX script files',
             reader: 'PdxScriptParser',
             primaryKey: 'path',
             listView: {
@@ -55,13 +55,14 @@ export default {
                         name: 'Path',
                         dataIndex: ['path'],
                         width: '75%',
+                        linkTo: 'pdxScripts',
                     },
                 ],
             }
         },
         {
             id: 'pdxData',
-            title: 'PDX data assets',
+            title: 'PDX binary data files',
             reader: 'PdxDataParser',
             primaryKey: 'path',
             listView: {
@@ -81,7 +82,7 @@ export default {
         },
         {
             id: 'pdxMeshes',
-            title: 'PDX Mesh Assets',
+            title: '3D Models',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
@@ -556,6 +557,33 @@ export default {
                         name: 'Native hostileness',
                         dataIndex: ['data', 'native_hostileness'],
                     },
+                ],
+            },
+        },
+        {
+            id: 'customCountryColors',
+            title: 'Custom country colors',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/custom_country_colors/',
+                pathPattern: 'common/custom_country_colors/*.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                dataPath: ['data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: 'customCountryColors',
+                    },
+
                 ],
             },
         },

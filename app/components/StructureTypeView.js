@@ -1,13 +1,69 @@
 // @flow
 import React, {Component} from 'react';
-import {Grid, applyGridConfig} from 'react-redux-grid';
-import {Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
+import {Grid, applyGridConfig, Actions} from 'react-redux-grid';
+import {Button, Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import JdxDatabase from "../utils/JdxDatabase";
 import _ from 'lodash';
 import Eu4Definition from '../definitions/eu4';
 import {Link} from "react-router-dom";
+import StructureLoaderTask from "../utils/tasks/StructureLoaderTask";
+import {connect} from "react-redux";
+import FileLoaderTask from "../utils/tasks/FileLoaderTask";
+import PdxScriptParserTask from "../utils/tasks/PdxScriptParserTask";
 
-export default class StructureTypeView extends Component {
+class StructureTypeView extends Component {
+
+    loadTypeFiles(typeId) {
+        let type = _(Eu4Definition.types).find(x => x.id === typeId);
+
+        return new Promise((resolve, reject) => {
+            FileLoaderTask.start(
+                {
+                    root: this.props.root,
+                    typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
+                    searchPattern: type.sourceType.pathPattern,
+                    searchPath: type.sourceType.pathPrefix,
+                },
+                (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
+                (result) => {resolve(result);},
+                (error) => {reject(error);},
+            );
+        });
+    }
+
+    loadPdxScriptFiles(typeId) {
+        let type = _(Eu4Definition.types).find(x => x.id === typeId);
+
+        return new Promise((resolve, reject) => {
+            PdxScriptParserTask.start({
+                    root: this.props.root,
+                    definition: Eu4Definition,
+                    filterTypes: [type.id],
+                },
+                (progress, total, message) => console.log('['+ progress +'/'+ total +'] '+ message),
+                (result) => {resolve(result);},
+                (error) => {reject(error);},
+            );
+        });
+    }
+
+    loadStructureData(typeId) {
+        let type = _(Eu4Definition.types).find(x => x.id === typeId);
+
+        this.loadTypeFiles(typeId).then(() => {
+            return this.loadPdxScriptFiles(typeId);
+        }).then(() => {
+            StructureLoaderTask.start({root: this.props.root, typeDefinition: type},
+                (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
+                (result) => {
+                    console.log("done");
+                    this.props.reloadGrid(this.gridSettings);
+                },
+                (error) => console.log(error),
+
+            );
+        });
+    }
 
     render() {
 
@@ -101,12 +157,31 @@ export default class StructureTypeView extends Component {
             }
         };
 
+        this.gridSettings = gridSettings;
+
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
                 <Typography variant="display2" gutterBottom>Type: {typeDefinition.title}</Typography>
+                <div style={{marginBottom: 20}}>
+                <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData(this.props.match.params.type)}>Reload</Button>
+                </div>
 
                 <Grid {...gridSettings}></Grid>
             </Paper>
         );
     }
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        reloadGrid: (gridSettings) => {
+            dispatch(Actions.GridActions.getAsyncData({
+                stateKey:  gridSettings.stateKey,
+                dataSource: gridSettings.dataSource,
+                type: gridSettings.type,
+            }))
+        },
+    }
+}
+
+export default connect(null, mapDispatchToProps)(StructureTypeView);
