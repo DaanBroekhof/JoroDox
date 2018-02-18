@@ -1235,6 +1235,570 @@ export default {
             },
         },
         {
+            id: 'institutions',
+            title: 'Institutions',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/institutions/',
+                pathPattern: 'common/institutions/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'institutions',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'isolationism',
+            title: 'Isolationism',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/isolationism/',
+                pathPattern: 'common/isolationism/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'isolationism',
+                    },
+                    {
+                        name: 'Isolation value',
+                        dataIndex: ['data', 'isolation_value'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'leaderPersonalities',
+            title: 'Leader personalities',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/leader_personalities/',
+                pathPattern: 'common/leader_personalities/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'leaderPersonalities',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'nativeAdvancement',
+            title: 'Native advancement',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/native_advancement/',
+                pathPattern: 'common/native_advancement/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'nativeAdvancement',
+                    },
+                    {
+                        name: 'Category',
+                        dataIndex: ['data', 'category'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'natives',
+            title: 'Natives',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/natives/',
+                pathPattern: 'common/natives/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'natives',
+                    },
+                    {
+                        name: 'Graphical culture',
+                        dataIndex: ['data', 'graphical_culture '],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'newDiplomaticActions',
+            title: 'New diplomatic actions',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/new_diplomatic_actions/',
+                pathPattern: 'common/new_diplomatic_actions/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'newDiplomaticActions',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'onActions',
+            title: 'On Actions',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/on_actions/',
+                pathPattern: 'common/on_actions/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'onActions',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'opinionModifiers',
+            title: 'Opinion modifiers',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/opinion_modifiers/',
+                pathPattern: 'common/opinion_modifiers/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'opinionModifiers',
+                    },
+                    {
+                        name: 'Opinion mod',
+                        dataIndex: ['data', 'opinion'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'parliamentBribes',
+            title: 'Parliament bribes',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/parliament_bribes/',
+                pathPattern: 'common/parliament_bribes/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'parliamentBribes',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'parliamentIssues',
+            title: 'Parliament issues',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/parliament_issues/',
+                pathPattern: 'common/parliament_issues/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'parliamentIssues',
+                    },
+                    {
+                        name: 'Category',
+                        dataIndex: ['data', 'category'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'peaceTreaties',
+            title: 'Peace treaties',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/peace_treaties/',
+                pathPattern: 'common/peace_treaties/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'peaceTreaties',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'personalDeities',
+            title: 'Personal deities',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/personal_deities/',
+                pathPattern: 'common/personal_deities/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'personalDeities',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'policies',
+            title: 'Policies',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/policies/',
+                pathPattern: 'common/policies/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'policies',
+                    },
+                    {
+                        name: 'Monarch power',
+                        dataIndex: ['data', 'monarch_power'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'powerprojection',
+            title: 'Powerprojection',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/powerprojection/',
+                pathPattern: 'common/powerprojection/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'powerprojection',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'prices',
+            title: 'Prices',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/prices/',
+                pathPattern: 'common/prices/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'prices',
+                    },
+                    {
+                        name: 'Base price',
+                        dataIndex: ['data', 'base_price'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'professionalism',
+            title: 'Professionalism',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/professionalism/',
+                pathPattern: 'common/professionalism/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'professionalism',
+                    },
+                    {
+                        name: 'Army professionalism',
+                        dataIndex: ['data', 'army_professionalism'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'provinceNames',
+            title: 'Province names',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/province_names/',
+                pathPattern: 'common/province_names/*.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                path: ['data', 'data'],
+                filenamePattern: '/([^/.]+).txt$',
+                filenamePatternKey: 'cultureOrCultureGroupOrTag',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: 'provinceNames',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'provinceTriggeredModifiers',
+            title: 'Province triggered modifiers',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/province_triggered_modifiers/',
+                pathPattern: 'common/province_triggered_modifiers/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'provinceTriggeredModifiers',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'rebelTypes',
+            title: 'Rebel types',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxScripts',
+                format: 'pdxScript',
+                pathPrefix: 'common/rebel_types/',
+                pathPattern: 'common/rebel_types/*.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: 'rebelTypes',
+                    },
+                ],
+            },
+        },
+        {
             id: 'events',
             title: 'Events',
             reader: 'StructureLoader',
