@@ -138,6 +138,10 @@ class StructureTypeView extends Component {
                     resizable: true,
                     minColumnWidth: 10,
                     moveable: true,
+                    sortable: {
+                        enabled: true,
+                        method: 'local',
+                    }
                 },
                 LOADER: {
                     enabled: true
@@ -161,7 +165,7 @@ class StructureTypeView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
-                <Typography variant="display2" gutterBottom>Type: {typeDefinition.title}</Typography>
+                <Typography variant="display2" gutterBottom><Link to={`/structure`}>Type</Link>: {typeDefinition.title}</Typography>
                 <div style={{marginBottom: 20}}>
                 <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData(this.props.match.params.type)}>Reload</Button>
                 </div>

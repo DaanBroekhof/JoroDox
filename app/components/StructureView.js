@@ -94,17 +94,21 @@ export default class StructureView extends Component {
 
     render() {
 
-        JdxDatabase.get(this.props.root).then(db => {
-            Eu4Definition.types.forEach(type => {
-                if (db && db[type.id] && !this.state.typeCounts[type.id] ) {
-                    db[type.id].count().then(count => {
-                        //let typeCounts =  Object.assign({}, this.state.typeCounts);
-                        this.state.typeCounts[type.id] = count;
-                        this.setState({typeCounts:  this.state.typeCounts});
+        if (!this.loadingCounts) {
+            JdxDatabase.get(this.props.root).then(db => {
+                let typeIds = Eu4Definition.types.filter(type => db[type.id] && this.state.typeCounts[type.id] === undefined).map(x => x.id);
+                let promises = typeIds.map(typeId => db[typeId].count());
+                Promise.all(promises).then(counts => {
+                    let typeCounts = {};
+                    counts.forEach((value, key) => {
+                        typeCounts[typeIds[key]] = value;
                     });
-                }
+                    this.setState({typeCounts});
+                    this.loadingCounts = false;
+                });
             });
-        });
+            this.loadingCounts = true;
+        }
 
         let extendedTypes = Eu4Definition.types.map(type => {
             if (type.totalCount !== this.state.typeCounts[type.id]) {

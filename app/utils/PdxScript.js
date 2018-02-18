@@ -57,7 +57,7 @@ export default class PdxScript {
 
             if (base.data[varScope.name])
             {
-                if (!Array.isArray(base.data[varScope.name]))
+                if (!Array.isArray(base.data[varScope.name]) || !base.data[varScope.name].multipleKeys)
                 {
                     base.data[varScope.name] = [base.data[varScope.name]];
                     base.data[varScope.name].multipleKeys = true;
@@ -113,7 +113,7 @@ export default class PdxScript {
 
                 if (scope.data[propertyScope.name])
                 {
-                    if (!Array.isArray(scope.data[propertyScope.name]))
+                    if (!Array.isArray(scope.data[propertyScope.name]) || !scope.data[propertyScope.name].multipleKeys)
                     {
                         scope.data[propertyScope.name] = [scope.data[propertyScope.name]];
                         scope.data[propertyScope.name].multipleKeys = true;

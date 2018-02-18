@@ -38,7 +38,6 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                     let relations = [];
                     if (definition.sourceTransform.type === 'keyValues') {
                         sourceItems.forEach(sourceItem => {
-
                             _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
                                 items.push({
                                     [definition.sourceTransform.keyName]: key,
@@ -55,16 +54,83 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                             });
                         });
                     }
+                    else if (definition.sourceTransform.type === 'namespacedTypes') {
+                        sourceItems.forEach(sourceItem => {
+                            let namespaceValues = {}
+                            _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value) => {
+                                if (_.includes(definition.sourceTransform.types, value.name)) {
+                                    items.push({
+                                        namespace: namespaceValues,
+                                        comments: value.comments.join("\n"),
+                                        id: value.data.id,
+                                        type: value.name,
+                                        data: value.data,
+                                    });
+                                    relations.push(this.addRelationId({
+                                        fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+                                        fromType: definition.id,
+                                        fromId: value.data.id,
+                                        toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+                                        toType: definition.sourceType.id,
+                                        toId: sourceItem.path,
+                                    }));
+                                }
+                                else {
+                                    namespaceValues[value.name] = value.data;
+                                }
+                            });
+                        });
+                    }
+                    else if (definition.sourceTransform.type === 'keyKeyValues') {
+                        sourceItems.forEach(sourceItem => {
+                            _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
+                                _.forOwn(value, (value2, key2) => {
+                                    if (definition.sourceTransform.requiredProperty && value2[definition.sourceTransform.requiredProperty] === undefined) {
+                                        return;
+                                    }
+                                    items.push({
+                                        [definition.sourceTransform.keyName]: key2,
+                                        [definition.sourceTransform.valueName]: value2,
+                                    });
+                                    relations.push(this.addRelationId({
+                                        fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+                                        fromType: definition.id,
+                                        fromId: key2,
+                                        toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+                                        toType: definition.sourceType.id,
+                                        toId: sourceItem.path,
+                                    }));
+                                    if (definition.sourceTransform.parentRelationType) {
+                                        relations.push(this.addRelationId({
+                                            fromKey: definition.id,
+                                            fromType: definition.id,
+                                            fromId: key2,
+                                            toKey: definition.sourceTransform.parentRelationKey,
+                                            toType: definition.sourceTransform.parentRelationType,
+                                            toId: key,
+                                        }));
+                                    }
+                                })
+                            });
+                        });
+                    }
                     else if (definition.sourceTransform.type === 'fileData') {
                         sourceItems.forEach(sourceItem => {
-                            items.push({
-                                path: sourceItem.path,
-                                data: definition.sourceTransform.dataPath ? _.get(sourceItem.data, definition.sourceTransform.dataPath) : sourceItem.data,
-                            });
+                            let item = {};
+                            if (definition.sourceTransform.filenamePattern) {
+                                let found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
+                                if (found) {
+                                    item[definition.sourceTransform.filenamePatternKey] = found[1];
+                                }
+                            }
+                            item.path = sourceItem.path;
+                            item.data = definition.sourceTransform.dataPath ? _.get(sourceItem.data, definition.sourceTransform.dataPath) : sourceItem.data;
+                            items.push(item);
+
                             relations.push(this.addRelationId({
                                 fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                                 fromType: definition.id,
-                                fromId: sourceItem.path,
+                                fromId: item[definition.primaryKey],
                                 toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
                                 toType: definition.sourceType.id,
                                 toId: sourceItem.path,

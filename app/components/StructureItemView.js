@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {Link} from "react-router-dom";
 import {Actions} from "react-redux-grid";
 import {connect} from "react-redux";
+const minimatch = require("minimatch");
 
 
 class StructureItemView extends Component {
@@ -22,7 +23,7 @@ class StructureItemView extends Component {
         };
     }
 
-    createTreeItem(key, item, startAtParentId, parentId, idCounter, depth) {
+    createTreeItem(key, item, startAtParentId, relations, parentId, idCounter, depth, path) {
         if (!idCounter) {
             idCounter = {id: 1};
         }
@@ -32,15 +33,40 @@ class StructureItemView extends Component {
         else {
             depth = depth + 1;
         }
+        if (path === undefined) {
+            path = '';
+        }
+        else {
+            path += '/'+ key;
+        }
 
         let isArray = _.isArray(item);
+
+        let relation = relations && relations.find(x => {
+            return x.type === 'valueByPath' && minimatch(path, '/' + x.dataPath.join('/'))
+        });
+
+        let valueRender = '';
+        if (isArray) {
+            valueRender = <i style={{color: 'lightgrey'}}>[{item.length} items]</i>;
+        }
+        else if (_.isPlainObject(item)) {
+            valueRender = <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i>;
+        }
+        else if (_.isPlainObject(item)) {
+            valueRender = <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i>;
+        }
+        else if (relation) {
+            valueRender = <Link to={`/structure/${relation.toType}/${item}`}>{(_.isObject(item) ? item.toString() : item)}</Link>;
+        }
+        else {
+            valueRender = <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>;
+        }
 
         let treeItem = {
             id: !parentId ? -1 : idCounter.id++,
             key: key,
-            value: isArray ? <i style={{color: 'lightgrey'}}>[{item.length} items]</i> : (_.isPlainObject(item) ?
-                <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i> :
-                <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>),
+            value: valueRender,
             parentId: parentId,
             _hideChildren: parentId && depth > 1 ? true : false,
             children: [],
@@ -50,12 +76,12 @@ class StructureItemView extends Component {
         if (_.isArray(item)) {
             _(item).forEach((value, key) => {
                 treeItem.children.push(this.createTreeItem(!isArray ? key :
-                    <i>{key}</i>, value, startAtParentId, treeItem.id, idCounter, depth));
+                    <i>{key}</i>, value, startAtParentId, relations, treeItem.id, idCounter, depth, path));
             });
         }
         else if (_.isPlainObject(item)) {
             _(item).forOwn((value, key) => {
-                treeItem.children.push(this.createTreeItem(key, value, startAtParentId, treeItem.id, idCounter, depth));
+                treeItem.children.push(this.createTreeItem(key, value, startAtParentId, relations, treeItem.id, idCounter, depth, path));
             });
         }
 
@@ -121,24 +147,23 @@ class StructureItemView extends Component {
         }*/
         let view = this;
         let dataSource = function getData({pageIndex, pageSize, parentId}) {
-            let x = new Promise((resolve) => {
+            return new Promise((resolve) => {
                 JdxDatabase.get(view.props.root).then(db => {
                     db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
                         if (item) {
-                            let treeItem = view.createTreeItem('root', item, parentId);
+                            let treeItem = view.createTreeItem('root', item, parentId, typeDefinition.relations);
                             view.setState({item: item});
+
                             if (parentId) {
                                 resolve({data: treeItem.children, partial: true});
-                                //this.props.setTreeNodeVisibility(row.id, !row._isExpanded, "typeView-" + this.props.match.params.type +"-" + this.props.match.params.id, true);
                             }
-                            else
+                            else {
                                 resolve({data: treeItem, total: 1});
+                            }
                         }
                     });
                 });
             });
-
-            return x;
         };
 
         let gridSettings = {
@@ -202,7 +227,7 @@ class StructureItemView extends Component {
 
                 {this.state.relationsFrom.length > 0 &&
                     <div>
-                        <h4>Linked from</h4>
+                        <h4>References to</h4>
                         <ul>
                             {this.state.relationsFrom.map(r => <li key={r.id}>{r.toKey}: <Link
                                 to={`/structure/${r.toType}/${r.toId}`}>{r.toId}</Link></li>)}
@@ -211,7 +236,7 @@ class StructureItemView extends Component {
                 }
                 {this.state.relationsTo.length > 0 &&
                     <div>
-                        <h4>Linked to</h4>
+                        <h4>Referenced in</h4>
                         <ul>
                             {this.state.relationsTo.map(r => <li key={r.id}>{r.fromKey}: <Link
                                 to={`/structure/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>)}
