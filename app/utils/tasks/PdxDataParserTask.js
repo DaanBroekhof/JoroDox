@@ -18,7 +18,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
             let patterns = [];
             _(args.definition.types).forOwn((typeDefinition) => {
-                if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxData" && typeDefinition.sourceType.pathPattern) {
+                if (typeDefinition.sourceType && typeDefinition.sourceType.id === "pdx_data" && typeDefinition.sourceType.pathPattern) {
                     patterns.push(typeDefinition.sourceType.pathPattern);
                 }
             });

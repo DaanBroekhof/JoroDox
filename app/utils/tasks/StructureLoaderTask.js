@@ -25,10 +25,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
                 let sourceData = db[definition.sourceType.id];
                 if (definition.sourceType.pathPrefix) {
-                    sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix);
+                    sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
                 }
                 if (definition.sourceType.pathPattern) {
-                    sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern));
+                    sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
                 }
 
                 sourceData.toArray(rawSourceItems => {
@@ -191,5 +191,28 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 });
             });
         });
+    }
+
+    processMethodKeyValues(sourceItems, definition)
+    {
+        let items = [];
+        let relations = [];
+        sourceItems.forEach(sourceItem => {
+            _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
+                items.push({
+                    [definition.sourceTransform.keyName]: key,
+                    [definition.sourceTransform.valueName]: value,
+                });
+                relations.push(this.addRelationId({
+                    fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+                    fromType: definition.id,
+                    fromId: key,
+                    toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+                    toType: definition.sourceType.id,
+                    toId: sourceItem.path,
+                }));
+            });
+        });
+        return {items, relations};
     }
 }

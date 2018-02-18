@@ -25,7 +25,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
             _(args.definition.types).forOwn((typeDefinition) => {
                 if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id))
                     return;
-                if (typeDefinition.sourceType && typeDefinition.sourceType.format === "pdxScript" && typeDefinition.sourceType.pathPattern) {
+                if (typeDefinition.sourceType && typeDefinition.sourceType.id === "pdx_scripts" && typeDefinition.sourceType.pathPattern) {
                     patterns.push(typeDefinition.sourceType.pathPattern);
                     prefixes.push(typeDefinition.sourceType.pathPrefix);
                 }

@@ -24,7 +24,7 @@ export default {
                         name: 'Path',
                         dataIndex: ['path'],
                         width: '75%',
-                        linkTo: 'files',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Size',
@@ -44,7 +44,7 @@ export default {
             }
         },
         {
-            id: 'pdxScripts',
+            id: 'pdx_scripts',
             title: 'PDX script files',
             reader: 'PdxScriptParser',
             primaryKey: 'path',
@@ -55,13 +55,13 @@ export default {
                         name: 'Path',
                         dataIndex: ['path'],
                         width: '75%',
-                        linkTo: 'pdxScripts',
+                        linkTo: '[self]',
                     },
                 ],
             }
         },
         {
-            id: 'pdxData',
+            id: 'pdx_data',
             title: 'PDX binary data files',
             reader: 'PdxDataParser',
             primaryKey: 'path',
@@ -75,19 +75,19 @@ export default {
                         name: 'Path',
                         dataIndex: ['path'],
                         width: '75%',
-                        linkTo: 'pdxData',
+                        linkTo: '[self]',
                     },
                 ],
             }
         },
         {
-            id: 'pdxMeshes',
+            id: 'pdx_meshes',
             title: '3D Models',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
-                id: 'pdxData',
-                format: 'pdxData',
+                id: 'pdx_data',
+                format: 'pdx_data',
                 pathPrefix: '',
                 pathPattern: '**/*.mesh',
             },
@@ -106,21 +106,20 @@ export default {
                         name: 'Path',
                         dataIndex: ['path'],
                         width: '75%',
-                        linkTo: 'pdxMeshes',
+                        linkTo: '[self]',
                     },
                 ],
             }
         },
         {
-            id: 'countryTags',
+            id: 'country_tags',
             title: 'Country tags',
             reader: 'StructureLoader',
             primaryKey: 'tag',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/country_tags/',
-                pathPattern: 'common/country_tags/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -145,7 +144,7 @@ export default {
                         name: 'Tag',
                         dataIndex: ['tag'],
                         width: '10%',
-                        linkTo: 'countryTags',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Filepath',
@@ -160,10 +159,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/countries/',
-                pathPattern: 'common/countries/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'fileData',
@@ -176,7 +174,7 @@ export default {
                     {
                         name: 'Path',
                         dataIndex: 'path',
-                        linkTo: 'countries',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Culture',
@@ -186,15 +184,14 @@ export default {
             },
         },
         {
-            id: 'countryColors',
+            id: 'country_colors',
             title: 'Country colors',
             reader: 'StructureLoader',
             primaryKey: 'tag',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/country_colors/',
-                pathPattern: 'common/country_colors/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -208,7 +205,7 @@ export default {
                     {
                         name: 'Tag',
                         dataIndex: 'tag',
-                        linkTo: 'countryColors',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Color',
@@ -223,10 +220,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/ages/',
-                pathPattern: 'common/ages/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -240,7 +236,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'ages',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Start',
@@ -250,15 +246,14 @@ export default {
             },
         },
         {
-            id: 'cultureGroups',
+            id: 'culture_groups',
             title: 'Culture groups',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/cultures/',
-                pathPattern: 'common/cultures/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -272,7 +267,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'cultureGroups',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Graphical culture',
@@ -287,10 +282,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/cultures/',
-                pathPattern: 'common/cultures/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyKeyValues',
@@ -307,7 +301,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'cultures',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Primary country',
@@ -331,10 +325,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/advisortypes/',
-                pathPattern: 'common/advisortypes/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -348,7 +341,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'advisortypes',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Monarch power',
@@ -358,15 +351,14 @@ export default {
             },
         },
         {
-            id: 'aiPersonalities',
+            id: 'ai_personalities',
             title: 'IA personalities',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/ai_personalities/',
-                pathPattern: 'common/ai_personalities/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -380,7 +372,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'aiPersonalities',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -391,10 +383,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/bookmarks/',
-                pathPattern: 'common/bookmarks/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'fileData',
@@ -406,7 +397,7 @@ export default {
                     {
                         name: 'Path',
                         dataIndex: 'path',
-                        linkTo: 'bookmarks',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Name',
@@ -434,10 +425,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/buildings/',
-                pathPattern: 'common/buildings/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -451,7 +441,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'buildings',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Cost',
@@ -465,15 +455,14 @@ export default {
             },
         },
         {
-            id: 'cbTypes',
+            id: 'cb_types',
             title: 'CB types',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/cb_types/',
-                pathPattern: 'common/cb_types/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -487,7 +476,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'cbTypes',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Months',
@@ -501,15 +490,14 @@ export default {
             },
         },
         {
-            id: 'churchAspects',
+            id: 'church_aspects',
             title: 'Church Aspects',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/church_aspects/',
-                pathPattern: 'common/church_aspects/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -523,21 +511,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'churchAspects',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'clientStates',
+            id: 'client_states',
             title: 'Client states',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/client_states/',
-                pathPattern: 'common/client_states/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -551,7 +538,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'clientStates',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Region',
@@ -561,15 +548,14 @@ export default {
             },
         },
         {
-            id: 'colonialRegions',
+            id: 'colonial_regions',
             title: 'Colonial regions',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/colonial_regions/',
-                pathPattern: 'common/colonial_regions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -583,7 +569,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'colonialRegions',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Tax income',
@@ -605,15 +591,14 @@ export default {
             },
         },
         {
-            id: 'religionGroups',
+            id: 'religion_groups',
             title: 'Religion groups',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/religions/',
-                pathPattern: 'common/religions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -627,7 +612,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'religionGroups',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Center of religion',
@@ -642,10 +627,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/religions/',
-                pathPattern: 'common/religions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyKeyValues',
@@ -662,21 +646,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'religions',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'customCountryColors',
+            id: 'custom_country_colors',
             title: 'Custom country colors',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/custom_country_colors/',
-                pathPattern: 'common/custom_country_colors/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'fileData',
@@ -688,22 +671,21 @@ export default {
                     {
                         name: 'Path',
                         dataIndex: 'path',
-                        linkTo: 'customCountryColors',
+                        linkTo: '[self]',
                     },
 
                 ],
             },
         },
         {
-            id: 'customIdeas',
+            id: 'custom_ideas',
             title: 'Custom ideas',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/custom_ideas/',
-                pathPattern: 'common/custom_ideas/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -717,7 +699,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'customIdeas',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Category',
@@ -732,10 +714,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/decrees/',
-                pathPattern: 'common/decrees/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -749,7 +730,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'decrees',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Cost',
@@ -759,15 +740,14 @@ export default {
             },
         },
         {
-            id: 'diplomaticActions',
+            id: 'diplomatic_actions',
             title: 'Diplomatic actions',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/diplomatic_actions/',
-                pathPattern: 'common/diplomatic_actions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -781,7 +761,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'diplomaticActions',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -792,10 +772,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/disasters/',
-                pathPattern: 'common/disasters/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -809,21 +788,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'disasters',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'dynastyColors',
+            id: 'dynasty_colors',
             title: 'Dynasty Colors',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/dynasty_colors/',
-                pathPattern: 'common/dynasty_colors/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'fileData',
@@ -835,7 +813,7 @@ export default {
                     {
                         name: 'Path',
                         dataIndex: 'path',
-                        linkTo: 'dynastyColors',
+                        linkTo: '[self]',
                     },
 
                 ],
@@ -847,10 +825,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/estates/',
-                pathPattern: 'common/estates/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -864,21 +841,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'estates',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'eventModifiers',
+            id: 'event_modifiers',
             title: 'Event modifiers',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/event_modifiers/',
-                pathPattern: 'common/event_modifiers/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -892,7 +868,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'eventModifiers',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -903,10 +879,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/factions/',
-                pathPattern: 'common/factions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -920,7 +895,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'factions',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Monarch power',
@@ -935,10 +910,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/fervor/',
-                pathPattern: 'common/fervor/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -952,7 +926,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'fervor',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Cost',
@@ -962,15 +936,14 @@ export default {
             },
         },
         {
-            id: 'fetishistCults',
+            id: 'fetishist_cults',
             title: 'Fetishist cults',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/fetishist_cults/',
-                pathPattern: 'common/fetishist_cults/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -984,21 +957,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'fetishistCults',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'governmentNames',
+            id: 'government_names',
             title: 'Government names',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/government_names/',
-                pathPattern: 'common/government_names/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1012,7 +984,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'governmentNames',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -1067,10 +1039,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/governments/',
-                pathPattern: 'common/governments/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1084,7 +1055,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'governments',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Monarchy',
@@ -1098,15 +1069,14 @@ export default {
             },
         },
         {
-            id: 'greatProjects',
+            id: 'great_projects',
             title: 'Great projects',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/great_projects/',
-                pathPattern: 'common/great_projects/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1120,7 +1090,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'greatProjects',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -1131,10 +1101,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/ideas/',
-                pathPattern: 'common/ideas/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1148,7 +1117,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'ideas',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Country tag',
@@ -1171,15 +1140,14 @@ export default {
             ],
         },
         {
-            id: 'imperialReforms',
+            id: 'imperial_reforms',
             title: 'Imperial reforms',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/imperial_reforms/',
-                pathPattern: 'common/imperial_reforms/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1193,7 +1161,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'imperialReforms',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Empire',
@@ -1208,10 +1176,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/incidents/',
-                pathPattern: 'common/incidents/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1225,7 +1192,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'incidents',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Frame',
@@ -1240,10 +1207,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/institutions/',
-                pathPattern: 'common/institutions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1257,7 +1223,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'institutions',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -1268,10 +1234,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/isolationism/',
-                pathPattern: 'common/isolationism/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1285,7 +1250,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'isolationism',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Isolation value',
@@ -1295,15 +1260,14 @@ export default {
             },
         },
         {
-            id: 'leaderPersonalities',
+            id: 'leader_personalities',
             title: 'Leader personalities',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/leader_personalities/',
-                pathPattern: 'common/leader_personalities/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1317,21 +1281,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'leaderPersonalities',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'nativeAdvancement',
+            id: 'native_advancement',
             title: 'Native advancement',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/native_advancement/',
-                pathPattern: 'common/native_advancement/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1345,7 +1308,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'nativeAdvancement',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Category',
@@ -1360,10 +1323,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/natives/',
-                pathPattern: 'common/natives/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1377,7 +1339,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'natives',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Graphical culture',
@@ -1387,15 +1349,14 @@ export default {
             },
         },
         {
-            id: 'newDiplomaticActions',
+            id: 'new_diplomatic_actions',
             title: 'New diplomatic actions',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/new_diplomatic_actions/',
-                pathPattern: 'common/new_diplomatic_actions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1409,21 +1370,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'newDiplomaticActions',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'onActions',
+            id: 'on_actions',
             title: 'On Actions',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/on_actions/',
-                pathPattern: 'common/on_actions/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1437,21 +1397,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'onActions',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'opinionModifiers',
+            id: 'opinion_modifiers',
             title: 'Opinion modifiers',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/opinion_modifiers/',
-                pathPattern: 'common/opinion_modifiers/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1465,7 +1424,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'opinionModifiers',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Opinion mod',
@@ -1475,15 +1434,14 @@ export default {
             },
         },
         {
-            id: 'parliamentBribes',
+            id: 'parliament_bribes',
             title: 'Parliament bribes',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/parliament_bribes/',
-                pathPattern: 'common/parliament_bribes/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1497,21 +1455,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'parliamentBribes',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'parliamentIssues',
+            id: 'parliament_issues',
             title: 'Parliament issues',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/parliament_issues/',
-                pathPattern: 'common/parliament_issues/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1525,7 +1482,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'parliamentIssues',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Category',
@@ -1535,15 +1492,14 @@ export default {
             },
         },
         {
-            id: 'peaceTreaties',
+            id: 'peace_treaties',
             title: 'Peace treaties',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/peace_treaties/',
-                pathPattern: 'common/peace_treaties/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1557,21 +1513,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'peaceTreaties',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'personalDeities',
+            id: 'personal_deities',
             title: 'Personal deities',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/personal_deities/',
-                pathPattern: 'common/personal_deities/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1585,7 +1540,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'personalDeities',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -1596,10 +1551,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/policies/',
-                pathPattern: 'common/policies/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1613,7 +1567,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'policies',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Monarch power',
@@ -1628,10 +1582,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/powerprojection/',
-                pathPattern: 'common/powerprojection/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1645,7 +1598,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'powerprojection',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -1656,10 +1609,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/prices/',
-                pathPattern: 'common/prices/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1673,7 +1625,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'prices',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Base price',
@@ -1688,10 +1640,9 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/professionalism/',
-                pathPattern: 'common/professionalism/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1705,7 +1656,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'professionalism',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Army professionalism',
@@ -1715,21 +1666,20 @@ export default {
             },
         },
         {
-            id: 'provinceNames',
+            id: 'province_names',
             title: 'Province names',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/province_names/',
-                pathPattern: 'common/province_names/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'fileData',
                 path: ['data', 'data'],
                 filenamePattern: '/([^/.]+).txt$',
-                filenamePatternKey: 'cultureOrCultureGroupOrTag',
+                filenamePatternKey: 'culture_or_culture_group_or_tag',
             },
             listView: {
                 pageSize: 100,
@@ -1737,21 +1687,20 @@ export default {
                     {
                         name: 'Path',
                         dataIndex: 'path',
-                        linkTo: 'provinceNames',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'provinceTriggeredModifiers',
+            id: 'province_triggered_modifiers',
             title: 'Province triggered modifiers',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/province_triggered_modifiers/',
-                pathPattern: 'common/province_triggered_modifiers/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1765,21 +1714,20 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'provinceTriggeredModifiers',
+                        linkTo: '[self]',
                     },
                 ],
             },
         },
         {
-            id: 'rebelTypes',
+            id: 'rebel_types',
             title: 'Rebel types',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
-                pathPrefix: 'common/rebel_types/',
-                pathPattern: 'common/rebel_types/*.txt',
+                id: 'pdx_scripts',
+                pathPrefix: 'common/{type.id}/',
+                pathPattern: 'common/{type.id}/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -1793,7 +1741,7 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'name',
-                        linkTo: 'rebelTypes',
+                        linkTo: '[self]',
                     },
                 ],
             },
@@ -1804,8 +1752,7 @@ export default {
             reader: 'StructureLoader',
             primaryKey: 'id',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
+                id: 'pdx_scripts',
                 pathPrefix: 'events/',
                 pathPattern: 'events/*.txt',
             },
@@ -1820,7 +1767,7 @@ export default {
                     {
                         name: 'Id',
                         dataIndex: ['id'],
-                        linkTo: 'events',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Namespace',
@@ -1846,13 +1793,12 @@ export default {
             },
         },
         {
-            id: 'provinceHistory',
-            title: 'Province history',
+            id: 'history_provinces',
+            title: 'History provinces',
             reader: 'StructureLoader',
             primaryKey: 'provinceId',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
+                id: 'pdx_scripts',
                 pathPrefix: 'history/provinces/',
                 pathPattern: 'history/provinces/*.txt',
             },
@@ -1860,15 +1806,15 @@ export default {
                 type: 'fileData',
                 dataPath: ['data'],
                 filenamePattern: '/([0-9]+)[^0-9][^/]*\.txt',
-                filenamePatternKey: 'provinceId',
+                filenamePatternKey: 'province_id',
             },
             listView: {
                 pageSize: 100,
                 columns: [
                     {
                         name: 'Province',
-                        dataIndex: 'provinceId',
-                        linkTo: 'provinceHistory',
+                        dataIndex: 'province_id',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Path',
@@ -1896,55 +1842,54 @@ export default {
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'owner'],
-                    fromName: 'provinceHistoryOwner',
-                    toType: 'countryTags',
-                    toName: 'ownerCountryTag',
+                    fromName: 'province_history_owner',
+                    toType: 'country_tags',
+                    toName: 'owner_country_tag',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'controller'],
-                    fromName: 'provinceHistoryController',
-                    toType: 'countryTags',
-                    toName: 'controllerCountryTag',
+                    fromName: 'province_history_controller',
+                    toType: 'country_tags',
+                    toName: 'controller_country_tag',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'add_core'],
-                    fromName: 'provinceHistoryAddCore',
-                    toType: 'countryTags',
-                    toName: 'controllerCountryTag',
+                    fromName: 'province_history_add_core',
+                    toType: 'country_tags',
+                    toName: 'controller_country_tag',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'culture'],
-                    fromName: 'provinceHistoryCulture',
+                    fromName: 'province_history_culture',
                     toType: 'cultures',
                     toName: 'culture',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'religion'],
-                    fromName: 'provinceHistoryReligion',
+                    fromName: 'province_history_religion',
                     toType: 'religions',
                     toName: 'religion',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data/*/+(controller|owner|add_core)'],
-                    fromName: 'provinceHistoryFuture',
-                    toType: 'countryTags',
-                    toName: 'controllerCountryTag',
+                    fromName: 'province_history_future',
+                    toType: 'country_tags',
+                    toName: 'controller_country_tag',
                 },
             ],
         },
         {
-            id: 'countryHistory',
-            title: 'Country history',
+            id: 'history_countries',
+            title: 'History countries',
             reader: 'StructureLoader',
             primaryKey: 'tag',
             sourceType: {
-                id: 'pdxScripts',
-                format: 'pdxScript',
+                id: 'pdx_scripts',
                 pathPrefix: 'history/countries/',
                 pathPattern: 'history/countries/*.txt',
             },
@@ -1960,7 +1905,7 @@ export default {
                     {
                         name: 'Tag',
                         dataIndex: 'tag',
-                        linkTo: 'countryHistory',
+                        linkTo: '[self]',
                     },
                     {
                         name: 'Path',
@@ -1988,21 +1933,21 @@ export default {
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'government'],
-                    fromName: 'countryHistoryGovernment',
+                    fromName: 'country_history_government',
                     toType: 'governments',
                     toName: 'government',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'religion'],
-                    fromName: 'countryHistoryReligion',
+                    fromName: 'country_history_religion',
                     toType: 'religions',
                     toName: 'religion',
                 },
                 {
                     type: 'valueByPath',
                     dataPath: ['data', 'primary_culture'],
-                    fromName: 'countryHistoryCulture',
+                    fromName: 'country_history_culture',
                     toType: 'cultures',
                     toName: 'culture',
                 },

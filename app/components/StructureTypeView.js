@@ -114,7 +114,7 @@ class StructureTypeView extends Component {
         let columns = typeDefinition.listView.columns.map(c => {
             if (c.linkTo) {
                 c.renderer = ({value, column}) => {
-                    return <span><Link to={"/structure/"+ column.linkTo +"/"+ value}>{value}</Link></span>
+                    return <span><Link to={"/structure/"+ column.linkTo.replace('[self]', this.props.match.params.type) +"/"+ value}>{value}</Link></span>
                 };
             }
             return c;
