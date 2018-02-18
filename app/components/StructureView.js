@@ -79,6 +79,8 @@ export default class StructureView extends Component {
     }
 
     reloadStructure() {
+        JdxDatabase.reloadAll(this.props.root);
+        /*
 
         JdxDatabase.get(this.props.root).then(db => {
             db.relations.clear().then(() => {
@@ -89,6 +91,13 @@ export default class StructureView extends Component {
                     (error) => console.log(error),
                 );
             });
+        });
+        */
+    }
+
+    reloadTypeById(typeId) {
+        JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
+            console.log("done");
         });
     }
 
@@ -136,7 +145,7 @@ export default class StructureView extends Component {
                     dataIndex: ['primaryKey'],
                     renderer: ({ column, value, row }) => (
                         <div style={{display: 'flex'}}>
-                            <Button size="small" onClick={() => {this.reloadType(row.id);}}>Reload</Button>
+                            <Button size="small" onClick={() => {this.reloadTypeById(row.id);}}>Reload</Button>
                         </div>
                     ),
                 },

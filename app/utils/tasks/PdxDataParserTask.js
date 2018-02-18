@@ -43,7 +43,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
                 });
 
                 Promise.all([
-                    this.saveChunked(datafiles, db.pdxData, 0, 500),
+                    this.saveChunked(datafiles, db.pdx_data, 0, 500),
                     this.saveChunked(relations, db.relations, 0, 500),
                 ]).then(result => {
                     this.finish(result);

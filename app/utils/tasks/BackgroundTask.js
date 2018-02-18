@@ -13,16 +13,18 @@ export default class BackgroundTask {
     static start(args, progressCallback, successCallback, errorCallback) {
         let taskId = Math.random() * 10000000;
 
-        ipc.on('background-response', (event, response) => {
+        ipc.on('background-response', function listener(event, response) {
             if (response.taskId === taskId) {
                 if (response.type === 'progress') {
                     progressCallback(response.progress, response.total, response.message);
                 }
                 else if (response.type === 'finished') {
                     successCallback(response.result);
+                    ipc.removeListener('background-response', listener);
                 }
                 else if (response.type === 'failed') {
                     errorCallback(response.error);
+                    ipc.removeListener('background-response', listener);
                 }
             }
         });

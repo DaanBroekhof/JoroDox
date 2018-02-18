@@ -26,8 +26,8 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
                 if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id))
                     return;
                 if (typeDefinition.sourceType && typeDefinition.sourceType.id === "pdx_scripts" && typeDefinition.sourceType.pathPattern) {
-                    patterns.push(typeDefinition.sourceType.pathPattern);
-                    prefixes.push(typeDefinition.sourceType.pathPrefix);
+                    patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+                    prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
                 }
             });
 
@@ -56,7 +56,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
                 });
 
                 Promise.all([
-                    this.saveChunked(scripts, db.pdxScripts, 0, 500),
+                    this.saveChunked(scripts, db.pdx_scripts, 0, 500),
                     this.saveChunked(relations, db.relations, 0, 500),
                 ]).then(result => {
                     this.finish(result);

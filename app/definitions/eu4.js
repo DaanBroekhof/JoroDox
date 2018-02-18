@@ -252,8 +252,8 @@ export default {
             primaryKey: 'name',
             sourceType: {
                 id: 'pdx_scripts',
-                pathPrefix: 'common/{type.id}/',
-                pathPattern: 'common/{type.id}/*.txt',
+                pathPrefix: 'common/cultures/',
+                pathPattern: 'common/cultures/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',
@@ -292,8 +292,8 @@ export default {
                 requiredProperty: 'primary',
                 keyName: 'name',
                 valueName: 'data',
-                parentRelationType: 'cultureGroups',
-                parentRelationKey: 'parentCultureGroup',
+                parentRelationType: 'culture_groups',
+                parentRelationKey: 'parent_culture_group',
             },
             listView: {
                 pageSize: 100,
@@ -597,8 +597,8 @@ export default {
             primaryKey: 'name',
             sourceType: {
                 id: 'pdx_scripts',
-                pathPrefix: 'common/{type.id}/',
-                pathPattern: 'common/{type.id}/*.txt',
+                pathPrefix: 'common/religions/',
+                pathPattern: 'common/religions/*.txt',
             },
             sourceTransform: {
                 type: 'keyValues',

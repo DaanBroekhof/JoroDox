@@ -21,8 +21,8 @@ class StructureTypeView extends Component {
                 {
                     root: this.props.root,
                     typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
-                    searchPattern: type.sourceType.pathPattern,
-                    searchPath: type.sourceType.pathPrefix,
+                    searchPattern: type.sourceType.pathPattern.replace('{type.id}', type.id),
+                    searchPath: type.sourceType.pathPrefix.replace('{type.id}', type.id),
                 },
                 (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
                 (result) => {resolve(result);},
@@ -47,21 +47,10 @@ class StructureTypeView extends Component {
         });
     }
 
-    loadStructureData(typeId) {
-        let type = _(Eu4Definition.types).find(x => x.id === typeId);
-
-        this.loadTypeFiles(typeId).then(() => {
-            return this.loadPdxScriptFiles(typeId);
-        }).then(() => {
-            StructureLoaderTask.start({root: this.props.root, typeDefinition: type},
-                (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
-                (result) => {
-                    console.log("done");
-                    this.props.reloadGrid(this.gridSettings);
-                },
-                (error) => console.log(error),
-
-            );
+    reloadTypeById(typeId) {
+        JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
+            console.log("done");
+            this.props.reloadGrid(this.gridSettings);
         });
     }
 
@@ -167,7 +156,7 @@ class StructureTypeView extends Component {
             <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
                 <Typography variant="display2" gutterBottom><Link to={`/structure`}>Type</Link>: {typeDefinition.title}</Typography>
                 <div style={{marginBottom: 20}}>
-                <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData(this.props.match.params.type)}>Reload</Button>
+                <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadTypeById(this.props.match.params.type)}>Reload</Button>
                 </div>
 
                 <Grid {...gridSettings}></Grid>
