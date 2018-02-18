@@ -11,6 +11,7 @@ export default class BackgroundApp extends Component {
     constructor(props) {
         super(props);
 
+        ipc.removeAllListeners('background-request');
         ipc.on('background-request', (event, request) => {
 
             switch (request.taskType)
