@@ -9,23 +9,24 @@ const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
 const _ = require('lodash');
 const minimatch = require("minimatch");
+const luaparser = require("luaparse");
 
-export default class PdxScriptParserTask extends DbBackgroundTask {
+export default class LuaScriptParserTask extends DbBackgroundTask {
 
     static getTaskType() {
-        return 'PdxScriptParserTask';
+        return 'LuaScriptParserTask';
     }
 
     execute(args) {
         JdxDatabase.get(args.root).then(db => {
-            this.progress(0, 1, 'Finding PDX scripts...');
+            this.progress(0, 1, 'Finding LUA scripts...');
 
             let patterns = [];
             let prefixes = [];
             _(args.definition.types).forOwn((typeDefinition) => {
                 if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id))
                     return;
-                if (typeDefinition.sourceType && typeDefinition.sourceType.id === "pdx_scripts" && typeDefinition.sourceType.pathPattern) {
+                if (typeDefinition.sourceType && typeDefinition.sourceType.id === "lua_scripts" && typeDefinition.sourceType.pathPattern) {
                     patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
                     prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
                 }
@@ -38,16 +39,17 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
                 let scripts = [];
                 let relations = [];
                 filesList.each(file => {
-                    let parser = new PdxScript();
-                    let data = parser.readFile(iconv.decode(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer'), 'win1252'));
+                    let luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
+
+                    let data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
 
                     if (scripts.length % 500 === 0)
-                        this.progress(scripts.length, filesList.size(), 'Parsing ' + filesList.size() + ' PDX scripts...');
+                        this.progress(scripts.length, filesList.size(), 'Parsing ' + filesList.size() + ' LUA scripts...');
 
                     scripts.push({path: file.path, data: data});
                     relations.push(this.addRelationId({
-                        fromKey: 'pdx_script',
-                        fromType: 'pdx_scripts',
+                        fromKey: 'lua_script',
+                        fromType: 'lua_scripts',
                         fromId: file.path,
                         toKey: 'file',
                         toType: 'files',
@@ -56,7 +58,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
                 });
 
                 Promise.all([
-                    this.saveChunked(scripts, db.pdx_scripts, 0, 500),
+                    this.saveChunked(scripts, db.lua_scripts, 0, 500),
                     this.saveChunked(relations, db.relations, 0, 500),
                 ]).then(result => {
                     this.finish(result);
@@ -65,5 +67,42 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
                 });
             });
         });
+    }
+
+    convertAstTree(node, prefix, comments) {
+        if (node.type === 'AssignmentStatement') {
+            let name = node.variables[0].name;
+
+            return this.convertAstTree(node.init[0], name +".", comments);
+        }
+        else if (node.type === 'TableConstructorExpression') {
+            let values = {};
+            node.fields.forEach(field => {
+                _.assign(values, this.convertAstTree(field.value, prefix + field.key.name +".", comments));
+            })
+            return values;
+        }
+        else if (node.type === 'TableKeyString') {
+            return {
+                [prefix + node.key.name]: node.value.value,
+            };
+        }
+        else if (node.type === 'StringKeyLiteral') {
+            return {
+                [prefix]: node.value,
+            };
+        }
+        else if (node.value) {
+            let comment = comments.find(x => x.loc.start.line === node.loc.start.line);
+            return {
+                [prefix.substring(0,prefix.length-1)]: {
+                    value: node.value,
+                    comment: comment ? comment.value : null,
+                },
+            };
+        }
+        else {
+            return {};
+        }
     }
 }

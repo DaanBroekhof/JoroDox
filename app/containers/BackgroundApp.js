@@ -6,6 +6,7 @@ import PdxScriptParserTask from "../utils/tasks/PdxScriptParserTask";
 import PdxDataParserTask from "../utils/tasks/PdxDataParserTask";
 import StructureLoaderTask from "../utils/tasks/StructureLoaderTask";
 import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
+import LuaScriptParserTask from "../utils/tasks/LuaScriptParserTask";
 
 export default class BackgroundApp extends Component {
     constructor(props) {
@@ -27,6 +28,9 @@ export default class BackgroundApp extends Component {
                     break;
                 case StructureLoaderTask.getTaskType():
                     StructureLoaderTask.handle(request);
+                    break;
+                case LuaScriptParserTask.getTaskType():
+                    LuaScriptParserTask.handle(request);
                     break;
                 default:
                     handler.fail('No task handler found.');

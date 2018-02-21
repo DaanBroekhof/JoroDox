@@ -84,6 +84,27 @@ export default {
             }
         },
         {
+            id: 'lua_scripts',
+            title: 'LUA script files',
+            category: 'Raw data',
+            reader: 'LuaScriptParser',
+            primaryKey: 'path',
+            listView: {
+                pageSize: 100,
+                unsetKeys: [
+                    ['data'],
+                ],
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: ['path'],
+                        width: '75%',
+                        linkTo: '[self]',
+                    },
+                ],
+            }
+        },
+        {
             id: 'pdx_meshes',
             title: '3D Models',
             category: 'Graphics',
@@ -3111,6 +3132,41 @@ export default {
                         name: 'Name',
                         dataIndex: 'name',
                         linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'defines',
+            title: 'Defines',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'lua_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/defines.lua',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Name',
+                        dataIndex:['data', 'value'],
+                    },
+                    {
+                        name: 'Comment',
+                        dataIndex:['data', 'comment'],
                     },
                 ],
             },

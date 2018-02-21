@@ -6,6 +6,7 @@ import StructureLoaderTask from "./tasks/StructureLoaderTask";
 import FileLoaderTask from "./tasks/FileLoaderTask";
 import PdxScriptParserTask from "./tasks/PdxScriptParserTask";
 import PdxDataParserTask from "./tasks/PdxDataParserTask";
+import LuaScriptParserTask from "./tasks/LuaScriptParserTask";
 
 export default class JdxDatabase {
 
@@ -141,6 +142,18 @@ export default class JdxDatabase {
         else if (type.reader === 'PdxScriptParser') {
             return new Promise((resolve, reject) => {
                 PdxScriptParserTask.start({
+                        root: root,
+                        definition: Eu4Definition,
+                    },
+                    (progress, total, message) => {},
+                    (result) => {resolve(result);},
+                    (error) => {reject(error);},
+                );
+            })
+        }
+        else if (type.reader === 'LuaScriptParser') {
+            return new Promise((resolve, reject) => {
+                LuaScriptParserTask.start({
                         root: root,
                         definition: Eu4Definition,
                     },

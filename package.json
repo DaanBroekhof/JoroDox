@@ -199,6 +199,7 @@
     "iconv-lite": "^0.4.19",
     "infinite-tree": "^1",
     "lodash": "^4.17.4",
+    "luaparse": "^0.2.1",
     "material-ui": "next",
     "material-ui-icons": "^1.0.0-beta.17",
     "mime": "^2.2.0",
