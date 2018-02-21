@@ -124,6 +124,20 @@ class StructureItemView extends Component {
         }
     }
 
+    getItemPath() {
+        if (this.state.item && this.state.item.path) {
+            return this.props.root +"/"+ this.state.item.path;
+        }
+
+        let fileRelation = this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data');
+
+        if (fileRelation) {
+            return this.props.root +"/"+ fileRelation.toId;
+        }
+
+        return '';
+    }
+
     render() {
         if (!this.props.match.params.type) {
             return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>;
@@ -226,10 +240,10 @@ class StructureItemView extends Component {
                     <Typography variant="display1" gutterBottom><Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}</Typography>
                     <span style={{marginLeft: 20}}>
                         <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
-                            <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: this.props.root +"/"+ this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data').toId})}><Icon color="action">pageview</Icon></IconButton>
+                            <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: this.getItemPath()})}><Icon color="action">pageview</Icon></IconButton>
                         </Tooltip>
                         <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-                            <IconButton onClick={() => OperatingSystemTask.start({openItem: this.props.root +"/"+ this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data').toId})}><Icon color="action">open_in_new</Icon></IconButton>
+                            <IconButton onClick={() => OperatingSystemTask.start({openItem: this.getItemPath()})}><Icon color="action">open_in_new</Icon></IconButton>
                         </Tooltip>
                     </span>
                 </div>

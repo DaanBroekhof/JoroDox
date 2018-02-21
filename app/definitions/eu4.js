@@ -2342,24 +2342,20 @@ export default {
                         linkTo: '[self]',
                     },
                     {
-                        name: 'Namespace',
-                        dataIndex: ['namespace', 'namespace'],
-                    },
-                    {
                         name: 'Type',
                         dataIndex: ['type'],
                     },
                     {
-                        name: 'MTT',
-                        dataIndex: ['data', 'mean_time_to_happen', 'months'],
-                    },
-                    {
-                        name: 'Triggered Only',
-                        dataIndex: ['data', 'is_triggered_only'],
-                    },
-                    {
                         name: 'Comments',
                         dataIndex: ['comments'],
+                    },
+                    {
+                        name: 'Namespace',
+                        dataIndex: ['namespace', 'namespace'],
+                    },
+                    {
+                        name: 'MTT',
+                        dataIndex: ['data', 'mean_time_to_happen', 'months'],
                     },
                 ],
             },
@@ -2936,6 +2932,184 @@ export default {
                     {
                         name: 'Name',
                         dataIndex: 'id',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'achievements',
+            title: 'Achievements',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/achievements.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'filePath',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'technology_groups',
+            title: 'Technology groups',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/technology.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data', 'groups'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Start level',
+                        dataIndex: ['data', 'start_level'],
+                    },
+                    {
+                        name: 'Start cost modifier',
+                        dataIndex: ['data', 'start_cost_modifier'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'technology_tables',
+            title: 'Technology tables',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/technology.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data', 'tables'],
+                keyName: 'name',
+                valueName: 'filePath',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'File path',
+                        dataIndex: 'filePath',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'historial_lucky',
+            title: 'Historical lucky countries',
+            reader: 'StructureLoader',
+            primaryKey: 'tag',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/historial_lucky.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'tag',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Tag',
+                        dataIndex: 'tag',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Always',
+                        dataIndex: ['data', 'always'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'alerts',
+            title: 'Alerts',
+            category: 'User interface',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/alerts.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                path: ['data', 'data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'graphicalculturetypes',
+            title: 'Graphical culture types',
+            category: 'User interface',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'common/',
+                pathPattern: 'common/graphicalculturetype.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'filePath',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
                         linkTo: '[self]',
                     },
                 ],
