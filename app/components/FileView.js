@@ -13,6 +13,9 @@ import ColladaView from "./ColladaView";
 
 export default class FileView extends Component {
     static getFileType(file) {
+        if (!file)
+            return 'directory';
+
         if (file.type === 'dir')
             return 'directory';
         let extension = file.name.match(/\.([^.]+)$/);

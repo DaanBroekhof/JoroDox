@@ -180,50 +180,29 @@ export default class StructureTree extends React.Component {
                 loadNodes={(parentNode, done) => {
 
                     if (parentNode.id === 'root:0') {
-                        done(null, [
-                            {
-                                id: 'typekind:raw',
-                                name: 'Raw data',
+
+                        let categories = _(Eu4Definition.types).map(type => {
+                            return type.category ? type.category : "Game structures";
+                        }).uniq().map(category => {
+                            return {
+                                id: 'category:' + category,
+                                name: category,
                                 loadOnDemand: true,
                                 info: {
-                                    view: 'typekind',
-                                    type: 'raw',
-                                },
-                            },
-                            {
-                                id: 'typekind:gamedata',
-                                name: 'Game structures',
-                                loadOnDemand: true,
-                                open: true,
-                                info: {
-                                    view: 'typekind',
-                                    type: 'gamedata',
-                                },
-                            }
-                        ], () => {
-                            this.tree.toggleNode(this.tree.getNodeById('typekind:gamedata'), {async: true});
+                                    view: 'category',
+                                    type: category,
+                                }
+                            };
+                        }).value();
+
+                        done(null, categories, () => {
+                            this.tree.toggleNode(this.tree.getNodeById('category:Game structures'), {async: true});
                         });
                     }
-                    else if (parentNode.id === 'typekind:raw') {
+                    else if (_.startsWith(parentNode.id, 'category:')) {
 
                         let items = [];
-                        _(Eu4Definition.types).filter(x => x.reader !== 'StructureLoader').sortBy(x => x.title).forEach(type => {
-                            items.push({
-                                id: 'type:'+ type.id,
-                                name: type.title,
-                                info: {
-                                    view: 'type',
-                                    type: type.id,
-                                },
-                            });
-                        });
-
-                        done(null, items);
-                    }
-                    else if (parentNode.id === 'typekind:gamedata') {
-
-                        let items = [];
-                        _(Eu4Definition.types).filter(x => x.reader === 'StructureLoader').sortBy(x => x.title).forEach(type => {
+                        _(Eu4Definition.types).filter(x => 'category:'+ (x.category ? x.category : 'Game structures') === parentNode.id).sortBy(x => x.title).forEach(type => {
                             items.push({
                                 id: 'type:'+ type.id,
                                 name: type.title,

@@ -7,6 +7,7 @@ export default {
         {
             id: 'files',
             title: 'Files & Directories',
+            category: 'Raw data',
             reader: 'FileLoader',
             readerFileIgnore: [
                 '.*',
@@ -46,6 +47,7 @@ export default {
         {
             id: 'pdx_scripts',
             title: 'PDX script files',
+            category: 'Raw data',
             reader: 'PdxScriptParser',
             primaryKey: 'path',
             listView: {
@@ -63,6 +65,7 @@ export default {
         {
             id: 'pdx_data',
             title: 'PDX binary data files',
+            category: 'Raw data',
             reader: 'PdxDataParser',
             primaryKey: 'path',
             listView: {
@@ -83,6 +86,7 @@ export default {
         {
             id: 'pdx_meshes',
             title: '3D Models',
+            category: 'Graphics',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
@@ -2672,6 +2676,7 @@ export default {
         {
             id: 'customizable_localization',
             title: 'Customizable localization',
+            category: 'Localization',
             reader: 'StructureLoader',
             primaryKey: 'id',
             sourceType: {
@@ -2736,6 +2741,7 @@ export default {
         {
             id: 'hints',
             title: 'Hints',
+            category: 'User interface',
             reader: 'StructureLoader',
             primaryKey: 'name',
             sourceType: {
@@ -2802,6 +2808,7 @@ export default {
         {
             id: 'music_files',
             title: 'Music files',
+            category: 'Audio',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
@@ -2827,6 +2834,7 @@ export default {
         {
             id: 'music',
             title: 'Music',
+            category: 'Audio',
             reader: 'StructureLoader',
             primaryKey: 'id',
             sourceType: {
@@ -2854,6 +2862,7 @@ export default {
         {
             id: 'music_songs',
             title: 'Music songs',
+            category: 'Audio',
             reader: 'StructureLoader',
             primaryKey: 'id',
             sourceType: {
@@ -2881,6 +2890,7 @@ export default {
         {
             id: 'sound_files',
             title: 'Sound files',
+            category: 'Audio',
             reader: 'StructureLoader',
             primaryKey: 'path',
             sourceType: {
@@ -2906,6 +2916,7 @@ export default {
         {
             id: 'sound',
             title: 'Sound',
+            category: 'Audio',
             reader: 'StructureLoader',
             primaryKey: 'id',
             sourceType: {
