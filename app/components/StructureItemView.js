@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {Link} from "react-router-dom";
 import {Actions} from "react-redux-grid";
 import {connect} from "react-redux";
+import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 const minimatch = require("minimatch");
 
 
@@ -43,7 +44,7 @@ class StructureItemView extends Component {
         let isArray = _.isArray(item);
 
         let relation = relations && relations.find(x => {
-            return x.type === 'valueByPath' && minimatch(path, '/' + x.dataPath.join('/'))
+            return x.type === 'valueByPath' && minimatch(path, '/' + x.path.join('/'))
         });
 
         let valueRender = '';
@@ -221,7 +222,17 @@ class StructureItemView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography variant="display1" gutterBottom><Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}</Typography>
+                <div style={{display: 'flex'}}>
+                    <Typography variant="display1" gutterBottom><Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}</Typography>
+                    <span style={{marginLeft: 20}}>
+                        <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
+                            <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: this.props.root +"/"+ this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data').toId})}><Icon color="action">pageview</Icon></IconButton>
+                        </Tooltip>
+                        <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
+                            <IconButton onClick={() => OperatingSystemTask.start({openItem: this.props.root +"/"+ this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data').toId})}><Icon color="action">open_in_new</Icon></IconButton>
+                        </Tooltip>
+                    </span>
+                </div>
 
                 <Grid ref={(input) => { this.grid = input; }} {...gridSettings}></Grid>
 
