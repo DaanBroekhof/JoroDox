@@ -207,7 +207,7 @@ export default class StructureTree extends React.Component {
                     else if (parentNode.id === 'typekind:raw') {
 
                         let items = [];
-                        _(Eu4Definition.types).filter(x => x.reader !== 'StructureLoader').forEach(type => {
+                        _(Eu4Definition.types).filter(x => x.reader !== 'StructureLoader').sortBy(x => x.title).forEach(type => {
                             items.push({
                                 id: 'type:'+ type.id,
                                 name: type.title,
@@ -223,7 +223,7 @@ export default class StructureTree extends React.Component {
                     else if (parentNode.id === 'typekind:gamedata') {
 
                         let items = [];
-                        _(Eu4Definition.types).filter(x => x.reader === 'StructureLoader').forEach(type => {
+                        _(Eu4Definition.types).filter(x => x.reader === 'StructureLoader').sortBy(x => x.title).forEach(type => {
                             items.push({
                                 id: 'type:'+ type.id,
                                 name: type.title,

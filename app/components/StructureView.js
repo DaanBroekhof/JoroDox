@@ -127,6 +127,7 @@ export default class StructureView extends Component {
             }
             return type;
         });
+        extendedTypes = _.sortBy(extendedTypes, x => x.title);
 
         let gridSettings = {
             height: false,

@@ -38,8 +38,17 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
                     let result = {items: [], relations: []};
 
-                    if (this['sourceTransformBy'+ _.upperFirst(definition.sourceTransform.type)]) {
-                        result = this['sourceTransformBy'+ _.upperFirst(definition.sourceTransform.type)](sourceItems, definition);
+                    if (definition.sourceTransform.type === 'keyValues') {
+                        result = this.sourceTransformByKeyValues(sourceItems, definition);
+                    }
+                    else if (definition.sourceTransform.type === 'keyKeyValues') {
+                        result = this.sourceTransformByKeyKeyValues(sourceItems, definition);
+                    }
+                    else if (definition.sourceTransform.type === 'fileData') {
+                        result = this.sourceTransformByFileData(sourceItems, definition);
+                    }
+                    else if (definition.sourceTransform.type === 'typesList') {
+                        result = this.sourceTransformByTypesList(sourceItems, definition);
                     }
                     else {
                         console.warn('Unknown sourceTransform type `'+  definition.sourceTransform.type +'`.');
@@ -97,10 +106,21 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                     if (definition.sourceTransform.requiredProperty && value2[definition.sourceTransform.requiredProperty] === undefined) {
                         return;
                     }
-                    items.push({
-                        [definition.sourceTransform.keyName]: key2,
-                        [definition.sourceTransform.valueName]: value2,
-                    });
+                    let item = {};
+                    if (definition.sourceTransform.keyName)
+                        item[definition.sourceTransform.keyName] = key2;
+                    if (definition.sourceTransform.parentKeyName)
+                        item[definition.sourceTransform.parentKeyName] = key;
+                    if (definition.sourceTransform.valueName)
+                        item[definition.sourceTransform.valueName] = value2;
+                    if (definition.sourceTransform.filenamePattern) {
+                        let found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
+                        if (found) {
+                            item[definition.sourceTransform.filenamePatternKey] = found[1];
+                        }
+                    }
+                    items.push(item);
+
                     relations.push(this.addRelationId({
                         fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                         fromType: definition.id,
@@ -126,26 +146,36 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         return {items, relations};
     }
 
-    sourceTransformByNamespacedTypes(sourceItems, definition)
+    sourceTransformByTypesList(sourceItems, definition)
     {
         let items = [];
         let relations = [];
 
+        let nr = 0;
         sourceItems.forEach(sourceItem => {
             let namespaceValues = {}
             _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value) => {
                 if (_.includes(definition.sourceTransform.types, value.name)) {
-                    items.push({
+                    let item = {
                         namespace: namespaceValues,
                         comments: value.comments.join("\n"),
-                        id: value.data.id,
+                        nr: nr.toString(),
+                        id: definition.sourceTransform.idPath ? _.get(value, definition.sourceTransform.idPath) : null,
                         type: value.name,
                         data: value.data,
-                    });
+                    };
+                    if (definition.sourceTransform.filenamePattern) {
+                        let found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
+                        if (found) {
+                            item[definition.sourceTransform.filenamePatternKey] = found[1];
+                        }
+                    }
+                    items.push(item);
+                    nr += 1;
                     relations.push(this.addRelationId({
                         fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                         fromType: definition.id,
-                        fromId: value.data.id,
+                        fromId: item[definition.primaryKey],
                         toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
                         toType: definition.sourceType.id,
                         toId: sourceItem.path,
@@ -174,7 +204,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 }
             }
             item.path = sourceItem.path;
-            item.data = definition.sourceTransform.dataPath ? _.get(sourceItem.data, definition.sourceTransform.dataPath) : sourceItem.data;
+            item.data = definition.sourceTransform.path !== undefined ? _.get(sourceItem, definition.sourceTransform.path) : sourceItem.data;
             items.push(item);
 
             relations.push(this.addRelationId({
@@ -206,7 +236,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                         }));
                     }
                     else if (relation.type === 'valueByPath') {
-                        let value = _.get(item, relation.dataPath);
+                        let value = _.get(item, relation.path);
                         if (value) {
                             result.relations.push(this.addRelationId({
                                 fromKey: relation.fromName,
@@ -219,7 +249,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                         }
                     }
                     else if (relation.type === 'arrayValuesByPath') {
-                        _.get(item, relation.dataPath).forEach(relationValue => {
+                        _.get(item, relation.path).forEach(relationValue => {
                             result.relations.push(this.addRelationId({
                                 fromKey: relation.fromName,
                                 fromType: definition.id,
