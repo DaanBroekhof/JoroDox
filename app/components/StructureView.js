@@ -12,6 +12,7 @@ import StructureLoaderTask from "../utils/tasks/StructureLoaderTask";
 import Eu4Definition from "../definitions/eu4";
 import {Grid} from "react-redux-grid";
 import {Link} from "react-router-dom";
+import WatchDirectoryTask from "../utils/tasks/WatchDirectoryTask";
 
 export default class StructureView extends Component {
 
@@ -56,6 +57,13 @@ export default class StructureView extends Component {
                     (error) => console.log(error),
                 );
             }
+        })
+    }
+
+    watchDirectory() {
+
+        WatchDirectoryTask.start({rootDir: this.props.root}, null, null, null, (type, response) => {
+            console.log('Watch response', type, response);
         })
     }
 
@@ -131,6 +139,7 @@ export default class StructureView extends Component {
 
         let gridSettings = {
             height: false,
+            emptyDataMessage: 'Loading...',
             columns: [
                 {
                     name: 'Type',
@@ -191,6 +200,8 @@ export default class StructureView extends Component {
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
+                    <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.watchDirectory()}>Watch directory</Button><br />
+
                 </div>
 
                 <Grid {...gridSettings}></Grid>

@@ -1,8 +1,16 @@
 const ipc = require('electron').ipcRenderer;
+const ipcMain = require('electron').ipcMain;
+
 
 export default class BackgroundTask {
-    constructor() {
-        this.taskId = null;
+
+    static taskMap = {};
+
+    from = null;
+
+    constructor(taskId, role) {
+        this.taskId = taskId ? taskId : null;
+        this.role = role;
     }
 
 
@@ -10,47 +18,76 @@ export default class BackgroundTask {
         return null
     }
 
-    static start(args, progressCallback, successCallback, errorCallback) {
+    static start(args, progressCallback, successCallback, errorCallback, requestCallback) {
         let taskId = Math.random() * 10000000;
 
         ipc.on('background-response', function listener(event, response) {
             if (response.taskId === taskId) {
-                if (response.type === 'progress') {
+                if (response.type === 'progress' && progressCallback) {
                     progressCallback(response.progress, response.total, response.message);
                 }
-                else if (response.type === 'finished') {
+                else if (response.type === 'finished' && successCallback) {
                     successCallback(response.result);
                     ipc.removeListener('background-response', listener);
                 }
-                else if (response.type === 'failed') {
+                else if (response.type === 'failed' && errorCallback) {
                     errorCallback(response.error);
                     ipc.removeListener('background-response', listener);
+                }
+                else if (response.type === 'response' && requestCallback) {
+                    requestCallback(response.data);
                 }
             }
         });
 
-        ipc.send('background-request', {taskId: taskId, taskType: this.getTaskType(), args: args});
+        ipc.send('background-request', {taskId: taskId, type: 'execute', taskType: this.getTaskType(), args: args});
+
+        return new this(taskId, 'sender');
     }
 
-    static handle(request) {
-        let task = new this(request.taskId);
-        task.taskId = request.taskId;
-        task.execute(request.args)
+    static handle(request, from) {
+        if (!this.taskMap[request.taskType] || !this.taskMap[request.taskType][request.taskId]) {
+
+            if (!this.taskMap[request.taskType])
+                this.taskMap[request.taskType] = {};
+
+            this.taskMap[request.taskType][request.taskId] = new this(request.taskId, 'receiver');
+        }
+
+        this.taskMap[request.taskType][request.taskId].from = from;
+
+        this.taskMap[request.taskType][request.taskId].handleRequest(request)
     }
 
     execute(task) {
         // Do stuff
     }
 
+    handleRequest(request) {
+        if (request.type === 'execute') {
+            this.execute(request.args)
+        }
+    }
+
+    sendRequest(type, data) {
+        ipc.send('background-request', {taskId: this.taskId, type: type, data: data});
+    }
+
+    sendResponse(data) {
+        (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'response', data: data});
+    }
+
     progress(progress, total, message) {
-        ipc.send('background-response', {taskId: this.taskId, type: 'progress', progress: progress, total: total, message: message});
+        (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'progress', progress: progress, total: total, message: message});
     }
 
     finish(result) {
-        ipc.send('background-response', {taskId: this.taskId, type: 'finished', result: result});
+        (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'finished', result: result});
+        this.constructor.taskMap[this.constructor.getTaskType()][this.taskId] = null;
     }
 
     fail(error) {
-        ipc.send('background-response', {taskId: this.taskId, type: 'failed', error: error});
+        (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'failed', error: error});
+        this.constructor.taskMap[this.constructor.getTaskType()][this.taskId] = null;
     }
 }
