@@ -49,6 +49,11 @@ export default class PdxScript {
             }
             else
             {
+                // Convert numeric values
+                if (!isNaN(value)) {
+                    value = +value;
+                }
+
                 varScope.value = value;
                 varScope.data = value;
                 varScope.type = 'property';
@@ -85,7 +90,7 @@ export default class PdxScript {
 
             token = this.readToken(scope);
 
-            // Allow assigning with and '=' or with an '{'
+            // Allow assigning with an '=' or with an '{'
             if (token === '=' || token === '{')
             {
                 // property style object
@@ -105,6 +110,11 @@ export default class PdxScript {
                 }
                 else
                 {
+                    // Convert numeric values
+                    if (!isNaN(token)) {
+                        token = +token;
+                    }
+
                     propertyScope.type = 'property';
                     propertyScope.icon = 'asterisk';
                     propertyScope.value = token;
