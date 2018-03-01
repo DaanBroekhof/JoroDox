@@ -1,7 +1,7 @@
 // @flow
 import React, {Component} from 'react';
 import {Grid, applyGridConfig, Actions} from 'react-redux-grid';
-import {Button, Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
+import {Button, Icon, IconButton, Paper, TextField, Tooltip, Typography} from "material-ui";
 import JdxDatabase from "../utils/JdxDatabase";
 import _ from 'lodash';
 import Eu4Definition from '../definitions/eu4';
@@ -11,8 +11,17 @@ import {connect} from "react-redux";
 import FileLoaderTask from "../utils/tasks/FileLoaderTask";
 import PdxScriptParserTask from "../utils/tasks/PdxScriptParserTask";
 import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
+import StructureScannerTask from "../utils/tasks/StructureScannerTask";
 
 class StructureTypeView extends Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            search: '',
+        };
+    }
 
     loadTypeFiles(typeId) {
         let type = _(Eu4Definition.types).find(x => x.id === typeId);
@@ -48,6 +57,21 @@ class StructureTypeView extends Component {
         });
     }
 
+    scanType(typeId) {
+        let type = _(Eu4Definition.types).find(x => x.id === typeId);
+
+        return new Promise((resolve, reject) => {
+            StructureScannerTask.start({
+                    root: this.props.root,
+                    typeDefinition: type,
+                },
+                (progress, total, message) => console.log('['+ progress +'/'+ total +'] '+ message),
+                (result) => {resolve(result);},
+                (error) => {reject(error);},
+            );
+        });
+    }
+
     reloadTypeById(typeId) {
         JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
             console.log("done");
@@ -69,6 +93,7 @@ class StructureTypeView extends Component {
         }
 
         let rootPath = this.props.root;
+        let search = this.state.search;
         let dataSource = function getData({pageIndex, pageSize}) {
 
             if (!pageIndex)
@@ -78,9 +103,15 @@ class StructureTypeView extends Component {
 
             return new Promise((resolve) => {
                 JdxDatabase.get(rootPath).then(db => {
-                    db[typeDefinition.id].count((total) => {
-                        db[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
+                    if (search) {
+                        // Just getting everything and filtering in javascript is faster than using Dexie filter()
+                        let base = db[typeDefinition.id];
+                        base = base.filter(x => x[typeDefinition.primaryKey].toString().match(new RegExp(_.escapeRegExp(search), 'i')));
+                        base.toArray((result) => {
+                            //result = result.filter(x => x[typeDefinition.primaryKey].toString().match(new RegExp(_.escapeRegExp(search), 'i')));
 
+                            let count = result.length;
+                            result = result.slice(pageIndex * pageSize, (pageIndex * pageSize) + pageSize);
                             if (typeDefinition.listView.unsetKeys) {
                                 result = result.map(x => {
                                     typeDefinition.listView.unsetKeys.forEach(keys => {
@@ -90,13 +121,32 @@ class StructureTypeView extends Component {
                                 });
                             }
 
-
                             resolve({
                                 data: result,
-                                total: total,
+                                total: count,
                             });
                         });
-                    });
+                    }
+                    else {
+                        db[typeDefinition.id].count((total) => {
+                            db[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
+
+                                if (typeDefinition.listView.unsetKeys) {
+                                    result = result.map(x => {
+                                        typeDefinition.listView.unsetKeys.forEach(keys => {
+                                            _.unset(x, keys);
+                                        });
+                                        return x;
+                                    });
+                                }
+
+                                resolve({
+                                    data: result,
+                                    total: total,
+                                });
+                            });
+                        });
+                    }
                 });
             });
         };
@@ -115,6 +165,7 @@ class StructureTypeView extends Component {
         let gridSettings = {
             height: false,
             columns: columns,
+            emptyDataMessage: 'Loading...',
             plugins: {
                 PAGER: {
                     enabled: true,
@@ -167,8 +218,24 @@ class StructureTypeView extends Component {
                         <Tooltip id="tooltip-icon" title="Reload data" placement="bottom">
                             <IconButton onClick={() => this.reloadTypeById(this.props.match.params.type)}><Icon color="action">refresh</Icon></IconButton>
                         </Tooltip>
+                        <Tooltip id="tooltip-icon" title="Scan data" placement="bottom">
+                            <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">download</Icon></IconButton>
+                        </Tooltip>
                     </span>
                 </div>
+                <TextField
+                    id="search"
+                    placeholder="Search..."
+                    type="search"
+                    margin="normal"
+                    style={{display: 'flex', flexGrow: 0, flexShrink: 0}}
+                    value={this.state.search}
+                    onChange={(event) => {
+                        this.setState({search: event.target.value}, () => {
+                            this.props.reloadGrid(this.gridSettings);
+                        });
+                    }}
+                />
 
                 <Grid {...gridSettings}></Grid>
             </Paper>
