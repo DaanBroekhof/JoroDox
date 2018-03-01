@@ -184,6 +184,7 @@ class StructureItemView extends Component {
         let gridSettings = {
             height: false,
             gridType: 'tree',
+            emptyDataMessage: 'Loading...',
             columns: [
                 {
                     name: 'Name',
