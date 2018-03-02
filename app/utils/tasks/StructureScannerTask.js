@@ -19,8 +19,8 @@ const defaultOptions = {
     setRequired: true,
     detectEnum: true,
     enumMaxLength: 10,
+    minEnum: 0,
     maxEnum: 4,
-    minEnum: 4,
 };
 
 // Find the Schema type for a JavaScript object

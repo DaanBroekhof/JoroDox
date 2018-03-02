@@ -77,9 +77,17 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
         }
         else if (node.type === 'TableConstructorExpression') {
             let values = {};
+            let arrayValues = [];
             node.fields.forEach(field => {
-                _.assign(values, this.convertAstTree(field.value, prefix + field.key.name +".", comments));
+                if (field.type === 'TableValue') {
+                    arrayValues.push(field.value.value);
+                } else {
+                    _.assign(values, this.convertAstTree(field.value, prefix + field.key.name + ".", comments));
+                }
             })
+            if (arrayValues) {
+                values[_.trim(prefix, '.')] = arrayValues;
+            }
             return values;
         }
         else if (node.type === 'TableKeyString') {

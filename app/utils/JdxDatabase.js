@@ -7,6 +7,7 @@ import FileLoaderTask from "./tasks/FileLoaderTask";
 import PdxScriptParserTask from "./tasks/PdxScriptParserTask";
 import PdxDataParserTask from "./tasks/PdxDataParserTask";
 import LuaScriptParserTask from "./tasks/LuaScriptParserTask";
+import CsvFileParserTask from "./tasks/CsvFileParserTask";
 
 export default class JdxDatabase {
 
@@ -123,13 +124,13 @@ export default class JdxDatabase {
         });
     }
 
-    static reloadTypeById(root, typeId) {
+    static reloadTypeById(root, typeId, filterTypes) {
         let type = _(Eu4Definition.types).find(x => x.id === typeId);
 
         if (type.reader === 'StructureLoader') {
             return new Promise((resolve, reject) => {
                 this.loadTypeFiles(root, typeId).then(() => {
-                    return this.loadPdxScriptFiles(root, typeId);
+                    return this.reloadTypeById(root, type.sourceType.id, [typeId]);
                 }).then(() => {
                     StructureLoaderTask.start({root: root, typeDefinition: type},
                         (progress, total, message) => {},
@@ -144,6 +145,7 @@ export default class JdxDatabase {
                 PdxScriptParserTask.start({
                         root: root,
                         definition: Eu4Definition,
+                        filterTypes: filterTypes,
                     },
                     (progress, total, message) => {},
                     (result) => {resolve(result);},
@@ -156,6 +158,7 @@ export default class JdxDatabase {
                 LuaScriptParserTask.start({
                         root: root,
                         definition: Eu4Definition,
+                        filterTypes: filterTypes,
                     },
                     (progress, total, message) => {},
                     (result) => {resolve(result);},
@@ -168,6 +171,20 @@ export default class JdxDatabase {
                 PdxDataParserTask.start({
                         root: root,
                         definition: Eu4Definition,
+                        filterTypes: filterTypes,
+                    },
+                    (progress, total, message) => {},
+                    (result) => {resolve(result);},
+                    (error) => {reject(error);},
+                );
+            })
+        }
+        else if (type.reader === 'CsvFileParser') {
+            return new Promise((resolve, reject) => {
+                CsvFileParserTask.start({
+                        root: root,
+                        definition: Eu4Definition,
+                        filterTypes: filterTypes,
                     },
                     (progress, total, message) => {},
                     (result) => {resolve(result);},

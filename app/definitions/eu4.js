@@ -105,6 +105,27 @@ export default {
             }
         },
         {
+            id: 'csv_files',
+            title: 'CSV data files',
+            category: 'Raw data',
+            reader: 'CsvFileParser',
+            primaryKey: 'path',
+            listView: {
+                pageSize: 100,
+                unsetKeys: [
+                    ['data'],
+                ],
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: ['path'],
+                        width: '75%',
+                        linkTo: '[self]',
+                    },
+                ],
+            }
+        },
+        {
             id: 'pdx_meshes',
             title: '3D Models',
             category: 'Graphics',
@@ -3167,6 +3188,652 @@ export default {
                     {
                         name: 'Comment',
                         dataIndex:['data', 'comment'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'dlcs',
+            title: 'DLCs',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'dlc/',
+                pathPattern: 'dlc/*.dlc',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                keyName: 'path',
+                path: ['data', 'data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Name',
+                        dataIndex: ['data', 'name'],
+                    },
+                    {
+                        name: 'Affects compatibility',
+                        dataIndex:['data', 'affects_compatability'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_ambient_object',
+            title: 'Map ambient objects',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'nr',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/ambient_object.txt',
+            },
+            sourceTransform: {
+                type: 'typesList',
+                path: ['data', 'children'],
+                types: ['type'],
+                idPath: [],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Nr',
+                        dataIndex: 'nr',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Type',
+                        dataIndex: ['data', 'type'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_area',
+            title: 'Map areas',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/area.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'provinces',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_climate',
+            title: 'Map climate',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/climate.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'provinces',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_continent',
+            title: 'Map continents',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/continent.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'provinces',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_positions',
+            title: 'Map city positions',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'province',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/positions.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'province',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Province nr',
+                        dataIndex: 'province',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_region',
+            title: 'Map regions',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/region.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_superregion',
+            title: 'Map superregions',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/superregion.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'regions',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_season',
+            title: 'Map seasons',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/seasons.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Start date',
+                        dataIndex: ['data', 'start_date'],
+                    },
+                    {
+                        name: 'End date',
+                        dataIndex: ['data', 'end_date'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_terrain_categories',
+            title: 'Map terrain categories',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/terrain.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data', 'categories'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Movement cost',
+                        dataIndex: ['data', 'movement_cost'],
+                    },
+                    {
+                        name: 'Is water',
+                        dataIndex: ['data', 'is_water'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_terrain_terrain',
+            title: 'Map terrains',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/terrain.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data', 'terrain'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Type',
+                        dataIndex: ['data', 'type'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_terrain_tree',
+            title: 'Map terrain trees',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/terrain.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data', 'tree'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Terrain',
+                        dataIndex: ['data', 'terrain'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_tradewinds',
+            title: 'Map tradewinds',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'province',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/tradewinds.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'province',
+                valueName: 'wind_direction',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Province',
+                        dataIndex: 'province',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Direction',
+                        dataIndex: ['data', 'wind_direction'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_lakes',
+            title: 'Map lakes',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'nr',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/',
+                pathPattern: 'map/lakes/*.txt',
+            },
+            sourceTransform: {
+                type: 'typesList',
+                path: ['data', 'children'],
+                types: ['lake'],
+                idPath: [],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Nr',
+                        dataIndex: 'nr',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Comments',
+                        dataIndex: ['comments'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_random_tweaks',
+            title: 'Map random tweaks',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'lua_scripts',
+                pathPrefix: 'map/random',
+                pathPattern: 'map/random/tweaks.lua',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Name',
+                        dataIndex:['data', 'value'],
+                    },
+                    {
+                        name: 'Comment',
+                        dataIndex:['data', 'comment'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_random_tiles',
+            title: 'Map random tiles',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/random/tiles',
+                pathPattern: 'map/random/tiles/*.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                keyName: 'path',
+                path: ['data', 'data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Continent',
+                        dataIndex: ['data', 'continent'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_random_lakenames',
+            title: 'Map random lake names',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/random',
+                pathPattern: 'map/random/RandomLakeNames.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                keyName: 'path',
+                path: ['data', 'data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_random_landnames',
+            title: 'Map random land names',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/random',
+                pathPattern: 'map/random/RandomLandNames.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                keyName: 'path',
+                path: ['data', 'data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_random_seanames',
+            title: 'Map random sea names',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'path',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/random',
+                pathPattern: 'map/random/RandomSeaNames.txt',
+            },
+            sourceTransform: {
+                type: 'fileData',
+                keyName: 'path',
+                path: ['data', 'data'],
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: 'path',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_random_scenarios',
+            title: 'Map random scenarios',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdx_scripts',
+                pathPrefix: 'map/random/',
+                pathPattern: 'map/random/RNWScenarios.txt',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data', 'data'],
+                keyName: 'name',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'map_adjacencies',
+            title: 'Map province adjacencies',
+            category: 'Map information',
+            reader: 'StructureLoader',
+            primaryKey: 'nr',
+            sourceType: {
+                id: 'csv_files',
+                pathPrefix: 'map/',
+                pathPattern: 'map/adjacencies.csv',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data'],
+                keyName: 'nr',
+                valueName: 'data',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Nr',
+                        dataIndex: 'nr',
+                        linkTo: '[self]',
+                    },
+                    {
+                        name: 'Type',
+                        dataIndex: ['data', 'Type'],
+                    },
+                    {
+                        name: 'Comment',
+                        dataIndex: ['data', 'Comment'],
                     },
                 ],
             },
