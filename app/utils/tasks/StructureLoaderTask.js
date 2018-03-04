@@ -50,6 +50,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                     else if (definition.sourceTransform.type === 'typesList') {
                         result = this.sourceTransformByTypesList(sourceItems, definition);
                     }
+                    else if (definition.sourceTransform.type === 'stringValues') {
+                        result = this.sourceTransformByStringValues(sourceItems, definition);
+                    }
                     else {
                         console.warn('Unknown sourceTransform type `'+  definition.sourceTransform.type +'`.');
                     }
@@ -94,6 +97,52 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         });
         return {items, relations};
     }
+
+    sourceTransformByStringValues(sourceItems, definition)
+    {
+        let items = [];
+        let relations = [];
+        sourceItems.forEach(sourceItem => {
+            _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value) => {
+                let item = {};
+
+                if (definition.sourceTransform.valueRegex !== undefined) {
+                    // Chop the string up via a regular expression
+                    let match = value.toString().match(new RegExp(definition.sourceTransform.valueRegex, definition.sourceTransform.valueRegexFlags));
+
+                    // No matches == no item
+                    if (!match)
+                        return;
+
+                    definition.sourceTransform.valueRegexNames.forEach((valueName, index) => {
+                        if (valueName !== null)
+                            item[valueName] = match[index];
+                    });
+                }
+                else
+                {
+                    item[definition.primaryKey] = value;
+                }
+
+                // No data == no item
+                if (_.size(item) === 0)
+                    return;
+
+                items.push(item);
+
+                relations.push(this.addRelationId({
+                    fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+                    fromType: definition.id,
+                    fromId: item[definition.primaryKey],
+                    toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+                    toType: definition.sourceType.id,
+                    toId: sourceItem.path,
+                }));
+            });
+        });
+        return {items, relations};
+    }
+
 
     sourceTransformByKeyKeyValues(sourceItems, definition)
     {

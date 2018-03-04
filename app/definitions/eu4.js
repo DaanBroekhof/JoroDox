@@ -3698,23 +3698,22 @@ export default {
             title: 'Map random lake names',
             category: 'Map information',
             reader: 'StructureLoader',
-            primaryKey: 'path',
+            primaryKey: 'name',
             sourceType: {
                 id: 'pdx_scripts',
                 pathPrefix: 'map/random',
                 pathPattern: 'map/random/RandomLakeNames.txt',
             },
             sourceTransform: {
-                type: 'fileData',
-                keyName: 'path',
-                path: ['data', 'data'],
+                type: 'stringValues',
+                path: ['data', 'data', 'random_names'],
             },
             listView: {
                 pageSize: 100,
                 columns: [
                     {
-                        name: 'Path',
-                        dataIndex: 'path',
+                        name: 'Name',
+                        dataIndex: 'name',
                         linkTo: '[self]',
                     },
                 ],
@@ -3725,24 +3724,29 @@ export default {
             title: 'Map random land names',
             category: 'Map information',
             reader: 'StructureLoader',
-            primaryKey: 'path',
+            primaryKey: 'name',
             sourceType: {
                 id: 'pdx_scripts',
                 pathPrefix: 'map/random',
                 pathPattern: 'map/random/RandomLandNames.txt',
             },
             sourceTransform: {
-                type: 'fileData',
-                keyName: 'path',
-                path: ['data', 'data'],
+                type: 'stringValues',
+                path: ['data', 'data', 'random_names'],
+                valueRegex: '^([^:]+)(:(.+))?$',
+                valueRegexNames: [null, 'name', null, 'type'],
             },
             listView: {
                 pageSize: 100,
                 columns: [
                     {
-                        name: 'Path',
-                        dataIndex: 'path',
+                        name: 'Name',
+                        dataIndex: 'name',
                         linkTo: '[self]',
+                    },
+                    {
+                        name: 'Type',
+                        dataIndex: 'type',
                     },
                 ],
             },
@@ -3752,23 +3756,22 @@ export default {
             title: 'Map random sea names',
             category: 'Map information',
             reader: 'StructureLoader',
-            primaryKey: 'path',
+            primaryKey: 'name',
             sourceType: {
                 id: 'pdx_scripts',
                 pathPrefix: 'map/random',
                 pathPattern: 'map/random/RandomSeaNames.txt',
             },
             sourceTransform: {
-                type: 'fileData',
-                keyName: 'path',
-                path: ['data', 'data'],
+                type: 'stringValues',
+                path: ['data', 'data', 'random_names'],
             },
             listView: {
                 pageSize: 100,
                 columns: [
                     {
-                        name: 'Path',
-                        dataIndex: 'path',
+                        name: 'Name',
+                        dataIndex: 'name',
                         linkTo: '[self]',
                     },
                 ],
