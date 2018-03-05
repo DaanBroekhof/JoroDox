@@ -14,14 +14,38 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     }
 
     execute(args) {
+        let relationStorage = args.typeDefinition.sourceTransform.relationsStorage ? args.typeDefinition.sourceTransform.relationsStorage : 'relations';
+
         JdxDatabase.get(args.root).then(db => {
             let definition = args.typeDefinition;
 
             this.progress(0, 1, 'Removing old data...');
 
             db[definition.id].clear().then(() => {
+                this.progress(0, 1, 'Removing old relations...');
 
-                this.progress(0, 1, 'Fetching files...');
+                if (relationStorage === 'relations') {
+                    let nrDelete = 0;
+                    let task = this;
+
+                    function delChunk() {
+                        return db[relationStorage].where('fromType').equals(definition.id).limit(1000).delete().then((deleted) => {
+                            task.progress(0, 1, 'Removing old relations ' + nrDelete + '...');
+                            nrDelete++;
+                            if (deleted !== 0) {
+                                return delChunk();
+                            }
+                        });
+                    }
+
+                    return delChunk();
+                }
+                else {
+                    return db[relationStorage].clear();
+                }
+            }).then(() => {
+
+                this.progress(0, 3, 'Fetching files...');
 
                 // Filter on known path info
                 let sourceData = db[definition.sourceType.id];
@@ -32,8 +56,11 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                     sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
                 }
 
+
                 // Iterate over all found data items
                 sourceData.toArray(rawSourceItems => {
+                    this.progress(0, 3, 'Parsing data...');
+
                     let sourceItems = _(rawSourceItems);
 
                     let result = {items: [], relations: []};
@@ -57,20 +84,26 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                         console.warn('Unknown sourceTransform type `'+  definition.sourceTransform.type +'`.');
                     }
 
+                    this.progress(0, 3, 'Adding additional relations...');
+
                     // Add any additional relations defined
                     result = this.processAdditionalRelations(result, definition);
 
+                    this.progress(0, 3, 'Saving data...');
 
-                    // Save them all to DB
-                    Promise.all([
-                        this.saveChunked(result.items, db[definition.id], 0, 100),
-                        this.saveChunked(result.relations, db.relations, 0, 100),
-                    ]).then(result => {
+                    let chunkSize = definition.sourceTransform.saveChunkSize ? definition.sourceTransform.saveChunkSize : 100;
+
+                    // Save everything to DB
+                    this.saveChunked(result.items, db[definition.id], 0, chunkSize).then(() => {
+                        return this.saveChunked(result.relations, db[relationStorage], 0, chunkSize);
+                    }).then(result => {
                         this.finish(result);
                     }).catch(reason => {
                         this.fail(reason.toString())
                     });
                 });
+            }).catch (e => {
+                console.error (e);
             });
         });
     }
@@ -81,10 +114,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         let relations = [];
         sourceItems.forEach(sourceItem => {
             _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
-                items.push({
-                    [definition.sourceTransform.keyName]: key,
-                    [definition.sourceTransform.valueName]: value,
-                });
+                let item = {};
+
+                if (definition.sourceTransform.keyName)
+                    item[definition.sourceTransform.keyName] = key;
+                if (definition.sourceTransform.valueName)
+                    item[definition.sourceTransform.valueName] = value;
+
+                items.push(item);
+
                 relations.push(this.addRelationId({
                     fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                     fromType: definition.id,
@@ -168,12 +206,17 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                             item[definition.sourceTransform.filenamePatternKey] = found[1];
                         }
                     }
+
+                    if (definition.sourceTransform.customFields) {
+                        item = this.getCustomFields(item, definition.sourceTransform.customFields)
+                    }
+
                     items.push(item);
 
                     relations.push(this.addRelationId({
                         fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
                         fromType: definition.id,
-                        fromId: key2,
+                        fromId: item[definition.primaryKey],
                         toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
                         toType: definition.sourceType.id,
                         toId: sourceItem.path,
@@ -182,10 +225,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                         relations.push(this.addRelationId({
                             fromKey: definition.id,
                             fromType: definition.id,
-                            fromId: key2,
-                            toKey: definition.sourceTransform.parentRelationKey,
+                            fromId: item[definition.primaryKey],
+                            toKey: definition.sourceTransform.parentKeyName,
                             toType: definition.sourceTransform.parentRelationType,
-                            toId: key,
+                            toId: item[definition.sourceTransform.parentKeyName],
                         }));
                     }
                 })
@@ -313,5 +356,19 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             });
         }
         return result;
+    }
+
+    getCustomFields(item, fields)
+    {
+        _.forOwn(fields, (fieldDef, fieldName) => {
+            if (fieldDef.type === 'concat') {
+                item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator ? fieldDef.separator : '.');
+            }
+            else {
+                console.warn('Unknown custom config field `'+ fieldDef.type +'`.', fieldDef);
+            }
+        });
+
+        return item;
     }
 }

@@ -114,11 +114,30 @@ class StructureItemView extends Component {
 
         if (typeDefinition) {
             JdxDatabase.get(props.root).then(db => {
-                db.relations.where(['fromType', 'fromId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
-                    this.setState({relationsFrom: _.sortBy(relations, ['toKey', 'toType', 'toId'])});
+                let stores = _.uniq(Eu4Definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
+                stores.push('relations');
+
+
+                let relationsFrom = [];
+                stores.reduce((promise, store) => {
+                    return promise.then(() => {
+                        return db[store].where(['fromType', 'fromId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
+                            relationsFrom = relationsFrom.concat(relations);
+                        });;
+                    });
+                }, Promise.resolve()).then(() => {
+                    this.setState({relationsFrom: _.sortBy(relationsFrom, ['toKey', 'toType', 'toId'])});
                 });
-                db.relations.where(['toType', 'toId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
-                    this.setState({relationsTo: _.sortBy(relations, ['fromKey', 'fromType', 'fromId'])});
+
+                let relationsTo = [];
+                stores.reduce((promise, store) => {
+                    return promise.then(() => {
+                        return db[store].where(['toType', 'toId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
+                            relationsTo = relationsTo.concat(relations);
+                        });
+                    });
+                }, Promise.resolve()).then(() => {
+                    this.setState({relationsTo: _.sortBy(relationsTo, ['fromKey', 'fromType', 'fromId'])});
                 });
             });
         }
@@ -253,18 +272,18 @@ class StructureItemView extends Component {
 
                 {this.state.relationsFrom.length > 0 &&
                     <div>
-                        <h4>References to</h4>
+                        <h4>References to ({this.state.relationsFrom.length})</h4>
                         <ul>
-                            {this.state.relationsFrom.map(r => <li key={r.id}>{r.toKey}: <Link
+                            {this.state.relationsFrom.slice(0, 1000).map(r => <li key={r.id}>{r.toKey}: <Link
                                 to={`/structure/${r.toType}/${r.toId}`}>{r.toId}</Link></li>)}
                         </ul>
                     </div>
                 }
                 {this.state.relationsTo.length > 0 &&
                     <div>
-                        <h4>Referenced in</h4>
+                        <h4>Referenced in ({this.state.relationsTo.length})</h4>
                         <ul>
-                            {this.state.relationsTo.map(r => <li key={r.id}>{r.fromKey}: <Link
+                            {this.state.relationsTo.slice(0, 1000).map(r => <li key={r.id}>{r.fromKey}: <Link
                                 to={`/structure/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>)}
                         </ul>
                     </div>

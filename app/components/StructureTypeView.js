@@ -66,7 +66,10 @@ class StructureTypeView extends Component {
                     typeDefinition: type,
                 },
                 (progress, total, message) => console.log('['+ progress +'/'+ total +'] '+ message),
-                (result) => {resolve(result);},
+                (result) => {
+                    resolve(result);
+                    console.log(result);
+                },
                 (error) => {reject(error);},
             );
         });
@@ -153,8 +156,10 @@ class StructureTypeView extends Component {
 
         let columns = typeDefinition.listView.columns.map(c => {
             if (c.linkTo) {
-                c.renderer = ({value, column}) => {
-                    return <span><Link to={"/structure/"+ column.linkTo.replace('[self]', this.props.match.params.type) +"/"+ value}>{value}</Link></span>
+                c.renderer = ({value, column, row}) => {
+                    let linkToId = column.linkKey ? _.get(row, column.linkKey) : value;
+
+                    return <span><Link to={"/structure/"+ column.linkTo.replace('[self]', this.props.match.params.type) +"/"+ linkToId}>{value}</Link></span>
                 };
             }
             return c;

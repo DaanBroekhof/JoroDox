@@ -9,6 +9,7 @@ import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 import LuaScriptParserTask from "../utils/tasks/LuaScriptParserTask";
 import StructureScannerTask from "../utils/tasks/StructureScannerTask";
 import CsvFileParserTask from "../utils/tasks/CsvFileParserTask";
+import PdxYmlFileParserTask from "../utils/tasks/PdxYmlFileParserTask";
 
 export default class BackgroundApp extends Component {
     constructor(props) {
@@ -36,6 +37,9 @@ export default class BackgroundApp extends Component {
                     break;
                 case CsvFileParserTask.getTaskType():
                     CsvFileParserTask.handle(request);
+                    break;
+                case PdxYmlFileParserTask.getTaskType():
+                    PdxYmlFileParserTask.handle(request);
                     break;
                 case StructureScannerTask.getTaskType():
                     StructureScannerTask.handle(request);

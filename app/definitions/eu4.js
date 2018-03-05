@@ -126,6 +126,27 @@ export default {
             }
         },
         {
+            id: 'pdxyml_files',
+            title: 'PDX YML data files',
+            category: 'Raw data',
+            reader: 'PdxYmlFileParser',
+            primaryKey: 'path',
+            listView: {
+                pageSize: 100,
+                unsetKeys: [
+                    ['data'],
+                ],
+                columns: [
+                    {
+                        name: 'Path',
+                        dataIndex: ['path'],
+                        width: '75%',
+                        linkTo: '[self]',
+                    },
+                ],
+            }
+        },
+        {
             id: 'pdx_meshes',
             title: '3D Models',
             category: 'Graphics',
@@ -3837,6 +3858,84 @@ export default {
                     {
                         name: 'Comment',
                         dataIndex: ['data', 'Comment'],
+                    },
+                ],
+            },
+        },
+        {
+            id: 'localisation_languages',
+            title: 'Localization languages',
+            category: 'Localization',
+            reader: 'StructureLoader',
+            primaryKey: 'name',
+            sourceType: {
+                id: 'pdxyml_files',
+                pathPrefix: 'localisation/',
+                pathPattern: 'localisation/languages.yml',
+            },
+            sourceTransform: {
+                type: 'keyValues',
+                path: ['data'],
+                keyName: 'name',
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                    },
+                ],
+            },
+        },
+        {
+            id: 'localisation',
+            title: 'Localizations',
+            category: 'Localization',
+            reader: 'StructureLoader',
+            primaryKey: 'id',
+            sourceType: {
+                id: 'pdxyml_files',
+                pathPrefix: 'localisation/',
+                pathPattern: 'localisation/*l_french.yml',
+            },
+            sourceTransform: {
+                type: 'keyKeyValues',
+                path: ['data'],
+                keyName: 'name',
+                parentKeyName: 'language',
+                parentRelationType: 'localisation_languages',
+                relationsStorage: 'localisation_relations',
+                valueName: 'data',
+                customFields: {
+                    id: {
+                        type: 'concat',
+                        fields: ['language', 'name'],
+                    },
+                },
+                saveChunkSize: 10000,
+            },
+            listView: {
+                pageSize: 100,
+                columns: [
+                    {
+                        name: 'Name',
+                        dataIndex: 'name',
+                        linkTo: '[self]',
+                        linkKey: 'id',
+                    },
+                    {
+                        name: 'Language',
+                        dataIndex: 'language',
+                    },
+                    {
+                        name: 'Translation',
+                        dataIndex: ['data', 'value'],
+                    },
+                    {
+                        name: 'Comment',
+                        dataIndex: ['data', 'comment'],
                     },
                 ],
             },

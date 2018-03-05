@@ -109,6 +109,15 @@ export default class StructureView extends Component {
         });
     }
 
+    reloadAll() {
+        Eu4Definition.types.filter(x => x.reader === 'StructureLoader').reduce((promise, type) => {
+            return promise.then(() => {
+                console.log('Starting '+ type.id);
+                return JdxDatabase.reloadTypeById(this.props.root, type.id);
+            });
+        }, Promise.resolve());
+    }
+
     render() {
 
         if (!this.loadingCounts) {
@@ -200,6 +209,7 @@ export default class StructureView extends Component {
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
+                    <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadAll()}>Load all</Button><br />
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.watchDirectory()}>Watch directory</Button><br />
 
                 </div>
