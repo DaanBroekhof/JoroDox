@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import {Button, Icon, IconButton, Paper, Tooltip, Typography} from "material-ui";
 import _ from "lodash";
 
-import FileLoaderTask from "../utils/tasks/FileLoaderTask";
 import JdxDatabase from "../utils/JdxDatabase";
 import PdxScriptParserTask from "../utils/tasks/PdxScriptParserTask";
 import PdxDataParserTask from "../utils/tasks/PdxDataParserTask";
@@ -13,6 +12,8 @@ import Eu4Definition from "../definitions/eu4";
 import {Grid} from "react-redux-grid";
 import {Link} from "react-router-dom";
 import WatchDirectoryTask from "../utils/tasks/WatchDirectoryTask";
+
+const syspath = require('electron').remote.require('path');
 
 export default class StructureView extends Component {
 
@@ -202,7 +203,7 @@ export default class StructureView extends Component {
 
         return (
             <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-                <Typography variant="display2" gutterBottom>Data types</Typography>
+                <Typography variant="display2" gutterBottom>{syspath.basename(this.props.root)} - Data types</Typography>
 
                 <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>
                     <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />

@@ -135,7 +135,7 @@ export default class StructureTree extends React.Component {
         this.setState({
             treeData: {
                 id: 'root:0',
-                name: 'Structure',
+                name: syspath.basename(this.props.root),
                 loadOnDemand: true,
                 info: {
                     view: 'types',
@@ -258,7 +258,7 @@ export default class StructureTree extends React.Component {
                 selectable={true}
                 shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
-                        if (node && node.info.type === 'dir') {
+                        if (node && node.info.view === 'category') {
                             this.tree.toggleNode(node, {async: true});
                         }
                         return false; // Prevent from deselecting the current node
@@ -293,7 +293,7 @@ export default class StructureTree extends React.Component {
                 onCloseNode={(node) => {
                 }}
                 onSelectNode={(node) => {
-                    if (node.info.view === 'typekind') {
+                    if (node.info.view === 'category') {
                         this.tree.openNode(node, {async: true});
                     }
                     this.navigateToNode(node, history);

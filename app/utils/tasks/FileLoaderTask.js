@@ -60,6 +60,10 @@ export default class FileLoaderTask extends DbBackgroundTask {
                 searchPattern = searchPattern.replace(new RegExp('^'+ _.escapeRegExp(searchPath)), '');
             }
 
+            if (!localJetpack.exists(searchPath)) {
+                this.finish([]);
+            }
+
             localJetpack.findAsync(searchPath, {
                 matching: searchPattern,
                 recursive: true,
@@ -98,7 +102,9 @@ export default class FileLoaderTask extends DbBackgroundTask {
                 }).catch(reason => {
                     this.fail(reason.toString())
                 });
-            });
+            }).catch(reason => {
+                this.fail(reason.toString())
+            });;
         });
     }
 }
