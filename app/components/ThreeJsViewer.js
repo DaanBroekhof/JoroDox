@@ -21,6 +21,7 @@ export default class ThreeJsViewer extends Component {
             cameraFocusHeight: 0,
             update: null,
             showSkeletons: true,
+            showLocators: true,
             showWireframes: false,
             showColliders: true,
             showMeshes: true,
@@ -133,6 +134,11 @@ export default class ThreeJsViewer extends Component {
                     this.objectScene.skeletons[i].visible = this.state.showSkeletons;
                 }
             }
+            if (this.objectScene.locatorSkeletons) {
+                for (let i = 0; i < this.objectScene.locatorSkeletons.length; i++) {
+                    this.objectScene.locatorSkeletons[i].visible = this.state.showLocators;
+                }
+            }
             if (this.objectScene.wireframes) {
                 for (let i = 0; i < this.objectScene.wireframes.length; i++) {
                     this.objectScene.wireframes[i].visible = this.state.showWireframes;
@@ -167,6 +173,7 @@ export default class ThreeJsViewer extends Component {
             <div>
                 <FormGroup row style={{alignItems: 'center'}}>
                     <FormControlLabel label="Skeletons" control={<Checkbox checked={this.state.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
+                    <FormControlLabel label="Locators" control={<Checkbox checked={this.state.showLocators} onChange={this.toggleValue('showLocators')} />} />
                     <FormControlLabel label="Mesh" control={<Checkbox checked={this.state.showMeshes} onChange={this.toggleValue('showMeshes')} />} />
                     <FormControlLabel label="Wireframes" control={<Checkbox checked={this.state.showWireframes} onChange={this.toggleValue('showWireframes')} />} />
                     <FormControlLabel label="Colliders" control={<Checkbox checked={this.state.showColliders} onChange={this.toggleValue('showColliders')} />} />
@@ -183,6 +190,7 @@ export default class ThreeJsViewer extends Component {
                         Meshes: {this.props.objectScene ? this.props.objectScene.meshCount : '-'}<br />
                         Triangles: {this.props.objectScene ? this.props.objectScene.triangleCount : '-'}<br />
                         Bones: {this.props.objectScene ? this.props.objectScene.boneCount : '-'}<br />
+                        Locators: {this.props.objectScene ? this.props.objectScene.locatorCount : '-'}<br />
                     </div>
                 </div>
             </div>

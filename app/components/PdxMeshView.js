@@ -234,7 +234,7 @@ export default withRouter(class PdxMeshView extends Component {
                     </TableBody>
                 </Table>
                 <div>
-                    <Button raised onClick={this.saveModifiedPdxMesh()}>Save changes</Button>
+                    <Button variant="raised" onClick={this.saveModifiedPdxMesh()}>Save changes</Button>
                 </div>
                 <br />
                 <Typography variant="headline">PDX Mesh Data</Typography>

@@ -10,6 +10,7 @@ export default class PdxMesh {
         let triangleCount = 0;
         let boneCount = 0;
         let skeletons = [];
+        let locatorSkeletons = [];
         let wireframes = [];
         let colliders = [];
         let meshes = [];
@@ -23,6 +24,7 @@ export default class PdxMesh {
         let scene = new THREE.Scene();
 
         // Iterate over 'shapes'
+        let locatorBones = [];
         for(let i = 0; i < pdxData.props['object'].children.length; i++)
         {
             if (pdxData.props['object'].children[i].type !== 'object')
@@ -30,16 +32,12 @@ export default class PdxMesh {
 
             let pdxShape = pdxData.props['object'].children[i];
 
+            // Get all animation bone data
             let bones = [];
             let bonesByName = {};
             if ('skeleton' in pdxShape.props)
             {
                 let skeleton = pdxShape.props['skeleton'];
-
-                let geometry = new THREE.Geometry();
-                let material = new THREE.MeshBasicMaterial();
-                material.wireframe = true;
-                material.color = new THREE.Color(0x00FF00);
 
                 // Iterate over 'bones', load all
                 for(let j = 0; j < skeleton.children.length; j++)
@@ -95,20 +93,60 @@ export default class PdxMesh {
                         console.log('Bone #'+ pdxBone.ix.data +' is not entry #'+ (bones.length-1));
                 }
 
-
-                let skeletonHelper = new THREE.SkeletonHelper(bones[0]);
-                for (let k = 0; k < skeletonHelper.geometry.attributes.color.count; k += 2)
-                {
-                    skeletonHelper.geometry.attributes.color[k] = new THREE.Color( 1, 0, 0 );
-                    skeletonHelper.geometry.attributes.color[k+1] = new THREE.Color( 1, 1, 1 );
-                }
-                scene.add(skeletonHelper);
-                skeletons.push(skeletonHelper);
-
                 scene.bones = bones;
                 scene.bonesByName = bonesByName;
             }
             boneCount += bones.length;
+
+            // Iterate over 'locators' to find any attached to bones
+            for(let i = 0; i < pdxData.props['locator'].children.length; i++) {
+                let locator = pdxData.props['locator'].children[i];
+
+                let parentBone = null;
+
+                if (!locator.props.pa) {
+                   continue;
+                }
+                else if (bonesByName[locator.props.pa]) {
+                    parentBone = bonesByName[locator.props.pa];
+                }
+                else {
+                    console.warn('Unknown locator parent bone `'+ locator.props.pa +'`');
+                    continue;
+                }
+
+                let locatorBone = new THREE.Bone();
+                locatorBone.name = "locator:"+ locator.name;
+                locatorBone.applyQuaternion(new THREE.Quaternion(locator.props.q[0], locator.props.q[1], locator.props.q[2], locator.props.q[3]));
+                locatorBone.position.add(new THREE.Vector3(locator.props.p[0], locator.props.p[1], locator.props.p[2]));
+
+                let indicatorBone = new THREE.Bone();
+                indicatorBone.name = "locator-direction:"+ locator.name;
+                indicatorBone.position.add(new THREE.Vector3(0, 0, -0.5));
+
+                parentBone.add(locatorBone);
+                locatorBone.add(indicatorBone);
+
+                locatorBones.push(locatorBone);
+                locatorBones.push(indicatorBone);
+            }
+
+            // Create skeleton (including any locators attached to them)
+            if (scene.bones) {
+                let skeletonHelper = new THREE.SkeletonHelper(scene.bones[0]);
+                for (let k = 0; k < skeletonHelper.geometry.attributes.color.array.length; k += 6) {
+                    let isLocator = !scene.bones[(k/6)];
+
+                    skeletonHelper.geometry.attributes.color.array[k] = isLocator ? 0 : 1;
+                    skeletonHelper.geometry.attributes.color.array[k + 1] = 0;
+                    skeletonHelper.geometry.attributes.color.array[k + 2] = isLocator ? 1 : 0;
+                    skeletonHelper.geometry.attributes.color.array[k + 3] = 1;
+                    skeletonHelper.geometry.attributes.color.array[k + 4] = 1;
+                    skeletonHelper.geometry.attributes.color.array[k + 5] = 1;
+                }
+                scene.add(skeletonHelper);
+                skeletons.push(skeletonHelper);
+            }
 
             // Iterate over 'objects in shapes'
             for(let j = 0; j < pdxShape.children.length; j++)
@@ -251,6 +289,54 @@ export default class PdxMesh {
             }
         }
 
+
+        // Iterate over 'locators' to find those not attached to bones
+        let rootLocatorBone = null;
+        for(let i = 0; i < pdxData.props['locator'].children.length; i++) {
+            let locator = pdxData.props['locator'].children[i];
+
+            if (locator.props.pa) {
+                continue;
+            }
+            if (!rootLocatorBone) {
+                rootLocatorBone = new THREE.Bone();
+                rootLocatorBone.name = 'locator-root';
+                scene.add(rootLocatorBone);
+                locatorBones.push(rootLocatorBone);
+            }
+
+            let locatorBone = new THREE.Bone();
+            locatorBone.name = "locator:"+ locator.name;
+            locatorBone.applyQuaternion(new THREE.Quaternion(locator.props.q[0], locator.props.q[1], locator.props.q[2], locator.props.q[3]));
+            locatorBone.position.add(new THREE.Vector3(locator.props.p[0], locator.props.p[1], locator.props.p[2]));
+
+            let indicatorBone = new THREE.Bone();
+            indicatorBone.name = "locator-direction:"+ locator.name;
+            indicatorBone.position.add(new THREE.Vector3(0, 0, -0.5));
+
+            rootLocatorBone.add(locatorBone);
+            locatorBone.add(indicatorBone);
+
+            locatorBones.push(locatorBone);
+            locatorBones.push(indicatorBone);
+        }
+
+        // Any locators bound to the root
+        if (rootLocatorBone) {
+            let skeletonHelper = new THREE.SkeletonHelper(rootLocatorBone);
+            for (let k = 0; k < skeletonHelper.geometry.attributes.color.array.length; k += 6) {
+                skeletonHelper.geometry.attributes.color.array[k] = 0;
+                skeletonHelper.geometry.attributes.color.array[k + 1] = 0;
+                skeletonHelper.geometry.attributes.color.array[k + 2] = 1;
+                skeletonHelper.geometry.attributes.color.array[k + 3] = 1;
+                skeletonHelper.geometry.attributes.color.array[k + 4] = 1;
+                skeletonHelper.geometry.attributes.color.array[k + 5] = 1;
+            }
+            scene.add(skeletonHelper);
+            locatorSkeletons.push(skeletonHelper);
+        }
+
+
         return {
             'object': scene,
             'distance': maxExtent,
@@ -264,6 +350,9 @@ export default class PdxMesh {
             'colliders': colliders,
             'skeletons': skeletons,
             'wireframes': wireframes,
+            'locatorCount': pdxData.props['locator'].children.length,
+            'locatorBones': locatorBones,
+            'locatorSkeletons': locatorSkeletons,
         };
     }
 

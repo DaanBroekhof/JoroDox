@@ -102,7 +102,7 @@ export default withRouter(class ColladaView extends Component {
                         <TableCell>{animation.fps}</TableCell>
                         <TableCell>{animation.tracks.length}</TableCell>
                         <TableCell>{animation.duration}</TableCell>
-                        <TableCell><Button raised onClick={this.convertToPdxAnimation(animation)}>Convert to .anim</Button></TableCell>
+                        <TableCell><Button variant="raised" onClick={this.convertToPdxAnimation(animation)}>Convert to .anim</Button></TableCell>
                     </TableRow>
                 );
             }
