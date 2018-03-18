@@ -1,178 +1,177 @@
 // @flow
 import React, { Component } from 'react';
+
 const jetpack = require('electron').remote.require('fs-jetpack');
+
 import InfiniteTree from 'react-infinite-tree';
 import classNames from 'classnames';
 import PdxData from '../utils/PdxData';
 
 export default class PdxDataView extends Component {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            fileTreeData: this.addTreeIds(props.data ? props.data : this.parseFile(props.file.path)),
-        };
-    }
+    this.state = {
+      fileTreeData: this.addTreeIds(props.data ? props.data : this.parseFile(props.file.path)),
+    };
+  }
 
     static defaultProps = {
-        style: {},
+      style: {},
     };
 
     shouldComponentUpdate(nextProps, nextState) {
-        return (nextProps.file && nextProps.file.path !== this.props.file.path);
+      return (nextProps.file && nextProps.file.path !== this.props.file.path);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.data !== this.props.data) {
-            this.setState({
-                fileTreeData: this.addTreeIds(nextProps.data),
-            });
-        }
-        else if (nextProps.file && nextProps.file.path !== this.props.file.path) {
-            this.setState({
-                fileTreeData: this.addTreeIds(this.parseFile(nextProps.file.path)),
-            });
-        }
+      if (nextProps.data !== this.props.data) {
+        this.setState({
+          fileTreeData: this.addTreeIds(nextProps.data),
+        });
+      } else if (nextProps.file && nextProps.file.path !== this.props.file.path) {
+        this.setState({
+          fileTreeData: this.addTreeIds(this.parseFile(nextProps.file.path)),
+        });
+      }
     }
 
     parseFile(path) {
-        let parser = new PdxData();
-        let data = parser.readFromBuffer(new Uint8Array(jetpack.read(path, 'buffer')).buffer);
-        return data;
+      const parser = new PdxData();
+      const data = parser.readFromBuffer(new Uint8Array(jetpack.read(path, 'buffer')).buffer);
+      return data;
     }
 
     addTreeIds(data) {
-        let id = 1;
-        let addIdsToTree = function (node) {
-            node.id = id;
-            id++;
-            if (node.children) {
-                for (let child of node.children) {
-                    addIdsToTree(child);
-                }
-            }
-            return node
-        };
-        data = addIdsToTree(data);
+      let id = 1;
+      const addIdsToTree = function (node) {
+        node.id = id;
+        id++;
+        if (node.children) {
+          for (const child of node.children) {
+            addIdsToTree(child);
+          }
+        }
+        return node;
+      };
+      data = addIdsToTree(data);
 
-        return data;
+      return data;
     }
 
 
     componentDidMount() {
-        this.tree.clear();
-        this.tree.loadData(this.state.fileTreeData);
-        if (this.tree.getChildNodes())
-            this.tree.selectNode(this.tree.getChildNodes()[0]);
+      this.tree.clear();
+      this.tree.loadData(this.state.fileTreeData);
+      if (this.tree.getChildNodes()) { this.tree.selectNode(this.tree.getChildNodes()[0]); }
     }
 
     componentDidUpdate() {
-        this.tree.clear();
-        this.tree.loadData(this.state.fileTreeData);
-        if (this.tree.getChildNodes())
-            this.tree.selectNode(this.tree.getChildNodes()[0]);
+      this.tree.clear();
+      this.tree.loadData(this.state.fileTreeData);
+      if (this.tree.getChildNodes()) { this.tree.selectNode(this.tree.getChildNodes()[0]); }
     }
 
     render() {
-        return (
-            <InfiniteTree
-                ref={(c) => this.tree = c ? c.tree : null}
-                style={{display: 'flex', flex: 1, border : '1px solid #eee', ...this.props.style}}
-                autoOpen={false}
-                loadNodes={(parentNode, done) => {
+      return (
+        <InfiniteTree
+          ref={(c) => this.tree = c ? c.tree : null}
+          style={{
+display: 'flex', flex: 1, border: '1px solid #eee', ...this.props.style
+}}
+          autoOpen={false}
+          loadNodes={(parentNode, done) => {
                 }}
-                rowRenderer={(node, treeOptions) => {
-                    const { id, name, loadOnDemand = false, children, state, props = {} } = node;
+          rowRenderer={(node, treeOptions) => {
+                    const {
+ id, name, loadOnDemand = false, children, state, props = {}
+} = node;
                     const droppable = treeOptions.droppable;
-                    const { depth, open, path, total, selected = false } = state;
+                    const {
+ depth, open, path, total, selected = false
+} = state;
                     const more = node.children && node.hasChildren();
 
                     return (
-                        <div
-                            className={classNames(
+                      <div
+                        className={classNames(
                                 'infinite-tree-item',
                                 { 'infinite-tree-selected': selected }
                             )}
-                            data-id={id}
+                        data-id={id}
+                      >
+                        <div
+                          className="infinite-tree-node pdx-script-node"
+                          style={{ paddingLeft: depth * 18 }}
                         >
-                            <div
-                                className="infinite-tree-node pdx-script-node"
-                                style={{ paddingLeft: depth * 18 }}
-                            >
-                                {!more && loadOnDemand &&
-                                <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
+                          {!more && loadOnDemand &&
+                            <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
                                 }
-                                {more && open &&
-                                <a className={classNames(treeOptions.togglerClass)}>❯</a>
+                          {more && open &&
+                            <a className={classNames(treeOptions.togglerClass)}>❯</a>
                                 }
-                                {more && !open &&
-                                <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
+                          {more && !open &&
+                            <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
                                 }
-                                {!more && !loadOnDemand &&
-                                <span className={classNames(treeOptions.togglerClass)}> </span>
+                          {!more && !loadOnDemand &&
+                            <span className={classNames(treeOptions.togglerClass)} />
                                 }
-                                <span className={classNames(["infinite-tree-type", more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? '🖿' : '🗎'}</span>
-                                <span className="infinite-tree-title">{name}</span>
-                            </div>
-                            <div className="pdx-data-type">{node.type} ({Array.isArray(node.value) ? node.value.length : (node.value ? '1' : node.children.length)})</div>
-                            <div className="pdx-data-value">{Array.isArray(node.value) ? '[' + node.value.slice(0, 50).join(', ') + (node.value.length > 50 ? ' ...'+ (node.value.length - 50) + ' more...' : '') + ']' : node.value}</div>
+                          <span className={classNames(['infinite-tree-type', more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? '🖿' : '🗎'}</span>
+                          <span className="infinite-tree-title">{name}</span>
                         </div>
+                        <div className="pdx-data-type">{node.type} ({Array.isArray(node.value) ? node.value.length : (node.value ? '1' : node.children.length)})</div>
+                        <div className="pdx-data-value">{Array.isArray(node.value) ? `[${node.value.slice(0, 50).join(', ')}${node.value.length > 50 ? ` ...${node.value.length - 50} more...` : ''}]` : node.value}</div>
+                      </div>
                     );
                 }}
-                selectable={true}
-                shouldSelectNode={(node) => {
+          selectable
+          shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
                         if (node && node.hasChildren()) {
-                            this.tree.toggleNode(node, {async: true});
+                            this.tree.toggleNode(node, { async: true });
                         }
                         return false; // Prevent from deselecting the current node
                     }
                     return true;
                 }}
-                onClick={(event) => {
+          onClick={(event) => {
                     // click event
                     const target = event.target || event.srcElement; // IE8
-                    //history.push('/fileview/')
-
+                    // history.push('/fileview/')
                 }}
-                onDoubleClick={(event) => {
+          onDoubleClick={(event) => {
                     function openAllChildren(node, tree, doClose = false) {
-                        if (!doClose)
-                            tree.openNode(node);
-                        else
-                            tree.closeNode(node);
+                        if (!doClose) { tree.openNode(node); } else { tree.closeNode(node); }
                         if (node.hasChildren()) {
-                            for (let c of node.children) {
+                            for (const c of node.children) {
                                 openAllChildren(c, tree, doClose);
                             }
                         }
                     }
-                    if (this.tree.getSelectedNode())
-                        setTimeout(() => { openAllChildren(this.tree.getSelectedNode(), this.tree); }, 0);
+                    if (this.tree.getSelectedNode()) { setTimeout(() => { openAllChildren(this.tree.getSelectedNode(), this.tree); }, 0); }
                 }}
-                onKeyDown={(event) => {
+          onKeyDown={(event) => {
                     // keydown event
                 }}
-                onKeyUp={(event) => {
+          onKeyUp={(event) => {
                     // keyup event
                 }}
-                onOpenNode={(node) => {
+          onOpenNode={(node) => {
                 }}
-                onCloseNode={(node) => {
+          onCloseNode={(node) => {
                 }}
-                onSelectNode={(node) => {
-                    this.tree.toggleNode(node, {async: true});
+          onSelectNode={(node) => {
+                    this.tree.toggleNode(node, { async: true });
                 }}
-                onClusterWillChange={() => {
+          onClusterWillChange={() => {
                 }}
-                onClusterDidChange={() => {
+          onClusterDidChange={() => {
                 }}
-                onContentWillUpdate={() => {
+          onContentWillUpdate={() => {
                 }}
-                onContentDidUpdate={() => {
+          onContentDidUpdate={() => {
                 }}
-            />
-        );
+        />
+      );
     }
 }

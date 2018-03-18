@@ -48,6 +48,6 @@ export default {
   ],
 
   node: {
-      __dirname: false,
+    __dirname: false,
   },
 };

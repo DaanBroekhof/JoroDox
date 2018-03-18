@@ -195,8 +195,8 @@ export default merge.smart(baseConfig, {
       },
       // Support for web worker scripts
       {
-          test: /\.worker\.js$/,
-          use: { loader: 'worker-loader' }
+        test: /\.worker\.js$/,
+        use: { loader: 'worker-loader' }
       }
     ]
   },

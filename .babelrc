@@ -1,7 +1,10 @@
 {
   "presets": [
     ["env", {
-      "targets": { "node": 7 },
+      "targets": {
+        "node": 8,
+        "chrome": 59
+      },
       "useBuiltIns": true
     }],
     "stage-0",

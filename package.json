@@ -30,7 +30,7 @@
     "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
     "test-watch": "npm test -- --watch"
   },
-  "browserslist": "electron 1.6",
+  "browserslist": "electron 1.7",
   "build": {
     "productName": "Jorodox",
     "appId": "com.haaibaar.Jorodox",

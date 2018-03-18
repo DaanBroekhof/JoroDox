@@ -13,14 +13,14 @@ type Props = {
 };
 
 export default class Root extends Component<Props> {
-    render() {
-        let isBackgroundWindow = window.location.pathname.endsWith('background.html');
-        return (
-            <Provider store={this.props.store}>
-              <ConnectedRouter history={this.props.history}>
-                  <Route name="home" breadcrumbName="Home" component={isBackgroundWindow ? BackgroundApp : App} />
-              </ConnectedRouter>
-            </Provider>
-        );
-    }
+  render() {
+    const isBackgroundWindow = window.location.pathname.endsWith('background.html');
+    return (
+      <Provider store={this.props.store}>
+        <ConnectedRouter history={this.props.history}>
+          <Route name="home" breadcrumbName="Home" component={isBackgroundWindow ? BackgroundApp : App} />
+        </ConnectedRouter>
+      </Provider>
+    );
+  }
 }
