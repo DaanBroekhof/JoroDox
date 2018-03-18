@@ -1,5 +1,5 @@
 // @flow
-import type { counterStateType } from '../reducers/counter';
+import type {counterStateType} from '../reducers/counter';
 
 type actionType = {
   +type: string
@@ -22,7 +22,7 @@ export function decrement() {
 
 export function incrementIfOdd() {
   return (dispatch: (action: actionType) => void, getState: () => counterStateType) => {
-    const { counter } = getState();
+    const {counter} = getState();
 
     if (counter % 2 === 0) {
       return;

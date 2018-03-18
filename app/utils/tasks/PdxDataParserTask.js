@@ -36,7 +36,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
           if (datafiles.length % 50 === 0) { this.progress(datafiles.length, filesList.size(), `Parsing ${filesList.size()} PDX binary data objects...`); }
 
-          datafiles.push({ path: filePath, data });
+          datafiles.push({path: filePath, data});
           relations.push(this.addRelationId({
             fromKey: 'pdxData', fromType: 'pdxData', fromId: filePath, toKey: 'file', toType: 'files', toId: filePath
           }));
@@ -58,6 +58,6 @@ export default class PdxDataParserTask extends DbBackgroundTask {
     const parser = new PdxData();
     const data = parser.readFromBuffer(new Uint8Array(jetpack.read(root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep), 'buffer')).buffer);
 
-    return { path, data };
+    return {path, data};
   }
 }

@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 
@@ -45,7 +45,7 @@ export default class PdxScriptView extends Component {
     return (
       <InfiniteTree
         ref={(c) => this.tree = c ? c.tree : null}
-        style={{ display: 'flex', flex: 1, border: '1px solid #eee' }}
+        style={{display: 'flex', flex: 1, border: '1px solid #eee'}}
         autoOpen={false}
         loadNodes={(parentNode, done) => {
                 }}
@@ -68,13 +68,13 @@ export default class PdxScriptView extends Component {
                       <div
                         className={classNames(
                                 'infinite-tree-item',
-                                { 'infinite-tree-selected': selected }
+                                {'infinite-tree-selected': selected}
                             )}
                         data-id={id}
                       >
                         <div
                           className="infinite-tree-node pdx-script-node"
-                          style={{ paddingLeft: (depth - 1) * 18 }}
+                          style={{paddingLeft: (depth - 1) * 18}}
                         >
                           {!more && loadOnDemand &&
                             <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
@@ -100,7 +100,7 @@ export default class PdxScriptView extends Component {
         shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
                         if (node && node.hasChildren()) {
-                            this.tree.toggleNode(node, { async: true });
+                            this.tree.toggleNode(node, {async: true});
                         }
                         return false; // Prevent from deselecting the current node
                     }
@@ -133,7 +133,7 @@ export default class PdxScriptView extends Component {
         onCloseNode={(node) => {
                 }}
         onSelectNode={(node) => {
-                    this.tree.toggleNode(node, { async: true });
+                    this.tree.toggleNode(node, {async: true});
                 }}
         onClusterWillChange={() => {
                 }}

@@ -51,7 +51,7 @@ export default class ColladaData {
     // 'internal' function
     const getVertexNrForUniqueData = function (vertNr, uv, normal, vertexToUniqueData, verts, skinIds, skinWeights) {
       if (!vertexToUniqueData[vertNr]) {
-        vertexToUniqueData[vertNr] = [{ uv, normal, v: vertNr }];
+        vertexToUniqueData[vertNr] = [{uv, normal, v: vertNr}];
         return vertNr;
       }
 
@@ -91,7 +91,7 @@ export default class ColladaData {
 
       const newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
 
-      vertexToUniqueData[vertNr].push({ uv, normal, v: newVert });
+      vertexToUniqueData[vertNr].push({uv, normal, v: newVert});
 
       return newVert;
     };
@@ -111,9 +111,9 @@ export default class ColladaData {
         isCollider: viewObject.colliders.indexOf(subObject) !== -1,
         material: {
           name: `${objectName}-material-${colladaData.materials.length}`,
-          diff: subObject.material.map && subObject.material.map.fileName ? { name: `${objectName}-effect-${colladaData.materials.length}-diff`, fileName: subObject.material.map.fileName } : null,
-          normal: subObject.material.normalMap && subObject.material.normalMap.fileName ? { name: `${objectName}-effect-${colladaData.materials.length}-normal`, fileName: subObject.material.normalMap.fileName } : null,
-          spec: subObject.material.specularMap && subObject.material.specularMap.fileName ? { name: `${objectName}-effect-${colladaData.materials.length}-spec`, fileName: subObject.material.specularMap.fileName } : null,
+          diff: subObject.material.map && subObject.material.map.fileName ? {name: `${objectName}-effect-${colladaData.materials.length}-diff`, fileName: subObject.material.map.fileName} : null,
+          normal: subObject.material.normalMap && subObject.material.normalMap.fileName ? {name: `${objectName}-effect-${colladaData.materials.length}-normal`, fileName: subObject.material.normalMap.fileName} : null,
+          spec: subObject.material.specularMap && subObject.material.specularMap.fileName ? {name: `${objectName}-effect-${colladaData.materials.length}-spec`, fileName: subObject.material.specularMap.fileName} : null,
         }
       };
       childNode.material.node = childNode;

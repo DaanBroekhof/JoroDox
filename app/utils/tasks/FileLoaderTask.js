@@ -80,7 +80,7 @@ export default class FileLoaderTask extends DbBackgroundTask {
           if (nr % 1000 === 0) { this.progress(nr, filesList.size(), `Adding ${filesList.size()} file meta data items...`); }
 
           // TODO: Make this async as well!
-          const info = localJetpack.inspect(file, { times: true });
+          const info = localJetpack.inspect(file, {times: true});
 
           return {
             path: file.replace(new RegExp(`\\${syspath.sep}`, 'g'), '/'),

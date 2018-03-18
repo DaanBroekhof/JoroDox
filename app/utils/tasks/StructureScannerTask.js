@@ -65,7 +65,7 @@ class SchemaTrainerProperty {
 
   train(object) {
     const type = getSchemaType(object);
-    const { options } = this;
+    const {options} = this;
 
     this.types[type] = true;
 
@@ -130,7 +130,7 @@ class SchemaTrainerProperty {
   }
 
   toJS() {
-    const { options } = this;
+    const {options} = this;
 
     const schema = {};
     let type = null;
@@ -226,7 +226,7 @@ class SchemaTrainer extends SchemaTrainerProperty {
   }
 
   toJS() {
-    return _.extend({ $schema }, super.toJS());
+    return _.extend({$schema}, super.toJS());
   }
 }
 

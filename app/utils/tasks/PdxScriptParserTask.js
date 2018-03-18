@@ -41,7 +41,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
 
           if (scripts.length % 500 === 0) { this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} PDX scripts...`); }
 
-          scripts.push({ path: file.path, data });
+          scripts.push({path: file.path, data});
           relations.push(this.addRelationId({
             fromKey: 'pdx_script',
             fromType: 'pdx_scripts',

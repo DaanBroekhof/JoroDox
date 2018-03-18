@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Paper, Typography } from 'material-ui';
+import React, {Component} from 'react';
+import {Paper, Typography} from 'material-ui';
 
 export default class AboutPage extends Component {
   render() {

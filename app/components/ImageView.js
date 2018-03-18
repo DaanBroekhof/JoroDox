@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 const nativeImage = require('electron').nativeImage;
@@ -16,7 +16,7 @@ export default class ImageView extends Component {
   }
 
   getBmpInfo(path) {
-    const stream = jetpack.createReadStream(this.props.file.path, { end: 100 });
+    const stream = jetpack.createReadStream(this.props.file.path, {end: 100});
     stream.on('readable', () => {
       const buf = stream.read(100);
       if (!buf) {
@@ -65,7 +65,7 @@ export default class ImageView extends Component {
     if (!imgInfo && this.state.imgInfo) { imgInfo = this.state.imgInfo; }
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         {imgInfo && <p>Dimensions: {imgInfo.width}x{imgInfo.height}</p>}
 
         <div style={{

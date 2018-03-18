@@ -59,7 +59,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
           const sourceItems = _(rawSourceItems);
 
-          let result = { items: [], relations: [] };
+          let result = {items: [], relations: []};
 
           if (definition.sourceTransform.type === 'keyValues') {
             result = this.sourceTransformByKeyValues(sourceItems, definition);
@@ -119,7 +119,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         }));
       });
     });
-    return { items, relations };
+    return {items, relations};
   }
 
   sourceTransformByStringValues(sourceItems, definition) {
@@ -158,7 +158,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         }));
       });
     });
-    return { items, relations };
+    return {items, relations};
   }
 
 
@@ -211,7 +211,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       });
     });
 
-    return { items, relations };
+    return {items, relations};
   }
 
   sourceTransformByTypesList(sourceItems, definition) {
@@ -253,7 +253,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       });
     });
 
-    return { items, relations };
+    return {items, relations};
   }
 
   sourceTransformByFileData(sourceItems, definition) {
@@ -282,7 +282,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       }));
     });
 
-    return { items, relations };
+    return {items, relations};
   }
 
   processAdditionalRelations(result, definition) {

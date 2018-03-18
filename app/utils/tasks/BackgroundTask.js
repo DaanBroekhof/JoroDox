@@ -66,11 +66,11 @@ export default class BackgroundTask {
     }
 
     sendRequest(type, data) {
-      ipc.send('background-request', { taskId: this.taskId, type, data });
+      ipc.send('background-request', {taskId: this.taskId, type, data});
     }
 
     sendResponse(data) {
-      (this.from ? this.from : ipc).send('background-response', { taskId: this.taskId, type: 'response', data });
+      (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'response', data});
     }
 
     progress(progress, total, message) {
@@ -80,12 +80,12 @@ export default class BackgroundTask {
     }
 
     finish(result) {
-      (this.from ? this.from : ipc).send('background-response', { taskId: this.taskId, type: 'finished', result });
+      (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'finished', result});
       this.constructor.taskMap[this.constructor.getTaskType()][this.taskId] = null;
     }
 
     fail(error) {
-      (this.from ? this.from : ipc).send('background-response', { taskId: this.taskId, type: 'failed', error });
+      (this.from ? this.from : ipc).send('background-response', {taskId: this.taskId, type: 'failed', error});
       this.constructor.taskMap[this.constructor.getTaskType()][this.taskId] = null;
     }
 }

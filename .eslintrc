@@ -29,6 +29,9 @@
     "promise/always-return": "error",
     "promise/catch-or-return": "error",
     "promise/no-native": "off",
+    "object-curly-newline": ["error", {
+      "consistent": true
+    }],
     "object-curly-spacing": ["error", "never"],
     "react/sort-comp": ["error", {
       "order": ["type-annotations", "static-methods", "lifecycle", "everything-else", "render"]

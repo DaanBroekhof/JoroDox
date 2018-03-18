@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 const path = require('electron').remote.require('path');
@@ -16,7 +16,7 @@ import {
 import DeleteIcon from 'material-ui-icons/Delete';
 import ColladaData from '../utils/ColladaData';
 import ThreeJsViewer from './ThreeJsViewer';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 
 export default withRouter(class PdxMeshView extends Component {
     pdxShaders = [
@@ -153,7 +153,7 @@ export default withRouter(class PdxMeshView extends Component {
     setMeshProperty(mesh, propName, value) {
       mesh.props.material.props[propName] = value;
 
-      this.setState({ editFileTreeData: this.state.editFileTreeData });
+      this.setState({editFileTreeData: this.state.editFileTreeData});
     }
 
     setAnimation(animationFile) {
@@ -179,20 +179,20 @@ export default withRouter(class PdxMeshView extends Component {
 
           meshConfig.push(<TableRow key={key + (nr++)}>
             <TableCell>{meshObject.name}{meshObject.children.length > 1 ? `.${nr}` : ''}</TableCell>
-            <TableCell style={{ maxWidth: 300 }}>
+            <TableCell style={{maxWidth: 300}}>
               <Select value={meshObjectPart.props.material.props.shader} onChange={(event) => this.setMeshProperty(meshObjectPart, 'shader', event.target.value)} native>
                 <option value={null}>Custom</option>
                 {this.pdxShaders.map((shader) => <option key={shader} value={shader}>{shader}</option>)}
               </Select><br />
-              <TextField value={meshObjectPart.props.material.props.shader} style={{ display: this.pdxShaders.includes(meshObjectPart.props.material.props.shader) ? 'none' : 'inherit' }} onChange={(event) => this.setMeshProperty(meshObjectPart, 'shader', event.target.value)} />
+              <TextField value={meshObjectPart.props.material.props.shader} style={{display: this.pdxShaders.includes(meshObjectPart.props.material.props.shader) ? 'none' : 'inherit'}} onChange={(event) => this.setMeshProperty(meshObjectPart, 'shader', event.target.value)} />
               <p>{this.pdxShaderDescriptions[meshObjectPart.props.material.props.shader]}</p>
             </TableCell>
-            <TableCell style={{ minWidth: 300 }}>
-              <span style={{ display: 'inline-block', width: 100 }}>Diffuse:</span>
+            <TableCell style={{minWidth: 300}}>
+              <span style={{display: 'inline-block', width: 100}}>Diffuse:</span>
               <Select value={meshObjectPart.props.material.props.diff} onChange={(event) => this.setMeshProperty(meshObjectPart, 'diff', event.target.value)} native><option key={null} value="nodiffuse.dds">- none -</option> {textureFilesOptions}</Select><br />
-              <span style={{ display: 'inline-block', width: 100 }}>Normal:</span>
+              <span style={{display: 'inline-block', width: 100}}>Normal:</span>
               <Select value={meshObjectPart.props.material.props.n} onChange={(event) => this.setMeshProperty(meshObjectPart, 'n', event.target.value)} native><option key={null} value="nonormal.dds">- none -</option>{textureFilesOptions}</Select><br />
-              <span style={{ display: 'inline-block', width: 100 }}>Specular:</span>
+              <span style={{display: 'inline-block', width: 100}}>Specular:</span>
               <Select value={meshObjectPart.props.material.props.spec} onChange={(event) => this.setMeshProperty(meshObjectPart, 'spec', event.target.value)} native><option key={null} value="nospec.dds">- none -</option>{textureFilesOptions}</Select><br />
             </TableCell>
                           </TableRow>);
@@ -233,7 +233,7 @@ export default withRouter(class PdxMeshView extends Component {
           </div>
           <br />
           <Typography variant="headline">PDX Mesh Data</Typography>
-          <PdxDataView data={this.state.fileTreeData} file={this.props.file} style={{ maxHeight: 800 }} />
+          <PdxDataView data={this.state.fileTreeData} file={this.props.file} style={{maxHeight: 800}} />
         </div>
       );
     }

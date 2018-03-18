@@ -37,7 +37,7 @@ class MenuBuilder {
   setupDevelopmentEnvironment() {
     this.mainWindow.openDevTools();
     this.mainWindow.webContents.on('context-menu', (e, props) => {
-      const { x, y } = props;
+      const {x, y} = props;
 
       Menu
         .buildFromTemplate([{
@@ -54,14 +54,14 @@ class MenuBuilder {
     const subMenuAbout = {
       label: 'Electron',
       submenu: [
-        { label: 'About ElectronReact', selector: 'orderFrontStandardAboutPanel:' },
-        { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
-        { label: 'Hide ElectronReact', accelerator: 'Command+H', selector: 'hide:' },
-        { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
-        { label: 'Show All', selector: 'unhideAllApplications:' },
-        { type: 'separator' },
+        {label: 'About ElectronReact', selector: 'orderFrontStandardAboutPanel:'},
+        {type: 'separator'},
+        {label: 'Services', submenu: []},
+        {type: 'separator'},
+        {label: 'Hide ElectronReact', accelerator: 'Command+H', selector: 'hide:'},
+        {label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:'},
+        {label: 'Show All', selector: 'unhideAllApplications:'},
+        {type: 'separator'},
         {
           label: 'Quit',
           accelerator: 'Command+Q',
@@ -74,13 +74,13 @@ class MenuBuilder {
     const subMenuEdit = {
       label: 'Edit',
       submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-        { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-        { label: 'Select All', accelerator: 'Command+A', selector: 'selectAll:' }
+        {label: 'Undo', accelerator: 'Command+Z', selector: 'undo:'},
+        {label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:'},
+        {type: 'separator'},
+        {label: 'Cut', accelerator: 'Command+X', selector: 'cut:'},
+        {label: 'Copy', accelerator: 'Command+C', selector: 'copy:'},
+        {label: 'Paste', accelerator: 'Command+V', selector: 'paste:'},
+        {label: 'Select All', accelerator: 'Command+A', selector: 'selectAll:'}
       ]
     };
     const subMenuViewDev = {
@@ -124,10 +124,10 @@ class MenuBuilder {
     const subMenuWindow = {
       label: 'Window',
       submenu: [
-        { label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:' },
-        { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-        { type: 'separator' },
-        { label: 'Bring All to Front', selector: 'arrangeInFront:' }
+        {label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:'},
+        {label: 'Close', accelerator: 'Command+W', selector: 'performClose:'},
+        {type: 'separator'},
+        {label: 'Bring All to Front', selector: 'arrangeInFront:'}
       ]
     };
     const subMenuHelp = {

@@ -22,13 +22,13 @@ export default class WatchDirectoryTask extends BackgroundTask {
   }
 
   execute(args) {
-    this.watcher = fs.watch(args.rootDir, { recursive: true }, (eventType, filename) => {
+    this.watcher = fs.watch(args.rootDir, {recursive: true}, (eventType, filename) => {
       if (!filename) {
         return;
       }
 
       if (eventType === 'rename' || eventType === 'change') {
-        this.sendResponse({ eventType, filename });
+        this.sendResponse({eventType, filename});
       }
     });
   }

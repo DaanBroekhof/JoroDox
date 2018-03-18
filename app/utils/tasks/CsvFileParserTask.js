@@ -41,7 +41,7 @@ export default class CsvFileParserTask extends DbBackgroundTask {
 
           if (csvResults.length % 500 === 0) { this.progress(csvResults.length, filesList.size(), `Parsing ${filesList.size()} CSV files...`); }
 
-          csvResults.push({ path: file.path, data: csvData });
+          csvResults.push({path: file.path, data: csvData});
           relations.push(this.addRelationId({
             fromKey: 'csv_files',
             fromType: 'csv_files',

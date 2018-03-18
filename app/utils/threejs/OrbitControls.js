@@ -75,7 +75,7 @@ module.exports = function (THREE) {
     };
 
     // Mouse buttons
-    this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
+    this.mouseButtons = {ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT};
 
     // for reset
     this.target0 = this.target.clone();
@@ -215,9 +215,9 @@ module.exports = function (THREE) {
 
     var scope = this;
 
-    var changeEvent = { type: 'change' };
-    const startEvent = { type: 'start' };
-    const endEvent = { type: 'end' };
+    var changeEvent = {type: 'change'};
+    const startEvent = {type: 'start'};
+    const endEvent = {type: 'end'};
 
     var STATE = {
       NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5

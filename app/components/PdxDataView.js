@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 
@@ -96,13 +96,13 @@ display: 'flex', flex: 1, border: '1px solid #eee', ...this.props.style
                       <div
                         className={classNames(
                                 'infinite-tree-item',
-                                { 'infinite-tree-selected': selected }
+                                {'infinite-tree-selected': selected}
                             )}
                         data-id={id}
                       >
                         <div
                           className="infinite-tree-node pdx-script-node"
-                          style={{ paddingLeft: depth * 18 }}
+                          style={{paddingLeft: depth * 18}}
                         >
                           {!more && loadOnDemand &&
                             <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
@@ -128,7 +128,7 @@ display: 'flex', flex: 1, border: '1px solid #eee', ...this.props.style
           shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
                         if (node && node.hasChildren()) {
-                            this.tree.toggleNode(node, { async: true });
+                            this.tree.toggleNode(node, {async: true});
                         }
                         return false; // Prevent from deselecting the current node
                     }
@@ -161,7 +161,7 @@ display: 'flex', flex: 1, border: '1px solid #eee', ...this.props.style
           onCloseNode={(node) => {
                 }}
           onSelectNode={(node) => {
-                    this.tree.toggleNode(node, { async: true });
+                    this.tree.toggleNode(node, {async: true});
                 }}
           onClusterWillChange={() => {
                 }}

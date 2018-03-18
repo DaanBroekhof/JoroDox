@@ -37,13 +37,13 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
         const scripts = [];
         const relations = [];
         filesList.each(file => {
-          const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), { locations: true });
+          const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
 
           const data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
 
           if (scripts.length % 500 === 0) { this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`); }
 
-          scripts.push({ path: file.path, data });
+          scripts.push({path: file.path, data});
           relations.push(this.addRelationId({
             fromKey: 'lua_script',
             fromType: 'lua_scripts',

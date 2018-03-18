@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { DDSLoader } from 'three-addons';
+import {DDSLoader} from 'three-addons';
 import ThreeJS from './ThreeJS';
 import ComputeTangents from './threejs/ComputeTangents';
 
@@ -543,14 +543,14 @@ export default class PdxMesh {
       };
     }
 
-    const pdxDataRoot = { name: 'pdxData', type: 'object', children: [] };
-    pdxDataRoot.children.push({ name: 'pdxasset', type: 'int', data: [1, 0] });
+    const pdxDataRoot = {name: 'pdxData', type: 'object', children: []};
+    pdxDataRoot.children.push({name: 'pdxasset', type: 'int', data: [1, 0]});
 
-    const objectsRoot = { name: 'object', type: 'object', children: [] };
+    const objectsRoot = {name: 'object', type: 'object', children: []};
     pdxDataRoot.children.push(objectsRoot);
-    pdxDataRoot.children.push({ name: 'locator', type: 'object', children: [] });
+    pdxDataRoot.children.push({name: 'locator', type: 'object', children: []});
 
-    const shapeRoot = { name: 'jorodoxShape', type: 'object', children: [] };
+    const shapeRoot = {name: 'jorodoxShape', type: 'object', children: []};
     objectsRoot.children.push(shapeRoot);
 
     // Get bones
@@ -585,8 +585,8 @@ export default class PdxMesh {
           name: boneList[i].name,
           type: 'object',
           children: [
-            { name: 'ix', type: 'int', data: [i] },
-            { name: 'pa', type: 'int', data: [boneList[i].parent.boneNr] },
+            {name: 'ix', type: 'int', data: [i]},
+            {name: 'pa', type: 'int', data: [boneList[i].parent.boneNr]},
             {
               name: 'tx',
               type: 'float',
@@ -701,18 +701,18 @@ export default class PdxMesh {
           textureFiles.normal = path.basename(subObject.material.normalMap.filePath);
         }
 
-        const mesh = { name: 'mesh', type: 'object', children: [] };
-        mesh.children.push({ name: 'p', type: 'float', data: indexedPositions });
-        mesh.children.push({ name: 'n', type: 'float', data: indexedNormals });
-        mesh.children.push({ name: 'ta', type: 'float', data: indexedTangents });
-        for (let i = 0; i < indexedUVs.length; i++) { mesh.children.push({ name: `u${i}`, type: 'float', data: indexedUVs[i] }); }
-        mesh.children.push({ name: 'tri', type: 'int', data: vertexIndex });
+        const mesh = {name: 'mesh', type: 'object', children: []};
+        mesh.children.push({name: 'p', type: 'float', data: indexedPositions});
+        mesh.children.push({name: 'n', type: 'float', data: indexedNormals});
+        mesh.children.push({name: 'ta', type: 'float', data: indexedTangents});
+        for (let i = 0; i < indexedUVs.length; i++) { mesh.children.push({name: `u${i}`, type: 'float', data: indexedUVs[i]}); }
+        mesh.children.push({name: 'tri', type: 'int', data: vertexIndex});
         mesh.children.push({
           name: 'aabb',
           type: 'object',
           children: [
-            { name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z] },
-            { name: 'max', type: 'float', data: [bb.max.x, bb.max.y, bb.max.z] },
+            {name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z]},
+            {name: 'max', type: 'float', data: [bb.max.x, bb.max.y, bb.max.z]},
           ]
         });
         mesh.children.push({
@@ -740,16 +740,16 @@ export default class PdxMesh {
             name: 'skin',
             type: 'object',
             children: [
-              { name: 'bones', type: 'int', data: [maxBonesUsed] },
-              { name: 'ix', type: 'int', data: indexedSkinIndexes },
-              { name: 'w', type: 'float', data: indexedSkinWeights },
+              {name: 'bones', type: 'int', data: [maxBonesUsed]},
+              {name: 'ix', type: 'int', data: indexedSkinIndexes},
+              {name: 'w', type: 'float', data: indexedSkinWeights},
             ]
           });
         }
       }
     });
 
-    if (boneData.length) { shapeRoot.children.push({ name: 'skeleton', type: 'object', children: boneData }); }
+    if (boneData.length) { shapeRoot.children.push({name: 'skeleton', type: 'object', children: boneData}); }
 
     return pdxDataRoot;
   }
@@ -815,7 +815,7 @@ export default class PdxMesh {
       name: 'pdxData',
       type: 'object',
       children: [
-        { name: 'pdxasset', type: 'int', data: [1, 0] },
+        {name: 'pdxasset', type: 'int', data: [1, 0]},
       ]
     };
 
@@ -856,9 +856,9 @@ export default class PdxMesh {
       name: 'info',
       type: 'object',
       children: [
-        { name: 'fps', type: 'float', data: [fps] },
-        { name: 'sa', type: 'int', data: [sampleCount] },
-        { name: 'j', type: 'int', data: trackArray },
+        {name: 'fps', type: 'float', data: [fps]},
+        {name: 'sa', type: 'int', data: [sampleCount]},
+        {name: 'j', type: 'int', data: trackArray},
       ]
     };
     pdxDataRoot.children.push(pdxInfo);
@@ -920,9 +920,9 @@ export default class PdxMesh {
           {
             name: 'sa', type: 'string', data: sampleFrom, nullByteString: true
           },
-          { name: 't', type: 'float', data: boneData[i].startPos },
-          { name: 'q', type: 'float', data: boneData[i].startQuat },
-          { name: 's', type: 'float', data: boneData[i].startScale },
+          {name: 't', type: 'float', data: boneData[i].startPos},
+          {name: 'q', type: 'float', data: boneData[i].startQuat},
+          {name: 's', type: 'float', data: boneData[i].startScale},
         ]
       };
 
@@ -933,7 +933,7 @@ export default class PdxMesh {
     // (this is what the collada importer currently does)
     // (we could expand this to support interpolation, etc - but too much work)
 
-    const pdxSamples = { name: 'samples', type: 'object', children: [] };
+    const pdxSamples = {name: 'samples', type: 'object', children: []};
     pdxDataRoot.children.push(pdxSamples);
     const samples = {
       t: [],
@@ -964,9 +964,9 @@ export default class PdxMesh {
       }
     }
 
-    if (samples.t.length > 0) { pdxSamples.children.push({ name: 't', type: 'float', data: samples.t }); }
-    if (samples.q.length > 0) { pdxSamples.children.push({ name: 'q', type: 'float', data: samples.q }); }
-    if (samples.s.length > 0) { pdxSamples.children.push({ name: 's', type: 'float', data: samples.s }); }
+    if (samples.t.length > 0) { pdxSamples.children.push({name: 't', type: 'float', data: samples.t}); }
+    if (samples.q.length > 0) { pdxSamples.children.push({name: 'q', type: 'float', data: samples.q}); }
+    if (samples.s.length > 0) { pdxSamples.children.push({name: 's', type: 'float', data: samples.s}); }
 
     return pdxDataRoot;
   }

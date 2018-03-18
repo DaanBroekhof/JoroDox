@@ -80,7 +80,7 @@ export default class PdxRendering {
         name: 'pdxData',
         type: 'object',
         subNodes: [
-          { name: 'pdxasset', type: 'int', data: [1, 0] },
+          {name: 'pdxasset', type: 'int', data: [1, 0]},
         ]
       };
 
@@ -106,9 +106,9 @@ export default class PdxRendering {
         name: 'info',
         type: 'object',
         subNodes: [
-          { name: 'fps', type: 'float', data: [animation.data.fps] },
-          { name: 'sa', type: 'int', data: [sampleCount] },
-          { name: 'j', type: 'int', data: [multiHierarchies.length] },
+          {name: 'fps', type: 'float', data: [animation.data.fps]},
+          {name: 'sa', type: 'int', data: [sampleCount]},
+          {name: 'j', type: 'int', data: [multiHierarchies.length]},
         ]
       };
       pdxDataRoot.subNodes.push(pdxInfo);
@@ -157,9 +157,9 @@ export default class PdxRendering {
             {
               name: 'sa', type: 'string', data: sampleFrom, nullByteString: true
             },
-            { name: 't', type: 'float', data: boneData[i].startPos },
-            { name: 'q', type: 'float', data: boneData[i].startQuat },
-            { name: 's', type: 'float', data: boneData[i].startScale },
+            {name: 't', type: 'float', data: boneData[i].startPos},
+            {name: 'q', type: 'float', data: boneData[i].startQuat},
+            {name: 's', type: 'float', data: boneData[i].startScale},
           ]
         };
 
@@ -170,7 +170,7 @@ export default class PdxRendering {
       // (this is what the collada importer currently does)
       // (we could expand this to support interpolation, etc - but too much work)
 
-      const pdxSamples = { name: 'samples', type: 'object', subNodes: [] };
+      const pdxSamples = {name: 'samples', type: 'object', subNodes: []};
       pdxDataRoot.subNodes.push(pdxSamples);
       const samples = {
         t: [],
@@ -210,9 +210,9 @@ export default class PdxRendering {
         }
       }
 
-      if (samples.t.length > 0) { pdxSamples.subNodes.push({ name: 't', type: 'float', data: samples.t }); }
-      if (samples.q.length > 0) { pdxSamples.subNodes.push({ name: 'q', type: 'float', data: samples.q }); }
-      if (samples.s.length > 0) { pdxSamples.subNodes.push({ name: 's', type: 'float', data: samples.s }); }
+      if (samples.t.length > 0) { pdxSamples.subNodes.push({name: 't', type: 'float', data: samples.t}); }
+      if (samples.q.length > 0) { pdxSamples.subNodes.push({name: 'q', type: 'float', data: samples.q}); }
+      if (samples.s.length > 0) { pdxSamples.subNodes.push({name: 's', type: 'float', data: samples.s}); }
 
       return pdxDataRoot;
     }
@@ -225,20 +225,20 @@ export default class PdxRendering {
         };
       }
 
-      const pdxDataRoot = { name: 'pdxData', type: 'object', subNodes: [] };
-      pdxDataRoot.subNodes.push({ name: 'pdxasset', type: 'int', data: [1, 0] });
+      const pdxDataRoot = {name: 'pdxData', type: 'object', subNodes: []};
+      pdxDataRoot.subNodes.push({name: 'pdxasset', type: 'int', data: [1, 0]});
 
-      const objectsRoot = { name: 'object', type: 'object', subNodes: [] };
+      const objectsRoot = {name: 'object', type: 'object', subNodes: []};
       pdxDataRoot.subNodes.push(objectsRoot);
-      pdxDataRoot.subNodes.push({ name: 'locator', type: 'object', subNodes: [] });
+      pdxDataRoot.subNodes.push({name: 'locator', type: 'object', subNodes: []});
 
-      const shapeRoot = { name: 'jorodoxShape', type: 'object', subNodes: [] };
+      const shapeRoot = {name: 'jorodoxShape', type: 'object', subNodes: []};
       objectsRoot.subNodes.push(shapeRoot);
 
       // 'internal' function
       const getVertexNrForUniqueData = function (vertNr, uv, normal, vertexToUniqueData, verts, skinIds, skinWeights) {
         if (!vertexToUniqueData[vertNr]) {
-          vertexToUniqueData[vertNr] = [{ uv, normal, v: vertNr }];
+          vertexToUniqueData[vertNr] = [{uv, normal, v: vertNr}];
           return vertNr;
         }
 
@@ -278,7 +278,7 @@ export default class PdxRendering {
 
         const newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
 
-        vertexToUniqueData[vertNr].push({ uv, normal, v: newVert });
+        vertexToUniqueData[vertNr].push({uv, normal, v: newVert});
 
         return newVert;
       };
@@ -314,8 +314,8 @@ export default class PdxRendering {
             name: boneList[i].name,
             type: 'object',
             subNodes: [
-              { name: 'ix', type: 'int', data: [i] },
-              { name: 'pa', type: 'int', data: [boneList[i].parent.boneNr] },
+              {name: 'ix', type: 'int', data: [i]},
+              {name: 'pa', type: 'int', data: [boneList[i].parent.boneNr]},
               {
                 name: 'tx',
                 type: 'float',
@@ -459,18 +459,18 @@ export default class PdxRendering {
             }
           }
 
-          const mesh = { name: 'mesh', type: 'object', subNodes: [] };
-          mesh.subNodes.push({ name: 'p', type: 'float', data: verts });
-          mesh.subNodes.push({ name: 'n', type: 'float', data: normals });
-          mesh.subNodes.push({ name: 'ta', type: 'float', data: tangents });
-          for (let i = 0; i < uvCount; i++) { mesh.subNodes.push({ name: `u${i}`, type: 'float', data: uvs[i] }); }
-          mesh.subNodes.push({ name: 'tri', type: 'int', data: tri });
+          const mesh = {name: 'mesh', type: 'object', subNodes: []};
+          mesh.subNodes.push({name: 'p', type: 'float', data: verts});
+          mesh.subNodes.push({name: 'n', type: 'float', data: normals});
+          mesh.subNodes.push({name: 'ta', type: 'float', data: tangents});
+          for (let i = 0; i < uvCount; i++) { mesh.subNodes.push({name: `u${i}`, type: 'float', data: uvs[i]}); }
+          mesh.subNodes.push({name: 'tri', type: 'int', data: tri});
           mesh.subNodes.push({
             name: 'aabb',
             type: 'object',
             subNodes: [
-              { name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z] },
-              { name: 'max', type: 'float', data: [bb.max.x, bb.max.y, bb.max.z] },
+              {name: 'min', type: 'float', data: [bb.min.x, bb.min.y, bb.min.z]},
+              {name: 'max', type: 'float', data: [bb.max.x, bb.max.y, bb.max.z]},
             ]
           });
           mesh.subNodes.push({
@@ -498,16 +498,16 @@ export default class PdxRendering {
               name: 'skin',
               type: 'object',
               subNodes: [
-                { name: 'bones', type: 'int', data: [bonesUsed] },
-                { name: 'ix', type: 'int', data: skinIds },
-                { name: 'w', type: 'float', data: skinWeights },
+                {name: 'bones', type: 'int', data: [bonesUsed]},
+                {name: 'ix', type: 'int', data: skinIds},
+                {name: 'w', type: 'float', data: skinWeights},
               ]
             });
           }
         }
       });
 
-      if (boneData.length) { shapeRoot.subNodes.push({ name: 'skeleton', type: 'object', subNodes: boneData }); }
+      if (boneData.length) { shapeRoot.subNodes.push({name: 'skeleton', type: 'object', subNodes: boneData}); }
 
 
       return pdxDataRoot;
@@ -555,7 +555,7 @@ export default class PdxRendering {
       // 'internal' function
       const getVertexNrForUniqueData = function (vertNr, uv, normal, vertexToUniqueData, verts, skinIds, skinWeights) {
         if (!vertexToUniqueData[vertNr]) {
-          vertexToUniqueData[vertNr] = [{ uv, normal, v: vertNr }];
+          vertexToUniqueData[vertNr] = [{uv, normal, v: vertNr}];
           return vertNr;
         }
 
@@ -595,7 +595,7 @@ export default class PdxRendering {
 
         const newVert = ((verts.length / 3) - 1) | 0; // '| 0' = cast to int
 
-        vertexToUniqueData[vertNr].push({ uv, normal, v: newVert });
+        vertexToUniqueData[vertNr].push({uv, normal, v: newVert});
 
         return newVert;
       };
@@ -615,9 +615,9 @@ export default class PdxRendering {
           isCollider: viewObject.colliders.indexOf(subObject) !== -1,
           material: {
             name: `${objectName}-material-${colladaData.materials.length}`,
-            diff: subObject.material.map && subObject.material.map.fileName ? { name: `${objectName}-effect-${colladaData.materials.length}-diff`, fileName: subObject.material.map.fileName } : null,
-            normal: subObject.material.normalMap && subObject.material.normalMap.fileName ? { name: `${objectName}-effect-${colladaData.materials.length}-normal`, fileName: subObject.material.normalMap.fileName } : null,
-            spec: subObject.material.specularMap && subObject.material.specularMap.fileName ? { name: `${objectName}-effect-${colladaData.materials.length}-spec`, fileName: subObject.material.specularMap.fileName } : null,
+            diff: subObject.material.map && subObject.material.map.fileName ? {name: `${objectName}-effect-${colladaData.materials.length}-diff`, fileName: subObject.material.map.fileName} : null,
+            normal: subObject.material.normalMap && subObject.material.normalMap.fileName ? {name: `${objectName}-effect-${colladaData.materials.length}-normal`, fileName: subObject.material.normalMap.fileName} : null,
+            spec: subObject.material.specularMap && subObject.material.specularMap.fileName ? {name: `${objectName}-effect-${colladaData.materials.length}-spec`, fileName: subObject.material.specularMap.fileName} : null,
           }
         };
         childNode.material.node = childNode;
@@ -1691,7 +1691,7 @@ export default class PdxRendering {
           const faces = texDatas.mipmaps.length / texDatas.mipmapCount;
 
           for (let f = 0; f < faces; f++) {
-            images[f] = { mipmaps: [] };
+            images[f] = {mipmaps: []};
 
             for (let i = 0; i < texDatas.mipmapCount; i++) {
               images[f].mipmaps.push(texDatas.mipmaps[f * texDatas.mipmapCount + i]);
@@ -1725,7 +1725,7 @@ export default class PdxRendering {
         greyTexture[3] = 255;
 
         texture.mipmaps = [
-          { data: greyTexture, width: 1, height: 1 }
+          {data: greyTexture, width: 1, height: 1}
         ];
         texture.needsUpdate = true;
       });
@@ -1763,7 +1763,7 @@ export default class PdxRendering {
       let size = 100,
         step = 1;
       const geometry = new THREE.Geometry();
-      const material = new THREE.LineBasicMaterial({ color: 0x303030 });
+      const material = new THREE.LineBasicMaterial({color: 0x303030});
       for (let i = -size; i <= size; i += step) {
         geometry.vertices.push(new THREE.Vector3(-size, -0.04, i));
         geometry.vertices.push(new THREE.Vector3(size, -0.04, i));
@@ -1774,7 +1774,7 @@ export default class PdxRendering {
       scene.add(line);
 
       // Some particle lights
-      const particleLight = new THREE.Mesh(new THREE.SphereGeometry(4, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      const particleLight = new THREE.Mesh(new THREE.SphereGeometry(4, 8, 8), new THREE.MeshBasicMaterial({color: 0xffffff}));
       scene.add(particleLight);
 
       // General lights

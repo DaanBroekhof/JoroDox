@@ -74,7 +74,7 @@ export default class PdxData {
   }
 
   readRawData(data, offset) {
-    const result = { data: null, offset: 0, type: null };
+    const result = {data: null, offset: 0, type: null};
     if (data.getInt8(offset) === 'i'.charCodeAt(0)) {
       result.type = 'int';
       // 'i'

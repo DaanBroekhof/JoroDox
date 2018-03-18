@@ -31,7 +31,7 @@ export default {
             name: 'Size',
             dataIndex: ['info', 'size'],
             moveable: true,
-            renderer: ({ column, value, row }) => (
+            renderer: ({column, value, row}) => (
               <span>{(row.info.type === 'file' ? filesize(value) : '')}</span>
             ),
           },

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
@@ -55,7 +55,7 @@ export default class FileTree extends React.Component<Props, State> {
         found = true;
         break;
       } else if (this.openToPath.startsWith(child.id + syspath.sep)) {
-        if (!child.state.open) { this.tree.openNode(child, { async: true }); } else { this.doOpenToPath(child); }
+        if (!child.state.open) { this.tree.openNode(child, {async: true}); } else { this.doOpenToPath(child); }
         found = true;
         break;
       }
@@ -162,7 +162,9 @@ export default class FileTree extends React.Component<Props, State> {
         autoOpen
         loadNodes={(parentNode, done) => {
           const localJetpack = jetpack.cwd(parentNode.id);
-          const dirs = localJetpack.find('.', {matching: '*', recursive: false, files: false, directories: true});
+          const dirs = localJetpack.find('.', {
+matching: '*', recursive: false, files: false, directories: true
+});
           const files = localJetpack.find('.', {matching: '*', recursive: false});
 
           const dirNodes = dirs.map((name) => ({
@@ -189,7 +191,9 @@ export default class FileTree extends React.Component<Props, State> {
           done(null, dirNodes.concat(fileNodes));
       }}
         rowRenderer={(node, treeOptions) => {
-          const {id, name, loadOnDemand = false, state} = node;
+          const {
+id, name, loadOnDemand = false, state
+} = node;
           const {depth, open, selected = false} = state;
           const more = node.hasChildren();
 

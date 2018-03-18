@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { DDSLoader } from 'three-addons';
+import {DDSLoader} from 'three-addons';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 
@@ -27,7 +27,7 @@ export default class ThreeJS {
         greyTexture[3] = 255;
 
         texture.mipmaps = [
-          { data: greyTexture, width: 1, height: 1 }
+          {data: greyTexture, width: 1, height: 1}
         ];
         texture.needsUpdate = true;
 
@@ -39,7 +39,7 @@ export default class ThreeJS {
         const faces = texDatas.mipmaps.length / texDatas.mipmapCount;
 
         for (let f = 0; f < faces; f++) {
-          images[f] = { mipmaps: [] };
+          images[f] = {mipmaps: []};
 
           for (let i = 0; i < texDatas.mipmapCount; i++) {
             images[f].mipmaps.push(texDatas.mipmaps[f * texDatas.mipmapCount + i]);
@@ -74,7 +74,7 @@ export default class ThreeJS {
       greyTexture[3] = 255;
 
       texture.mipmaps = [
-        { data: greyTexture, width: 1, height: 1 }
+        {data: greyTexture, width: 1, height: 1}
       ];
       texture.needsUpdate = true;
     });

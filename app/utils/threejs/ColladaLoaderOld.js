@@ -68,12 +68,12 @@ export default function () {
               readyCallbackFunc = readyCallback;
               parse(request.response, undefined, url);
             } else if (failCallback) {
-              failCallback({ type: 'error', url });
+              failCallback({type: 'error', url});
             } else {
               console.error(`ColladaLoader: Empty or non-existing file (${url})`);
             }
           } else if (failCallback) {
-            failCallback({ type: 'error', url });
+            failCallback({type: 'error', url});
           } else {
             console.error(`ColladaLoader: Couldn't load "${url}" (${request.status})`);
           }
@@ -83,7 +83,7 @@ export default function () {
               length = request.getResponseHeader('Content-Length');
             }
 
-            progressCallback({ total: length, loaded: request.responseText.length });
+            progressCallback({total: length, loaded: request.responseText.length});
           }
         }
       };
@@ -340,11 +340,11 @@ export default function () {
       const target = daeGeometry.mesh.primitives[0].geometry;
 
       if (target.vertices.length === geometry.vertices.length) {
-        geometry.morphTargets.push({ name: 'target_1', vertices: target.vertices });
+        geometry.morphTargets.push({name: 'target_1', vertices: target.vertices});
       }
     }
 
-    geometry.morphTargets.push({ name: 'target_Z', vertices: geometry.vertices });
+    geometry.morphTargets.push({name: 'target_Z', vertices: geometry.vertices});
   }
 
   function createSkin(geometry, ctrl, applyBindShape) {
@@ -620,7 +620,7 @@ export default function () {
     };
 
     for (var j = 0; j < sortedbones.length; j++) {
-      animationdata.hierarchy.push({ parent: sortedbones[j].parent, name: sortedbones[j].name, keys: [] });
+      animationdata.hierarchy.push({parent: sortedbones[j].parent, name: sortedbones[j].name, keys: []});
     }
 
     console.log('ColladaLoader:', `${animationBounds.ID} has ${sortedbones.length} bones.`);
@@ -947,7 +947,7 @@ export default function () {
         }
 
         var mesh;
-        let material = first_material || new THREE.MeshLambertMaterial({ color: 0xdddddd, side: geometry.doubleSided ? THREE.DoubleSide : THREE.FrontSide });
+        let material = first_material || new THREE.MeshLambertMaterial({color: 0xdddddd, side: geometry.doubleSided ? THREE.DoubleSide : THREE.FrontSide});
         const geom = geometry.mesh.geometry3js;
 
         if (num_materials > 1) {
@@ -4319,7 +4319,7 @@ export default function () {
   function getConvertedIndex(index) {
     if (index > -1 && index < 3) {
       let members = ['X', 'Y', 'Z'],
-        indices = { X: 0, Y: 1, Z: 2 };
+        indices = {X: 0, Y: 1, Z: 2};
 
       index = getConvertedMember(members[index]);
       index = indices[index];

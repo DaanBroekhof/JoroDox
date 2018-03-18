@@ -1,8 +1,8 @@
 // @flow
 import * as THREE from 'three';
-import { withRouter } from 'react-router';
-import React, { Component } from 'react';
-import { Button, Checkbox, Table, TableBody, TableCell, TableHead, TableRow, Typography } from 'material-ui';
+import {withRouter} from 'react-router';
+import React, {Component} from 'react';
+import {Button, Checkbox, Table, TableBody, TableCell, TableHead, TableRow, Typography} from 'material-ui';
 import PdxData from '../utils/PdxData';
 import PdxMesh from '../utils/PdxMesh';
 import ColladaData from '../utils/ColladaData';
@@ -31,7 +31,7 @@ export default withRouter(class ColladaView extends Component<Props, State> {
 
     try {
       (new ColladaData()).convertToThreeJsScene(jetpack.read(this.props.file.path), path.resolve(this.props.file.path, '..')).then((objectScene) => {
-        return this.setState({ objectScene });
+        return this.setState({objectScene});
       }).catch((e) => console.log(e));
     } catch (e) {
       console.log(e);
@@ -42,7 +42,7 @@ export default withRouter(class ColladaView extends Component<Props, State> {
     if (nextProps.file.path !== this.props.file.path) {
       try {
         return (new ColladaData()).convertToThreeJsScene(jetpack.read(nextProps.file.path), path.resolve(nextProps.file.path, '..')).then((objectScene) => {
-          return this.setState({ objectScene });
+          return this.setState({objectScene});
         });
       } catch (e) {
         console.log(e);
@@ -99,7 +99,7 @@ export default withRouter(class ColladaView extends Component<Props, State> {
     const animations = [];
     if (this.state.objectScene && this.state.objectScene.animations) {
       this.state.objectScene.animations.forEach((animation) => {
-        animations.push(
+        animations.push((
           <TableRow key={animation.uuid}>
             <TableCell><Checkbox
               onChange={(event, checked) => (checked ? this.startAnimation(animation) : this.stopAnimation())}
@@ -110,7 +110,7 @@ export default withRouter(class ColladaView extends Component<Props, State> {
             <TableCell>{animation.duration}</TableCell>
             <TableCell><Button variant="raised" onClick={this.convertToPdxAnimation(animation)}>Convert to .anim</Button></TableCell>
           </TableRow>
-        );
+        ));
       });
     }
 

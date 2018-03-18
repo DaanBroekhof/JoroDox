@@ -366,7 +366,7 @@ THREE.ColladaLoader.prototype = {
       // transfer data into a sortable array
 
       for (const time in data) {
-        keyframes.push({ time: parseFloat(time), value: data[time] });
+        keyframes.push({time: parseFloat(time), value: data[time]});
       }
 
       // ensure keyframes are sorted by time
@@ -660,7 +660,7 @@ THREE.ColladaLoader.prototype = {
             var semantic = child.getAttribute('semantic');
             var id = parseId(child.getAttribute('source'));
             var offset = parseInt(child.getAttribute('offset'));
-            data.inputs[semantic] = { id, offset };
+            data.inputs[semantic] = {id, offset};
             break;
 
           case 'vcount':
@@ -739,7 +739,7 @@ THREE.ColladaLoader.prototype = {
           const weightId = v[stride + weightOffset];
           const skinWeight = weights[weightId];
 
-          vertexSkinData.push({ index: skinIndex, weight: skinWeight });
+          vertexSkinData.push({index: skinIndex, weight: skinWeight});
 
           stride += 2;
         }
@@ -775,7 +775,7 @@ THREE.ColladaLoader.prototype = {
         const name = jointSource.array[i];
         const boneInverse = new THREE.Matrix4().fromArray(inverseSource.array, i * inverseSource.stride).transpose();
 
-        build.joints.push({ name, boneInverse });
+        build.joints.push({name, boneInverse});
       }
 
       return build;
@@ -975,7 +975,7 @@ THREE.ColladaLoader.prototype = {
             break;
 
           case 'texture':
-            data[child.nodeName] = { id: child.getAttribute('texture'), extra: parseEffectParameterTexture(child) };
+            data[child.nodeName] = {id: child.getAttribute('texture'), extra: parseEffectParameterTexture(child)};
             break;
         }
       }
@@ -1512,7 +1512,7 @@ THREE.ColladaLoader.prototype = {
             var id = parseId(child.getAttribute('source'));
             var semantic = child.getAttribute('semantic');
             var offset = parseInt(child.getAttribute('offset'));
-            primitive.inputs[semantic] = { id, offset };
+            primitive.inputs[semantic] = {id, offset};
             primitive.stride = Math.max(primitive.stride, offset + 1);
             break;
 
@@ -1569,13 +1569,13 @@ THREE.ColladaLoader.prototype = {
     function buildGeometryType(primitives, sources, vertices) {
       const build = {};
 
-      const position = { array: [], stride: 0 };
-      const normal = { array: [], stride: 0 };
-      const uv = { array: [], stride: 0 };
-      const color = { array: [], stride: 0 };
+      const position = {array: [], stride: 0};
+      const normal = {array: [], stride: 0};
+      const uv = {array: [], stride: 0};
+      const color = {array: [], stride: 0};
 
-      const skinIndex = { array: [], stride: 4 };
-      const skinWeight = { array: [], stride: 4 };
+      const skinIndex = {array: [], stride: 4};
+      const skinWeight = {array: [], stride: 4};
 
       const geometry = new THREE.BufferGeometry();
 
@@ -2418,7 +2418,7 @@ THREE.ColladaLoader.prototype = {
             boneInverse = new THREE.Matrix4();
           }
 
-          boneData.push({ bone: object, boneInverse, processed: false });
+          boneData.push({bone: object, boneInverse, processed: false});
         }
       });
     }
@@ -2676,7 +2676,7 @@ THREE.ColladaLoader.prototype = {
     console.time('THREE.ColladaLoader');
 
     if (text.length === 0) {
-      return { scene: new THREE.Scene() };
+      return {scene: new THREE.Scene()};
     }
 
     console.time('THREE.ColladaLoader: DOMParser');

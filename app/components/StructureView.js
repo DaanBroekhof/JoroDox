@@ -1,7 +1,7 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import { Button, Icon, IconButton, Paper, Tooltip, Typography } from 'material-ui';
+import {Button, Icon, IconButton, Paper, Tooltip, Typography} from 'material-ui';
 import _ from 'lodash';
 
 import JdxDatabase from '../utils/JdxDatabase';
@@ -9,8 +9,8 @@ import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import Eu4Definition from '../definitions/eu4';
-import { Grid } from 'react-redux-grid';
-import { Link } from 'react-router-dom';
+import {Grid} from 'react-redux-grid';
+import {Link} from 'react-router-dom';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 
 const syspath = require('electron').remote.require('path');
@@ -48,7 +48,7 @@ export default class StructureView extends Component {
     _(Eu4Definition.types).forEach(type => {
       if (type.sourceType && (!typeId || type.id === typeId)) {
         StructureLoaderTask.start(
-          { root: this.props.root, typeDefinition: type },
+          {root: this.props.root, typeDefinition: type},
           (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
           (result) => console.log('done'),
           (error) => console.log(error),
@@ -58,7 +58,7 @@ export default class StructureView extends Component {
   }
 
   watchDirectory() {
-    WatchDirectoryTask.start({ rootDir: this.props.root }, null, null, null, (type, response) => {
+    WatchDirectoryTask.start({rootDir: this.props.root}, null, null, null, (type, response) => {
       console.log('Watch response', type, response);
     });
   }
@@ -66,7 +66,7 @@ export default class StructureView extends Component {
 
   loadPdxScripts() {
     PdxScriptParserTask.start(
-      { root: this.props.root, definition: Eu4Definition },
+      {root: this.props.root, definition: Eu4Definition},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
       (result) => console.log('done'),
       (error) => console.log(error),
@@ -75,7 +75,7 @@ export default class StructureView extends Component {
 
   loadPdxData() {
     PdxDataParserTask.start(
-      { root: this.props.root, definition: Eu4Definition },
+      {root: this.props.root, definition: Eu4Definition},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
       (result) => console.log('done'),
       (error) => console.log(error),
@@ -122,7 +122,7 @@ export default class StructureView extends Component {
           counts.forEach((value, key) => {
             typeCounts[typeIds[key]] = value;
           });
-          this.setState({ typeCounts });
+          this.setState({typeCounts});
           this.loadingCounts = false;
         });
       });
@@ -146,7 +146,7 @@ export default class StructureView extends Component {
         {
           name: 'Type',
           dataIndex: ['title'],
-          renderer: ({ column, value, row }) => <Link to={`/structure/${row.id}`}>{value}</Link>,
+          renderer: ({column, value, row}) => <Link to={`/structure/${row.id}`}>{value}</Link>,
         },
         {
           name: 'Item count',
@@ -155,8 +155,8 @@ export default class StructureView extends Component {
         {
           name: 'Actions',
           dataIndex: ['primaryKey'],
-          renderer: ({ column, value, row }) => (
-            <div style={{ display: 'flex' }}>
+          renderer: ({column, value, row}) => (
+            <div style={{display: 'flex'}}>
               <Button size="small" onClick={() => { this.reloadTypeById(row.id); }}>Reload</Button>
             </div>
           ),
@@ -185,7 +185,7 @@ export default class StructureView extends Component {
         flexDirection: 'column',
       },
       events: {
-        HANDLE_ROW_CLICK: ({ row }) => {
+        HANDLE_ROW_CLICK: ({row}) => {
           // this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
         },
       }
@@ -198,13 +198,13 @@ export default class StructureView extends Component {
       >
         <Typography variant="display2" gutterBottom>{syspath.basename(this.props.root)} - Data types</Typography>
 
-        <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
-          <Button variant="raised" color="secondary" style={{ marginRight: 10 }} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
-          <Button variant="raised" color="secondary" style={{ marginRight: 10 }} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
-          <Button variant="raised" color="secondary" style={{ marginRight: 10 }} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
-          <Button variant="raised" color="secondary" style={{ marginRight: 10 }} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
-          <Button variant="raised" color="secondary" style={{ marginRight: 10 }} onClick={() => this.reloadAll()}>Load all</Button><br />
-          <Button variant="raised" color="secondary" style={{ marginRight: 10 }} onClick={() => this.watchDirectory()}>Watch directory</Button><br />
+        <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadAll()}>Load all</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.watchDirectory()}>Watch directory</Button><br />
 
         </div>
 

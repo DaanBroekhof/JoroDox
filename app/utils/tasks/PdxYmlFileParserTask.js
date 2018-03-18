@@ -42,7 +42,7 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
           if (results.length % 500 === 0) { this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`); }
 
-          results.push({ path: file.path, data: pdxYmlData });
+          results.push({path: file.path, data: pdxYmlData});
           relations.push(this.addRelationId({
             fromKey: 'pdxyml_files',
             fromType: 'pdxyml_files',

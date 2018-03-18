@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 const path = require('electron').remote.require('path');
@@ -8,7 +8,7 @@ import PdxData from '../utils/PdxData';
 import PdxDataView from './PdxDataView';
 import * as THREE from 'three';
 import PdxMesh from '../utils/PdxMesh';
-import { Button, Checkbox, FormControlLabel, FormGroup, Icon, IconButton } from 'material-ui';
+import {Button, Checkbox, FormControlLabel, FormGroup, Icon, IconButton} from 'material-ui';
 import DeleteIcon from 'material-ui-icons/Delete';
 import ColladaData from '../utils/ColladaData';
 
@@ -68,7 +68,7 @@ export default class ThreeJsViewer extends Component {
     let size = 100,
       step = 1;
     const geometry = new THREE.Geometry();
-    const material = new THREE.LineBasicMaterial({ color: 0x303030 });
+    const material = new THREE.LineBasicMaterial({color: 0x303030});
     for (let i = -size; i <= size; i += step) {
       geometry.vertices.push(new THREE.Vector3(-size, -0.04, i));
       geometry.vertices.push(new THREE.Vector3(size, -0.04, i));
@@ -79,7 +79,7 @@ export default class ThreeJsViewer extends Component {
     this.scene.add(line);
 
     // Some particle lights
-    this.particleLight = new THREE.Mesh(new THREE.SphereGeometry(4, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    this.particleLight = new THREE.Mesh(new THREE.SphereGeometry(4, 8, 8), new THREE.MeshBasicMaterial({color: 0xffffff}));
     this.scene.add(this.particleLight);
     const pointLight = new THREE.PointLight(0xffffff, 4);
     this.particleLight.add(pointLight);
@@ -99,7 +99,7 @@ export default class ThreeJsViewer extends Component {
 
     this.scene.add(this.objectScene.object);
     if (this.objectScene.skeletonHelper) { this.scene.add(this.objectScene.skeletonHelper); }
-    this.setState({ distance: this.objectScene.distance * 4 });
+    this.setState({distance: this.objectScene.distance * 4});
     this.clock = new THREE.Clock();
 
     this.animateScene();
@@ -160,14 +160,14 @@ export default class ThreeJsViewer extends Component {
 
   toggleValue(name) {
     return (event, checked) => {
-      this.setState({ [name]: checked });
+      this.setState({[name]: checked});
     };
   }
 
   render() {
     return (
       <div>
-        <FormGroup row style={{ alignItems: 'center' }}>
+        <FormGroup row style={{alignItems: 'center'}}>
           <FormControlLabel label="Skeletons" control={<Checkbox checked={this.state.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
           <FormControlLabel label="Locators" control={<Checkbox checked={this.state.showLocators} onChange={this.toggleValue('showLocators')} />} />
           <FormControlLabel label="Mesh" control={<Checkbox checked={this.state.showMeshes} onChange={this.toggleValue('showMeshes')} />} />
@@ -179,8 +179,8 @@ export default class ThreeJsViewer extends Component {
 
         </FormGroup>
 
-        <div style={{ position: 'relative', display: 'inline-block' }}>
-          <canvas ref={canvas => this.canvas = canvas} style={{ width: 900, height: 600 }} />
+        <div style={{position: 'relative', display: 'inline-block'}}>
+          <canvas ref={canvas => this.canvas = canvas} style={{width: 900, height: 600}} />
 
           <div style={{
 position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'

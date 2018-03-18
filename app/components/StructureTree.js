@@ -6,9 +6,9 @@ import 'react-infinite-tree/dist/react-infinite-tree.css';
 const jetpack = require('electron').remote.require('fs-jetpack');
 const syspath = require('electron').remote.require('path');
 
-import { Route } from 'react-router';
+import {Route} from 'react-router';
 import FileView from './FileView';
-import { Icon } from 'material-ui';
+import {Icon} from 'material-ui';
 import Eu4Definition from '../definitions/eu4';
 
 export default class StructureTree extends React.Component {
@@ -49,7 +49,7 @@ export default class StructureTree extends React.Component {
           found = true;
           break;
         } else if (child.info.type === 'typekind') {
-          if (!child.state.open) { this.tree.openNode(child, { async: true }); } else { this.doOpenToType(child, type); }
+          if (!child.state.open) { this.tree.openNode(child, {async: true}); } else { this.doOpenToType(child, type); }
           found = true;
           break;
         }
@@ -164,8 +164,8 @@ export default class StructureTree extends React.Component {
     render() {
       const fileTree = this;
       return (
-        <Route render={({ history }) => (<InfiniteTree
-          style={{ display: 'flex', flex: 1, backgroundColor: 'white' }}
+        <Route render={({history}) => (<InfiniteTree
+          style={{display: 'flex', flex: 1, backgroundColor: 'white'}}
           ref={(c) => this.tree = c ? c.tree : null}
           autoOpen
           loadNodes={(parentNode, done) => {
@@ -182,7 +182,7 @@ export default class StructureTree extends React.Component {
 .value();
 
                         done(null, categories, () => {
-                            this.tree.toggleNode(this.tree.getNodeById('category:Game structures'), { async: true });
+                            this.tree.toggleNode(this.tree.getNodeById('category:Game structures'), {async: true});
                         });
                     } else if (_.startsWith(parentNode.id, 'category:')) {
                         const items = [];
@@ -216,13 +216,13 @@ export default class StructureTree extends React.Component {
                       <div
                         className={classNames(
                                 'infinite-tree-item',
-                                { 'infinite-tree-selected': selected }
+                                {'infinite-tree-selected': selected}
                             )}
                         data-id={id}
                       >
                         <div
                           className="infinite-tree-node"
-                          style={{ marginLeft: (depth - 1) * 18 }}
+                          style={{marginLeft: (depth - 1) * 18}}
                         >
                           {!more && loadOnDemand &&
                             <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
@@ -236,7 +236,7 @@ export default class StructureTree extends React.Component {
                           {!more && !loadOnDemand &&
                             <span className={classNames(treeOptions.togglerClass)} />
                                 }
-                          <span className={classNames(['infinite-tree-type', more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? <Icon style={{ fontSize: '19px', paddingTop: '2px' }}>folder</Icon> : <Icon style={{ fontSize: '19px', paddingTop: '2px' }}>description</Icon>}</span>
+                          <span className={classNames(['infinite-tree-type', more || loadOnDemand ? 'infinite-tree-type-more' : ''])}>{more || loadOnDemand ? <Icon style={{fontSize: '19px', paddingTop: '2px'}}>folder</Icon> : <Icon style={{fontSize: '19px', paddingTop: '2px'}}>description</Icon>}</span>
                           <span className={classNames(['infinite-tree-title', FileView.getFileType(node) !== 'unknown' ? 'filetree-known-type' : ''])}>{name}</span>
                         </div>
                       </div>
@@ -246,7 +246,7 @@ export default class StructureTree extends React.Component {
           shouldSelectNode={(node) => {
                     if (!node || (node === this.tree.getSelectedNode())) {
                         if (node && node.info.view === 'category') {
-                            this.tree.toggleNode(node, { async: true });
+                            this.tree.toggleNode(node, {async: true});
                         }
                         return false; // Prevent from deselecting the current node
                     }
@@ -282,7 +282,7 @@ export default class StructureTree extends React.Component {
                 }}
           onSelectNode={(node) => {
                     if (node.info.view === 'category') {
-                        this.tree.openNode(node, { async: true });
+                        this.tree.openNode(node, {async: true});
                     }
                     this.navigateToNode(node, history);
                 }}

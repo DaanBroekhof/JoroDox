@@ -1,14 +1,14 @@
 // @flow
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import { Icon, IconButton, Paper, Tooltip, Typography } from 'material-ui';
+import {Icon, IconButton, Paper, Tooltip, Typography} from 'material-ui';
 import Eu4Definition from '../definitions/eu4';
 import JdxDatabase from '../utils/JdxDatabase';
-import { applyGridConfig, Grid } from 'react-redux-grid';
+import {applyGridConfig, Grid} from 'react-redux-grid';
 import _ from 'lodash';
-import { Link } from 'react-router-dom';
-import { Actions } from 'react-redux-grid';
-import { connect } from 'react-redux';
+import {Link} from 'react-router-dom';
+import {Actions} from 'react-redux-grid';
+import {connect} from 'react-redux';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 
 const minimatch = require('minimatch');
@@ -27,7 +27,7 @@ class StructureItemView extends Component {
 
   createTreeItem(key, item, startAtParentId, relations, parentId, idCounter, depth, path) {
     if (!idCounter) {
-      idCounter = { id: 1 };
+      idCounter = {id: 1};
     }
     if (depth === undefined) {
       depth = 0;
@@ -46,15 +46,15 @@ class StructureItemView extends Component {
 
     let valueRender = '';
     if (isArray) {
-      valueRender = <i style={{ color: 'lightgrey' }}>[{item.length} items]</i>;
+      valueRender = <i style={{color: 'lightgrey'}}>[{item.length} items]</i>;
     } else if (_.isPlainObject(item)) {
-      valueRender = <i style={{ color: 'lightgrey' }}>[{_(item).size()} properties]</i>;
+      valueRender = <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i>;
     } else if (_.isPlainObject(item)) {
-      valueRender = <i style={{ color: 'lightgrey' }}>[{_(item).size()} properties]</i>;
+      valueRender = <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i>;
     } else if (relation) {
       valueRender = <Link to={`/structure/${relation.toType}/${item}`}>{(_.isObject(item) ? item.toString() : item)}</Link>;
     } else {
-      valueRender = <span style={{ color: 'green' }}>{(_.isObject(item) ? item.toString() : item)}</span>;
+      valueRender = <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>;
     }
 
     let treeItem = {
@@ -89,7 +89,7 @@ class StructureItemView extends Component {
       if (found) { treeItem = found; }
     }
 
-    return !parentId && !startAtParentId ? { root: treeItem } : treeItem;
+    return !parentId && !startAtParentId ? {root: treeItem} : treeItem;
   }
 
   componentDidMount() {
@@ -113,14 +113,14 @@ class StructureItemView extends Component {
         stores.reduce((promise, store) => promise.then(() => db[store].where(['fromType', 'fromId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
           relationsFrom = relationsFrom.concat(relations);
         })), Promise.resolve()).then(() => {
-          this.setState({ relationsFrom: _.sortBy(relationsFrom, ['toKey', 'toType', 'toId']) });
+          this.setState({relationsFrom: _.sortBy(relationsFrom, ['toKey', 'toType', 'toId'])});
         });
 
         let relationsTo = [];
         stores.reduce((promise, store) => promise.then(() => db[store].where(['toType', 'toId']).equals([typeDefinition.id, props.match.params.id]).toArray(relations => {
           relationsTo = relationsTo.concat(relations);
         })), Promise.resolve()).then(() => {
-          this.setState({ relationsTo: _.sortBy(relationsTo, ['fromKey', 'fromType', 'fromId']) });
+          this.setState({relationsTo: _.sortBy(relationsTo, ['fromKey', 'fromType', 'fromId'])});
         });
       });
     }
@@ -171,18 +171,18 @@ flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
             });
         } */
     const view = this;
-    const dataSource = function getData({ pageIndex, pageSize, parentId }) {
+    const dataSource = function getData({pageIndex, pageSize, parentId}) {
       return new Promise((resolve) => {
         JdxDatabase.get(view.props.root).then(db => {
-          db[typeDefinition.id].where({ [typeDefinition.primaryKey]: view.props.match.params.id }).first(item => {
+          db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
             if (item) {
               const treeItem = view.createTreeItem('root', item, parentId, typeDefinition.relations);
-              view.setState({ item });
+              view.setState({item});
 
               if (parentId) {
-                resolve({ data: treeItem.children, partial: true });
+                resolve({data: treeItem.children, partial: true});
               } else {
-                resolve({ data: treeItem, total: 1 });
+                resolve({data: treeItem, total: 1});
               }
             }
           });
@@ -227,9 +227,9 @@ flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
         flexDirection: 'column',
       },
       events: {
-        HANDLE_ROW_CLICK: ({ row }) => {
+        HANDLE_ROW_CLICK: ({row}) => {
           if (row.leaf === false && row._hasChildren === false) {
-            dataSource({ parentId: row._id }).then((result) => {
+            dataSource({parentId: row._id}).then((result) => {
               this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
             });
           } else {
@@ -248,14 +248,14 @@ flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
  flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
 }}
       >
-        <div style={{ display: 'flex' }}>
+        <div style={{display: 'flex'}}>
           <Typography variant="display1" gutterBottom><Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}</Typography>
-          <span style={{ marginLeft: 20 }}>
+          <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
-              <IconButton onClick={() => OperatingSystemTask.start({ showItemInFolder: this.getItemPath() })}><Icon color="action">pageview</Icon></IconButton>
+              <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: this.getItemPath()})}><Icon color="action">pageview</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-              <IconButton onClick={() => OperatingSystemTask.start({ openItem: this.getItemPath() })}><Icon color="action">open_in_new</Icon></IconButton>
+              <IconButton onClick={() => OperatingSystemTask.start({openItem: this.getItemPath()})}><Icon color="action">open_in_new</Icon></IconButton>
             </Tooltip>
           </span>
         </div>

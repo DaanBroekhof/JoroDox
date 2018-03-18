@@ -24,3 +24,4 @@ module.name_mapper.extension='png' -> '<PROJECT_ROOT>/internals/flow/WebpackAsse
 module.name_mapper.extension='jpg' -> '<PROJECT_ROOT>/internals/flow/WebpackAsset.js.flow'
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
 suppress_comment=\\(.\\|\n\\)*\\$FlowIssue
+delimiter-dangle=only-multiline

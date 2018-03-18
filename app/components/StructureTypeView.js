@@ -1,13 +1,13 @@
 // @flow
-import React, { Component } from 'react';
-import { Grid, applyGridConfig, Actions } from 'react-redux-grid';
-import { Button, Icon, IconButton, Paper, TextField, Tooltip, Typography } from 'material-ui';
+import React, {Component} from 'react';
+import {Grid, applyGridConfig, Actions} from 'react-redux-grid';
+import {Button, Icon, IconButton, Paper, TextField, Tooltip, Typography} from 'material-ui';
 import JdxDatabase from '../utils/JdxDatabase';
 import _ from 'lodash';
 import Eu4Definition from '../definitions/eu4';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
@@ -96,7 +96,7 @@ class StructureTypeView extends Component {
   getDataSource(rootPath, type, search) {
     const typeDefinition = _(Eu4Definition.types).find(x => x.id === type);
 
-    return function getData({ pageIndex, pageSize }) {
+    return function getData({pageIndex, pageSize}) {
       if (!pageIndex) { pageIndex = 0; }
       if (!pageSize) { pageSize = typeDefinition.listView.pageSize; }
 
@@ -174,7 +174,7 @@ class StructureTypeView extends Component {
 
     const columns = typeDefinition.listView.columns.map(c => {
       if (c.linkTo) {
-        c.renderer = ({ value, column, row }) => {
+        c.renderer = ({value, column, row}) => {
           const linkToId = column.linkKey ? _.get(row, column.linkKey) : value;
 
           return <span><Link to={`/structure/${column.linkTo.replace('[self]', this.props.match.params.type)}/${linkToId}`}>{value}</Link></span>;
@@ -216,7 +216,7 @@ class StructureTypeView extends Component {
         flexDirection: 'column',
       },
       events: {
-        HANDLE_ROW_CLICK: ({ row }) => {
+        HANDLE_ROW_CLICK: ({row}) => {
           // this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
         },
       }
@@ -229,14 +229,14 @@ class StructureTypeView extends Component {
  flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'
 }}
       >
-        <div style={{ display: 'flex', flexGrow: 0, flexShrink: 0 }}>
+        <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
           <Typography variant="display2" gutterBottom><Link to="/structure">Type</Link>: {typeDefinition.title}</Typography>
-          <span style={{ marginLeft: 20 }}>
+          <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
-              <IconButton onClick={() => OperatingSystemTask.start({ showItemInFolder: `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}` })}><Icon color="action">pageview</Icon></IconButton>
+              <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}`})}><Icon color="action">pageview</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-              <IconButton onClick={() => OperatingSystemTask.start({ openItem: `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}` })}><Icon color="action">open_in_new</Icon></IconButton>
+              <IconButton onClick={() => OperatingSystemTask.start({openItem: `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}`})}><Icon color="action">open_in_new</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Reload data" placement="bottom">
               <IconButton onClick={() => this.reloadTypeById(this.props.match.params.type)}><Icon color="action">refresh</Icon></IconButton>
@@ -251,10 +251,10 @@ class StructureTypeView extends Component {
           placeholder="Search..."
           type="search"
           margin="normal"
-          style={{ display: 'flex', flexGrow: 0, flexShrink: 0 }}
+          style={{display: 'flex', flexGrow: 0, flexShrink: 0}}
           value={this.state.search}
           onChange={(event) => {
-                        this.setState({ search: event.target.value }, () => {
+                        this.setState({search: event.target.value}, () => {
                             this.props.reloadGrid(this.gridSettings);
                         });
                     }}
