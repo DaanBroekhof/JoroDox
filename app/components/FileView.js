@@ -44,31 +44,20 @@ export default class FileView extends Component {
 
   render() {
     if (!this.props.match.params.path) {
-      return (<Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      ><p>Error during file load.</p>
-              </Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during file load.</p></Paper>);
     }
 
     const file = jetpack.inspect(this.props.match.params.path, {times: true});
 
     if (!file) {
-      return (<Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      ><p>File could not be found</p>
-      </Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>File could not be found</p></Paper>);
     }
 
     file.path = this.props.match.params.path;
     const fileType = FileView.getFileType(file);
 
     return (
-      <Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      >
+      <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
         <div style={{display: 'flex'}}>
           <Typography variant="display2" gutterBottom>{file.name}</Typography>
           <span style={{marginLeft: 20}}>

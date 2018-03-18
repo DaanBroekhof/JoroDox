@@ -31,7 +31,7 @@ export default {
             name: 'Size',
             dataIndex: ['info', 'size'],
             moveable: true,
-            renderer: ({column, value, row}) => (
+            renderer: ({value, row}) => (
               <span>{(row.info.type === 'file' ? filesize(value) : '')}</span>
             ),
           },
@@ -2436,7 +2436,7 @@ export default {
       sourceTransform: {
         type: 'fileData',
         path: ['data', 'data'],
-        filenamePattern: '/([0-9]+)[^0-9][^/]*\.txt',
+        filenamePattern: '/([0-9]+)[^0-9][^/]*\\.txt',
         filenamePatternKey: 'province_id',
       },
       listView: {
@@ -2527,7 +2527,7 @@ export default {
       sourceTransform: {
         type: 'fileData',
         path: ['data', 'data'],
-        filenamePattern: '/([A-Z]+)\\s+\-[^/]*\.txt',
+        filenamePattern: '/([A-Z]+)\\s+\-[^/]*\\.txt',
         filenamePatternKey: 'tag',
       },
       listView: {

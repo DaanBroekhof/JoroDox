@@ -1,17 +1,15 @@
 // @flow
 import React, {Component} from 'react';
-
-const ipc = require('electron').ipcRenderer;
-
 import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
-import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import LuaScriptParserTask from '../utils/tasks/LuaScriptParserTask';
 import StructureScannerTask from '../utils/tasks/StructureScannerTask';
 import CsvFileParserTask from '../utils/tasks/CsvFileParserTask';
 import PdxYmlFileParserTask from '../utils/tasks/PdxYmlFileParserTask';
+
+const ipc = require('electron').ipcRenderer;
 
 export default class BackgroundApp extends Component {
   constructor(props) {
@@ -44,6 +42,7 @@ export default class BackgroundApp extends Component {
         case StructureScannerTask.getTaskType():
           StructureScannerTask.handle(request);
           break;
+        default:
       }
     });
   }

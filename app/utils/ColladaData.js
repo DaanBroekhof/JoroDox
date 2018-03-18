@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import ColladaLoader from './threejs/ColladaLoader.js';
 import ThreeJS from './ThreeJS';
+import ColladaLoader from './threejs/ColladaLoader';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 

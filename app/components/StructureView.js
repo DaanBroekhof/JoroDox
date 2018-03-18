@@ -1,16 +1,14 @@
 // @flow
 import React, {Component} from 'react';
-
-import {Button, Icon, IconButton, Paper, Tooltip, Typography} from 'material-ui';
+import {Button, Paper, Typography} from 'material-ui';
 import _ from 'lodash';
-
+import {Grid} from 'react-redux-grid';
+import {Link} from 'react-router-dom';
 import JdxDatabase from '../utils/JdxDatabase';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import Eu4Definition from '../definitions/eu4';
-import {Grid} from 'react-redux-grid';
-import {Link} from 'react-router-dom';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 
 const syspath = require('electron').remote.require('path');
@@ -85,22 +83,21 @@ export default class StructureView extends Component {
   reloadStructure() {
     JdxDatabase.reloadAll(this.props.root);
     /*
-
-        JdxDatabase.get(this.props.root).then(db => {
-            db.relations.clear().then(() => {
-                FileLoaderTask.start(
-                    {root: this.props.root, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')},
-                    (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
-                    (result) => console.log("done"),
-                    (error) => console.log(error),
-                );
-            });
+    JdxDatabase.get(this.props.root).then(db => {
+        db.relations.clear().then(() => {
+            FileLoaderTask.start(
+                {root: this.props.root, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')},
+                (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
+                (result) => console.log("done"),
+                (error) => console.log(error),
+            );
         });
-        */
+    });
+    */
   }
 
   reloadTypeById(typeId) {
-    JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
+    return JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
       console.log('done');
     });
   }
@@ -117,7 +114,7 @@ export default class StructureView extends Component {
       JdxDatabase.get(this.props.root).then(db => {
         const typeIds = Eu4Definition.types.filter(type => db[type.id] && this.state.typeCounts[type.id] === undefined).map(x => x.id);
         const promises = typeIds.map(typeId => db[typeId].count());
-        Promise.all(promises).then(counts => {
+        return Promise.all(promises).then(counts => {
           const typeCounts = {};
           counts.forEach((value, key) => {
             typeCounts[typeIds[key]] = value;
@@ -125,6 +122,8 @@ export default class StructureView extends Component {
           this.setState({typeCounts});
           this.loadingCounts = false;
         });
+      }).catch((e) => {
+        console.error(e);
       });
       this.loadingCounts = true;
     }
@@ -166,7 +165,7 @@ export default class StructureView extends Component {
         PAGER: {
           enabled: false,
           pagingType: 'local',
-          toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => `${pageIndex * pageSize} - ${pageIndex * pageSize + currentRecords} of ${total}`,
+          toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => `${pageIndex * pageSize} - ${(pageIndex * pageSize) + currentRecords} of ${total}`,
           pagerComponent: false
         },
         COLUMN_MANAGER: {
@@ -192,10 +191,7 @@ export default class StructureView extends Component {
     };
 
     return (
-      <Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      >
+      <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
         <Typography variant="display2" gutterBottom>{syspath.basename(this.props.root)} - Data types</Typography>
 
         <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>

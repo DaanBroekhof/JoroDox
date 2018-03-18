@@ -11,12 +11,13 @@ export default class ThreeJS {
     const images = [];
     texture.image = images;
 
-    jetpack.readAsync(file, 'buffer').then((buffer) => {
+    return jetpack.readAsync(file, 'buffer').then((buffer) => {
       if (!buffer) {
         console.error(`Could not load DDS texture file \`${file}\``);
         return;
       }
 
+      /* eslint no-underscore-dangle: ["error", { "allow": ["ddsLoader", "_parser"] }] */
       const texDatas = ddsLoader._parser(buffer.buffer, true);
 
       if (texDatas.width === 0 && texDatas.height === 0) {
@@ -78,7 +79,5 @@ export default class ThreeJS {
       ];
       texture.needsUpdate = true;
     });
-
-    return texture;
   }
 }

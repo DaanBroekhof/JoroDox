@@ -1,13 +1,12 @@
 // @flow
 import React, {Component} from 'react';
-import {Grid, applyGridConfig, Actions} from 'react-redux-grid';
-import {Button, Icon, IconButton, Paper, TextField, Tooltip, Typography} from 'material-ui';
-import JdxDatabase from '../utils/JdxDatabase';
+import {Grid, Actions} from 'react-redux-grid';
+import {Icon, IconButton, Paper, TextField, Tooltip, Typography} from 'material-ui';
 import _ from 'lodash';
-import Eu4Definition from '../definitions/eu4';
 import {Link} from 'react-router-dom';
-import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import {connect} from 'react-redux';
+import JdxDatabase from '../utils/JdxDatabase';
+import Eu4Definition from '../definitions/eu4';
 import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
@@ -87,9 +86,9 @@ class StructureTypeView extends Component {
   }
 
   reloadTypeById(typeId) {
-    JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
+    return JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
       console.log('done');
-      this.props.reloadGrid(this.gridSettings);
+      return this.props.reloadGrid(this.gridSettings);
     });
   }
 
@@ -97,11 +96,15 @@ class StructureTypeView extends Component {
     const typeDefinition = _(Eu4Definition.types).find(x => x.id === type);
 
     return function getData({pageIndex, pageSize}) {
-      if (!pageIndex) { pageIndex = 0; }
-      if (!pageSize) { pageSize = typeDefinition.listView.pageSize; }
+      if (!pageIndex) {
+        pageIndex = 0;
+      }
+      if (!pageSize) {
+        pageSize = typeDefinition.listView.pageSize;
+      }
 
       return new Promise((resolve) => {
-        JdxDatabase.get(rootPath).then(db => {
+        return JdxDatabase.get(rootPath).then(db => {
           if (search) {
             // Just getting everything and filtering in javascript is faster than using Dexie filter()
             let base = db[typeDefinition.id];
@@ -151,26 +154,13 @@ class StructureTypeView extends Component {
 
   render() {
     if (!this.props.match.params.type) {
-      return (<Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      ><p>Error during type view
-                load.
-      </p>
-              </Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
     }
 
     const typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
     if (!typeDefinition) {
-      return (<Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      ><p>Could not find type
-                definition.
-      </p>
-              </Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
-
 
     const columns = typeDefinition.listView.columns.map(c => {
       if (c.linkTo) {
@@ -192,7 +182,7 @@ class StructureTypeView extends Component {
         PAGER: {
           enabled: true,
           pagingType: 'remote',
-          toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => `${pageIndex * pageSize} - ${pageIndex * pageSize + currentRecords} of ${total}`,
+          toolbarRenderer: (pageIndex, pageSize, total, currentRecords) => `${pageIndex * pageSize} - ${(pageIndex * pageSize) + currentRecords} of ${total}`,
           pagerComponent: false
         },
         COLUMN_MANAGER: {
@@ -225,10 +215,7 @@ class StructureTypeView extends Component {
     this.gridSettings = gridSettings;
 
     return (
-      <Paper style={{
- flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'
-}}
-      >
+      <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
           <Typography variant="display2" gutterBottom><Link to="/structure">Type</Link>: {typeDefinition.title}</Typography>
           <span style={{marginLeft: 20}}>
@@ -254,10 +241,10 @@ class StructureTypeView extends Component {
           style={{display: 'flex', flexGrow: 0, flexShrink: 0}}
           value={this.state.search}
           onChange={(event) => {
-                        this.setState({search: event.target.value}, () => {
-                            this.props.reloadGrid(this.gridSettings);
-                        });
-                    }}
+            this.setState({search: event.target.value}, () => {
+              this.props.reloadGrid(this.gridSettings);
+            });
+          }}
         />
 
         <Grid {...gridSettings} />

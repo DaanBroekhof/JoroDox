@@ -25,6 +25,14 @@ class StructureItemView extends Component {
     };
   }
 
+  componentDidMount() {
+    this.loadRelations(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.loadRelations(nextProps);
+  }
+
   createTreeItem(key, item, startAtParentId, relations, parentId, idCounter, depth, path) {
     if (!idCounter) {
       idCounter = {id: 1};
@@ -65,22 +73,22 @@ class StructureItemView extends Component {
       _hideChildren: !!(parentId && depth > 1),
       children: [],
     };
-    idCounter.id++;
+    idCounter.id += 1;
 
     if (_.isArray(item)) {
-      _(item).forEach((value, key) => {
-        treeItem.children.push(this.createTreeItem(!isArray ? key :
-        <i>{key}</i>, value, startAtParentId, relations, treeItem.id, idCounter, depth, path));
+      _(item).forEach((value, key2) => {
+        treeItem.children.push(this.createTreeItem(!isArray ? key2 : <i>{key2}</i>, value, startAtParentId, relations, treeItem.id, idCounter, depth, path));
       });
     } else if (_.isPlainObject(item)) {
-      _(item).forOwn((value, key) => {
-        treeItem.children.push(this.createTreeItem(key, value, startAtParentId, relations, treeItem.id, idCounter, depth, path));
+      _(item).forOwn((value, key2) => {
+        treeItem.children.push(this.createTreeItem(key2, value, startAtParentId, relations, treeItem.id, idCounter, depth, path));
       });
     }
 
     if (treeItem.children.length > 200 && !startAtParentId) {
       treeItem.children = [];
       treeItem.leaf = false;
+      /* eslint no-underscore-dangle: ["error", { "allow": ["treeItem", "_hideChildren"] }] */
       treeItem._hideChildren = false;
     }
 
@@ -92,19 +100,11 @@ class StructureItemView extends Component {
     return !parentId && !startAtParentId ? {root: treeItem} : treeItem;
   }
 
-  componentDidMount() {
-    this.loadRelations(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.loadRelations(nextProps);
-  }
-
   loadRelations(props) {
     const typeDefinition = _(Eu4Definition.types).find(x => x.id === props.match.params.type);
 
     if (typeDefinition) {
-      JdxDatabase.get(props.root).then(db => {
+      return JdxDatabase.get(props.root).then((db) => {
         const stores = _.uniq(Eu4Definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
         stores.push('relations');
 
@@ -142,39 +142,33 @@ class StructureItemView extends Component {
 
   render() {
     if (!this.props.match.params.type) {
-      return (<Paper style={{
-flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      ><p>Error during type view load.</p>
-      </Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
     }
 
     const typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
     if (!typeDefinition) {
-      return (<Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      ><p>Could not find type definition.</p>
-      </Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
 
     /*
-        if (!this.state.item) {
-            JdxDatabase.get(this.props.root)[typeDefinition.id].where({[typeDefinition.primaryKey]: this.props.match.params.id}).first(item => {
-                if (item) {
-                    console.log(this.createTreeItem('root', item));
-                    this.setState({
-                        item: item,
-                        treeItem: this.createTreeItem('root', item),
-                    });
-                }
-            });
-        } */
+      if (!this.state.item) {
+        JdxDatabase.get(this.props.root)[typeDefinition.id].where({[typeDefinition.primaryKey]: this.props.match.params.id}).first(item => {
+            if (item) {
+                console.log(this.createTreeItem('root', item));
+                this.setState({
+                    item: item,
+                    treeItem: this.createTreeItem('root', item),
+                });
+            }
+        });
+    }
+    */
+
     const view = this;
     const dataSource = function getData({pageIndex, pageSize, parentId}) {
       return new Promise((resolve) => {
-        JdxDatabase.get(view.props.root).then(db => {
-          db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
+        return JdxDatabase.get(view.props.root).then(db => {
+          return db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
             if (item) {
               const treeItem = view.createTreeItem('root', item, parentId, typeDefinition.relations);
               view.setState({item});
@@ -229,12 +223,12 @@ flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
       events: {
         HANDLE_ROW_CLICK: ({row}) => {
           if (row.leaf === false && row._hasChildren === false) {
-            dataSource({parentId: row._id}).then((result) => {
-              this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
+            return dataSource({parentId: row._id}).then((result) => {
+              return this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
             });
-          } else {
-            this.props.setTreeNodeVisibility(row._id, !row._isExpanded, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, false);
           }
+
+          return this.props.setTreeNodeVisibility(row._id, !row._isExpanded, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, false);
         },
       },
       ref2: (grid) => {
@@ -244,12 +238,11 @@ flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
     };
 
     return (
-      <Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      >
+      <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
         <div style={{display: 'flex'}}>
-          <Typography variant="display1" gutterBottom><Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}</Typography>
+          <Typography variant="display1" gutterBottom>
+            <Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}
+          </Typography>
           <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
               <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: this.getItemPath()})}><Icon color="action">pageview</Icon></IconButton>
@@ -262,30 +255,26 @@ flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
 
-        {this.state.relationsFrom.length > 0 &&
-        <div>
-          <h4>References to ({this.state.relationsFrom.length})</h4>
-          <ul>
-            {this.state.relationsFrom.slice(0, 1000).map(r => (<li key={r.id}>{r.toKey}: <Link
-              to={`/structure/${r.toType}/${r.toId}`}
-            >{r.toId}
-            </Link>
-            </li>))}
-          </ul>
-        </div>
-                }
-        {this.state.relationsTo.length > 0 &&
-        <div>
-          <h4>Referenced in ({this.state.relationsTo.length})</h4>
-          <ul>
-            {this.state.relationsTo.slice(0, 1000).map(r => (<li key={r.id}>{r.fromKey}: <Link
-              to={`/structure/${r.fromType}/${r.fromId}`}
-            >{r.fromId}
-            </Link>
-            </li>))}
-          </ul>
-        </div>
-                }
+        {this.state.relationsFrom.length > 0 && (
+          <div>
+            <h4>References to ({this.state.relationsFrom.length})</h4>
+            <ul>
+              {this.state.relationsFrom.slice(0, 1000).map(r => (
+                <li key={r.id}>{r.toKey}: <Link to={`/structure/${r.toType}/${r.toId}`}>{r.toId}</Link></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {this.state.relationsTo.length > 0 && (
+          <div>
+            <h4>Referenced in ({this.state.relationsTo.length})</h4>
+            <ul>
+              {this.state.relationsTo.slice(0, 1000).map(r => (
+                <li key={r.id}>{r.fromKey}: <Link to={`/structure/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>
+              ))}
+            </ul>
+          </div>
+        )}
 
       </Paper>
     );

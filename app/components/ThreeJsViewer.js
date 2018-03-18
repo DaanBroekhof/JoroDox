@@ -1,16 +1,7 @@
 // @flow
 import React, {Component} from 'react';
-
-const jetpack = require('electron').remote.require('fs-jetpack');
-const path = require('electron').remote.require('path');
-
-import PdxData from '../utils/PdxData';
-import PdxDataView from './PdxDataView';
 import * as THREE from 'three';
-import PdxMesh from '../utils/PdxMesh';
-import {Button, Checkbox, FormControlLabel, FormGroup, Icon, IconButton} from 'material-ui';
-import DeleteIcon from 'material-ui-icons/Delete';
-import ColladaData from '../utils/ColladaData';
+import {Checkbox, FormControlLabel, FormGroup} from 'material-ui';
 
 const OrbitControls = require('../utils/threejs/OrbitControls')(THREE);
 
@@ -43,7 +34,9 @@ export default class ThreeJsViewer extends Component {
   }
 
   createScene() {
-    if (this.props.objectScene === this.objectScene) { return; }
+    if (this.props.objectScene === this.objectScene) {
+      return;
+    }
 
     this.objectScene = this.props.objectScene;
     const distance = (this.objectScene ? this.objectScene.distance * 4 : this.state.distance);
@@ -65,8 +58,8 @@ export default class ThreeJsViewer extends Component {
     this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
 
     // Grid
-    let size = 100,
-      step = 1;
+    let size = 100;
+    let step = 1;
     const geometry = new THREE.Geometry();
     const material = new THREE.LineBasicMaterial({color: 0x303030});
     for (let i = -size; i <= size; i += step) {
@@ -98,7 +91,9 @@ export default class ThreeJsViewer extends Component {
     if (!this.objectScene) { return; }
 
     this.scene.add(this.objectScene.object);
-    if (this.objectScene.skeletonHelper) { this.scene.add(this.objectScene.skeletonHelper); }
+    if (this.objectScene.skeletonHelper) {
+      this.scene.add(this.objectScene.skeletonHelper);
+    }
     this.setState({distance: this.objectScene.distance * 4});
     this.clock = new THREE.Clock();
 
@@ -127,27 +122,27 @@ export default class ThreeJsViewer extends Component {
 
     if (this.objectScene) {
       if (this.objectScene.skeletons) {
-        for (let i = 0; i < this.objectScene.skeletons.length; i++) {
+        for (let i = 0; i < this.objectScene.skeletons.length; i += 1) {
           this.objectScene.skeletons[i].visible = this.state.showSkeletons;
         }
       }
       if (this.objectScene.locatorSkeletons) {
-        for (let i = 0; i < this.objectScene.locatorSkeletons.length; i++) {
+        for (let i = 0; i < this.objectScene.locatorSkeletons.length; i += 1) {
           this.objectScene.locatorSkeletons[i].visible = this.state.showLocators;
         }
       }
       if (this.objectScene.wireframes) {
-        for (let i = 0; i < this.objectScene.wireframes.length; i++) {
+        for (let i = 0; i < this.objectScene.wireframes.length; i += 1) {
           this.objectScene.wireframes[i].visible = this.state.showWireframes;
         }
       }
       if (this.objectScene.meshes) {
-        for (let i = 0; i < this.objectScene.meshes.length; i++) {
+        for (let i = 0; i < this.objectScene.meshes.length; i += 1) {
           this.objectScene.meshes[i].material.visible = this.state.showMeshes;
         }
       }
       if (this.objectScene.colliders) {
-        for (let i = 0; i < this.objectScene.colliders.length; i++) {
+        for (let i = 0; i < this.objectScene.colliders.length; i += 1) {
           this.objectScene.colliders[i].material.visible = this.state.showColliders;
         }
       }
@@ -182,14 +177,11 @@ export default class ThreeJsViewer extends Component {
         <div style={{position: 'relative', display: 'inline-block'}}>
           <canvas ref={canvas => this.canvas = canvas} style={{width: 900, height: 600}} />
 
-          <div style={{
-position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'
-}}
-          >
-                        Meshes: {this.props.objectScene ? this.props.objectScene.meshCount : '-'}<br />
-                        Triangles: {this.props.objectScene ? this.props.objectScene.triangleCount : '-'}<br />
-                        Bones: {this.props.objectScene ? this.props.objectScene.boneCount : '-'}<br />
-                        Locators: {this.props.objectScene ? this.props.objectScene.locatorCount : '-'}<br />
+          <div style={{position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'}}>
+            Meshes: {this.props.objectScene ? this.props.objectScene.meshCount : '-'}<br />
+            Triangles: {this.props.objectScene ? this.props.objectScene.triangleCount : '-'}<br />
+            Bones: {this.props.objectScene ? this.props.objectScene.boneCount : '-'}<br />
+            Locators: {this.props.objectScene ? this.props.objectScene.locatorCount : '-'}<br />
           </div>
         </div>
       </div>

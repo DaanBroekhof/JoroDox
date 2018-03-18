@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 export default class PdxData {
   readFromBuffer(buffer) {
     const data = new DataView(buffer);

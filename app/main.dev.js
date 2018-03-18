@@ -180,6 +180,7 @@ app.on('ready', async () => {
       case WatchDirectoryTask.getTaskType():
         WatchDirectoryTask.handle(request, mainWindow.webContents);
         break;
+      default:
     }
   });
 });

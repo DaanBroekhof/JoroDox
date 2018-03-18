@@ -258,14 +258,10 @@ id, name, loadOnDemand = false, state
             history.push(`/fileview/${node.info.absolutePath}`);
           }
         }}
-        onClusterWillChange={() => {
-        }}
-        onClusterDidChange={() => {
-        }}
-        onContentWillUpdate={() => {
-        }}
-        onContentDidUpdate={() => {
-        }}
+        onClusterWillChange={() => {}}
+        onClusterDidChange={() => {}}
+        onContentWillUpdate={() => {}}
+        onContentDidUpdate={() => {}}
       />)}
       />
     );

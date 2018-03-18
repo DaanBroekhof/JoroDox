@@ -17,8 +17,9 @@ export default class PdxScript {
     this.errors = [];
 
     const base = {
-      id: this.lastId++, type: 'rootScope', name: 'pdxScript', children: [], depth: 0, comments: [], data: {}
+      id: this.lastId, type: 'rootScope', name: 'pdxScript', children: [], depth: 0, comments: [], data: {}
     };
+    this.lastId += 1;
     let token = false;
 
     do {
@@ -27,8 +28,9 @@ export default class PdxScript {
       if (token === false) { break; }
 
       const varScope = {
-        id: this.lastId++, type: 'object', name: token, children: [], depth: 1, value: null, data: {}, comments: []
+        id: this.lastId, type: 'object', name: token, children: [], depth: 1, value: null, data: {}, comments: []
       };
+      this.lastId += 1;
       base.children.push(varScope);
 
       // Copy any comments immediately above this statement to scope
@@ -48,7 +50,7 @@ export default class PdxScript {
         this.readObject(varScope);
       } else {
         // Convert numeric values
-        if (!isNaN(value)) {
+        if (!Number.isNaN(value)) {
           value = +value;
         }
 
@@ -87,8 +89,9 @@ export default class PdxScript {
         // property style object
 
         const propertyScope = {
-          id: this.lastId++, type: 'property', name: prevToken, children: [], depth: scope.depth + 1, value: null, data: {}, comments: []
+          id: this.lastId, type: 'property', name: prevToken, children: [], depth: scope.depth + 1, value: null, data: {}, comments: []
         };
+        this.lastId += 1;
         scope.children.push(propertyScope);
         // Copy any comments immediately above this statement to scope
         this.moveComments(scope, propertyScope, this.currentLine - 1);
@@ -181,7 +184,7 @@ export default class PdxScript {
 
       token += this.data[this.currentOffset];
 
-      this.currentOffset++;
+      this.currentOffset += 1;
 
       // '=', '{' can only be a solo operator
       if (token === '=' || token === '{') { break; }
@@ -196,37 +199,47 @@ export default class PdxScript {
   }
 
   readComment(scope) {
-    this.currentOffset++;
+    this.currentOffset += 1;
     let comment = '';
 
     while (this.currentOffset < this.data.length) {
       if (comment === '' && (this.data[this.currentOffset] === ' ' || this.data[this.currentOffset] === '\t'))
         ; // Skip whitespace after '#'
       else { comment += this.data[this.currentOffset]; }
-      this.currentOffset++;
+      this.currentOffset += 1;
       if (this.data[this.currentOffset] === '\n') {
-        this.currentOffset++;
+        this.currentOffset += 1;
         this.lineScope = null;
         break;
       }
     }
     scope.comments[this.currentLine] = comment;
-    this.currentLine++;
+    this.currentLine += 1;
   }
 
   readString(scope) {
     let string = '';
 
     while (this.currentOffset < this.data.length) {
-      this.currentOffset++;
+      this.currentOffset += 1;
       if (this.data[this.currentOffset] === '\\') {
-        this.currentOffset++;
-        if (this.data[this.currentOffset] === 't') { string += '\t'; } else if (this.data[this.currentOffset] === 'n') { string += '\n'; } else if (this.data[this.currentOffset] === 'r') { string += '\r'; } else if (this.data[this.currentOffset] === '\\') { string += '\\'; } else if (this.data[this.currentOffset] === '"') { string += '"'; } else {
+        this.currentOffset += 1;
+        if (this.data[this.currentOffset] === 't') {
+          string += '\t';
+        } else if (this.data[this.currentOffset] === 'n') {
+          string += '\n';
+        } else if (this.data[this.currentOffset] === 'r') {
+          string += '\r';
+        } else if (this.data[this.currentOffset] === '\\') {
+          string += '\\';
+        } else if (this.data[this.currentOffset] === '"') {
+          string += '"';
+        } else {
           string += this.data[this.currentOffset];
           this.errors.push(`Unknown escape char \`${this.data[this.currentOffset]}\` at line ${this.currentLine}`);
         }
       } else if (this.data[this.currentOffset] === '"') {
-        this.currentOffset++;
+        this.currentOffset += 1;
         break;
       } else {
         string += this.data[this.currentOffset];
@@ -239,27 +252,29 @@ export default class PdxScript {
     while (fromScope.comments[startline]) {
       toScope.comments[startline] = fromScope.comments[startline];
       fromScope.comments[startline] = null;
-      startline--;
+      startline -= 1;
     }
   }
 
   writeData(data, indent) {
-    if (indent === undefined) { indent = -1; }
+    if (indent === undefined) {
+      indent = -1;
+    }
 
     const indentTxt = this.repeatString('\t', indent);
 
     let txt = '';
 
     if (Array.isArray(data)) {
-      txt += '{' + '\n';
+      txt += '{\n';
       txt += `${indentTxt}\t`;
       let lineLength = 0;
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i += 1) {
         const valueTxt = this.writeData(data[i]);
 
         lineLength += valueTxt.length + 1;
 
-        if (lineLength + indentTxt.length * 4 > 80) {
+        if (lineLength + (indentTxt.length * 4) > 80) {
           txt += `${valueTxt}\n${indentTxt}\t`;
           lineLength = 0;
         } else {
@@ -268,23 +283,37 @@ export default class PdxScript {
       }
       txt += `\n${indentTxt}}`;
     } else if (Array.isObject(data)) {
-      if (indent !== -1) { txt += '{' + '\n'; }
+      if (indent !== -1) {
+        txt += '{\n';
+      }
 
       const indentTxtProp = this.repeatString('\t', indent + 1);
 
       Array.forEach(data, (value, key) => {
         // Array of non-strings = same key used multiple times
         if (Array.isArray(value) && 'multipleKeys' in value) {
-          for (let i = 0; i < value.length; i++) {
+          for (let i = 0; i < value.length; i += 1) {
             if (value[i] !== '') { txt += `${indentTxtProp + key} = ${this.writeData(value[i], indent + 1)}\n`; }
           }
         } else
-        if (value !== '') { txt += `${indentTxtProp + key} = ${this.writeData(value, indent + 1)}\n`; }
+        if (value !== '') {
+          txt += `${indentTxtProp + key} = ${this.writeData(value, indent + 1)}\n`;
+        }
       });
 
-      if (indent !== -1) { txt += `${indentTxt}}`; }
-    } else
-    if (isNaN(data) && (data.toString().indexOf(' ') !== -1) || (data.toString().indexOf('"') !== -1) || (data.toString().indexOf('\'') !== -1) || (data.toString().indexOf('\n') !== -1)) { txt += `"${data.replace('"', '\\"')}"`; } else { txt += data; }
+      if (indent !== -1) {
+        txt += `${indentTxt}}`;
+      }
+    } else if (Number.isNaN(data) && (
+      (data.toString().indexOf(' ') !== -1)
+      || (data.toString().indexOf('"') !== -1)
+      || (data.toString().indexOf('\'') !== -1)
+      || (data.toString().indexOf('\n') !== -1)
+    )) {
+      txt += `"${data.replace('"', '\\"')}"`;
+    } else {
+      txt += data;
+    }
 
     return txt;
   }
@@ -292,7 +321,9 @@ export default class PdxScript {
   repeatString(string, num) {
     return new Array(num + 1).join(string);
   }
-/*		'writePdxData': function (data, valueData) {
+
+/*
+    'writePdxData': function (data, valueData) {
         if (data.type == 'rootScope')
             return this.writePdxRootScope(data);
         else if (data.type == 'object')

@@ -1,28 +1,19 @@
 // @flow
 import React, {Component} from 'react';
-import FileTree from '../components/FileTree';
 import SplitterLayout from 'react-splitter-layout';
 import {Link} from 'react-router-dom';
-
 import {Switch, Route} from 'react-router';
+import {Button, MuiThemeProvider, createMuiTheme, Toolbar, Typography} from 'material-ui';
+import AppBar from 'material-ui/AppBar';
+import FileTree from '../components/FileTree';
 import FileView from '../components/FileView';
 import HomePage from '../containers/HomePage';
-
 import SettingsPage from '../components/SettingsPage';
 import AboutPage from '../components/AboutPage';
-
 import StructureTree from '../components/StructureTree';
 import StructureTypeView from '../components/StructureTypeView';
 import StructureItemView from '../components/StructureItemView';
 import StructureView from '../components/StructureView';
-
-
-import AppBar from 'material-ui/AppBar';
-import {Button, Card, MuiThemeProvider, createMuiTheme, Toolbar, Typography} from 'material-ui';
-import blueGrey from 'material-ui/colors/blueGrey';
-import yellow from 'material-ui/colors/yellow';
-import red from 'material-ui/colors/red';
-import grey from 'material-ui/colors/grey';
 import ProgressInfo from '../components/ProgressInfo';
 
 const {dialog} = require('electron').remote;

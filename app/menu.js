@@ -2,9 +2,6 @@
 const app = require('electron').app;
 const Menu = require('electron').Menu;
 const shell = require('electron').shell;
-const BrowserWindow = require('electron').BrowserWindow;
-const dialog = require('electron').dialog;
-const jetpack = require('fs-jetpack').jetpack;
 
 class MenuBuilder {
   constructor(mainWindow) {
