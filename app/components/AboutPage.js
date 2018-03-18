@@ -1,37 +1,25 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import styles from './Home.css';
 import { Paper, Typography } from 'material-ui';
 
 export default class AboutPage extends Component {
   render() {
     return (
-      <Paper style={{
- flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'
-}}
-      >
+      <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
         <Typography variant="display2" gutterBottom>About the Jorodox Tool</Typography>
-
         <p>
-                    The Jorodox Tool is an application to assist in the creation of user-made mods for <a
-                      href="https://www.paradoxplaza.com/paradox-development-studio"
-                      target="_blank"
-                    >Paradox Development
-                    Studio
-                    </a> games like <a href="https://www.paradoxplaza.com/europa-universalis-4" target="_blank">Europa
-                    Universalis 4
-                                                                                                       </a> and <a href="https://www.paradoxplaza.com/crusader-kings-2" target="_blank">Crusader
-                    Kings 2
-                             </a>.
+          The Jorodox Tool is an application to assist in the creation of user-made mods for
+          <a href="https://www.paradoxplaza.com/paradox-development-studio" target="_blank" rel="noopener noreferrer">Paradox Development Studio </a>
+          games like <a href="https://www.paradoxplaza.com/europa-universalis-4" target="_blank" rel="noopener noreferrer">Europa Universalis 4 </a>
+          and <a href="https://www.paradoxplaza.com/crusader-kings-2" target="_blank" rel="noopener noreferrer">Crusader Kings 2 </a>.
         </p>
 
         {/*
-                <dl class="dl-horizontal property-list">
-                    <dt>Version</dt><dd>v1.</dd>
-                    <dt>By</dt><dd>Daan Broekhof (<a href="mailto:Daan Broekhof <daan.broekhof@gmail.com>" target="_blank">daan.broekhof@gmail.com</a>)</dd>
-                    <dt>Source</dt><dd><a href="https://github.com/DaanBroekhof/JoroDox" target="_blank">https://github.com/DaanBroekhof/JoroDox</a> - please report issues here</dd>
-                </dl>
-                */}
+        <dl class="dl-horizontal property-list">
+          <dt>Version</dt><dd>v1.</dd>
+          <dt>By</dt><dd>Daan Broekhof (<a href="mailto:Daan Broekhof <daan.broekhof@gmail.com>" target="_blank">daan.broekhof@gmail.com</a>)</dd>
+          <dt>Source</dt><dd><a href="https://github.com/DaanBroekhof/JoroDox" target="_blank">https://github.com/DaanBroekhof/JoroDox</a> - please report issues here</dd>
+        </dl>
+        */}
 
         <h3>Changelog</h3>
 
@@ -90,7 +78,7 @@ export default class AboutPage extends Component {
         <h5>Changes</h5>
         <ul>
           <li>Fixed texture mapping for multi-UV-per-vertex models</li>
-          <li>Added data cache view &amp; management in 'settings' tab</li>
+          <li>Added data cache view &amp; management in `settings` tab</li>
         </ul>
 
         <h4>v0.2 (2015-01-31)</h4>
@@ -109,7 +97,7 @@ export default class AboutPage extends Component {
               <li>View Paradox-script files (.asset, .txt, .map, .gfx and many others) in data-tree
                                 structure
               </li>
-              <li>View Paradox binary format ("pdxmesh" format for meshes &amp; animations: .mesh, .anim)
+              <li>View Paradox binary format `pdxmesh` format for meshes &amp; animations: .mesh, .anim)
                                 data
               </li>
               <li>View image files (including .tga files, excluding .dds files)</li>

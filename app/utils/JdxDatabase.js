@@ -16,7 +16,14 @@ export default class JdxDatabase {
     static get(root, definition) {
       if (this.db) { return Promise.resolve(this.db); }
 
+      /* eslint-disable no-param-reassign */
       if (!definition) { definition = Eu4Definition; }
+      /* eslint-enable no-param-reassign */
+
+      const relationDefinition = _.join([
+        '++id', 'fromType', 'fromKey', '[fromType+fromId]',
+        '[fromType+fromId+fromKey]', 'toType', 'toKey', '[toType+toId]', '[toType+toId+toKey]'
+      ], ',');
 
       let stores = {
         settings: '++key',
@@ -24,17 +31,19 @@ export default class JdxDatabase {
       _(definition.types).forEach(type => {
         stores[type.id] = `++${type.primaryKey}${type.indexedKeys ? `,${type.indexedKeys.join(',')}` : ''}`;
         if (type.sourceTransform && type.sourceTransform.relationsStorage) {
-          stores[type.sourceTransform.relationsStorage] = '++id,fromType,fromKey,[fromType+fromId],[fromType+fromId+fromKey],toType,toKey,[toType+toId],[toType+toId+toKey]';
+          stores[type.sourceTransform.relationsStorage] = relationDefinition;
         }
       });
 
-      stores.relations = '++id,fromType,fromKey,[fromType+fromId],[fromType+fromId+fromKey],toType,toKey,[toType+toId],[toType+toId+toKey]';
+      stores.relations = relationDefinition;
 
       stores = _(stores).mapValues(x => x.split(',').sort().join(',')).value();
 
       const rootHash = crypto.createHash('md5').update(`${definition.name}||${root}`).digest('hex').substring(0, 8);
-      const db = new Dexie(`JdxDatabase-${rootHash}`, { allowEmptyDB: true });
+      const db = new Dexie(`JdxDatabase-${rootHash}`, {allowEmptyDB: true});
 
+      // Hacky way to allow empty DB editing
+      /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */
       db._allowEmptyDB = true;
 
       const currentStores = [];
@@ -75,11 +84,13 @@ export default class JdxDatabase {
 
         db.version(currentVerNo).stores(currentStores);
         if (_(deleteStores).size()) {
-          db.version(++currentVerNo).stores(deleteStores);
+          currentVerNo += 1;
+          db.version(currentVerNo).stores(deleteStores);
           console.log('Deleting stores:', deleteStores);
         }
         if (_(newStores).size()) {
-          db.version(++currentVerNo).stores(newStores);
+          currentVerNo += 1;
+          db.version(currentVerNo).stores(newStores);
           console.log('Creating stores:', newStores);
         }
 
@@ -102,7 +113,7 @@ export default class JdxDatabase {
             searchPattern: type.sourceType.pathPattern.replace('{type.id}', type.id),
             searchPath: type.sourceType.pathPrefix.replace('{type.id}', type.id),
           },
-          (progress, total, message) => {},
+          (/* progress, total, message */) => {},
           (result) => { resolve(result); },
           (error) => { reject(error); },
         );
@@ -119,7 +130,7 @@ export default class JdxDatabase {
             definition: Eu4Definition,
             filterTypes: [type.id],
           },
-          (progress, total, message) => {},
+          (/* progress, total, message */) => {},
           (result) => { resolve(result); },
           (error) => { reject(error); },
         );
@@ -131,14 +142,16 @@ export default class JdxDatabase {
 
       if (type.reader === 'StructureLoader') {
         return new Promise((resolve, reject) => {
-          this.loadTypeFiles(root, typeId).then(() => {
+          return this.loadTypeFiles(root, typeId).then(() => {
             if (type.sourceType.id !== 'files') {
               return this.reloadTypeById(root, type.sourceType.id, [typeId]);
             }
+
+            return null;
           }).then(() => {
-            StructureLoaderTask.start(
-              { root, typeDefinition: type },
-              (progress, total, message) => {},
+            return StructureLoaderTask.start(
+              {root, typeDefinition: type},
+              (/* progress, total, message */) => {},
               (result) => { resolve(result); },
               (error) => { reject(error); },
             );
@@ -152,7 +165,7 @@ export default class JdxDatabase {
               definition: Eu4Definition,
               filterTypes,
             },
-            (progress, total, message) => {},
+            (/* progress, total, message */) => {},
             (result) => { resolve(result); },
             (error) => { reject(error); },
           );
@@ -165,7 +178,7 @@ export default class JdxDatabase {
               definition: Eu4Definition,
               filterTypes,
             },
-            (progress, total, message) => {},
+            (/* progress, total, message */) => {},
             (result) => { resolve(result); },
             (error) => { reject(error); },
           );
@@ -178,7 +191,7 @@ export default class JdxDatabase {
               definition: Eu4Definition,
               filterTypes,
             },
-            (progress, total, message) => {},
+            (/* progress, total, message */) => {},
             (result) => { resolve(result); },
             (error) => { reject(error); },
           );
@@ -191,7 +204,7 @@ export default class JdxDatabase {
               definition: Eu4Definition,
               filterTypes,
             },
-            (progress, total, message) => {},
+            (/* progress, total, message */) => {},
             (result) => { resolve(result); },
             (error) => { reject(error); },
           );
@@ -204,7 +217,7 @@ export default class JdxDatabase {
               definition: Eu4Definition,
               filterTypes,
             },
-            (progress, total, message) => {},
+            (/* progress, total, message */) => {},
             (result) => { resolve(result); },
             (error) => { reject(error); },
           );
@@ -216,18 +229,18 @@ export default class JdxDatabase {
               root,
               typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
             },
-            (progress, total, message) => {},
+            (/* progress, total, message */) => {},
             (result) => { resolve(result); },
             (error) => { reject(error); },
           );
         });
       }
 
-      return Promise.reject(`Unknown reader: ${type.reader}`);
+      return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
     }
 
     static reloadAll(root) {
-      JdxDatabase.get(root).then(db => db.relations.clear()).then(() => new Promise((resolve, reject) => {
+      return JdxDatabase.get(root).then(db => db.relations.clear()).then(() => new Promise((resolve, reject) => {
         FileLoaderTask.start(
           {
             root,
@@ -261,11 +274,11 @@ export default class JdxDatabase {
         }))
         .then(() => {
           const promises = [];
-          _(Eu4Definition.types).forEach(type => {
+          return _(Eu4Definition.types).forEach(type => {
             if (type.sourceType) {
               promises.push(new Promise((resolve, reject) => {
                 StructureLoaderTask.start(
-                  { root, typeDefinition: type },
+                  {root, typeDefinition: type},
                   (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
                   (result) => { resolve(result); },
                   (error) => { reject(error); },
