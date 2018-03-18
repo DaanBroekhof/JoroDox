@@ -23,6 +23,17 @@ class StructureTypeView extends Component {
         };
     }
 
+    componentDidMount() {
+        //this.props.reloadGrid(this.gridSettings);
+    }
+
+    componentWillReceiveProps(nextProps) {
+
+        if (nextProps.root !== this.props.root) {
+            this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.type, this.state.search));
+        }
+    }
+
     loadTypeFiles(typeId) {
         let type = _(Eu4Definition.types).find(x => x.id === typeId);
 
@@ -82,22 +93,10 @@ class StructureTypeView extends Component {
         });
     }
 
-    render() {
+    getDataSource(rootPath, type, search) {
+        let typeDefinition = _(Eu4Definition.types).find(x => x.id === type);
 
-        if (!this.props.match.params.type) {
-            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view
-                load.</p></Paper>;
-        }
-
-        let typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
-        if (!typeDefinition) {
-            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type
-                definition.</p></Paper>;
-        }
-
-        let rootPath = this.props.root;
-        let search = this.state.search;
-        let dataSource = function getData({pageIndex, pageSize}) {
+        return function getData({pageIndex, pageSize}) {
 
             if (!pageIndex)
                 pageIndex = 0;
@@ -153,6 +152,21 @@ class StructureTypeView extends Component {
                 });
             });
         };
+    }
+
+    render() {
+
+        if (!this.props.match.params.type) {
+            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view
+                load.</p></Paper>;
+        }
+
+        let typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
+        if (!typeDefinition) {
+            return <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type
+                definition.</p></Paper>;
+        }
+
 
         let columns = typeDefinition.listView.columns.map(c => {
             if (c.linkTo) {
@@ -193,8 +207,8 @@ class StructureTypeView extends Component {
                     enabled: true
                 },
             },
-            dataSource: dataSource,
-            stateKey: "typeList-" + this.props.match.params.type,
+            dataSource: this.getDataSource(this.props.root, this.props.match.params.type, this.state.search),
+            stateKey: "typeList-" + this.props.root +'-'+ this.props.match.params.type,
             pageSize: typeDefinition.listView.pageSize,
             style: {
                 display: 'flex',
@@ -250,10 +264,10 @@ class StructureTypeView extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        reloadGrid: (gridSettings) => {
+        reloadGrid: (gridSettings, dataSource) => {
             dispatch(Actions.GridActions.getAsyncData({
                 stateKey:  gridSettings.stateKey,
-                dataSource: gridSettings.dataSource,
+                dataSource: dataSource ? dataSource : gridSettings.dataSource,
                 type: gridSettings.type,
             }))
         },

@@ -1,6 +1,4 @@
-import BackgroundTask from "./BackgroundTask";
 import JdxDatabase from "../JdxDatabase";
-import Dexie from "dexie/dist/dexie";
 import DbBackgroundTask from "./DbBackgroundTask";
 
 const syspath = require('electron').remote.require('path');
@@ -245,7 +243,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
         let nr = 0;
         sourceItems.forEach(sourceItem => {
-            let namespaceValues = {}
+            let namespaceValues = {};
             _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value) => {
                 if (_.includes(definition.sourceTransform.types, value.name)) {
                     let item = {

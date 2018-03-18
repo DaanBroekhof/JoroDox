@@ -130,12 +130,12 @@ export default class StructureTree extends React.Component {
        }
     }
 
-    setTreeState() {
+    setTreeState(root) {
 
         this.setState({
             treeData: {
-                id: 'root:0',
-                name: syspath.basename(this.props.root),
+                id: 'root:'+root,
+                name: syspath.basename(root),
                 loadOnDemand: true,
                 info: {
                     view: 'types',
@@ -179,7 +179,7 @@ export default class StructureTree extends React.Component {
                 autoOpen={true}
                 loadNodes={(parentNode, done) => {
 
-                    if (parentNode.id === 'root:0') {
+                    if (parentNode.info.view === 'types') {
 
                         let categories = _(Eu4Definition.types).map(type => {
                             return type.category ? type.category : "Game structures";
@@ -274,9 +274,10 @@ export default class StructureTree extends React.Component {
                         nodeTarget = nodeTarget.parentElement;
                     }
 
-                    const node = this.tree.getNodeById(nodeTarget.dataset.id);
-
-                    this.navigateToNode(node, history);
+                    if (nodeTarget.dataset) {
+                        const node = this.tree.getNodeById(nodeTarget.dataset.id);
+                        this.navigateToNode(node, history);
+                    }
                 }}
                 onDoubleClick={(event) => {
                     // dblclick event
