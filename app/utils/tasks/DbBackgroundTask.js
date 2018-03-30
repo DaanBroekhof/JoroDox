@@ -1,7 +1,8 @@
-import BackgroundTask from './BackgroundTask';
 import Dexie from 'dexie';
+import BackgroundTask from './BackgroundTask';
 
 const hash = require('object-hash');
+const minimatch = require('minimatch');
 
 export default class DbBackgroundTask extends BackgroundTask {
   saveChunked(data, store, chunkNr, chunkSize) {
@@ -27,5 +28,25 @@ export default class DbBackgroundTask extends BackgroundTask {
   addRelationId(relationData) {
     relationData.id = hash(relationData);
     return relationData;
+  }
+
+  filterFilesByPath(files, types, sourceTypeId, filterTypes) {
+    const patterns = [];
+    const prefixes = [];
+    _(types).forOwn((typeDefinition) => {
+      if (filterTypes && !_.includes(filterTypes, typeDefinition.id)) {
+        return;
+      }
+      if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
+        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+      }
+      if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
+        patterns.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+        prefixes.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+      }
+    });
+
+    return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
   }
 }

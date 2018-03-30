@@ -21,17 +21,7 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.root);
     this.progress(0, 1, 'Finding LUA scripts...');
 
-    const patterns = [];
-    const prefixes = [];
-    _(args.definition.types).forOwn((typeDefinition) => {
-      if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
-      if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'lua_scripts' && typeDefinition.sourceType.pathPattern) {
-        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-      }
-    });
-
-    const files = await db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
+    const files = await this.filterFilesByPath(db.files, args.definition.types, 'lua_scripts', args.filterTypes);
 
     const filesList = _(files);
 

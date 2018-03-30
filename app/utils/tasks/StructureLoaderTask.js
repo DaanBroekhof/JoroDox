@@ -28,7 +28,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       function delChunk() {
         return db[relationStorage].where('fromType').equals(definition.id).limit(1000).delete()
           .then((deleted) => {
-            task.progress(0, 1, `Removing old relations ${nrDelete}...`);
+            task.progress(0, 1, 'Removing old relations...' + (nrDelete > 0 ? ' '+ nrDelete : ''));
             nrDelete++;
             if (deleted !== 0) {
               return delChunk();
@@ -45,6 +45,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
     // Filter on known path info
     let sourceData = db[definition.sourceType.id];
+    if (definition.sourceType.path) {
+      sourceData = sourceData.where({path: definition.sourceType.path.replace('{type.id}', definition.id)});
+    }
     if (definition.sourceType.pathPrefix) {
       sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
     }
