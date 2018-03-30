@@ -233,6 +233,15 @@ export default {
         path: ['data', 'data'],
         relationsFromName: 'country',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'graphical_culture'],
+          fromName: 'graphical_culture',
+          toType: 'graphicalculturetypes',
+          toName: 'graphicalculturetype',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -508,6 +517,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'make_obsolete'],
+          fromName: 'made_obsolete_by',
+          toType: 'buildings',
+          toName: 'makes_obsolete',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -543,6 +561,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'war_goal'],
+          fromName: 'cb_type_war_goal',
+          toType: 'wargoal_types',
+          toName: 'cb_types',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -1176,6 +1203,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'province'],
+          fromName: 'great_project',
+          toType: 'map_provinces',
+          toName: 'map_province',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -1626,6 +1662,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'allow', 'religion'],
+          fromName: 'personal_deities_allow',
+          toType: 'religions',
+          toName: 'religion',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -2452,7 +2497,7 @@ export default {
       id: 'history_provinces',
       title: 'History provinces',
       reader: 'StructureLoader',
-      primaryKey: 'provinceId',
+      primaryKey: 'province_id',
       sourceType: {
         id: 'pdx_scripts',
         pathPrefix: 'history/provinces/',
@@ -2536,6 +2581,13 @@ export default {
           fromName: 'history_province_future',
           toType: 'country_tags',
           toName: 'controller_country_tag',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'trade_goods'],
+          fromName: 'history_province_trade_goods',
+          toType: 'tradegoods',
+          toName: 'tradegoods_province',
         },
       ],
     },
@@ -3205,7 +3257,6 @@ export default {
         type: 'keyValues',
         path: ['data', 'data'],
         keyName: 'name',
-        valueName: 'filePath',
       },
       listView: {
         pageSize: 100,
@@ -3477,6 +3528,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['data', 'areas'],
+          fromName: 'map_region',
+          toType: 'map_area',
+          toName: 'map_area',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3498,6 +3558,15 @@ export default {
         id: 'pdx_scripts',
         path: 'map/superregion.txt',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['regions'],
+          fromName: 'map_superregion',
+          toType: 'map_region',
+          toName: 'map_region',
+        },
+      ],
       sourceTransform: {
         type: 'keyValues',
         path: ['data', 'data'],
@@ -3566,6 +3635,16 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['data', 'terrain_override'],
+          fromName: 'map_terrain_categories_override',
+          toType: 'map_provinces',
+          toName: 'map_terrain_categories_overrides',
+
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
