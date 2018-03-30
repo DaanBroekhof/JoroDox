@@ -214,16 +214,18 @@ class StructureTypeView extends Component {
 
     this.gridSettings = gridSettings;
 
+    const itemPath = `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}`;
+
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
           <Typography variant="display2" gutterBottom><Link to="/structure">Type</Link>: {typeDefinition.title}</Typography>
           <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
-              <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}`})}><Icon color="action">pageview</Icon></IconButton>
+              <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: itemPath})}><Icon color="action">pageview</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
-              <IconButton onClick={() => OperatingSystemTask.start({openItem: `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}`})}><Icon color="action">open_in_new</Icon></IconButton>
+              <IconButton onClick={() => OperatingSystemTask.start({openItem: itemPath})}><Icon color="action">open_in_new</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Reload data" placement="bottom">
               <IconButton onClick={() => this.reloadTypeById(this.props.match.params.type)}><Icon color="action">refresh</Icon></IconButton>

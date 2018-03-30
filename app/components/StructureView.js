@@ -98,7 +98,7 @@ export default class StructureView extends Component {
 
   reloadTypeById(typeId) {
     return JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
-      console.log('done');
+      console.log(`Finished loading ${typeId}`);
     });
   }
 
