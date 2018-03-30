@@ -23,7 +23,7 @@ export default class PdxScript {
     let token = false;
 
     do {
-      token = this.readToken(base, true);
+      token = this.readToken(base);
 
       if (token === false) { break; }
 
