@@ -383,6 +383,13 @@ export default {
           toType: 'country_tags',
           toName: 'primary_country_tag',
         },
+        {
+          type: 'valueByPath',
+          path: ['culture_group'],
+          fromName: 'culture',
+          toType: 'culture_groups',
+          toName: 'culture_group',
+        },
       ],
     },
     {
@@ -629,6 +636,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['data', 'provinces'],
+          fromName: 'colonial_regions',
+          toType: 'map_provinces',
+          toName: 'provinces',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -707,6 +723,15 @@ export default {
         parentRelationType: 'religionGroups',
         parentRelationKey: 'parentReligionGroup',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['religion_group'],
+          fromName: 'religion_group',
+          toType: 'religion_groups',
+          toName: 'religion',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -2527,9 +2552,53 @@ export default {
       sourceTransform: {
         type: 'fileData',
         path: ['data', 'data'],
-        filenamePattern: '/([A-Z]+)\\s+\-[^/]*\\.txt',
+        filenamePattern: '/([A-Z]+)\\s+-[^/]*\\.txt',
         filenamePatternKey: 'tag',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'government'],
+          fromName: 'country_history_government',
+          toType: 'governments',
+          toName: 'government',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'religion'],
+          fromName: 'country_history_religion',
+          toType: 'religions',
+          toName: 'religion',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'primary_culture'],
+          fromName: 'country_history_culture',
+          toType: 'cultures',
+          toName: 'culture',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'capital'],
+          fromName: 'country_capital',
+          toType: 'map_provinces',
+          toName: 'capital_province',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'fixed_capital'],
+          fromName: 'country_fixed_capital',
+          toType: 'map_provinces',
+          toName: 'fixed_capital_province',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'technology_group'],
+          fromName: 'country_technology_group',
+          toType: 'technology_groups',
+          toName: 'country_technology_group',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -2560,29 +2629,6 @@ export default {
           },
         ],
       },
-      relations: [
-        {
-          type: 'valueByPath',
-          path: ['data', 'government'],
-          fromName: 'country_history_government',
-          toType: 'governments',
-          toName: 'government',
-        },
-        {
-          type: 'valueByPath',
-          path: ['data', 'religion'],
-          fromName: 'country_history_religion',
-          toType: 'religions',
-          toName: 'religion',
-        },
-        {
-          type: 'valueByPath',
-          path: ['data', 'primary_culture'],
-          fromName: 'country_history_culture',
-          toType: 'cultures',
-          toName: 'culture',
-        },
-      ],
     },
     {
       id: 'history_advisors',
@@ -3287,6 +3333,15 @@ export default {
         keyName: 'name',
         valueName: 'provinces',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['provinces'],
+          fromName: 'map_area',
+          toType: 'map_provinces',
+          toName: 'provinces',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3314,6 +3369,15 @@ export default {
         keyName: 'name',
         valueName: 'provinces',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['provinces'],
+          fromName: 'map_climate',
+          toType: 'map_provinces',
+          toName: 'provinces',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3341,6 +3405,15 @@ export default {
         keyName: 'name',
         valueName: 'provinces',
       },
+      relations: [
+        {
+          type: 'arrayValuesByPath',
+          path: ['provinces'],
+          fromName: 'map_continent',
+          toType: 'map_provinces',
+          toName: 'provinces',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3368,6 +3441,15 @@ export default {
         keyName: 'province',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['province'],
+          fromName: 'map_positions',
+          toType: 'map_provinces',
+          toName: 'province',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3573,7 +3655,7 @@ export default {
       primaryKey: 'province',
       sourceType: {
         id: 'pdx_scripts',
-        path: 'map/tradewinds.txt',
+        path: 'map/trade_winds.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3581,6 +3663,15 @@ export default {
         keyName: 'province',
         valueName: 'wind_direction',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['province'],
+          fromName: 'map_tradewinds',
+          toType: 'map_provinces',
+          toName: 'province',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3818,6 +3909,29 @@ export default {
         keyName: 'nr',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'From'],
+          fromName: 'map_adjacencies_from',
+          toType: 'map_provinces',
+          toName: 'from_province',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'To'],
+          fromName: 'map_adjacencies_to',
+          toType: 'map_provinces',
+          toName: 'to_province',
+        },
+        {
+          type: 'valueByPath',
+          path: ['data', 'Through'],
+          fromName: 'map_adjacencies_through',
+          toType: 'map_provinces',
+          toName: 'through_province',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -3833,6 +3947,42 @@ export default {
           {
             name: 'Comment',
             dataIndex: ['data', 'Comment'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'map_provinces',
+      title: 'Map provinces',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'province',
+      sourceType: {
+        id: 'csv_files',
+        path: 'map/definition.csv',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data'],
+        valueName: 'data',
+        customFields: {
+          province: {
+            type: 'get',
+            fields: ['data', 'province'],
+          },
+          name: {
+            type: 'get',
+            fields: ['data', 'x'],
+          },
+        },
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Province',
+            dataIndex: 'province',
+            linkTo: '[self]',
           },
         ],
       },
