@@ -17,50 +17,43 @@ export default class CsvFileParserTask extends DbBackgroundTask {
     return 'CsvFileParserTask';
   }
 
-  execute(args) {
-    JdxDatabase.get(args.root).then(db => {
-      this.progress(0, 1, 'Finding CSV files...');
+  async execute(args) {
+    const db = await JdxDatabase.get(args.root);
 
-      const patterns = [];
-      const prefixes = [];
-      _(args.definition.types).forOwn((typeDefinition) => {
-        if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
-        if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'csv_files' && typeDefinition.sourceType.pathPattern) {
-          patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-          prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-        }
-      });
+    this.progress(0, 1, 'Finding CSV files...');
 
-      db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
-        const filesList = _(files);
-
-        const csvResults = [];
-        const relations = [];
-        filesList.each(file => {
-          const csvData = csvparser(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), ';').asObjects();
-
-          if (csvResults.length % 500 === 0) { this.progress(csvResults.length, filesList.size(), `Parsing ${filesList.size()} CSV files...`); }
-
-          csvResults.push({path: file.path, data: csvData});
-          relations.push(this.addRelationId({
-            fromKey: 'csv_files',
-            fromType: 'csv_files',
-            fromId: file.path,
-            toKey: 'file',
-            toType: 'files',
-            toId: file.path
-          }));
-        });
-
-        Promise.all([
-          this.saveChunked(csvResults, db.csv_files, 0, 500),
-          this.saveChunked(relations, db.relations, 0, 500),
-        ]).then(result => {
-          this.finish(result);
-        }).catch(reason => {
-          this.fail(reason.toString());
-        });
-      });
+    const patterns = [];
+    const prefixes = [];
+    _(args.definition.types).forOwn((typeDefinition) => {
+      if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
+      if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'csv_files' && typeDefinition.sourceType.pathPattern) {
+        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+      }
     });
+
+    const files = await db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
+    const filesList = _(files);
+
+    const csvResults = [];
+    const relations = [];
+    filesList.each(file => {
+      const csvData = csvparser(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), ';').asObjects();
+
+      if (csvResults.length % 500 === 0) { this.progress(csvResults.length, filesList.size(), `Parsing ${filesList.size()} CSV files...`); }
+
+      csvResults.push({path: file.path, data: csvData});
+      relations.push(this.addRelationId({
+        fromKey: 'csv_files',
+        fromType: 'csv_files',
+        fromId: file.path,
+        toKey: 'file',
+        toType: 'files',
+        toId: file.path
+      }));
+    });
+
+    await this.saveChunked(csvResults, db.csv_files, 0, 500);
+    await this.saveChunked(relations, db.relations, 0, 500);
   }
 }

@@ -40,65 +40,61 @@ export default class FileLoaderTask extends DbBackgroundTask {
     return 'FileLoaderTask';
   }
 
-  execute(args) {
-    JdxDatabase.get(args.root).then(db => {
-      this.progress(0, 1, 'Reading directory data...');
+  async execute(args) {
+    const db = await JdxDatabase.get(args.root);
 
-      const localJetpack = jetpack.cwd(args.root);
+    this.progress(0, 1, 'Reading directory data...');
 
-      const typeDefinition = args.typeDefinition;
+    const localJetpack = jetpack.cwd(args.root);
 
-      let searchPattern = '*';
-      if (args.searchPattern) { searchPattern = args.searchPattern; }
-      let searchPath = '.';
-      if (args.searchPath) {
-        searchPath = args.searchPath;
-        searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
-      }
+    const typeDefinition = args.typeDefinition;
 
-      if (!localJetpack.exists(searchPath)) {
-        this.finish([]);
-      }
+    let searchPattern = '*';
+    if (args.searchPattern) {
+      searchPattern = args.searchPattern;
+    }
+    let searchPath = '.';
+    if (args.searchPath) {
+      searchPath = args.searchPath;
+      searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
+    }
 
-      localJetpack.findAsync(searchPath, {
-        matching: searchPattern,
-        recursive: true,
-        files: true,
-        directories: true
-      }).then(files => {
-        let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
+    if (!localJetpack.exists(searchPath)) {
+      this.finish([]);
+    }
 
-        if (args.fileFilters) {
-          filesList = filesList.filter(file => args.fileFilters.some(x => minimatch(file, x)));
-        }
-
-        this.progress(0, filesList.size(), `Adding ${filesList.size()} file meta data items...`);
-
-        let nr = 0;
-        const filesRemapped = filesList.map(file => {
-          nr += 1;
-          if (nr % 1000 === 0) { this.progress(nr, filesList.size(), `Adding ${filesList.size()} file meta data items...`); }
-
-          // TODO: Make this async as well!
-          const info = localJetpack.inspect(file, {times: true});
-
-          return {
-            path: file.replace(new RegExp(`\\${syspath.sep}`, 'g'), '/'),
-            info,
-            // type: FileLoaderTask.getFileType(info),
-          };
-        });
-
-        Promise.all([
-          this.saveChunked(filesRemapped.value(), db.files, 0, 500),
-        ]).then(result => {
-          this.finish(result);
-        }).catch(reason => {
-          this.fail(reason.toString());
-        });
-      }).catch(reason => {
-        this.fail(reason.toString());
-      });
+    const files = await localJetpack.findAsync(searchPath, {
+      matching: searchPattern,
+      recursive: true,
+      files: true,
+      directories: true
     });
+
+    let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
+
+    if (args.fileFilters) {
+      filesList = filesList.filter(file => args.fileFilters.some(x => minimatch(file, x)));
+    }
+
+    this.progress(0, filesList.size(), `Adding ${filesList.size()} file meta data items...`);
+
+    let nr = 0;
+    const filesRemapped = filesList.map(file => {
+      nr += 1;
+      if (nr % 1000 === 0) {
+        this.progress(nr, filesList.size(), `Adding ${filesList.size()} file meta data items...`);
+      }
+
+      // TODO: Make this async as well!
+      const info = localJetpack.inspect(file, {times: true});
+
+      return {
+        path: file.replace(new RegExp(`\\${syspath.sep}`, 'g'), '/'),
+        info,
+        // type: FileLoaderTask.getFileType(info),
+      };
+    });
+
+    await this.saveChunked(filesRemapped.value(), db.files, 0, 500);
   }
 }

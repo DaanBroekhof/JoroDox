@@ -17,53 +17,47 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
     return 'LuaScriptParserTask';
   }
 
-  execute(args) {
-    JdxDatabase.get(args.root).then(db => {
-      this.progress(0, 1, 'Finding LUA scripts...');
+  async execute(args) {
+    const db = await JdxDatabase.get(args.root);
+    this.progress(0, 1, 'Finding LUA scripts...');
 
-      const patterns = [];
-      const prefixes = [];
-      _(args.definition.types).forOwn((typeDefinition) => {
-        if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
-        if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'lua_scripts' && typeDefinition.sourceType.pathPattern) {
-          patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-          prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-        }
-      });
-
-      db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
-        const filesList = _(files);
-
-        const scripts = [];
-        const relations = [];
-        filesList.each(file => {
-          const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
-
-          const data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
-
-          if (scripts.length % 500 === 0) { this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`); }
-
-          scripts.push({path: file.path, data});
-          relations.push(this.addRelationId({
-            fromKey: 'lua_script',
-            fromType: 'lua_scripts',
-            fromId: file.path,
-            toKey: 'file',
-            toType: 'files',
-            toId: file.path
-          }));
-        });
-
-        Promise.all([
-          this.saveChunked(scripts, db.lua_scripts, 0, 500),
-          this.saveChunked(relations, db.relations, 0, 500),
-        ]).then(result => {
-          this.finish(result);
-        }).catch(reason => {
-          this.fail(reason.toString());
-        });
-      });
+    const patterns = [];
+    const prefixes = [];
+    _(args.definition.types).forOwn((typeDefinition) => {
+      if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
+      if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'lua_scripts' && typeDefinition.sourceType.pathPattern) {
+        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+      }
     });
+
+    const files = await db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
+
+    const filesList = _(files);
+
+    const scripts = [];
+    const relations = [];
+    filesList.each(file => {
+      const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
+
+      const data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
+
+      if (scripts.length % 500 === 0) { this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`); }
+
+      scripts.push({path: file.path, data});
+      relations.push(this.addRelationId({
+        fromKey: 'lua_script',
+        fromType: 'lua_scripts',
+        fromId: file.path,
+        toKey: 'file',
+        toType: 'files',
+        toId: file.path
+      }));
+    });
+
+
+    await this.saveChunked(scripts, db.lua_scripts, 0, 500);
+    await this.saveChunked(relations, db.relations, 0, 500);
   }
 
   convertAstTree(node, prefix, comments) {

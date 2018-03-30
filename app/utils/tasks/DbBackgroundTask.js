@@ -11,7 +11,11 @@ export default class DbBackgroundTask extends BackgroundTask {
     return new Promise((resolve, reject) => {
       store.bulkPut(slice).then(lastkey => {
         this.progress(Math.min(data.length, chunkNr * chunkSize), data.length, `Saving ${data.length} ${store.name} data to DB...`);
-        if (chunkNr * chunkSize >= data.length) { resolve(lastkey); } else { task.saveChunked(data, store, chunkNr + 1, chunkSize).then(result => resolve(result)).catch(reason => reject(reason)); }
+        if (chunkNr * chunkSize >= data.length) {
+          return resolve(lastkey);
+        }
+
+        return task.saveChunked(data, store, chunkNr + 1, chunkSize).then(result => resolve(result)).catch(reason => reject(reason));
       }).catch(reason => {
         reject(reason);
       }).catch(Dexie.BulkError, (e) => {

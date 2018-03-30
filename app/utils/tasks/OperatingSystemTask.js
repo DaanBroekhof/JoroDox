@@ -7,7 +7,7 @@ export default class OperatingSystemTask extends BackgroundTask {
     return 'OperatingSystemTask';
   }
 
-  execute(args) {
+  async execute(args) {
     if (args.showItemInFolder) {
       shell.showItemInFolder(args.showItemInFolder);
     }

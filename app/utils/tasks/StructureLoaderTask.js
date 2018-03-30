@@ -10,91 +10,82 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return 'StructureLoaderTask';
   }
 
-  execute(args) {
+  async execute(args) {
     const relationStorage = args.typeDefinition.sourceTransform.relationsStorage ? args.typeDefinition.sourceTransform.relationsStorage : 'relations';
 
-    JdxDatabase.get(args.root).then(db => {
-      const definition = args.typeDefinition;
+    const db = await JdxDatabase.get(args.root);
+    const definition = args.typeDefinition;
 
-      this.progress(0, 1, 'Removing old data...');
+    this.progress(0, 1, 'Removing old data...');
 
-      db[definition.id].clear().then(() => {
-        this.progress(0, 1, 'Removing old relations...');
+    await db[definition.id].clear();
+    this.progress(0, 1, 'Removing old relations...');
 
-        if (relationStorage === 'relations') {
-          let nrDelete = 0;
-          const task = this;
+    if (relationStorage === 'relations') {
+      let nrDelete = 0;
+      const task = this;
 
-          function delChunk() {
-            return db[relationStorage].where('fromType').equals(definition.id).limit(1000).delete()
-              .then((deleted) => {
-                task.progress(0, 1, `Removing old relations ${nrDelete}...`);
-                nrDelete++;
-                if (deleted !== 0) {
-                  return delChunk();
-                }
-              });
-          }
-
-          return delChunk();
-        }
-
-        return db[relationStorage].clear();
-      }).then(() => {
-        this.progress(0, 3, 'Fetching files...');
-
-        // Filter on known path info
-        let sourceData = db[definition.sourceType.id];
-        if (definition.sourceType.pathPrefix) {
-          sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
-        }
-        if (definition.sourceType.pathPattern) {
-          sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
-        }
-
-
-        // Iterate over all found data items
-        sourceData.toArray(rawSourceItems => {
-          this.progress(0, 3, 'Parsing data...');
-
-          const sourceItems = _(rawSourceItems);
-
-          let result = {items: [], relations: []};
-
-          if (definition.sourceTransform.type === 'keyValues') {
-            result = this.sourceTransformByKeyValues(sourceItems, definition);
-          } else if (definition.sourceTransform.type === 'keyKeyValues') {
-            result = this.sourceTransformByKeyKeyValues(sourceItems, definition);
-          } else if (definition.sourceTransform.type === 'fileData') {
-            result = this.sourceTransformByFileData(sourceItems, definition);
-          } else if (definition.sourceTransform.type === 'typesList') {
-            result = this.sourceTransformByTypesList(sourceItems, definition);
-          } else if (definition.sourceTransform.type === 'stringValues') {
-            result = this.sourceTransformByStringValues(sourceItems, definition);
-          } else {
-            console.warn(`Unknown sourceTransform type \`${definition.sourceTransform.type}\`.`);
-          }
-
-          this.progress(0, 3, 'Adding additional relations...');
-
-          // Add any additional relations defined
-          result = this.processAdditionalRelations(result, definition);
-
-          this.progress(0, 3, 'Saving data...');
-
-          const chunkSize = definition.sourceTransform.saveChunkSize ? definition.sourceTransform.saveChunkSize : 100;
-
-          // Save everything to DB
-          this.saveChunked(result.items, db[definition.id], 0, chunkSize).then(() => this.saveChunked(result.relations, db[relationStorage], 0, chunkSize)).then(result => {
-            this.finish(result);
-          }).catch(reason => {
-            this.fail(reason.toString());
+      function delChunk() {
+        return db[relationStorage].where('fromType').equals(definition.id).limit(1000).delete()
+          .then((deleted) => {
+            task.progress(0, 1, `Removing old relations ${nrDelete}...`);
+            nrDelete++;
+            if (deleted !== 0) {
+              return delChunk();
+            }
           });
-        });
-      }).catch(e => {
-        console.error(e);
-      });
-    });
+      }
+
+      await delChunk();
+    }
+
+    await db[relationStorage].clear();
+
+    this.progress(0, 3, 'Fetching files...');
+
+    // Filter on known path info
+    let sourceData = db[definition.sourceType.id];
+    if (definition.sourceType.pathPrefix) {
+      sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
+    }
+    if (definition.sourceType.pathPattern) {
+      sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
+    }
+
+    // Iterate over all found data items
+    const rawSourceItems = await sourceData.toArray();
+    this.progress(0, 3, 'Parsing data...');
+
+    const sourceItems = _(rawSourceItems);
+
+    let result = {items: [], relations: []};
+
+    if (definition.sourceTransform.type === 'keyValues') {
+      result = this.sourceTransformByKeyValues(sourceItems, definition);
+    } else if (definition.sourceTransform.type === 'keyKeyValues') {
+      result = this.sourceTransformByKeyKeyValues(sourceItems, definition);
+    } else if (definition.sourceTransform.type === 'fileData') {
+      result = this.sourceTransformByFileData(sourceItems, definition);
+    } else if (definition.sourceTransform.type === 'typesList') {
+      result = this.sourceTransformByTypesList(sourceItems, definition);
+    } else if (definition.sourceTransform.type === 'stringValues') {
+      result = this.sourceTransformByStringValues(sourceItems, definition);
+    } else {
+      console.warn(`Unknown sourceTransform type \`${definition.sourceTransform.type}\`.`);
+    }
+
+    this.progress(0, 3, 'Adding additional relations...');
+
+    // Add any additional relations defined
+    result = this.processAdditionalRelations(result, definition);
+
+    this.progress(0, 3, 'Saving data...');
+
+    const chunkSize = definition.sourceTransform.saveChunkSize ? definition.sourceTransform.saveChunkSize : 100;
+
+    // Save everything to DB
+    await this.saveChunked(result.items, db[definition.id], 0, chunkSize);
+    await this.saveChunked(result.relations, db[relationStorage], 0, chunkSize);
   }
 
   sourceTransformByKeyValues(sourceItems, definition) {

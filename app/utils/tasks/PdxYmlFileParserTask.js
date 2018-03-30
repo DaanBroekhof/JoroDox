@@ -16,53 +16,45 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     return 'PdxYmlFileParserTask';
   }
 
-  execute(args) {
-    JdxDatabase.get(args.root).then(db => {
-      this.progress(0, 1, 'Finding Paradox YML files...');
+  async execute(args) {
+    const db = await JdxDatabase.get(args.root);
+    this.progress(0, 1, 'Finding Paradox YML files...');
 
-      const patterns = [];
-      const prefixes = [];
-      _(args.definition.types).forOwn((typeDefinition) => {
-        if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
-        if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'pdxyml_files' && typeDefinition.sourceType.pathPattern) {
-          patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-          prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-        }
-      });
-
-      db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray(files => {
-        const filesList = _(files);
-
-        const results = [];
-        const relations = [];
-        filesList.each(file => {
-          const filePath = args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep);
-          const fileData = jetpack.read(filePath);
-          const pdxYmlData = this.parsePdxYml(fileData, filePath);
-
-          if (results.length % 500 === 0) { this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`); }
-
-          results.push({path: file.path, data: pdxYmlData});
-          relations.push(this.addRelationId({
-            fromKey: 'pdxyml_files',
-            fromType: 'pdxyml_files',
-            fromId: file.path,
-            toKey: 'file',
-            toType: 'files',
-            toId: file.path
-          }));
-        });
-
-        Promise.all([
-          this.saveChunked(results, db.pdxyml_files, 0, 5000),
-          this.saveChunked(relations, db.relations, 0, 5000),
-        ]).then(result => {
-          this.finish(result);
-        }).catch(reason => {
-          this.fail(reason.toString());
-        });
-      });
+    const patterns = [];
+    const prefixes = [];
+    _(args.definition.types).forOwn((typeDefinition) => {
+      if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
+      if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'pdxyml_files' && typeDefinition.sourceType.pathPattern) {
+        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+      }
     });
+
+    const files = await db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
+    const filesList = _(files);
+
+    const results = [];
+    const relations = [];
+    filesList.each(file => {
+      const filePath = args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep);
+      const fileData = jetpack.read(filePath);
+      const pdxYmlData = this.parsePdxYml(fileData, filePath);
+
+      if (results.length % 500 === 0) { this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`); }
+
+      results.push({path: file.path, data: pdxYmlData});
+      relations.push(this.addRelationId({
+        fromKey: 'pdxyml_files',
+        fromType: 'pdxyml_files',
+        fromId: file.path,
+        toKey: 'file',
+        toType: 'files',
+        toId: file.path
+      }));
+    });
+
+    await this.saveChunked(results, db.pdxyml_files, 0, 5000);
+    await this.saveChunked(relations, db.relations, 0, 5000);
   }
 
   // The .yml files are not quite YAML

@@ -55,13 +55,27 @@ export default class BackgroundTask {
       this.taskMap[request.taskType][request.taskId].handleRequest(request);
     }
 
-    execute(task) {
+    async execute(task) {
       // Do stuff
     }
 
     handleRequest(request) {
       if (request.type === 'execute') {
-        this.execute(request.args);
+
+        try {
+          const result = this.execute(request.args);
+          if (result && result.then) {
+            result.then(res => {
+              return this.finish(res);
+            }).catch(e => {
+              this.fail(e.toString());
+            });
+          } else {
+            this.finish(result);
+          }
+        } catch (e) {
+          this.fail(e.toString());
+        }
       }
     }
 
