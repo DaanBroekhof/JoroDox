@@ -68,12 +68,14 @@ export default class BackgroundTask {
             result.then(res => {
               return this.finish(res);
             }).catch(e => {
+              console.error(e);
               this.fail(e.toString());
             });
           } else {
             this.finish(result);
           }
         } catch (e) {
+          console.error(e);
           this.fail(e.toString());
         }
       }
