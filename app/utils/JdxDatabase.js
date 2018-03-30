@@ -110,8 +110,8 @@ export default class JdxDatabase {
         {
           root,
           typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
-          searchPattern: type.sourceType.pathPattern.replace('{type.id}', type.id),
-          searchPath: type.sourceType.pathPrefix.replace('{type.id}', type.id),
+          searchPattern: type.sourceType.path ? type.sourceType.path.replace('{type.id}', type.id) : type.sourceType.pathPattern.replace('{type.id}', type.id),
+          searchPath: type.sourceType.path ? type.sourceType.path.replace('{type.id}', type.id) : type.sourceType.pathPrefix.replace('{type.id}', type.id),
         },
         (/* progress, total, message */) => {},
         (result) => { resolve(result); },

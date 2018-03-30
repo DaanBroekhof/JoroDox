@@ -214,7 +214,12 @@ class StructureTypeView extends Component {
 
     this.gridSettings = gridSettings;
 
-    const itemPath = `${this.props.root}/${typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type)}`;
+    let itemPath = `${this.props.root}/`;
+    if (typeDefinition.sourceType && typeDefinition.sourceType.pathPrefix) {
+      itemPath += typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type);
+    } else if (typeDefinition.sourceType && typeDefinition.sourceType.path) {
+      itemPath += typeDefinition.sourceType.path.replace('{type.id}', this.props.match.params.type);
+    }
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>

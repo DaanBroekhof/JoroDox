@@ -59,16 +59,22 @@ export default class FileLoaderTask extends DbBackgroundTask {
       searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
     }
 
-    if (!localJetpack.exists(searchPath)) {
+    const type = localJetpack.exists(searchPath);
+    if (!type || type === 'other') {
       this.finish([]);
     }
 
-    const files = await localJetpack.findAsync(searchPath, {
-      matching: searchPattern,
-      recursive: true,
-      files: true,
-      directories: true
-    });
+    let files = [];
+    if (type === 'file') {
+      files = [searchPath];
+    } else if (type === 'dir') {
+      files = await localJetpack.findAsync(searchPath, {
+        matching: searchPattern,
+        recursive: true,
+        files: true,
+        directories: true
+      });
+    }
 
     let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
 

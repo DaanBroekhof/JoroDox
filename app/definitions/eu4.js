@@ -3007,8 +3007,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/achievements.txt',
+        path: 'common/achievements.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3034,8 +3033,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/technology.txt',
+        path: 'common/technology.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3069,8 +3067,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/technology.txt',
+        path: 'common/technology.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3100,8 +3097,7 @@ export default {
       primaryKey: 'tag',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/historial_lucky.txt',
+        path: 'common/historial_lucky.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3132,8 +3128,7 @@ export default {
       primaryKey: 'path',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/alerts.txt',
+        path: 'common/alerts.txt',
       },
       sourceTransform: {
         type: 'fileData',
@@ -3158,8 +3153,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/graphicalculturetype.txt',
+        path: 'common/graphicalculturetype.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3185,8 +3179,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'lua_scripts',
-        pathPrefix: 'common/',
-        pathPattern: 'common/defines.lua',
+        path: 'common/defines.lua',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3255,8 +3248,7 @@ export default {
       primaryKey: 'nr',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/ambient_object.txt',
+        path: 'map/ambient_object.txt',
       },
       sourceTransform: {
         type: 'typesList',
@@ -3287,8 +3279,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/area.txt',
+        path: 'map/area.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3315,8 +3306,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/climate.txt',
+        path: 'map/climate.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3343,8 +3333,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/continent.txt',
+        path: 'map/continent.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3371,8 +3360,7 @@ export default {
       primaryKey: 'province',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/positions.txt',
+        path: 'map/positions.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3399,8 +3387,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/region.txt',
+        path: 'map/region.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3427,8 +3414,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/superregion.txt',
+        path: 'map/superregion.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3455,8 +3441,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/seasons.txt',
+        path: 'map/seasons.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3491,8 +3476,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/terrain.txt',
+        path: 'map/terrain.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3527,8 +3511,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/terrain.txt',
+        path: 'map/terrain.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3559,8 +3542,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/terrain.txt',
+        path: 'map/terrain.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3591,8 +3573,7 @@ export default {
       primaryKey: 'province',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/',
-        pathPattern: 'map/tradewinds.txt',
+        path: 'map/tradewinds.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3655,8 +3636,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'lua_scripts',
-        pathPrefix: 'map/random',
-        pathPattern: 'map/random/tweaks.lua',
+        path: 'map/random/tweaks.lua',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3722,8 +3702,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/random',
-        pathPattern: 'map/random/RandomLakeNames.txt',
+        path: 'map/random/RandomLakeNames.txt',
       },
       sourceTransform: {
         type: 'stringValues',
@@ -3748,8 +3727,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/random',
-        pathPattern: 'map/random/RandomLandNames.txt',
+        path: 'map/random/RandomLandNames.txt',
       },
       sourceTransform: {
         type: 'stringValues',
@@ -3780,8 +3758,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/random',
-        pathPattern: 'map/random/RandomSeaNames.txt',
+        path: 'map/random/RandomSeaNames.txt',
       },
       sourceTransform: {
         type: 'stringValues',
@@ -3806,8 +3783,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/random/',
-        pathPattern: 'map/random/RNWScenarios.txt',
+        path: 'map/random/RNWScenarios.txt',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3834,8 +3810,7 @@ export default {
       primaryKey: 'nr',
       sourceType: {
         id: 'csv_files',
-        pathPrefix: 'map/',
-        pathPattern: 'map/adjacencies.csv',
+        path: 'map/adjacencies.csv',
       },
       sourceTransform: {
         type: 'keyValues',
@@ -3870,8 +3845,7 @@ export default {
       primaryKey: 'name',
       sourceType: {
         id: 'pdxyml_files',
-        pathPrefix: 'localisation/',
-        pathPattern: 'localisation/languages.yml',
+        path: 'localisation/languages.yml',
       },
       sourceTransform: {
         type: 'keyValues',
