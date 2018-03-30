@@ -189,6 +189,7 @@
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
+    "csv-parse": "^2.1.0",
     "devtron": "^1.4.0",
     "dexie": "^2.0.1",
     "electron-debug": "^1.5.0",

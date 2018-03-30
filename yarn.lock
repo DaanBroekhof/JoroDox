@@ -1406,13 +1406,9 @@ balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
-base64-js@1.2.0:
+base64-js@1.2.0, base64-js@^1.0.2:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.0.tgz#a39992d723584811982be5e290bb6a53d86700f1"
-
-base64-js@^1.0.2:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.3.tgz#fb13668233d9614cf5fb4bce95a9ba4096cdf801"
 
 base@^0.11.1:
   version "0.11.2"
@@ -2647,6 +2643,10 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
 csstype@^1.6.0:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-1.8.2.tgz#2c0f16da08b99f13fe7fbb242e87d1a19dbe77a7"
+
+csv-parse@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-2.1.0.tgz#75293aa334e7f8dd1ef956c5551adf0db6a79c81"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"

@@ -10,7 +10,7 @@ const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
 const _ = require('lodash');
 const minimatch = require('minimatch');
-const csvparser = require('electron').remote.require('node-csv-parse');
+const csvparser = require('electron').remote.require('csv-parse');
 
 export default class CsvFileParserTask extends DbBackgroundTask {
   static getTaskType() {
@@ -22,27 +22,44 @@ export default class CsvFileParserTask extends DbBackgroundTask {
 
     this.progress(0, 1, 'Finding CSV files...');
 
-    const patterns = [];
-    const prefixes = [];
-    _(args.definition.types).forOwn((typeDefinition) => {
-      if (args.filterTypes && !_.includes(args.filterTypes, typeDefinition.id)) { return; }
-      if (typeDefinition.sourceType && typeDefinition.sourceType.id === 'csv_files' && typeDefinition.sourceType.pathPattern) {
-        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-      }
-    });
-
-    const files = await db.files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
+    const files = await this.filterFilesByPath(db.files, args.definition.types, 'csv_files', args.filterTypes);
     const filesList = _(files);
 
     const csvResults = [];
     const relations = [];
-    filesList.each(file => {
-      const csvData = csvparser(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), ';').asObjects();
+    for (const file of filesList) {
+      const fullPath = args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep);
+      const csvData = await new Promise((resolve, reject) => {
+        csvparser(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'), {
+          delimiter: ';',
+          skip_empty_lines: true,
+          relax_column_count: true,
+        }, (error, data) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(data);
+          }
+        });
+      });
 
-      if (csvResults.length % 500 === 0) { this.progress(csvResults.length, filesList.size(), `Parsing ${filesList.size()} CSV files...`); }
+      const uniqueColumns = [];
+      csvData[0].forEach(column => {
+        let nr = 0;
+        let newColumn = column;
+        while (_.includes(uniqueColumns, newColumn)) {
+          nr += 1;
+          newColumn = column + '_' + nr;
+        }
+        uniqueColumns.push(newColumn);
+      });
+      const csvDataObject = _.map(csvData.slice(1), (row) => _.zipObject(uniqueColumns, row));
 
-      csvResults.push({path: file.path, data: csvData});
+      if (csvResults.length % 500 === 0) {
+        this.progress(csvResults.length, filesList.size(), `Parsing ${filesList.size()} CSV files...`);
+      }
+
+      csvResults.push({path: file.path, data: csvDataObject});
       relations.push(this.addRelationId({
         fromKey: 'csv_files',
         fromType: 'csv_files',
@@ -51,7 +68,7 @@ export default class CsvFileParserTask extends DbBackgroundTask {
         toType: 'files',
         toId: file.path
       }));
-    });
+    }
 
     await this.saveChunked(csvResults, db.csv_files, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
