@@ -50,7 +50,7 @@ export default class PdxScript {
         this.readObject(varScope);
       } else {
         // Convert numeric values
-        if (!Number.isNaN(value)) {
+        if (!isNaN(value)) {
           value = +value;
         }
 
