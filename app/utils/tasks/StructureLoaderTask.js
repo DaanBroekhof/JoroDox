@@ -37,9 +37,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       }
 
       await delChunk();
+    } else {
+      await db[relationStorage].clear();
     }
-
-    await db[relationStorage].clear();
 
     this.progress(0, 3, 'Fetching files...');
 
@@ -98,15 +98,24 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
         const item = {};
 
-        if (definition.sourceTransform.keyName) { item[definition.sourceTransform.keyName] = key; }
-        if (definition.sourceTransform.valueName) { item[definition.sourceTransform.valueName] = value; }
+        if (definition.sourceTransform.keyName) {
+          item[definition.sourceTransform.keyName] = key;
+        }
+        if (definition.sourceTransform.valueName) {
+          item[definition.sourceTransform.valueName] = value;
+        }
 
+        if (definition.sourceTransform.customFields) {
+          this.getCustomFields(item, definition.sourceTransform.customFields);
+        }
+
+        item[definition.primaryKey] = item[definition.primaryKey].toString();
         items.push(item);
 
         relations.push(this.addRelationId({
           fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
           fromType: definition.id,
-          fromId: key,
+          fromId: item[definition.primaryKey],
           toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
           toType: definition.sourceType.id,
           toId: sourceItem.path,
@@ -128,17 +137,28 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           const match = value.toString().match(new RegExp(definition.sourceTransform.valueRegex, definition.sourceTransform.valueRegexFlags));
 
           // No matches == no item
-          if (!match) { return; }
+          if (!match) {
+            return;
+          }
 
           definition.sourceTransform.valueRegexNames.forEach((valueName, index) => {
-            if (valueName !== null) { item[valueName] = match[index]; }
+            if (valueName !== null) {
+              item[valueName] = match[index];
+            }
           });
         } else {
           item[definition.primaryKey] = value;
         }
 
         // No data == no item
-        if (_.size(item) === 0) { return; }
+        if (_.size(item) === 0) {
+          return;
+        }
+
+        if (definition.sourceTransform.customFields) {
+          this.getCustomFields(item, definition.sourceTransform.customFields);
+        }
+        item[definition.primaryKey] = item[definition.primaryKey].toString();
 
         items.push(item);
 
@@ -166,7 +186,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           if (definition.sourceTransform.requiredProperty && value2[definition.sourceTransform.requiredProperty] === undefined) {
             return;
           }
-          let item = {};
+          const item = {};
           if (definition.sourceTransform.keyName) { item[definition.sourceTransform.keyName] = key2; }
           if (definition.sourceTransform.parentKeyName) { item[definition.sourceTransform.parentKeyName] = key; }
           if (definition.sourceTransform.valueName) { item[definition.sourceTransform.valueName] = value2; }
@@ -178,8 +198,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           }
 
           if (definition.sourceTransform.customFields) {
-            item = this.getCustomFields(item, definition.sourceTransform.customFields);
+            this.getCustomFields(item, definition.sourceTransform.customFields);
           }
+          item[definition.primaryKey] = item[definition.primaryKey].toString();
 
           items.push(item);
 
@@ -231,7 +252,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
               item[definition.sourceTransform.filenamePatternKey] = found[1];
             }
           }
+
+          if (definition.sourceTransform.customFields) {
+            this.getCustomFields(item, definition.sourceTransform.customFields);
+          }
+
+          item[definition.primaryKey] = item[definition.primaryKey].toString();
           items.push(item);
+
           nr += 1;
           relations.push(this.addRelationId({
             fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
@@ -264,6 +292,11 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       }
       item.path = sourceItem.path;
       item.data = definition.sourceTransform.path !== undefined ? _.get(sourceItem, definition.sourceTransform.path) : sourceItem.data;
+
+      if (definition.sourceTransform.customFields) {
+        this.getCustomFields(item, definition.sourceTransform.customFields);
+      }
+      item[definition.primaryKey] = item[definition.primaryKey].toString();
       items.push(item);
 
       relations.push(this.addRelationId({
@@ -287,7 +320,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             result.relations.push(this.addRelationId({
               fromKey: relation.fromName,
               fromType: definition.id,
-              fromId: item[definition.primaryKey],
+              fromId: item[definition.primaryKey].toString(),
               toKey: relation.toName,
               toType: relation.toType,
               toId: relation.pathPrefix + item[relation.property],
@@ -298,23 +331,26 @@ export default class StructureLoaderTask extends DbBackgroundTask {
               result.relations.push(this.addRelationId({
                 fromKey: relation.fromName,
                 fromType: definition.id,
-                fromId: item[definition.primaryKey],
+                fromId: item[definition.primaryKey].toString(),
                 toKey: relation.toName,
                 toType: relation.toType,
-                toId: value,
+                toId: value.toString(),
               }));
             }
           } else if (relation.type === 'arrayValuesByPath') {
-            _.get(item, relation.path).forEach(relationValue => {
-              result.relations.push(this.addRelationId({
-                fromKey: relation.fromName,
-                fromType: definition.id,
-                fromId: item[definition.primaryKey],
-                toKey: relation.toName,
-                toType: relation.toType,
-                toId: relationValue,
-              }));
-            });
+            const values = _.get(item, relation.path);
+            if (values) {
+              values.forEach(relationValue => {
+                result.relations.push(this.addRelationId({
+                  fromKey: relation.fromName,
+                  fromType: definition.id,
+                  fromId: item[definition.primaryKey].toString(),
+                  toKey: relation.toName,
+                  toType: relation.toType,
+                  toId: relationValue.toString(),
+                }));
+              });
+            }
           }
         });
       });
@@ -326,6 +362,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     _.forOwn(fields, (fieldDef, fieldName) => {
       if (fieldDef.type === 'concat') {
         item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator ? fieldDef.separator : '.');
+      } else if (fieldDef.type === 'get') {
+        item[fieldName] = _.get(item, fieldDef.fields);
       } else {
         console.warn(`Unknown custom config field \`${fieldDef.type}\`.`, fieldDef);
       }
