@@ -105,7 +105,10 @@ export default class StructureView extends Component {
   reloadAll() {
     Eu4Definition.types.filter(x => x.reader === 'StructureLoader').reduce((promise, type) => promise.then(() => {
       console.log(`Starting ${type.id}`);
-      return JdxDatabase.reloadTypeById(this.props.root, type.id);
+      return JdxDatabase.reloadTypeById(this.props.root, type.id).then(result => {
+        console.log(`Loaded ${type.id}`);
+        return result;
+      });
     }), Promise.resolve());
   }
 

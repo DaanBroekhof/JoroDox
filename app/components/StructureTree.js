@@ -249,7 +249,7 @@ export default class StructureTree extends React.Component {
               nodeTarget = nodeTarget.parentElement;
             }
 
-            if (nodeTarget.dataset) {
+            if (nodeTarget && nodeTarget.dataset) {
               const node = this.tree.getNodeById(nodeTarget.dataset.id);
               this.navigateToNode(node, history);
             }
