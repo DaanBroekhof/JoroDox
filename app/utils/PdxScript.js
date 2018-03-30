@@ -23,7 +23,7 @@ export default class PdxScript {
     let token = false;
 
     do {
-      token = this.readToken(base);
+      token = this.readToken(base, true);
 
       if (token === false) { break; }
 
@@ -36,28 +36,31 @@ export default class PdxScript {
       // Copy any comments immediately above this statement to scope
       this.moveComments(base, varScope, this.currentLine - 1);
 
-      const assign = this.readToken(varScope);
+      const assign = this.readToken(varScope, true);
       if (assign !== '=' && assign !== '{') {
         this.errors.push(`Expected token \`=\` or \`{\` at line ${this.currentLine}\`, instead got "${assign}".`);
       }
 
       let value = assign;
 
-      // Allow assigning with and '=' or with an '{'
-      if (assign === '=') { value = this.readToken(varScope); }
-
-      if (value === '{') {
-        this.readObject(varScope);
-      } else {
-        // Convert numeric values
-        if (!isNaN(value)) {
-          value = +value;
+      if (assign === '=' || assign === '{') {
+        // Allow assigning with an '=' or with an '{'
+        if (assign === '=') {
+          value = this.readToken(varScope);
         }
+        if (value === '{') {
+          this.readObject(varScope);
+        } else {
+          // Convert numeric values
+          if (!isNaN(value)) {
+            value = +value;
+          }
 
-        varScope.value = value;
-        varScope.data = value;
-        varScope.type = 'property';
-        varScope.icon = 'asterisk';
+          varScope.value = value;
+          varScope.data = value;
+          varScope.type = 'property';
+          varScope.icon = 'asterisk';
+        }
       }
 
       if (base.data[varScope.name]) {
@@ -97,7 +100,9 @@ export default class PdxScript {
         this.moveComments(scope, propertyScope, this.currentLine - 1);
 
         // Value or '{' may follow '='
-        if (token === '=') { token = this.readToken(propertyScope); }
+        if (token === '=') {
+          token = this.readToken(propertyScope);
+        }
 
         if (token === '{') {
           this.readObject(propertyScope);
@@ -152,15 +157,19 @@ export default class PdxScript {
     while (token !== false);
   }
 
-  readToken(scope) {
+  readToken(scope, stopAtNewline) {
     // Skip first whitespace
     while (this.whiteSpace.indexOf(this.data[this.currentOffset]) !== -1) {
+      this.currentOffset++;
       if (this.data[this.currentOffset] === '\n') {
         this.lineScope = null;
         this.currentLine++;
-        this.currentLineOffset = this.currentOffset + 1;
+        this.currentLineOffset = this.currentOffset;
+
+        if (stopAtNewline) {
+          return false;
+        }
       }
-      this.currentOffset++;
     }
 
     // Keep track of deepest scope in current line (for comments)
@@ -174,7 +183,9 @@ export default class PdxScript {
       if (this.data[this.currentOffset] === '#') {
         this.readComment(this.lineScope);
 
-        if (token !== '') { return token; }
+        if (token !== '') {
+          return token;
+        }
         return this.readToken(scope);
       }
       // '=', '{', '}' can only be a solo token
