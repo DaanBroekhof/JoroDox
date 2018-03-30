@@ -50,7 +50,10 @@ class StructureItemView extends Component {
 
     const isArray = _.isArray(item);
 
-    const relation = relations && relations.find(x => x.type === 'valueByPath' && minimatch(path, `/${x.path.join('/')}`));
+    let relation = relations && relations.find(x => x.type === 'valueByPath' && minimatch(path, `/${x.path.join('/')}`));
+    if (!relation) {
+      relation = relations && relations.find(x => x.type === 'arrayValuesByPath' && minimatch(path, `/${x.path.join('/')}/*`));
+    }
 
     let valueRender = '';
     if (isArray) {
