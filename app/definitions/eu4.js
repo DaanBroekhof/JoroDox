@@ -241,6 +241,13 @@ export default {
           toType: 'graphicalculturetypes',
           toName: 'graphicalculturetype',
         },
+        {
+          type: 'arrayValuesByPath',
+          path: ['data', 'historical_idea_groups'],
+          fromName: 'country_historical_idea_groups',
+          toType: 'ideas',
+          toName: 'idea_group',
+        },
       ],
       listView: {
         pageSize: 100,
@@ -335,6 +342,15 @@ export default {
         keyName: 'name',
         valueName: 'data',
       },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['data', 'graphical_culture'],
+          fromName: 'graphical_culture',
+          toType: 'graphicalculturetypes',
+          toName: 'graphicalculturetype',
+        },
+      ],
       listView: {
         pageSize: 100,
         columns: [
@@ -2445,7 +2461,7 @@ export default {
           },
           {
             name: 'Type',
-            dataIndex: ['data', 'name'],
+            dataIndex: ['data', 'type'],
           },
         ],
       },
