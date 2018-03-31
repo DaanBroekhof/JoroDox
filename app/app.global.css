@@ -209,3 +209,34 @@ a {
   top: 0 !important;
   font-size: 10px !important;
 }
+
+/* In page search */
+/*
+* .electron-in-page-search-window is a class specified to default
+* <webview> element for search window.
+*/
+.electron-in-page-search-window {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  border: solid grey 1px;
+  background-color: white;
+  width: 300px;
+  height: 36px;
+}
+
+/*
+* .search-inactive is added to search window <webview> when the window
+* is inactive.
+*/
+.search-inactive {
+  visibility: hidden;
+}
+
+/*
+* .search-inactive is added to search window <webview> when the window
+* is active.
+*/
+.search-active {
+  visibility: visible;
+}

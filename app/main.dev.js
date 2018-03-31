@@ -23,6 +23,9 @@ const OperatingSystemTask = require('./utils/tasks/OperatingSystemTask');
 let mainWindow = null;
 let backgroundWindow = null;
 
+// Register some globals for ease of use
+global.searchWindowDir = `${__dirname}/search-window`;
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
