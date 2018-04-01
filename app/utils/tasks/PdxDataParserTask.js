@@ -5,7 +5,6 @@ import DbBackgroundTask from './DbBackgroundTask';
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
 const _ = require('lodash');
-const minimatch = require('minimatch');
 
 export default class PdxDataParserTask extends DbBackgroundTask {
   static getTaskType() {

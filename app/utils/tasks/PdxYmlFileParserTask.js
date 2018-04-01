@@ -1,15 +1,9 @@
-import BackgroundTask from './BackgroundTask';
 import JdxDatabase from '../JdxDatabase';
-import PdxScript from '../PdxScript';
-import Dexie from 'dexie/dist/dexie';
-import FileView from '../../components/FileView';
-import * as iconv from 'iconv-lite';
 import DbBackgroundTask from './DbBackgroundTask';
 
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
 const _ = require('lodash');
-const minimatch = require('minimatch');
 
 export default class PdxYmlFileParserTask extends DbBackgroundTask {
   static getTaskType() {
