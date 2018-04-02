@@ -227,7 +227,7 @@ export default class JdxDatabase {
     } else if (this.parserToTask[type.reader]) {
       return this.parserToTask[type.reader].start({
         root,
-        definition: type,
+        definition: Eu4Definition,
         filterTypes,
       });
     }
