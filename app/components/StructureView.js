@@ -4,25 +4,31 @@ import {Button, Paper, Typography} from 'material-ui';
 import _ from 'lodash';
 import {Grid} from 'react-redux-grid';
 import {Link} from 'react-router-dom';
+import { connect } from 'react-redux';
 import JdxDatabase from '../utils/JdxDatabase';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import Eu4Definition from '../definitions/eu4';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
+import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
+import {incrementVersion} from '../actions/database';
 
 const syspath = require('electron').remote.require('path');
 
-export default class StructureView extends Component {
+class StructureView extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      files: null,
-      filesList: null,
-      filesCount: null,
       typeCounts: {},
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.root !== this.props.root) {
+      //this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.type, this.state.search));
+    }
   }
 
   reloadType(typeId) {
@@ -48,26 +54,39 @@ export default class StructureView extends Component {
         StructureLoaderTask.start(
           {root: this.props.root, typeDefinition: type},
           (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
-          (result) => console.log('done'),
-          (error) => console.log(error),
         );
       }
     });
   }
 
   watchDirectory() {
-    WatchDirectoryTask.start({rootDir: this.props.root}, null, null, null, (type, response) => {
-      console.log('Watch response', type, response);
-    });
+    WatchDirectoryTask.start(
+      {rootDir: this.props.root},
+      (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
+      (data) => {
+        console.log('Watch response', data);
+        const names = _(data).filter(x => x.eventType !== 'dirChange').map('filename').uniq().value();
+
+        JdxDatabase.loadByPaths(this.props.root, names, Eu4Definition.types).then(() => {
+          //this.props.incrementDatabaseVersion();
+          this.props.dispatch(incrementVersion());
+          return this;
+        });
+      }
+    );
   }
 
+  deleteRelatedTest() {
+    DeleteRelatedTask.start(
+      {rootDir: this.props.root, type: 'files', typeIds: ['common/ages/00_default.txt'], types: Eu4Definition.types},
+      (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
+    );
+  }
 
   loadPdxScripts() {
     PdxScriptParserTask.start(
       {root: this.props.root, definition: Eu4Definition},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
-      (result) => console.log('done'),
-      (error) => console.log(error),
     );
   }
 
@@ -75,8 +94,6 @@ export default class StructureView extends Component {
     PdxDataParserTask.start(
       {root: this.props.root, definition: Eu4Definition},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
-      (result) => console.log('done'),
-      (error) => console.log(error),
     );
   }
 
@@ -99,6 +116,7 @@ export default class StructureView extends Component {
   reloadTypeById(typeId) {
     return JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
       console.log(`Finished loading ${typeId}`);
+      return;
     });
   }
 
@@ -111,6 +129,12 @@ export default class StructureView extends Component {
       });
     }), Promise.resolve());
   }
+
+
+  reloadDiff() {
+    JdxDatabase.loadByPaths(this.props.root, null, Eu4Definition.types);
+  }
+
 
   render() {
     if (!this.loadingCounts) {
@@ -198,12 +222,17 @@ export default class StructureView extends Component {
         <Typography variant="display2" gutterBottom>{syspath.basename(this.props.root)} - Data types</Typography>
 
         <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>
+          {/*
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
+          */}
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadAll()}>Load all</Button><br />
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.watchDirectory()}>Watch directory</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.deleteRelatedTest()}>Test delete</Button><br />
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadDiff()}>Reload diff</Button><br />
+
 
         </div>
 
@@ -212,3 +241,19 @@ export default class StructureView extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch => {
+  return {
+    incrementDatabaseVersion: () => {
+      dispatch(incrementVersion());
+    }
+  };
+};
+
+const mapStateToProps = state => {
+  return {
+//    databaseVersion: state.database,
+  };
+};
+
+export default connect(null, null)(StructureView);

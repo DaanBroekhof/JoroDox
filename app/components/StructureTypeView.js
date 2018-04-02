@@ -4,13 +4,14 @@ import {Grid, Actions} from 'react-redux-grid';
 import {Icon, IconButton, Paper, TextField, Tooltip, Typography} from 'material-ui';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
+import {connect, dispatch} from 'react-redux';
 import JdxDatabase from '../utils/JdxDatabase';
 import Eu4Definition from '../definitions/eu4';
 import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import StructureScannerTask from '../utils/tasks/StructureScannerTask';
+import {incrementVersion} from "../actions/database";
 
 class StructureTypeView extends Component {
   constructor(props) {
@@ -26,8 +27,8 @@ class StructureTypeView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.root !== this.props.root) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.type, this.state.search));
+    if (nextProps.root !== this.props.root || nextProps.databaseVersion !== this.props.databaseVersion) {
+      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.match.params.type, this.state.search));
     }
   }
 
@@ -268,6 +269,7 @@ class StructureTypeView extends Component {
   }
 }
 
+
 const mapDispatchToProps = (dispatch) => ({
   reloadGrid: (gridSettings, dataSource) => {
     dispatch(Actions.GridActions.getAsyncData({
@@ -276,6 +278,15 @@ const mapDispatchToProps = (dispatch) => ({
       type: gridSettings.type,
     }));
   },
+  incrementDatabaseVersion: () => {
+    dispatch(incrementVersion());
+  },
 });
 
-export default connect(null, mapDispatchToProps)(StructureTypeView);
+const mapStateToProps = state => {
+  return {
+    databaseVersion: state.database,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StructureTypeView);

@@ -10,6 +10,7 @@ import {Link} from 'react-router-dom';
 import {Actions} from 'react-redux-grid';
 import {connect} from 'react-redux';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
+import {incrementVersion} from "../actions/database";
 
 const minimatch = require('minimatch');
 
@@ -31,6 +32,9 @@ class StructureItemView extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.loadRelations(nextProps);
+    if (nextProps.databaseVersion !== this.props.databaseVersion) {
+      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.match.params.type, nextProps.match.params.id));
+    }
   }
 
   createTreeItem(key, item, startAtParentId, relations, parentId, idCounter, depth, path) {
@@ -143,6 +147,29 @@ class StructureItemView extends Component {
     return '';
   }
 
+  getDataSource(rootPath, type, id) {
+    const typeDefinition = _(Eu4Definition.types).find(x => x.id === type);
+
+    return function getData({pageIndex, pageSize, parentId}) {
+      return new Promise((resolve) => {
+        return JdxDatabase.get(rootPath).then(db => {
+          return db[typeDefinition.id].where({[typeDefinition.primaryKey]: id}).first(item => {
+            if (item) {
+              const treeItem = this.createTreeItem('root', item, parentId, typeDefinition.relations);
+              this.setState({item});
+
+              if (parentId) {
+                resolve({data: treeItem.children, partial: true});
+              } else {
+                resolve({data: treeItem, total: 1});
+              }
+            }
+          });
+        });
+      });
+    }.bind(this);
+  }
+
   render() {
     if (!this.props.match.params.type) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
@@ -166,26 +193,6 @@ class StructureItemView extends Component {
         });
     }
     */
-
-    const view = this;
-    const dataSource = function getData({pageIndex, pageSize, parentId}) {
-      return new Promise((resolve) => {
-        return JdxDatabase.get(view.props.root).then(db => {
-          return db[typeDefinition.id].where({[typeDefinition.primaryKey]: view.props.match.params.id}).first(item => {
-            if (item) {
-              const treeItem = view.createTreeItem('root', item, parentId, typeDefinition.relations);
-              view.setState({item});
-
-              if (parentId) {
-                resolve({data: treeItem.children, partial: true});
-              } else {
-                resolve({data: treeItem, total: 1});
-              }
-            }
-          });
-        });
-      });
-    };
 
     const gridSettings = {
       height: false,
@@ -216,7 +223,7 @@ class StructureItemView extends Component {
           enabled: true
         },
       },
-      dataSource,
+      dataSource: this.getDataSource(this.props.root, this.props.match.params.type, this.props.match.params.id),
       stateKey: `typeView-${this.props.match.params.type}-${this.props.match.params.id}`,
       pageSize: 1000,
       style: {
@@ -239,6 +246,7 @@ class StructureItemView extends Component {
         this.grid = grid;
       }
     };
+    this.gridSettings = gridSettings;
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
@@ -285,6 +293,13 @@ class StructureItemView extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
+  reloadGrid: (gridSettings, dataSource) => {
+    dispatch(Actions.GridActions.getAsyncData({
+      stateKey: gridSettings.stateKey,
+      dataSource: dataSource || gridSettings.dataSource,
+      type: gridSettings.type,
+    }));
+  },
   setTreeNodeVisibility: (id, visible, stateKey, showTreeRootNode) => {
     dispatch(Actions.GridActions.setTreeNodeVisibility({
       id, visible, stateKey, showTreeRootNode
@@ -297,4 +312,10 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(StructureItemView);
+const mapStateToProps = state => {
+  return {
+    databaseVersion: state.database,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StructureItemView);
