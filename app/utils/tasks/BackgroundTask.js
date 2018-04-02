@@ -17,35 +17,41 @@ export default class BackgroundTask {
       return null;
     }
 
-    static start(args, progressCallback, successCallback, errorCallback, requestCallback) {
+    static start(args, progressCallback, requestCallback) {
       const taskId = Math.random() * 10000000;
 
-      ipc.on('background-response', function listener(event, response) {
-        if (response.taskId === taskId) {
-          if (response.type === 'progress' && progressCallback) {
-            progressCallback(response.progress, response.total, response.message);
-          } else if (response.type === 'finished' && successCallback) {
-            successCallback(response.result);
-            ipc.removeListener('background-response', listener);
-          } else if (response.type === 'failed' && errorCallback) {
-            errorCallback(response.error);
-            ipc.removeListener('background-response', listener);
-          } else if (response.type === 'response' && requestCallback) {
-            requestCallback(response.data);
+      this.resultPromise = new Promise((resolve, reject) => {
+        ipc.on('background-response', function listener(event, response) {
+          if (response.taskId === taskId) {
+            if (response.type === 'progress' && progressCallback) {
+              progressCallback(response.progress, response.total, response.message);
+            } else if (response.type === 'finished') {
+              ipc.removeListener('background-response', listener);
+              resolve(response.result);
+            } else if (response.type === 'failed') {
+              ipc.removeListener('background-response', listener);
+              reject(response.error);
+            } else if (response.type === 'response' && requestCallback) {
+              requestCallback(response.data);
+            }
           }
-        }
+        });
       });
+
+      this.resultPromise.task = new this(taskId, 'sender');
 
       ipc.send('background-request', {
         taskId, type: 'execute', taskType: this.getTaskType(), args
       });
 
-      return new this(taskId, 'sender');
+      return this.resultPromise;
     }
 
     static handle(request, from) {
       if (!this.taskMap[request.taskType] || !this.taskMap[request.taskType][request.taskId]) {
-        if (!this.taskMap[request.taskType]) { this.taskMap[request.taskType] = {}; }
+        if (!this.taskMap[request.taskType]) {
+          this.taskMap[request.taskType] = {};
+        }
 
         this.taskMap[request.taskType][request.taskId] = new this(request.taskId, 'receiver');
       }
@@ -55,13 +61,16 @@ export default class BackgroundTask {
       this.taskMap[request.taskType][request.taskId].handleRequest(request);
     }
 
-    async execute(task) {
+    async getResult(){
+      return this.resultPromise;
+    }
+
+    async execute(task){
       // Do stuff
     }
 
     handleRequest(request) {
       if (request.type === 'execute') {
-
         try {
           const result = this.execute(request.args);
           if (result && result.then) {

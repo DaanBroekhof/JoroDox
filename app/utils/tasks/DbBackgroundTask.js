@@ -30,23 +30,66 @@ export default class DbBackgroundTask extends BackgroundTask {
     return relationData;
   }
 
-  filterFilesByPath(files, types, sourceTypeId, filterTypes) {
+  filterFilesByPath(files, types, sourceTypeId, filterTypes, paths) {
+    if (paths) {
+      return paths;
+    }
+
     const patterns = [];
     const prefixes = [];
     _(types).forOwn((typeDefinition) => {
-      if (filterTypes && !_.includes(filterTypes, typeDefinition.id)) {
-        return;
-      }
-      if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
-        patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-        prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-      }
-      if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
-        patterns.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
-        prefixes.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+      if (filterTypes) {
+        if (!_.includes(filterTypes, typeDefinition.id)) {
+          return;
+        }
+        if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
+          patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+          prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+        }
+        if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
+          patterns.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+          prefixes.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+        }
       }
     });
 
-    return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray();
+    return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys();
+  }
+
+  static filterPaths(typeDefinition, paths) {
+    return paths.filter(path => {
+      let valid = true;
+      if (typeDefinition.sourceType) {
+        if (typeDefinition.sourceType.pathPattern) {
+          valid = valid && minimatch(path, typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+        }
+        if (typeDefinition.sourceType.pathPrefix) {
+          valid = valid && _.startsWith(path, typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+        }
+        if (typeDefinition.sourceType.path) {
+          valid = valid && typeDefinition.sourceType.path === path;
+        }
+      }
+
+      return valid;
+    });
+  }
+
+  async deleteChunked(collection, chunkSize) {
+    let stepNr = 0;
+    const deleteChunkSize = chunkSize ? chunkSize : 1000;
+    let total = 0;
+    let nrDeleted = 0;
+
+    do {
+      this.progress(0, 1, 'Removing ' + collection.name + '...' + (stepNr > 0 ? ' ' + stepNr : ''));
+      nrDeleted = await collection.limit(deleteChunkSize).delete();
+      total += nrDeleted;
+      stepNr += 1;
+    } while (nrDeleted === chunkSize)
+
+    this.progress(1, 1, 'Removing ' + collection.name + '...' + (stepNr > 0 ? ' ' + stepNr : ''));
+
+    return total;
   }
 }

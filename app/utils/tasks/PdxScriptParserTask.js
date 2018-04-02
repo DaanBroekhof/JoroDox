@@ -16,33 +16,33 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.root);
     this.progress(0, 1, 'Finding PDX scripts...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'pdx_scripts', args.filterTypes);
+    const files = await this.filterFilesByPath(db.files, args.definition.types, 'pdx_scripts', args.filterTypes, args.paths);
     const filesList = _(files);
 
     const scripts = [];
     const relations = [];
-    filesList.each(file => {
+    filesList.each(path => {
       const parser = new PdxScript();
-      const path = args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep);
+      const fullPath = args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
 
-      if (!jetpack.exists(path)) {
+      if (!jetpack.exists(fullPath)) {
         return;
       }
 
-      const data = parser.readFile(iconv.decode(jetpack.read(path, 'buffer'), 'win1252'));
+      const data = parser.readFile(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'));
 
       if (scripts.length % 500 === 0) {
         this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} PDX scripts...`);
       }
 
-      scripts.push({path: file.path, data});
+      scripts.push({path, data});
       relations.push(this.addRelationId({
         fromKey: 'pdx_script',
         fromType: 'pdx_scripts',
-        fromId: file.path,
-        toKey: 'file',
+        fromId: path,
+        toKey: 'source',
         toType: 'files',
-        toId: file.path
+        toId: path
       }));
     });
 

@@ -15,26 +15,26 @@ export default class PdxDataParserTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.root);
     this.progress(0, 1, 'Finding PDX data files...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'pdx_data', args.filterTypes);
+    const files = await this.filterFilesByPath(db.files, args.definition.types, 'pdx_data', args.filterTypes, args.paths);
     const filesList = _(files);
 
     this.progress(0, filesList.size(), `Parsing ${filesList.size()} PDX binary data files...`);
 
     const datafiles = [];
     const relations = [];
-    filesList.each(file => {
+    filesList.each(path => {
       const parser = new PdxData();
 
-      const fullPath = args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep);
+      const fullPath = args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const data = parser.readFromBuffer(new Uint8Array(jetpack.read(fullPath, 'buffer')).buffer);
 
       if (datafiles.length % 50 === 0) {
         this.progress(datafiles.length, filesList.size(), `Parsing ${filesList.size()} PDX binary data objects...`);
       }
 
-      datafiles.push({path: file.path, data});
+      datafiles.push({path, data});
       relations.push(this.addRelationId({
-        fromKey: 'pdxData', fromType: 'pdxData', fromId: file.path, toKey: 'file', toType: 'files', toId: file.path
+        fromKey: 'pdx_data', fromType: 'pdx_data', fromId: path, toKey: 'source', toType: 'files', toId: path
       }));
     });
 

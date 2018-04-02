@@ -11,48 +11,43 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const relationStorage = args.typeDefinition.sourceTransform.relationsStorage ? args.typeDefinition.sourceTransform.relationsStorage : 'relations';
-
     const db = await JdxDatabase.get(args.root);
     const definition = args.typeDefinition;
+    const relationStorage = definition.sourceTransform.relationsStorage ? definition.sourceTransform.relationsStorage : 'relations';
 
-    this.progress(0, 1, 'Removing old data...');
+    if (!args.paths) {
+      this.progress(0, 1, 'Removing old data...');
 
-    await db[definition.id].clear();
-    this.progress(0, 1, 'Removing old relations...');
+      await db[definition.id].clear();
+      this.progress(0, 1, 'Removing old relations...');
 
-    if (relationStorage === 'relations') {
-      let nrDelete = 0;
-      const task = this;
-
-      function delChunk() {
-        return db[relationStorage].where('fromType').equals(definition.id).limit(1000).delete()
-          .then((deleted) => {
-            task.progress(0, 1, 'Removing old relations...' + (nrDelete > 0 ? ' '+ nrDelete : ''));
-            nrDelete++;
-            if (deleted !== 0) {
-              return delChunk();
-            }
-          });
+      if (relationStorage === 'relations') {
+        await this.deleteChunked(db[relationStorage].where('fromType').equals(definition.id));
+      } else {
+        await db[relationStorage].clear();
       }
-
-      await delChunk();
-    } else {
-      await db[relationStorage].clear();
     }
 
     this.progress(0, 3, 'Fetching files...');
 
     // Filter on known path info
     let sourceData = db[definition.sourceType.id];
-    if (definition.sourceType.path) {
-      sourceData = sourceData.where({path: definition.sourceType.path.replace('{type.id}', definition.id)});
-    }
-    if (definition.sourceType.pathPrefix) {
-      sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
-    }
-    if (definition.sourceType.pathPattern) {
-      sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
+    if (args.paths) {
+      const paths = StructureLoaderTask.filterPaths(definition, args.paths);
+      if (paths.length === 0) {
+        return null;
+      }
+      sourceData = sourceData.where('path').anyOf(paths);
+    } else {
+      if (definition.sourceType.path) {
+        sourceData = sourceData.where({path: definition.sourceType.path.replace('{type.id}', definition.id)});
+      }
+      if (definition.sourceType.pathPrefix) {
+        sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
+      }
+      if (definition.sourceType.pathPattern) {
+        sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
+      }
     }
 
     // Iterate over all found data items
@@ -116,7 +111,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
           fromType: definition.id,
           fromId: item[definition.primaryKey],
-          toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+          toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
           toType: definition.sourceType.id,
           toId: sourceItem.path,
         }));
@@ -166,7 +161,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
           fromType: definition.id,
           fromId: item[definition.primaryKey],
-          toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+          toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
           toType: definition.sourceType.id,
           toId: sourceItem.path,
         }));
@@ -208,7 +203,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
             fromType: definition.id,
             fromId: item[definition.primaryKey],
-            toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+            toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
             toType: definition.sourceType.id,
             toId: sourceItem.path,
           }));
@@ -257,7 +252,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             this.getCustomFields(item, definition.sourceTransform.customFields);
           }
 
-          item[definition.primaryKey] = item[definition.primaryKey].toString();
+          if (item[definition.primaryKey] !== undefined)
+            item[definition.primaryKey] = item[definition.primaryKey].toString();
           items.push(item);
 
           nr += 1;
@@ -265,7 +261,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
             fromType: definition.id,
             fromId: item[definition.primaryKey],
-            toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+            toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
             toType: definition.sourceType.id,
             toId: sourceItem.path,
           }));
@@ -303,7 +299,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
         fromType: definition.id,
         fromId: item[definition.primaryKey],
-        toKey: definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+        toKey: 'source', //definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
         toType: definition.sourceType.id,
         toId: sourceItem.path,
       }));

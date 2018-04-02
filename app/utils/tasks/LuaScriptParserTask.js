@@ -1,15 +1,9 @@
-import BackgroundTask from './BackgroundTask';
 import JdxDatabase from '../JdxDatabase';
-import PdxScript from '../PdxScript';
-import Dexie from 'dexie/dist/dexie';
-import FileView from '../../components/FileView';
-import * as iconv from 'iconv-lite';
 import DbBackgroundTask from './DbBackgroundTask';
 
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
 const _ = require('lodash');
-const minimatch = require('minimatch');
 const luaparser = require('luaparse');
 
 export default class LuaScriptParserTask extends DbBackgroundTask {
@@ -21,27 +15,27 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.root);
     this.progress(0, 1, 'Finding LUA scripts...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'lua_scripts', args.filterTypes);
+    const files = await this.filterFilesByPath(db.files, args.definition.types, 'lua_scripts', args.filterTypes, args.paths);
 
     const filesList = _(files);
 
     const scripts = [];
     const relations = [];
-    filesList.each(file => {
-      const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + file.path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
+    filesList.each(path => {
+      const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
 
       const data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
 
       if (scripts.length % 500 === 0) { this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`); }
 
-      scripts.push({path: file.path, data});
+      scripts.push({path, data});
       relations.push(this.addRelationId({
         fromKey: 'lua_script',
         fromType: 'lua_scripts',
-        fromId: file.path,
-        toKey: 'file',
+        fromId: path,
+        toKey: 'source',
         toType: 'files',
-        toId: file.path
+        toId: path
       }));
     });
 

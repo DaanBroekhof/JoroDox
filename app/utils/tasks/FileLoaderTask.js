@@ -7,88 +7,108 @@ const _ = require('lodash');
 const minimatch = require('minimatch');
 
 export default class FileLoaderTask extends DbBackgroundTask {
-  static getFileType(info) {
-    const fileTypeRegexes = {
-      pdxScript: [
-        /\.(asset|gfx|txt|gui)$/i
-      ],
-      pdxMesh: [
-        /\.mesh$/i
-      ],
-      pdxAnim: [
-        /\.anim$/i
-      ],
-      image: [
-        /\.(png|jpg|bmp|tga)$/i
-      ],
-      collada: [
-        /\.(dea)$/i
-      ],
-    };
-
-    let type = '_unknown_';
-    _(fileTypeRegexes).forOwn((patterns, patternType) => {
-      if (_(patterns).find(p => p.test(info.name))) {
-        type = patternType;
-      }
-    });
-
-    return type;
-  }
-
   static getTaskType() {
     return 'FileLoaderTask';
   }
 
   async execute(args) {
     const db = await JdxDatabase.get(args.root);
+    const localJetpack = jetpack.cwd(args.root);
 
     this.progress(0, 1, 'Reading directory data...');
 
-    const localJetpack = jetpack.cwd(args.root);
+    let filesList = [];
 
-    const typeDefinition = args.typeDefinition;
+    if (args.searchPattern || args.searchPath) {
+      let searchPattern = '*';
+      if (args.searchPattern) {
+        searchPattern = args.searchPattern;
+      }
+      let searchPath = '.';
+      if (args.searchPath) {
+        searchPath = args.searchPath;
+        searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
+      }
 
-    let searchPattern = '*';
-    if (args.searchPattern) {
-      searchPattern = args.searchPattern;
+      if (args.exactPaths) {
+        searchPath = args.searchPath;
+        searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
+      }
+
+      const type = localJetpack.exists(searchPath);
+      if (!type || type === 'other') {
+        this.finish([]);
+      }
+
+      if (type === 'file') {
+        filesList = _([searchPath]);
+      } else {
+        filesList = _(await localJetpack.findAsync(searchPath, {
+          matching: searchPattern,
+          recursive: true,
+          files: true,
+          directories: true
+        }));
+      }
+    } else if (args.exactPaths) {
+      filesList = _(args.exactPaths);
     }
-    let searchPath = '.';
-    if (args.searchPath) {
-      searchPath = args.searchPath;
-      searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
-    }
 
-    const type = localJetpack.exists(searchPath);
-    if (!type || type === 'other') {
-      this.finish([]);
-    }
+    filesList = filesList.map(x => x.replace(/\\/g, '/'));
 
-    let files = [];
-    if (type === 'file') {
-      files = [searchPath];
-    } else if (type === 'dir') {
-      files = await localJetpack.findAsync(searchPath, {
-        matching: searchPattern,
-        recursive: true,
-        files: true,
-        directories: true
-      });
+    if (args.typeDefinition) {
+      filesList = filesList.filter(file => !args.typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
     }
-
-    let filesList = _(files).filter(file => !typeDefinition.readerFileIgnore.some(x => minimatch(file, x)));
 
     if (args.fileFilters) {
       filesList = filesList.filter(file => args.fileFilters.some(x => minimatch(file, x)));
     }
 
-    this.progress(0, filesList.size(), `Adding ${filesList.size()} file meta data items...`);
+    const storedFileData = await db.files.where('path').startsWithAnyOf(filesList.value()).toArray();
+    const storedFiles = _.keyBy(storedFileData, 'path');
+
+    const filesMetaData = this.getFilesMetaData(args.root, filesList);
+
+    const filesDiff = {
+      changed: [],
+      added: [],
+      deleted: [],
+    };
+
+    filesMetaData.forEach(fileMetaData => {
+      const storedFile = storedFiles[fileMetaData.path];
+      if (!storedFile && fileMetaData.info) {
+        filesDiff.added.push(fileMetaData);
+      } else if (storedFile) {
+        if (!fileMetaData.info) {
+          filesDiff.deleted.push(fileMetaData);
+          filesDiff.deleted.push(...storedFileData.filter(x => _.startsWith(x.path, fileMetaData.path + '/')));
+        } else if (!_.eq(storedFile.info, fileMetaData.info)) {
+          filesDiff.changed.push(fileMetaData);
+        }
+      }
+    });
+
+    const deletePaths = filesDiff.deleted.map(x => x.path);
+
+    await this.deleteChunked(db.files.where('path').anyOf(deletePaths));
+
+    await this.saveChunked(filesDiff.added, db.files, 0, 500);
+    await this.saveChunked(filesDiff.changed, db.files, 0, 500);
+
+    return filesDiff;
+  }
+
+  getFilesMetaData(root, filesList) {
+    const localJetpack = jetpack.cwd(root);
+
+    this.progress(0, filesList.size(), `Reading ${filesList.size()} file meta entries...`);
 
     let nr = 0;
-    const filesRemapped = filesList.map(file => {
+    const filesMetaData = filesList.map(file => {
       nr += 1;
       if (nr % 1000 === 0) {
-        this.progress(nr, filesList.size(), `Adding ${filesList.size()} file meta data items...`);
+        this.progress(nr, filesList.size(), `Reading ${filesList.size()} file meta entries...`);
       }
 
       // TODO: Make this async as well!
@@ -101,6 +121,6 @@ export default class FileLoaderTask extends DbBackgroundTask {
       };
     });
 
-    await this.saveChunked(filesRemapped.value(), db.files, 0, 500);
+    return filesMetaData;
   }
 }
