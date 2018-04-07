@@ -233,7 +233,7 @@ class StructureItemView extends Component {
       events: {
         HANDLE_ROW_CLICK: ({row}) => {
           if (row.leaf === false && row._hasChildren === false) {
-            return dataSource({parentId: row._id}).then((result) => {
+            return this.gridSettings.dataSource({parentId: row._id}).then((result) => {
               return this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
             });
           }
