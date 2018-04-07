@@ -82,13 +82,13 @@ export default class DbBackgroundTask extends BackgroundTask {
     let nrDeleted = 0;
 
     do {
-      this.progress(0, 1, 'Removing ' + collection.name + '...' + (stepNr > 0 ? ' ' + stepNr : ''));
+      this.progress(0, 1, 'Removing DB entries...' + (stepNr > 0 ? ' ' + stepNr : ''));
       nrDeleted = await collection.limit(deleteChunkSize).delete();
       total += nrDeleted;
       stepNr += 1;
     } while (nrDeleted === chunkSize)
 
-    this.progress(1, 1, 'Removing ' + collection.name + '...' + (stepNr > 0 ? ' ' + stepNr : ''));
+    this.progress(1, 1, 'Removing DB entries...' + (stepNr > 0 ? ' ' + stepNr : ''));
 
     return total;
   }

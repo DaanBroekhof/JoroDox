@@ -3,6 +3,8 @@ import DbBackgroundTask from './DbBackgroundTask';
 
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
+const fsutils = require('electron').remote.require('./utils/FsUtils');
+
 const _ = require('lodash');
 const minimatch = require('minimatch');
 
@@ -41,17 +43,17 @@ export default class FileLoaderTask extends DbBackgroundTask {
       }
 
       if (type === 'file') {
-        filesList = _([searchPath]);
+        filesList = [searchPath];
       } else {
-        filesList = _(await localJetpack.findAsync(searchPath, {
+        filesList = await localJetpack.findAsync(searchPath, {
           matching: searchPattern,
           recursive: true,
           files: true,
           directories: true
-        }));
+        });
       }
     } else if (args.exactPaths) {
-      filesList = _(args.exactPaths);
+      filesList = args.exactPaths;
     }
 
     filesList = filesList.map(x => x.replace(/\\/g, '/'));
@@ -64,10 +66,16 @@ export default class FileLoaderTask extends DbBackgroundTask {
       filesList = filesList.filter(file => args.fileFilters.some(x => minimatch(file, x)));
     }
 
-    const storedFileData = await db.files.where('path').startsWithAnyOf(filesList.value()).toArray();
-    const storedFiles = _.keyBy(storedFileData, 'path');
+    const storedFileData = await db.files.where('path').startsWithAnyOf(filesList).toArray();
 
-    const filesMetaData = this.getFilesMetaData(args.root, filesList);
+    const storedFilesMap = new Map();
+    storedFileData.forEach(f => {
+      storedFilesMap.set(f.path, f.info.modifyTime);
+    });
+
+    this.progress(0, 1, 'Getting file meta data...');
+
+    const filesMetaData = JSON.parse(await fsutils.getFilesMetaData(args.root, filesList));
 
     const filesDiff = {
       changed: [],
@@ -75,19 +83,21 @@ export default class FileLoaderTask extends DbBackgroundTask {
       deleted: [],
     };
 
-    filesMetaData.forEach(fileMetaData => {
-      const storedFile = storedFiles[fileMetaData.path];
-      if (!storedFile && fileMetaData.info) {
+    for (const fileMetaData of filesMetaData) {
+      const storedFileModified = storedFilesMap.get(fileMetaData.path);
+      if (!storedFileModified && fileMetaData.info) {
         filesDiff.added.push(fileMetaData);
-      } else if (storedFile) {
+      } else if (storedFileModified) {
         if (!fileMetaData.info) {
           filesDiff.deleted.push(fileMetaData);
           filesDiff.deleted.push(...storedFileData.filter(x => _.startsWith(x.path, fileMetaData.path + '/')));
-        } else if (!_.eq(storedFile.info, fileMetaData.info)) {
+        } else if (storedFileModified !== fileMetaData.info.modifyTime.toString()) {
           filesDiff.changed.push(fileMetaData);
         }
       }
-    });
+    }
+
+    this.progress(0, 1, 'Saving file data...');
 
     const deletePaths = filesDiff.deleted.map(x => x.path);
 
@@ -97,30 +107,5 @@ export default class FileLoaderTask extends DbBackgroundTask {
     await this.saveChunked(filesDiff.changed, db.files, 0, 500);
 
     return filesDiff;
-  }
-
-  getFilesMetaData(root, filesList) {
-    const localJetpack = jetpack.cwd(root);
-
-    this.progress(0, filesList.size(), `Reading ${filesList.size()} file meta entries...`);
-
-    let nr = 0;
-    const filesMetaData = filesList.map(file => {
-      nr += 1;
-      if (nr % 1000 === 0) {
-        this.progress(nr, filesList.size(), `Reading ${filesList.size()} file meta entries...`);
-      }
-
-      // TODO: Make this async as well!
-      const info = localJetpack.inspect(file, {times: true});
-
-      return {
-        path: file.replace(new RegExp(`\\${syspath.sep}`, 'g'), '/'),
-        info,
-        // type: FileLoaderTask.getFileType(info),
-      };
-    });
-
-    return filesMetaData;
   }
 }
