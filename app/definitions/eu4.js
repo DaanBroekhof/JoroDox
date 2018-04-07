@@ -3239,22 +3239,86 @@ export default {
       title: 'Alerts',
       category: 'User interface',
       reader: 'StructureLoader',
-      primaryKey: 'path',
+      primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
         path: 'common/alerts.txt',
       },
       sourceTransform: {
-        type: 'fileData',
-        path: ['data', 'data'],
+        type: 'keyValues',
+        path: ['data', 'data', 'alerts'],
+        keyName: 'name',
+        valueName: 'data',
       },
       listView: {
         pageSize: 100,
         columns: [
           {
-            name: 'Path',
-            dataIndex: 'path',
+            name: 'Name',
+            dataIndex: 'name',
             linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'alert_sounds',
+      title: 'Alert sounds',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'type',
+      sourceType: {
+        id: 'pdx_scripts',
+        path: 'common/alerts.txt',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data', 'data', 'sound'],
+        keyName: 'type',
+        valueName: 'sound',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Type',
+            dataIndex: 'type',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Sound',
+            dataIndex: 'sound',
+          },
+        ],
+      },
+    },
+    {
+      id: 'alert_icons',
+      title: 'Alert icons',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'type',
+      sourceType: {
+        id: 'pdx_scripts',
+        path: 'common/alerts.txt',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data', 'data', 'icon'],
+        keyName: 'type',
+        valueName: 'icon',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Type',
+            dataIndex: 'type',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Icon',
+            dataIndex: 'icon',
           },
         ],
       },
