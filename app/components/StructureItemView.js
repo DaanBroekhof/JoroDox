@@ -67,7 +67,7 @@ class StructureItemView extends Component {
     } else if (_.isPlainObject(item)) {
       valueRender = <i style={{color: 'lightgrey'}}>[{_(item).size()} properties]</i>;
     } else if (relation) {
-      valueRender = <Link to={`/structure/${relation.toType}/${item}`}>{(_.isObject(item) ? item.toString() : item)}</Link>;
+      valueRender = <Link to={`/structure/t/${relation.toType}/${item}`}>{(_.isObject(item) ? item.toString() : item)}</Link>;
     } else {
       valueRender = <span style={{color: 'green'}}>{(_.isObject(item) ? item.toString() : item)}</span>;
     }
@@ -252,7 +252,7 @@ class StructureItemView extends Component {
       <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
         <div style={{display: 'flex'}}>
           <Typography variant="display1" gutterBottom>
-            <Link to={`/structure/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}
+            <Link to={`/structure/t/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}
           </Typography>
           <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
@@ -271,7 +271,7 @@ class StructureItemView extends Component {
             <h4>References to ({this.state.relationsFrom.length})</h4>
             <ul>
               {this.state.relationsFrom.slice(0, 1000).map(r => (
-                <li key={r.id}>{r.toKey}: <Link to={`/structure/${r.toType}/${r.toId}`}>{r.toId}</Link></li>
+                <li key={r.id}>{r.toKey}: <Link to={`/structure/t/${r.toType}/${r.toId}`}>{r.toId}</Link></li>
               ))}
             </ul>
           </div>
@@ -281,7 +281,7 @@ class StructureItemView extends Component {
             <h4>Referenced in ({this.state.relationsTo.length})</h4>
             <ul>
               {this.state.relationsTo.slice(0, 1000).map(r => (
-                <li key={r.id}>{r.fromKey}: <Link to={`/structure/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>
+                <li key={r.id}>{r.fromKey}: <Link to={`/structure/t/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>
               ))}
             </ul>
           </div>

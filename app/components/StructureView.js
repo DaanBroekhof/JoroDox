@@ -139,7 +139,10 @@ class StructureView extends Component {
   render() {
     if (!this.loadingCounts) {
       JdxDatabase.get(this.props.root).then(db => {
-        const typeIds = Eu4Definition.types.filter(type => db[type.id] && this.state.typeCounts[type.id] === undefined).map(x => x.id);
+        const typeIds = Eu4Definition.types
+          .filter(type => db[type.id] && this.state.typeCounts[type.id] === undefined)
+          .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'))
+          .map(x => x.id);
         const promises = typeIds.map(typeId => db[typeId].count());
         return Promise.all(promises).then(counts => {
           const typeCounts = {};
@@ -162,7 +165,7 @@ class StructureView extends Component {
         return typeCopy;
       }
       return type;
-    });
+    }).filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
     extendedTypes = _.sortBy(extendedTypes, x => x.title);
 
     const gridSettings = {
@@ -172,7 +175,7 @@ class StructureView extends Component {
         {
           name: 'Type',
           dataIndex: ['title'],
-          renderer: ({column, value, row}) => <Link to={`/structure/${row.id}`}>{value}</Link>,
+          renderer: ({column, value, row}) => <Link to={`/structure/t/${row.id}`}>{value}</Link>,
         },
         {
           name: 'Item count',
@@ -219,7 +222,7 @@ class StructureView extends Component {
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-        <Typography variant="display2" gutterBottom>{syspath.basename(this.props.root)} - Data types</Typography>
+        <Typography variant="display2" gutterBottom>{this.props.match.params.category || syspath.basename(this.props.root)} - types</Typography>
 
         <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>
           {/*

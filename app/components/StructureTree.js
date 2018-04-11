@@ -28,101 +28,60 @@ export default class StructureTree extends React.Component {
       this.setTreeState(nextProps.root);
     }
     if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
-      if (nextProps.match) { this.doOpenToType(this.tree.getRootNode(), nextProps.match.params.type); }
+      if (nextProps.match) {
+        this.doOpenToType(this.tree.getRootNode(), nextProps.match.params.category, nextProps.match.params.type);
+      }
     }
   }
 
   tree = null;
   treeData = null;
-  openToType = null;
 
-  doOpenToType(node, type = null, updated = false) {
-    if (type) { this.openToType = type; }
-    if (!this.openToType) { return; }
+  doOpenToType(node, category, type) {
+    if (!type && this.props.match.params.type) {
+      type = this.props.match.params.type;
+    }
+    if (!category && this.props.match.params.category) {
+      category = this.props.match.params.category;
+    }
 
-    let found = false;
+    if (!category && type) {
+      const typeDefinition = Eu4Definition.types.find(x => x.id === type);
+      if (typeDefinition) {
+        category = typeDefinition.category || 'Game structures';
+      }
+    }
+
     for (const child of node.children) {
-      if (this.openToType === child.info.type) {
-        this.openToType = null;
-        this.tree.selectNode(child);
-        found = true;
-        break;
-      } else if (child.info.type === 'typekind') {
-        if (!child.state.open) { this.tree.openNode(child, {async: true}); } else { this.doOpenToType(child, type); }
-        found = true;
-        break;
+      if (child.info.view === 'types') {
+        if (!child.state.open) {
+          this.tree.openNode(child);
+        } else {
+          this.doOpenToType(child, category, type);
+        }
+        if (!type && !category) {
+          this.tree.selectNode(child);
+        }
+      } else if (child.info.view === 'category') {
+        if (child.info.type === category) {
+          if (!child.state.open && type) {
+            this.tree.openNode(child);
+          } else if (!type) {
+            this.tree.selectNode(child);
+          } else {
+            this.doOpenToType(child, category, type);
+          }
+        }
+      } else if (child.info.view === 'type') {
+        if (child.info.type === type) {
+          this.tree.selectNode(child);
+        }
       }
-    }
-
-    if (!found && !updated) {
-      // this.updateNode(node);
-      // this.doOpenToPath(node, path, true);
-    }
-  }
-
-  updateNode(node) {
-    if (!node.id) { return; }
-
-    const localJetpack = jetpack.cwd(node.id);
-    const dirs = localJetpack.find('.', {matching: '*', recursive: false, files: false, directories: true});
-    const files = localJetpack.find('.', {matching: '*', recursive: false, files: true, directories: false});
-
-    const nodeIds = [];
-    const newNodes = {};
-    for (const dirName of dirs) {
-      const id = node.id + syspath.sep + dirName;
-      nodeIds.push(`D:${id}`);
-      if (!this.tree.getNodeById(id)) {
-        newNodes[`D:${id}`] = {
-          id,
-          name: dirName,
-          loadOnDemand: true,
-          info: {
-            name: dirName,
-            type: 'dir',
-            absolutePath: id,
-          },
-        };
-      }
-    }
-    for (const fileName of files) {
-      const id = node.id + syspath.sep + fileName;
-      nodeIds.push(`F:${id}`);
-      if (!this.tree.getNodeById(id)) {
-        newNodes[`F:${id}`] = {
-          id,
-          name: fileName,
-          loadOnDemand: false,
-          info: {
-            name: fileName,
-            type: 'file',
-            absolutePath: id,
-          },
-        };
-      }
-    }
-
-    nodeIds.sort((a, b) => a.localeCompare(b));
-
-    // Remove all nodes that no longer exist
-    for (const c of node.children) {
-      if (!nodeIds.includes((c.info.type === 'dir' ? 'D:' : 'F:') + c.id)) {
-        this.tree.removeNode(c);
-      }
-    }
-
-    // Insert new nodes
-    let index = 0;
-    for (const nodeId of nodeIds) {
-      if (newNodes[nodeId]) {
-        this.tree.addChildNodes([newNodes[nodeId]], index, node);
-      }
-      index++;
     }
   }
 
   setTreeState(root) {
-    this.setState({
+    return this.setState({
       treeData: {
         id: `root:${root}`,
         name: syspath.basename(root),
@@ -135,23 +94,25 @@ export default class StructureTree extends React.Component {
       this.tree.loadData(this.state.treeData);
       this.tree.openNode(this.tree.getRootNode().children[0]);
 
-      if (this.props.match.params.type) {
-        this.doOpenToType(this.tree.getRootNode(), this.props.match.params.type);
-      } else {
-        // this.doOpenToPath(this.tree.getRootNode(), root);
-      }
+      this.doOpenToType(this.tree.getRootNode(), this.props.match.params.category, this.props.match.params.type);
+
+      return true;
     });
   }
+
 
   navigateToNode(node, history) {
     if (node.info.view === 'types') {
       if (history.location.pathname !== '/structure') { history.push('/structure'); }
     }
+    if (node.info.view === 'category') {
+      if (history.location.pathname !== `/structure/c/${node.info.type}`) { history.push(`/structure/c/${node.info.type}`); }
+    }
     if (node.info.view === 'type') {
-      if (history.location.pathname !== `/structure/${node.info.type}`) { history.push(`/structure/${node.info.type}`); }
+      if (history.location.pathname !== `/structure/t/${node.info.type}`) { history.push(`/structure/t/${node.info.type}`); }
     }
     if (node.info.view === 'item') {
-      if (history.location.pathname !== `/structure/${node.info.type}/${node.info.id}`) { history.push(`/structure/${node.info.type}/${node.info.id}`); }
+      if (history.location.pathname !== `/structure/t/${node.info.type}/${node.info.id}`) { history.push(`/structure/t/${node.info.type}/${node.info.id}`); }
     }
   }
 
@@ -175,9 +136,7 @@ export default class StructureTree extends React.Component {
                 }
               })).value();
 
-              done(null, categories, () => {
-                  this.tree.toggleNode(this.tree.getNodeById('category:Game structures'), {async: true});
-              });
+              done(null, categories);
           } else if (_.startsWith(parentNode.id, 'category:')) {
             const items = [];
             _(Eu4Definition.types)

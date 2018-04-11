@@ -168,13 +168,13 @@ class StructureTypeView extends Component {
         c.renderer = ({value, column, row}) => {
           const linkToId = column.linkKey ? _.get(row, column.linkKey) : value;
 
-          return <span><Link to={`/structure/${column.linkTo.replace('[self]', this.props.match.params.type)}/${linkToId}`}>{value}</Link></span>;
+          return <span><Link to={`/structure/t/${column.linkTo.replace('[self]', this.props.match.params.type)}/${linkToId}`}>{value}</Link></span>;
         };
       } else {
         _.filter(typeDefinition.relations, (x) => _.isEqual(x.path, c.dataIndex)).forEach(relation => {
           c.renderer = ({value, column, row}) => {
             const linkToId = column.linkKey ? _.get(row, column.linkKey) : value;
-            return <span><Link to={`/structure/${relation.toType}/${linkToId}`}>{value}</Link></span>;
+            return <span><Link to={`/structure/t/${relation.toType}/${linkToId}`}>{value}</Link></span>;
           };
         });
       }

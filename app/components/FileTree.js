@@ -36,7 +36,9 @@ export default class FileTree extends React.Component<Props, State> {
       this.setTreeState(nextProps.root);
     }
     if (!this.tree.getSelectedNode() || nextProps.match.params.path !== this.tree.getSelectedNode().id) {
-      if (nextProps.match) { this.doOpenToPath(this.tree.getRootNode(), nextProps.match.params.path); }
+      if (nextProps.match) {
+        this.doOpenToPath(this.tree.getRootNode(), nextProps.match.params.path);
+      }
     }
   }
 
@@ -55,7 +57,11 @@ export default class FileTree extends React.Component<Props, State> {
         found = true;
         break;
       } else if (this.openToPath.startsWith(child.id + syspath.sep)) {
-        if (!child.state.open) { this.tree.openNode(child, {async: true}); } else { this.doOpenToPath(child); }
+        if (!child.state.open) {
+          this.tree.openNode(child, {async: true});
+        } else {
+          this.doOpenToPath(child);
+        }
         found = true;
         break;
       }

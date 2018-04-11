@@ -103,13 +103,15 @@ export default class App extends Component {
           </AppBar>
           <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
             <Switch>
-              <Route path="/structure/:type?/:id?" render={(props) => <StructureTree root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/c/:category" render={(props) => <StructureTree root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree root={this.state.rootPath} {...props} />} />
               <Route path="/fileview/:path(.*)" render={(props) => <FileTree root={this.state.rootPath} {...props} />} />
               <Route path="/" render={(props) => <FileTree root={this.state.rootPath} {...props} />} />
             </Switch>
             <Switch>
-              <Route path="/structure/:type/:id(.*)" component={(props) => <StructureItemView root={this.state.rootPath} {...props} />} />
-              <Route path="/structure/:type" component={(props) => <StructureTypeView root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/c/:category" component={(props) => <StructureView root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/t/:type" component={(props) => <StructureTypeView root={this.state.rootPath} {...props} />} />
               <Route path="/structure" component={(props) => <StructureView root={this.state.rootPath} {...props} />} />
               <Route path="/fileview/:path(.*)" component={FileView} />
               <Route path="/settings" component={SettingsPage} />
