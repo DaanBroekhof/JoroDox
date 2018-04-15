@@ -8,7 +8,8 @@ import LuaScriptParserTask from '../utils/tasks/LuaScriptParserTask';
 import StructureScannerTask from '../utils/tasks/StructureScannerTask';
 import CsvFileParserTask from '../utils/tasks/CsvFileParserTask';
 import PdxYmlFileParserTask from '../utils/tasks/PdxYmlFileParserTask';
-import DeleteRelatedTask from "../utils/tasks/DeleteRelatedTask";
+import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
+import IndexedBmpParserTask from '../utils/tasks/IndexedBmpParserTask';
 
 const ipc = require('electron').ipcRenderer;
 
@@ -39,6 +40,9 @@ export default class BackgroundApp extends Component {
           break;
         case PdxYmlFileParserTask.getTaskType():
           PdxYmlFileParserTask.handle(request);
+          break;
+        case IndexedBmpParserTask.getTaskType():
+          IndexedBmpParserTask.handle(request);
           break;
         case StructureScannerTask.getTaskType():
           StructureScannerTask.handle(request);

@@ -1,6 +1,7 @@
 /* eslint global-require: 0, flowtype-errors/show-errors: 0 */
 
 import WatchDirectoryTask from './utils/tasks/WatchDirectoryTask';
+import IndexedBmpParserForkTask from './utils/tasks/IndexedBmpParserForkTask';
 
 /**
  * This module executes inside of electron's main process. You can start
@@ -178,10 +179,13 @@ app.on('ready', async () => {
   ipc.on('background-request', (event, request) => {
     switch (request.taskType) {
       case OperatingSystemTask.getTaskType():
-        OperatingSystemTask.handle(request, mainWindow.webContents);
+        OperatingSystemTask.handle(request, event.sender);
         break;
       case WatchDirectoryTask.getTaskType():
-        WatchDirectoryTask.handle(request, mainWindow.webContents);
+        WatchDirectoryTask.handle(request, event.sender);
+        break;
+      case IndexedBmpParserForkTask.getTaskType():
+        IndexedBmpParserForkTask.handle(request, event.sender);
         break;
       default:
     }

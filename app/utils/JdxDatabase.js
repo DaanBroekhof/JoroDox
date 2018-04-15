@@ -10,6 +10,7 @@ import PdxDataParserTask from './tasks/PdxDataParserTask';
 import LuaScriptParserTask from './tasks/LuaScriptParserTask';
 import CsvFileParserTask from './tasks/CsvFileParserTask';
 import PdxYmlFileParserTask from './tasks/PdxYmlFileParserTask';
+import IndexedBmpParserTask from './tasks/IndexedBmpParserTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
 
@@ -24,6 +25,7 @@ export default class JdxDatabase {
     LuaScriptParser: LuaScriptParserTask,
     CsvFileParser: CsvFileParserTask,
     PdxYmlFileParser: PdxYmlFileParserTask,
+    IndexedBmpParser: IndexedBmpParserTask,
     DeleteRelated: DeleteRelatedTask,
   };
 
@@ -225,6 +227,9 @@ export default class JdxDatabase {
       }
       return StructureLoaderTask.start({root, typeDefinition: type});
     } else if (this.parserToTask[type.reader]) {
+      if (type.sourceType && type.sourceType.id !== 'files') {
+        await this.reloadTypeById(root, type.sourceType.id, [typeId]);
+      }
       return this.parserToTask[type.reader].start({
         root,
         definition: Eu4Definition,

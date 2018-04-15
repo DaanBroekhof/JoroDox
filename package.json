@@ -190,6 +190,7 @@
   },
   "dependencies": {
     "async": "^2.6.0",
+    "bmp-js": "^0.0.3",
     "csv-parse": "^2.1.0",
     "devtron": "^1.4.0",
     "dexie": "^2.0.1",

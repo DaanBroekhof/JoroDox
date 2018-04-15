@@ -4223,5 +4223,166 @@ export default {
         ],
       },
     },
+    {
+      id: 'indexed_bmps',
+      title: 'Indexed BMPs',
+      category: 'Raw data',
+      reader: 'IndexedBmpParser',
+      primaryKey: 'path',
+      listView: {
+        pageSize: 100,
+        unsetKeys: [
+          ['data'],
+        ],
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: ['path'],
+            width: '75%',
+            linkTo: '[self]',
+          },
+        ],
+      }
+    },
+    {
+      id: 'map_province_map',
+      title: 'Map provinces location',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'color',
+      sourceType: {
+        id: 'indexed_bmps',
+        path: 'map/provinces.bmp',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data'],
+        keyName: 'color',
+        valueName: 'data',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Color',
+            dataIndex: 'color',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Size',
+            dataIndex: ['data', 'size'],
+          },
+          {
+            name: 'Adjacencies',
+            dataIndex: ['data', 'adjacencies'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'map_canals',
+      title: 'Map canals',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'indexed_bmps',
+        pathPrefix: 'map/',
+        pathPattern: 'map/*_canal_river.bmp',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        path: ['data'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'map_rivers',
+      title: 'Map rivers',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'indexed_bmps',
+        path: 'map/rivers.bmp',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        path: ['data'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'map_terrain_map',
+      title: 'Map terrain map',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'color',
+      sourceType: {
+        id: 'indexed_bmps',
+        path: 'map/terrain.bmp',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data'],
+        keyName: 'color',
+        valueName: 'data',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Color',
+            dataIndex: 'color',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'map_trees_map',
+      title: 'Map terrain trees map',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'color',
+      sourceType: {
+        id: 'indexed_bmps',
+        path: 'map/trees.bmp',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data'],
+        keyName: 'color',
+        valueName: 'data',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Color',
+            dataIndex: 'color',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
   ],
 };
