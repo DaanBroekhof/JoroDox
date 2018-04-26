@@ -46,7 +46,9 @@ export default class DeleteRelatedTask extends DbBackgroundTask {
 
     // Delete source type data
     for (const subType in typeDeletion) {
-      totalDeleted += await this.deleteTypeItems(db, subType, typeDeletion[subType]);
+      if (db[subType]) {
+        totalDeleted += await this.deleteTypeItems(db, subType, typeDeletion[subType]);
+      }
     }
 
     return totalDeleted;

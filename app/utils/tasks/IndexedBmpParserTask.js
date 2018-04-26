@@ -31,7 +31,7 @@ export default class IndexedBmpParserTask extends DbBackgroundTask {
 
       datafiles.push({path, data});
       relations.push(this.addRelationId({
-        fromKey: 'indexed_bmp', fromType: 'indexed_bmp', fromId: path, toKey: 'source', toType: 'files', toId: path
+        fromKey: 'indexed_bmps', fromType: 'indexed_bmps', fromId: path, toKey: 'source', toType: 'files', toId: path
       }));
     }
 
