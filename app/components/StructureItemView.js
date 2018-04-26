@@ -294,11 +294,11 @@ class StructureItemView extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   reloadGrid: (gridSettings, dataSource) => {
-    dispatch(Actions.GridActions.getAsyncData({
-      stateKey: gridSettings.stateKey,
-      dataSource: dataSource || gridSettings.dataSource,
-      type: gridSettings.type,
-    }));
+    return dataSource({}).then((result) => {
+      return dispatch(Actions.GridActions.setTreeData({
+        partial: false, data: result.data, parentId: null, stateKey: gridSettings.stateKey
+      }));
+    });
   },
   setTreeNodeVisibility: (id, visible, stateKey, showTreeRootNode) => {
     dispatch(Actions.GridActions.setTreeNodeVisibility({
