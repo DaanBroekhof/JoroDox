@@ -123,10 +123,11 @@ export default class JdxDatabase {
     return db.open();
   }
 
-  static async loadTypeFiles(root, typeId) {
+  static async loadTypeFiles(root, typeId, taskTitle) {
     const type = _(Eu4Definition.types).find(x => x.id === typeId);
 
     return FileLoaderTask.start({
+      taskTitle,
       root,
       typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
       searchPattern: type.sourceType.path ? type.sourceType.path.replace('{type.id}', type.id) : type.sourceType.pathPattern.replace('{type.id}', type.id),
@@ -134,26 +135,32 @@ export default class JdxDatabase {
     });
   }
 
-  static async loadPdxScriptFiles(root, typeId) {
+  static async loadPdxScriptFiles(root, typeId, taskTitle) {
     const type = _(Eu4Definition.types).find(x => x.id === typeId);
 
     return PdxScriptParserTask.start({
+      taskTitle,
       root,
       definition: Eu4Definition,
       filterTypes: [type.id],
     });
   }
 
-  static async loadByPaths(root, paths, types) {
+  static async loadByPaths(root, paths, types, taskTitle) {
+    if (!taskTitle) {
+      taskTitle = 'Reload paths';
+    }
+
     let result = null;
     if (paths === null) {
-      result = await FileLoaderTask.start({root, searchPath: '.', typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')});
+      result = await FileLoaderTask.start({taskTitle, root, searchPath: '.', typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')});
     } else {
-      result = await FileLoaderTask.start({root, exactPaths: paths, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')});
+      result = await FileLoaderTask.start({taskTitle, root, exactPaths: paths, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')});
     }
 
     if (result.deleted.length || result.changed.length) {
       const deleted = await DeleteRelatedTask.start({
+        taskTitle,
         rootDir: root,
         type: 'files',
         typeIds: [...result.deleted, ...result.changed].map(x => x.path),
@@ -202,11 +209,16 @@ export default class JdxDatabase {
     }
   }
 
-  static async reloadTypePaths(root, typeId, paths) {
+  static async reloadTypePaths(root, typeId, paths, taskTitle) {
     const type = _(Eu4Definition.types).find(x => x.id === typeId);
+
+    if (!taskTitle) {
+      taskTitle = 'Reload `' + typeId + '`';
+    }
 
     if (this.parserToTask[type.reader]) {
       return this.parserToTask[type.reader].start({
+        taskTitle,
         root,
         definition: type,
         typeDefinition: type,
@@ -217,20 +229,25 @@ export default class JdxDatabase {
     return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
   }
 
-  static async reloadTypeById(root, typeId, filterTypes) {
+  static async reloadTypeById(root, typeId, filterTypes, taskTitle) {
     const type = _(Eu4Definition.types).find(x => x.id === typeId);
 
+    if (!taskTitle) {
+      taskTitle = 'Reloading `' + typeId + '`';
+    }
+
     if (type.reader === 'StructureLoader') {
-      await this.loadTypeFiles(root, typeId);
+      await this.loadTypeFiles(root, typeId, taskTitle);
       if (type.sourceType.id !== 'files') {
-        await this.reloadTypeById(root, type.sourceType.id, [typeId]);
+        await this.reloadTypeById(root, type.sourceType.id, [typeId], taskTitle);
       }
-      return StructureLoaderTask.start({root, typeDefinition: type});
+      return StructureLoaderTask.start({taskTitle, root, typeDefinition: type});
     } else if (this.parserToTask[type.reader]) {
       if (type.sourceType && type.sourceType.id !== 'files') {
-        await this.reloadTypeById(root, type.sourceType.id, [typeId]);
+        await this.reloadTypeById(root, type.sourceType.id, [typeId], taskTitle);
       }
       return this.parserToTask[type.reader].start({
+        taskTitle,
         root,
         definition: Eu4Definition,
         filterTypes,
@@ -243,19 +260,24 @@ export default class JdxDatabase {
   static async reloadAll(root) {
     const db = await JdxDatabase.get(root);
 
+    const taskTitle = 'Reload all';
+
     await db.relations.clear();
 
     await FileLoaderTask.start({
+      taskTitle,
       root,
       typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
     }, (progress, total, message) => console.log(`[${progress}/${total}] ${message}`));
 
     await PdxDataParserTask.start({
+      taskTitle,
       root,
       definition: Eu4Definition,
     }, (progress, total, message) => console.log(`[${progress}/${total}] ${message}`));
 
     await PdxScriptParserTask.start({
+      taskTitle,
       root,
       definition: Eu4Definition,
     }, (progress, total, message) => console.log(`[${progress}/${total}] ${message}`));
@@ -264,7 +286,7 @@ export default class JdxDatabase {
     _(Eu4Definition.types).forEach(type => {
       if (type.sourceType) {
         promises.push(StructureLoaderTask.start(
-          {root, typeDefinition: type},
+          {taskTitle, root, typeDefinition: type},
           (progress, total, message) => console.log(`[${progress}/${total}] ${message}`)
         ));
       }

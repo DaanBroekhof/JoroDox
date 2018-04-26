@@ -13,6 +13,7 @@ export default class ProgressInfo extends Component {
     super(props);
 
     this.state = {
+      title: null,
       message: null,
       progress: null,
       total: null,
@@ -20,6 +21,7 @@ export default class ProgressInfo extends Component {
 
     ipc.on('background-response', (sender, args) => {
       this.setState({
+        title: args.taskTitle,
         message: args.message,
         total: args.total,
         progress: args.progress,
@@ -44,7 +46,7 @@ export default class ProgressInfo extends Component {
         {this.state.message && (
           <div
             style={{display: 'flex', marginLeft: 10, flexGrow: 1, alignItems: 'center', fontSize: '70%', overflowY: 'hidden'}}
-          >{this.state.message}
+          >{this.state.title}<br />{this.state.message}
           </div>
         )}
       </div>

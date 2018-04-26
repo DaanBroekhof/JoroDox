@@ -67,8 +67,8 @@ class StructureView extends Component {
         console.log('Watch response', data);
         const names = _(data).filter(x => x.eventType !== 'dirChange').map('filename').uniq().value();
 
-        JdxDatabase.loadByPaths(this.props.root, names, Eu4Definition.types).then(() => {
-          //this.props.incrementDatabaseVersion();
+        return JdxDatabase.loadByPaths(this.props.root, names, Eu4Definition.types, 'Change detected...').then(() => {
+          // this.props.incrementDatabaseVersion();
           this.props.dispatch(incrementVersion());
           return this;
         });
@@ -132,7 +132,7 @@ class StructureView extends Component {
 
 
   reloadDiff() {
-    JdxDatabase.loadByPaths(this.props.root, null, Eu4Definition.types);
+    JdxDatabase.loadByPaths(this.props.root, null, Eu4Definition.types, 'Synchronizing changes...');
   }
 
 
