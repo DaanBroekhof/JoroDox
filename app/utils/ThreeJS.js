@@ -11,7 +11,7 @@ export default class ThreeJS {
     const images = [];
     texture.image = images;
 
-    return jetpack.readAsync(file, 'buffer').then((buffer) => {
+    jetpack.readAsync(file, 'buffer').then((buffer) => {
       if (!buffer) {
         console.error(`Could not load DDS texture file \`${file}\``);
         return;
@@ -78,6 +78,8 @@ export default class ThreeJS {
         {data: greyTexture, width: 1, height: 1}
       ];
       texture.needsUpdate = true;
-    });
+    }).catch((e) => console.error(e));
+
+    return texture;
   }
 }

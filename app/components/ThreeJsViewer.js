@@ -163,14 +163,14 @@ export default class ThreeJsViewer extends Component {
     return (
       <div>
         <FormGroup row style={{alignItems: 'center'}}>
-          <FormControlLabel label="Skeletons" control={<Checkbox checked={this.state.showSkeletons} onChange={this.toggleValue('showSkeletons')} />} />
-          <FormControlLabel label="Locators" control={<Checkbox checked={this.state.showLocators} onChange={this.toggleValue('showLocators')} />} />
-          <FormControlLabel label="Mesh" control={<Checkbox checked={this.state.showMeshes} onChange={this.toggleValue('showMeshes')} />} />
-          <FormControlLabel label="Wireframes" control={<Checkbox checked={this.state.showWireframes} onChange={this.toggleValue('showWireframes')} />} />
-          <FormControlLabel label="Colliders" control={<Checkbox checked={this.state.showColliders} onChange={this.toggleValue('showColliders')} />} />
-          <FormControlLabel label="Spotlights" control={<Checkbox checked={this.state.showSpotlights} onChange={this.toggleValue('showSpotlights')} />} />
+          <FormControlLabel label="Skeletons" control={<Checkbox checked={this.state.showSkeletons} onChange={this.toggleValue('showSkeletons')} color="primary" />} />
+          <FormControlLabel label="Locators" control={<Checkbox checked={this.state.showLocators} onChange={this.toggleValue('showLocators')} color="primary" />} />
+          <FormControlLabel label="Mesh" control={<Checkbox checked={this.state.showMeshes} onChange={this.toggleValue('showMeshes')} color="primary" />} />
+          <FormControlLabel label="Wireframes" control={<Checkbox checked={this.state.showWireframes} onChange={this.toggleValue('showWireframes')} color="primary" />}  />
+          <FormControlLabel label="Colliders" control={<Checkbox checked={this.state.showColliders} onChange={this.toggleValue('showColliders')} color="primary" />} />
+          <FormControlLabel label="Spotlights" control={<Checkbox checked={this.state.showSpotlights} onChange={this.toggleValue('showSpotlights')} color="primary" />} />
 
-          <FormControlLabel label="Rotate" control={<Checkbox defaultChecked={this.state.rotate} onChange={this.toggleValue('rotate')} />} />
+          <FormControlLabel label="Rotate" control={<Checkbox defaultChecked={this.state.rotate} onChange={this.toggleValue('rotate')} color="primary" />} />
 
         </FormGroup>
 

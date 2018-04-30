@@ -255,7 +255,9 @@ export default class PdxMesh {
 
           mesh.pose();
 
-          if ('material' in pdxMesh && pdxMesh.material.props.shader === 'Collision') { colliders.push(mesh); }
+          if ('material' in pdxMesh && pdxMesh.material.props.shader === 'Collision') {
+            colliders.push(mesh);
+          }
 
           meshes.push(mesh);
         }
@@ -330,7 +332,9 @@ export default class PdxMesh {
   }
 
   static updatePdxMesh(mesh) {
-    if (!mesh.pdxData) { return; }
+    if (!mesh.pdxData) {
+      return;
+    }
 
     const pdxMaterial = mesh.pdxData.props.material.props;
 
