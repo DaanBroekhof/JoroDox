@@ -207,12 +207,12 @@ export default class JdxDatabase {
       // TODO: Fixme~ ^
       for (const type in updateByType) {
         if (!updateByType[type].source) {
-          await this.reloadTypePaths(project, updateByType[type].paths);
+          await this.reloadTypePaths(project, type, updateByType[type].paths);
         }
       }
       for (const type in updateByType) {
         if (updateByType[type].source) {
-          await this.reloadTypePaths(project, updateByType[type].paths);
+          await this.reloadTypePaths(project, type, updateByType[type].paths);
         }
       }
     }

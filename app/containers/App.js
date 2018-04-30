@@ -8,7 +8,6 @@ import AppBar from 'material-ui/AppBar';
 import searchInPage from 'electron-in-page-search';
 import FileTree from '../components/FileTree';
 import FileView from '../components/FileView';
-import HomePage from '../containers/HomePage';
 import SettingsPage from '../components/SettingsPage';
 import AboutPage from '../components/AboutPage';
 import StructureTree from '../components/StructureTree';
@@ -95,7 +94,7 @@ export default class App extends Component {
   handleTab = (event, newTab) => {
     switch (newTab) {
       default:
-      case 'fileview': this.props.history.push('/fileview'); break;
+      case 'fileview': this.props.history.push('/fileview/' + this.state.project.rootPath); break;
       case 'structure': this.props.history.push('/structure/'); break;
       case 'projects': this.props.history.push('/projects'); break;
     }
@@ -137,7 +136,6 @@ export default class App extends Component {
               <Route path="/structure/c/:category" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
-              <Route path="/projects/:project(.*)" render={(props) => <div>De nada</div>} />
               <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
             <Switch>

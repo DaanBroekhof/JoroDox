@@ -57,7 +57,7 @@ export default class BackgroundApp extends Component {
 
   render() {
     return (
-      <div>Le background window</div>
+      <div style={{margin: 20}}>This background window is a work-window... nothing interesting going on here visually. Check logs for debugging.</div>
     );
   }
 }
