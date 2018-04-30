@@ -148,6 +148,9 @@ app.on('ready', async () => {
     if (cmd === 'browser-backward' && mainWindow.webContents.canGoBack()) {
       mainWindow.webContents.goBack();
     }
+    if (cmd === 'browser-forward' && mainWindow.webContents.canGoForward()) {
+      mainWindow.webContents.goForward();
+    }
   });
 
 
