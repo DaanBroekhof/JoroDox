@@ -18,17 +18,18 @@ export default class CsvFileParserTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.root);
+    const db = await JdxDatabase.get(args.project);
+    const definition = JdxDatabase.getDefinition(args.project.definitionType);
 
     this.progress(0, 1, 'Finding CSV files...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'csv_files', args.filterTypes, args.paths);
+    const files = await this.filterFilesByPath(db.files, definition.types, 'csv_files', args.filterTypes, args.paths);
     const filesList = _(files);
 
     const csvResults = [];
     const relations = [];
     for (const path of filesList) {
-      const fullPath = args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
+      const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const csvData = await new Promise((resolve, reject) => {
         csvparser(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'), {
           delimiter: ';',

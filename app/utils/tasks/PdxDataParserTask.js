@@ -12,10 +12,11 @@ export default class PdxDataParserTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.root);
+    const db = await JdxDatabase.get(args.project);
+    const definition = JdxDatabase.getDefinition(args.project.definitionType);
     this.progress(0, 1, 'Finding PDX data files...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'pdx_data', args.filterTypes, args.paths);
+    const files = await this.filterFilesByPath(db.files, definition.types, 'pdx_data', args.filterTypes, args.paths);
     const filesList = _(files);
 
     this.progress(0, filesList.size(), `Parsing ${filesList.size()} PDX binary data files...`);
@@ -25,7 +26,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
     filesList.each(path => {
       const parser = new PdxData();
 
-      const fullPath = args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
+      const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const data = parser.readFromBuffer(new Uint8Array(jetpack.read(fullPath, 'buffer')).buffer);
 
       if (datafiles.length % 50 === 0) {

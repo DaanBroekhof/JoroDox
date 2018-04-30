@@ -2,8 +2,8 @@ import React from 'react';
 import filesize from 'filesize';
 
 export default {
-  name: 'Europe Universalis 4',
-  id: 'eu4',
+  name: 'Stellaris',
+  id: 'stellaris',
   types: [
     {
       id: 'files',

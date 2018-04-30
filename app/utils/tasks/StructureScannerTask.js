@@ -238,7 +238,7 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
   execute(args) {
     console.log('moooxxx');
-    JdxDatabase.get(args.root).then(db => {
+    JdxDatabase.get(args.project).then(db => {
       const definition = args.typeDefinition;
 
       console.log('mooo');

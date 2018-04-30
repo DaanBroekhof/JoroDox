@@ -6,7 +6,6 @@ import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {connect, dispatch} from 'react-redux';
 import JdxDatabase from '../utils/JdxDatabase';
-import Eu4Definition from '../definitions/eu4';
 import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
@@ -19,6 +18,7 @@ class StructureTypeView extends Component {
 
     this.state = {
       search: '',
+      definition: JdxDatabase.getDefinition(props.project.definitionType),
     };
   }
 
@@ -27,19 +27,22 @@ class StructureTypeView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.root !== this.props.root || nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.match.params.type, this.state.search));
+    if (nextProps.project.definitionType !== this.props.project.definitionType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+    }
+    if (nextProps.project.rootPath !== this.props.project.rootPath || nextProps.databaseVersion !== this.props.databaseVersion) {
+      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, this.state.search));
     }
   }
 
   loadTypeFiles(typeId) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+    const type = _(this.state.definition.types).find(x => x.id === typeId);
 
     return new Promise((resolve, reject) => {
       FileLoaderTask.start(
         {
-          root: this.props.root,
-          typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
+          project: this.props.project,
+          typeDefinition: _(this.state.definition.types).find(x => x.id === 'files'),
           searchPattern: type.sourceType.pathPattern.replace('{type.id}', type.id),
           searchPath: type.sourceType.pathPrefix.replace('{type.id}', type.id),
         },
@@ -51,13 +54,13 @@ class StructureTypeView extends Component {
   }
 
   loadPdxScriptFiles(typeId) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+    const type = _(this.state.definition.types).find(x => x.id === typeId);
 
     return new Promise((resolve, reject) => {
       PdxScriptParserTask.start(
         {
-          root: this.props.root,
-          definition: Eu4Definition,
+          project: this.props.project,
+          definition: this.state.definition,
           filterTypes: [type.id],
         },
         (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
@@ -68,12 +71,12 @@ class StructureTypeView extends Component {
   }
 
   scanType(typeId) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+    const type = _(this.state.definition.types).find(x => x.id === typeId);
 
     return new Promise((resolve, reject) => {
       StructureScannerTask.start(
         {
-          root: this.props.root,
+          project: this.props.project,
           typeDefinition: type,
         },
         (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
@@ -87,14 +90,14 @@ class StructureTypeView extends Component {
   }
 
   reloadTypeById(typeId) {
-    return JdxDatabase.reloadTypeById(this.props.root, typeId).then(() => {
+    return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
       console.log('done');
       return this.props.reloadGrid(this.gridSettings);
     });
   }
 
-  getDataSource(rootPath, type, search) {
-    const typeDefinition = _(Eu4Definition.types).find(x => x.id === type);
+  getDataSource(project, type, search) {
+    const typeDefinition = _(this.state.definition.types).find(x => x.id === type);
 
     return function getData({pageIndex, pageSize}) {
       if (!pageIndex) {
@@ -105,7 +108,7 @@ class StructureTypeView extends Component {
       }
 
       return new Promise((resolve) => {
-        return JdxDatabase.get(rootPath).then(db => {
+        return JdxDatabase.get(project).then(db => {
           if (search) {
             // Just getting everything and filtering in javascript is faster than using Dexie filter()
             let base = db[typeDefinition.id];
@@ -130,6 +133,8 @@ class StructureTypeView extends Component {
               });
             });
           } else {
+            var time = new Date().getTime();
+            console.log(time);
             db[typeDefinition.id].count((total) => {
               db[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
                 if (typeDefinition.listView.unsetKeys) {
@@ -141,6 +146,7 @@ class StructureTypeView extends Component {
                   });
                 }
 
+                console.log(new Date().getTime() - time);
                 resolve({
                   data: result,
                   total,
@@ -158,7 +164,7 @@ class StructureTypeView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
     }
 
-    const typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
+    const typeDefinition = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
     if (!typeDefinition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
@@ -207,8 +213,8 @@ class StructureTypeView extends Component {
           enabled: true
         },
       },
-      dataSource: this.getDataSource(this.props.root, this.props.match.params.type, this.state.search),
-      stateKey: `typeList-${this.props.root}-${this.props.match.params.type}`,
+      dataSource: this.getDataSource(this.props.project, this.props.match.params.type, this.state.search),
+      stateKey: `typeList-${this.props.project.rootPath}-${this.props.match.params.type}`,
       pageSize: typeDefinition.listView.pageSize,
       style: {
         display: 'flex',
@@ -223,7 +229,7 @@ class StructureTypeView extends Component {
 
     this.gridSettings = gridSettings;
 
-    let itemPath = `${this.props.root}/`;
+    let itemPath = `${this.props.project.rootPath}/`;
     if (typeDefinition.sourceType && typeDefinition.sourceType.pathPrefix) {
       itemPath += typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type);
     } else if (typeDefinition.sourceType && typeDefinition.sourceType.path) {

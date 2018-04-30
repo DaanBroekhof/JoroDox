@@ -11,7 +11,7 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 const syspath = require('electron').remote.require('path');
 
 type Props = {
-  root: string,
+  project: object,
   match: object
 };
 type State = {
@@ -28,15 +28,15 @@ export default class FileTree extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.setTreeState(this.props.root);
+    this.setTreeState(this.props.project.rootPath);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.root !== this.props.root) {
-      this.setTreeState(nextProps.root);
+    if (nextProps.project.rootPath !== this.props.project.rootPath) {
+      this.setTreeState(nextProps.project.rootPath);
     }
     if (!this.tree.getSelectedNode() || nextProps.match.params.path !== this.tree.getSelectedNode().id) {
-      if (nextProps.match) {
+      if (nextProps.match && nextProps.match.params.path) {
         this.doOpenToPath(this.tree.getRootNode(), nextProps.match.params.path);
       }
     }
@@ -45,7 +45,7 @@ export default class FileTree extends React.Component<Props, State> {
   tree = null;
   treeData = null;
 
-  doOpenToPath(node, path = null, updated = false) {
+  doOpenToPath(node, path = null, updated = false, select = true) {
     if (path) { this.openToPath = path; }
     if (!this.openToPath) { return; }
 
@@ -53,7 +53,12 @@ export default class FileTree extends React.Component<Props, State> {
     for (const child of node.children) {
       if (this.openToPath === child.id) {
         this.openToPath = null;
-        this.tree.selectNode(child);
+        if (child && child.info.type === 'dir') {
+          this.tree.openNode(child, {async: true});
+        }
+        if (select) {
+          this.tree.selectNode(child);
+        }
         found = true;
         break;
       } else if (this.openToPath.startsWith(child.id + syspath.sep)) {
@@ -154,7 +159,7 @@ export default class FileTree extends React.Component<Props, State> {
       if (this.props.match.params.path && this.props.match.params.path.startsWith(root)) {
         this.doOpenToPath(this.tree.getRootNode(), this.props.match.params.path);
       } else {
-        this.doOpenToPath(this.tree.getRootNode(), root);
+        this.doOpenToPath(this.tree.getRootNode(), root, false, false);
       }
     });
   }

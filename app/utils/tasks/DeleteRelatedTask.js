@@ -12,7 +12,7 @@ export default class DeleteRelatedTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.rootDir);
+    const db = await JdxDatabase.get(args.project);
 
     this.progress(0, 1, 'Removing related data...');
 

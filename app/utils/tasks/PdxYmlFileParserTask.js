@@ -11,22 +11,23 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.root);
+    const db = await JdxDatabase.get(args.project);
+    const definition = JdxDatabase.getDefinition(args.project.definitionType);
     this.progress(0, 1, 'Finding Paradox YML files...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'pdxyml_files', args.filterTypes, args.paths);
+    const files = await this.filterFilesByPath(db.files, definition.types, 'pdxyml_files', args.filterTypes, args.paths);
     const filesList = _(files);
 
     const results = [];
     const relations = [];
     filesList.each(path => {
-      const filePath = args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
+      const filePath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const fileData = jetpack.read(filePath);
       const pdxYmlData = this.parsePdxYml(fileData, filePath);
 
       if (results.length % 500 === 0) { this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`); }
 
-      results.push({path: path, data: pdxYmlData});
+      results.push({path, data: pdxYmlData});
       relations.push(this.addRelationId({
         fromKey: 'pdxyml_files',
         fromType: 'pdxyml_files',

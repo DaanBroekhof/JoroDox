@@ -5,7 +5,7 @@ import {Icon} from 'material-ui';
 import {Route} from 'react-router';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 import FileView from './FileView';
-import Eu4Definition from '../definitions/eu4';
+import JdxDatabase from "../utils/JdxDatabase";
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 const syspath = require('electron').remote.require('path');
@@ -16,16 +16,20 @@ export default class StructureTree extends React.Component {
 
     this.state = {
       treeData: null,
+      definition: JdxDatabase.getDefinition(props.project.definitionType),
     };
   }
 
   componentDidMount() {
-    this.setTreeState(this.props.root);
+    this.setTreeState(this.props.project.rootPath);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.root !== this.props.root) {
-      this.setTreeState(nextProps.root);
+    if (nextProps.project.rootPath !== this.props.project.rootPath) {
+      this.setTreeState(nextProps.project.rootPath);
+    }
+    if (nextProps.project.definitionType !== this.props.project.definitionType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
     }
     if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
       if (nextProps.match) {
@@ -46,7 +50,7 @@ export default class StructureTree extends React.Component {
     }
 
     if (!category && type) {
-      const typeDefinition = Eu4Definition.types.find(x => x.id === type);
+      const typeDefinition = this.state.definition.types.find(x => x.id === type);
       if (typeDefinition) {
         category = typeDefinition.category || 'Game structures';
       }
@@ -84,7 +88,7 @@ export default class StructureTree extends React.Component {
     return this.setState({
       treeData: {
         id: `root:${root}`,
-        name: syspath.basename(root),
+        name: this.state.definition.name,
         loadOnDemand: true,
         info: {
           view: 'types',
@@ -126,7 +130,7 @@ export default class StructureTree extends React.Component {
           autoOpen
           loadNodes={(parentNode, done) => {
             if (parentNode.info.view === 'types') {
-              const categories = _(Eu4Definition.types).map(type => (type.category ? type.category : 'Game structures')).uniq().map(category => ({
+              const categories = _(this.state.definition.types).map(type => (type.category ? type.category : 'Game structures')).uniq().map(category => ({
                 id: `category:${category}`,
                 name: category,
                 loadOnDemand: true,
@@ -139,7 +143,7 @@ export default class StructureTree extends React.Component {
               done(null, categories);
           } else if (_.startsWith(parentNode.id, 'category:')) {
             const items = [];
-            _(Eu4Definition.types)
+            _(this.state.definition.types)
               .filter(x => `category:${x.category ? x.category : 'Game structures'}` === parentNode.id)
               .sortBy(x => x.title).forEach(type => {
               items.push({

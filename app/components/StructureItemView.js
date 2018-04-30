@@ -2,13 +2,11 @@
 import React, {Component} from 'react';
 
 import {Icon, IconButton, Paper, Tooltip, Typography} from 'material-ui';
-import Eu4Definition from '../definitions/eu4';
-import JdxDatabase from '../utils/JdxDatabase';
-import {applyGridConfig, Grid} from 'react-redux-grid';
+import {applyGridConfig, Grid, Actions} from 'react-redux-grid';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {Actions} from 'react-redux-grid';
 import {connect} from 'react-redux';
+import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import {incrementVersion} from "../actions/database";
 
@@ -23,6 +21,7 @@ class StructureItemView extends Component {
       item: null,
       relationsFrom: [],
       relationsTo: [],
+      definition: JdxDatabase.getDefinition(props.project.definitionType),
     };
   }
 
@@ -32,8 +31,13 @@ class StructureItemView extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.loadRelations(nextProps);
+
+    if (nextProps.project.definitionType !== this.props.project.definitionType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+    }
+
     if (nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.root, nextProps.match.params.type, nextProps.match.params.id));
+      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, nextProps.match.params.id));
     }
   }
 
@@ -108,11 +112,11 @@ class StructureItemView extends Component {
   }
 
   loadRelations(props) {
-    const typeDefinition = _(Eu4Definition.types).find(x => x.id === props.match.params.type);
+    const typeDefinition = _(this.state.definition.types).find(x => x.id === props.match.params.type);
 
     if (typeDefinition) {
-      return JdxDatabase.get(props.root).then((db) => {
-        const stores = _.uniq(Eu4Definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
+      return JdxDatabase.get(props.project).then((db) => {
+        const stores = _.uniq(this.state.definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
         stores.push('relations');
 
 
@@ -135,24 +139,24 @@ class StructureItemView extends Component {
 
   getItemPath() {
     if (this.state.item && this.state.item.path) {
-      return `${this.props.root}/${this.state.item.path}`;
+      return `${this.props.project.root}/${this.state.item.path}`;
     }
 
     const fileRelation = this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data');
 
     if (fileRelation) {
-      return `${this.props.root}/${fileRelation.toId}`;
+      return `${this.props.project.root}/${fileRelation.toId}`;
     }
 
     return '';
   }
 
   getDataSource(rootPath, type, id) {
-    const typeDefinition = _(Eu4Definition.types).find(x => x.id === type);
+    const typeDefinition = this.state.definition.types.find(x => x.id === type);
 
     return function getData({pageIndex, pageSize, parentId}) {
       return new Promise((resolve) => {
-        return JdxDatabase.get(rootPath).then(db => {
+        return JdxDatabase.get(this.props.project).then(db => {
           return db[typeDefinition.id].where({[typeDefinition.primaryKey]: id}).first(item => {
             if (item) {
               const treeItem = this.createTreeItem('root', item, parentId, typeDefinition.relations);
@@ -175,7 +179,7 @@ class StructureItemView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
     }
 
-    const typeDefinition = _(Eu4Definition.types).find(x => x.id === this.props.match.params.type);
+    const typeDefinition = this.state.definition.types.find(x => x.id === this.props.match.params.type);
     if (!typeDefinition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
@@ -223,7 +227,7 @@ class StructureItemView extends Component {
           enabled: true
         },
       },
-      dataSource: this.getDataSource(this.props.root, this.props.match.params.type, this.props.match.params.id),
+      dataSource: this.getDataSource(this.props.project.root, this.props.match.params.type, this.props.match.params.id),
       stateKey: `typeView-${this.props.match.params.type}-${this.props.match.params.id}`,
       pageSize: 1000,
       style: {

@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import SplitterLayout from 'react-splitter-layout';
 import {Link} from 'react-router-dom';
 import {Switch, Route} from 'react-router';
-import {Button, MuiThemeProvider, createMuiTheme, Toolbar, Typography} from 'material-ui';
+import {Button, MuiThemeProvider, createMuiTheme, Toolbar, Typography, Tabs, Tab} from 'material-ui';
 import AppBar from 'material-ui/AppBar';
 import searchInPage from 'electron-in-page-search';
 import FileTree from '../components/FileTree';
@@ -16,8 +16,9 @@ import StructureTypeView from '../components/StructureTypeView';
 import StructureItemView from '../components/StructureItemView';
 import StructureView from '../components/StructureView';
 import ProgressInfo from '../components/ProgressInfo';
+import ProjectsPage from '../components/ProjectsPage';
 
-const {dialog, getCurrentWebContents, getGlobal} = require('electron').remote;
+const {getCurrentWebContents, getGlobal} = require('electron').remote;
 
 const theme = createMuiTheme({
   palette: {
@@ -40,12 +41,25 @@ export default class App extends Component {
   constructor(props) {
     super(props);
 
-    const rootPath = localStorage.getItem('rootPath');
+    let projects = JSON.parse(localStorage.getItem('projects'));
+    if (!projects) {
+      projects = [];
+    }
 
-    // rootPath = "/Users/";
+    let currentProject = projects.find(x => x.isCurrent);
+
+    if (!currentProject) {
+      currentProject = {
+        rootPath: '/',
+        definitionType: 'eu4',
+        isCurrent: true,
+      };
+      projects.push(currentProject);
+    }
 
     this.state = {
-      rootPath: rootPath === null ? '/' : rootPath,
+      project: currentProject,
+      projects,
     };
   }
 
@@ -69,53 +83,72 @@ export default class App extends Component {
     }
   }
 
-  openDirectory = () => {
-    const dir = dialog.showOpenDialog({properties: ['openDirectory', 'showHiddenFiles']});
+  changeProject = (newSettings) => {
+    const newProjectState = {...(this.state.project), ...newSettings};
+    const newProjectsState = this.state.projects.map(p => (p.isCurrent ? newProjectState : p));
 
-    console.log(dir);
-
-    if (dir && dir.length > 0) {
-      this.setState({rootPath: dir[0]}, () => {
-        localStorage.setItem('rootPath', this.state.rootPath);
-      });
-    }
+    this.setState({project: newProjectState, projects: newProjectsState}, () => {
+      localStorage.setItem('projects', JSON.stringify(this.state.projects));
+    });
   };
 
+  handleTab = (event, newTab) => {
+    switch (newTab) {
+      default:
+      case 'fileview': this.props.history.push('/fileview'); break;
+      case 'structure': this.props.history.push('/structure/'); break;
+      case 'projects': this.props.history.push('/projects'); break;
+    }
+  }
+
   render() {
+    let currentTab = false;
+    if (this.props.location.pathname.startsWith('/fileview')) {
+      currentTab = 'fileview';
+    }
+    if (this.props.location.pathname.startsWith('/structure')) {
+      currentTab = 'structure';
+    }
+    if (this.props.location.pathname.startsWith('/projects')) {
+      currentTab = 'projects';
+    }
+
     return (
       <MuiThemeProvider theme={theme}>
         <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
           <AppBar position="static">
             <Toolbar>
-              <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>
-                              Jorodox Tool<br />
+              <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>Jorodox Tool<br />
                 <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta</span>
               </Typography>
-              <div style={{display: 'flex', padding: 10, flexGrow: 1}}>
-                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/">Files</Button>
-                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/structure">Structure</Button>
-                {/* <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/settings">Settings</Button> */}
-                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/about">About</Button>
+              <div style={{display: 'flex', flexGrow: 1}}>
+                <Tabs value={currentTab} onChange={this.handleTab}>
+                  <Tab value="projects" label="Project" />
+                  <Tab value="fileview" label="Files" />
+                  <Tab value="structure" label="Game data" />
+                </Tabs>
                 <ProgressInfo style={{marginLeft: '40px'}} />
-                <Button color="primary" variant="raised" style={{marginRight: '10px'}} onClick={this.openDirectory}>Open...</Button>
+                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/about">About</Button>
               </div>
             </Toolbar>
           </AppBar>
           <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
             <Switch>
-              <Route path="/structure/c/:category" render={(props) => <StructureTree root={this.state.rootPath} {...props} />} />
-              <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree root={this.state.rootPath} {...props} />} />
-              <Route path="/fileview/:path(.*)" render={(props) => <FileTree root={this.state.rootPath} {...props} />} />
-              <Route path="/" render={(props) => <FileTree root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/c/:category" render={(props) => <StructureTree project={this.state.project} {...props} />} />
+              <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
+              <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
+              <Route path="/projects/:project(.*)" render={(props) => <div>De nada</div>} />
+              <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
             <Switch>
-              <Route path="/structure/c/:category" component={(props) => <StructureView root={this.state.rootPath} {...props} />} />
-              <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView root={this.state.rootPath} {...props} />} />
-              <Route path="/structure/t/:type" component={(props) => <StructureTypeView root={this.state.rootPath} {...props} />} />
-              <Route path="/structure" component={(props) => <StructureView root={this.state.rootPath} {...props} />} />
+              <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} {...props} />} />
+              <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={this.state.project} {...props} />} />
+              <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={this.state.project} {...props} />} />
+              <Route path="/structure" component={(props) => <StructureView project={this.state.project} {...props} />} />
               <Route path="/fileview/:path(.*)" component={FileView} />
+              <Route path="/projects" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
               <Route path="/settings" component={SettingsPage} />
-              <Route path="/" component={HomePage} />
+              <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
             </Switch>
           </SplitterLayout>
           <Route path="/about" component={AboutPage} />

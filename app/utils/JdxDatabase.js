@@ -1,8 +1,6 @@
 import Dexie from 'dexie/dist/dexie';
 import crypto from 'crypto';
 import _ from 'lodash';
-import async from 'async';
-import Eu4Definition from '../definitions/eu4';
 import StructureLoaderTask from './tasks/StructureLoaderTask';
 import FileLoaderTask from './tasks/FileLoaderTask';
 import PdxScriptParserTask from './tasks/PdxScriptParserTask';
@@ -13,6 +11,8 @@ import PdxYmlFileParserTask from './tasks/PdxYmlFileParserTask';
 import IndexedBmpParserTask from './tasks/IndexedBmpParserTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
+import Eu4Definition from '../definitions/eu4';
+import StellarisDefinition from '../definitions/stellaris';
 
 export default class JdxDatabase {
   static db;
@@ -29,20 +29,16 @@ export default class JdxDatabase {
     DeleteRelated: DeleteRelatedTask,
   };
 
-  static async get(root, definition) {
+  static async get(project) {
     if (this.db) {
       return Promise.resolve(this.db);
     }
+    const root = project.rootPath;
+    const definition = this.getDefinition(project.definitionType);
 
     if (!root) {
       throw new Error(`Empty root dir '${root}'`);
     }
-
-    /* eslint-disable no-param-reassign */
-    if (!definition) {
-      definition = Eu4Definition;
-    }
-    /* eslint-enable no-param-reassign */
 
     const relationDefinition = _.join([
       '++id', 'fromType', 'fromKey', '[fromType+fromId]',
@@ -123,45 +119,57 @@ export default class JdxDatabase {
     return db.open();
   }
 
-  static async loadTypeFiles(root, typeId, taskTitle) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+  static getSourceTypePath(type, defaultPath) {
+    if (type.sourceType && type.sourceType.path) {
+      return type.sourceType.path.replace('{type.id}', type.id);
+    } else {
+      return defaultPath.replace('{type.id}', type.id);
+    }
+  }
+
+  static async loadTypeFiles(project, typeId, taskTitle) {
+    const definition = this.getDefinition(project.definitionType);
+
+    const type = _(definition.types).find(x => x.id === typeId);
 
     return FileLoaderTask.start({
       taskTitle,
-      root,
-      typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
-      searchPattern: type.sourceType.path ? type.sourceType.path.replace('{type.id}', type.id) : type.sourceType.pathPattern.replace('{type.id}', type.id),
-      searchPath: type.sourceType.path ? type.sourceType.path.replace('{type.id}', type.id) : type.sourceType.pathPrefix.replace('{type.id}', type.id),
+      project,
+      typeDefinition: _(definition.types).find(x => x.id === 'files'),
+      searchPattern: this.getSourceTypePath(type, type.sourceType.pathPattern),
+      searchPath: this.getSourceTypePath(type, type.sourceType.pathPrefix),
     });
   }
 
-  static async loadPdxScriptFiles(root, typeId, taskTitle) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+  static async loadPdxScriptFiles(project, typeId, taskTitle) {
+    const type = _(project.definition.types).find(x => x.id === typeId);
+    const root = project.rootPath;
+    const definition = this.getDefinition(project.definitionType);
 
     return PdxScriptParserTask.start({
       taskTitle,
-      root,
-      definition: Eu4Definition,
+      project,
       filterTypes: [type.id],
     });
   }
 
-  static async loadByPaths(root, paths, types, taskTitle) {
+  static async loadByPaths(project, paths, types, taskTitle) {
     if (!taskTitle) {
-      taskTitle = 'Reload paths';
+      taskTitle = 'Loading from paths...';
     }
+    const definition = this.getDefinition(project.definitionType);
 
     let result = null;
     if (paths === null) {
-      result = await FileLoaderTask.start({taskTitle, root, searchPath: '.', typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')});
+      result = await FileLoaderTask.start({taskTitle, project, searchPath: '.', typeDefinition: _(definition.types).find(x => x.id === 'files')});
     } else {
-      result = await FileLoaderTask.start({taskTitle, root, exactPaths: paths, typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files')});
+      result = await FileLoaderTask.start({taskTitle, project, exactPaths: paths, typeDefinition: _(definition.types).find(x => x.id === 'files')});
     }
 
     if (result.deleted.length || result.changed.length) {
       const deleted = await DeleteRelatedTask.start({
         taskTitle,
-        rootDir: root,
+        project,
         type: 'files',
         typeIds: [...result.deleted, ...result.changed].map(x => x.path),
       });
@@ -196,21 +204,23 @@ export default class JdxDatabase {
       });
 
       // Simple solution - only two stages of resolution :/ without-source and with-source
+      // TODO: Fixme~ ^
       for (const type in updateByType) {
         if (!updateByType[type].source) {
-          await this.reloadTypePaths(root, type, updateByType[type].paths);
+          await this.reloadTypePaths(project, updateByType[type].paths);
         }
       }
       for (const type in updateByType) {
         if (updateByType[type].source) {
-          await this.reloadTypePaths(root, type, updateByType[type].paths);
+          await this.reloadTypePaths(project, updateByType[type].paths);
         }
       }
     }
   }
 
-  static async reloadTypePaths(root, typeId, paths, taskTitle) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+  static async reloadTypePaths(project, typeId, paths, taskTitle) {
+    const definition = this.getDefinition(project.definitionType);
+    const type = _(definition.types).find(x => x.id === typeId);
 
     if (!taskTitle) {
       taskTitle = 'Reload `' + typeId + '`';
@@ -219,7 +229,7 @@ export default class JdxDatabase {
     if (this.parserToTask[type.reader]) {
       return this.parserToTask[type.reader].start({
         taskTitle,
-        root,
+        project,
         definition: type,
         typeDefinition: type,
         paths,
@@ -229,27 +239,27 @@ export default class JdxDatabase {
     return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
   }
 
-  static async reloadTypeById(root, typeId, filterTypes, taskTitle) {
-    const type = _(Eu4Definition.types).find(x => x.id === typeId);
+  static async reloadTypeById(project, typeId, filterTypes, taskTitle) {
+    const definition = this.getDefinition(project.definitionType);
+    const type = _(definition.types).find(x => x.id === typeId);
 
     if (!taskTitle) {
-      taskTitle = 'Reloading `' + typeId + '`';
+      taskTitle = 'Loading `' + typeId + '`';
     }
 
     if (type.reader === 'StructureLoader') {
-      await this.loadTypeFiles(root, typeId, taskTitle);
+      await this.loadTypeFiles(project, typeId, taskTitle);
       if (type.sourceType.id !== 'files') {
-        await this.reloadTypeById(root, type.sourceType.id, [typeId], taskTitle);
+        await this.reloadTypeById(project, type.sourceType.id, [typeId], taskTitle);
       }
-      return StructureLoaderTask.start({taskTitle, root, typeDefinition: type});
+      return StructureLoaderTask.start({taskTitle, project, typeDefinition: type});
     } else if (this.parserToTask[type.reader]) {
       if (type.sourceType && type.sourceType.id !== 'files') {
-        await this.reloadTypeById(root, type.sourceType.id, [typeId], taskTitle);
+        await this.reloadTypeById(project, type.sourceType.id, [typeId], taskTitle);
       }
       return this.parserToTask[type.reader].start({
         taskTitle,
-        root,
-        definition: Eu4Definition,
+        project,
         filterTypes,
       });
     }
@@ -257,40 +267,55 @@ export default class JdxDatabase {
     return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
   }
 
-  static async reloadAll(root) {
-    const db = await JdxDatabase.get(root);
+  static async reloadAll(project) {
+    const definition = this.getDefinition(project.definitionType);
+    const db = await JdxDatabase.get(project);
 
-    const taskTitle = 'Reload all';
+    const taskTitle = 'Loading all...';
 
     await db.relations.clear();
 
     await FileLoaderTask.start({
       taskTitle,
-      root,
-      typeDefinition: _(Eu4Definition.types).find(x => x.id === 'files'),
+      project,
+      typeDefinition: _(definition.types).find(x => x.id === 'files'),
     }, (progress, total, message) => console.log(`[${progress}/${total}] ${message}`));
 
     await PdxDataParserTask.start({
       taskTitle,
-      root,
-      definition: Eu4Definition,
+      project,
     }, (progress, total, message) => console.log(`[${progress}/${total}] ${message}`));
 
     await PdxScriptParserTask.start({
       taskTitle,
-      root,
-      definition: Eu4Definition,
+      project,
     }, (progress, total, message) => console.log(`[${progress}/${total}] ${message}`));
 
     const promises = [];
-    _(Eu4Definition.types).forEach(type => {
+    _(definition.types).forEach(type => {
       if (type.sourceType) {
         promises.push(StructureLoaderTask.start(
-          {taskTitle, root, typeDefinition: type},
+          {taskTitle, project, typeDefinition: type},
           (progress, total, message) => console.log(`[${progress}/${total}] ${message}`)
         ));
       }
     });
     return Promise.all(promises);
+  }
+
+  static definitions = {
+    eu4: Eu4Definition,
+    stellaris: StellarisDefinition,
+  };
+
+  static getDefinitions() {
+    return this.definitions;
+  }
+
+  static getDefinition(id) {
+    if (!this.definitions[id]) {
+      throw new Error('Unknown project definition type: `' + id + '`.');
+    }
+    return this.definitions[id];
   }
 }

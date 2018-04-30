@@ -12,17 +12,18 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.root);
+    const db = await JdxDatabase.get(args.project);
+    const definition = JdxDatabase.getDefinition(args.project.definitionType);
     this.progress(0, 1, 'Finding LUA scripts...');
 
-    const files = await this.filterFilesByPath(db.files, args.definition.types, 'lua_scripts', args.filterTypes, args.paths);
+    const files = await this.filterFilesByPath(db.files, definition.types, 'lua_scripts', args.filterTypes, args.paths);
 
     const filesList = _(files);
 
     const scripts = [];
     const relations = [];
     filesList.each(path => {
-      const luaAST = luaparser.parse(jetpack.read(args.root + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
+      const luaAST = luaparser.parse(jetpack.read(args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
 
       const data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
 

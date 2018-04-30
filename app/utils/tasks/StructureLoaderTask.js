@@ -11,7 +11,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.root);
+    const db = await JdxDatabase.get(args.project);
     const definition = args.typeDefinition;
     const relationStorage = definition.sourceTransform.relationsStorage ? definition.sourceTransform.relationsStorage : 'relations';
 

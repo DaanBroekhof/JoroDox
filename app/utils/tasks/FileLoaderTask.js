@@ -14,8 +14,8 @@ export default class FileLoaderTask extends DbBackgroundTask {
   }
 
   async execute(args) {
-    const db = await JdxDatabase.get(args.root);
-    const localJetpack = jetpack.cwd(args.root);
+    const db = await JdxDatabase.get(args.project);
+    const localJetpack = jetpack.cwd(args.project.rootPath);
 
     this.progress(0, 1, 'Reading directory data...');
 
@@ -75,7 +75,7 @@ export default class FileLoaderTask extends DbBackgroundTask {
 
     this.progress(0, 1, 'Getting file meta data...');
 
-    const filesMetaData = JSON.parse(await fsutils.getFilesMetaData(args.root, filesList));
+    const filesMetaData = JSON.parse(await fsutils.getFilesMetaData(args.project.rootPath, filesList));
 
     const filesDiff = {
       changed: [],
