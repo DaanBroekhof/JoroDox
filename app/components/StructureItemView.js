@@ -139,13 +139,15 @@ class StructureItemView extends Component {
 
   getItemPath() {
     if (this.state.item && this.state.item.path) {
-      return `${this.props.project.root}/${this.state.item.path}`;
+      return `${this.props.project.rootPath}/${this.state.item.path}`;
     }
 
-    const fileRelation = this.state.relationsFrom.find(x => x.toType === 'pdx_scripts' || x.toType === 'files' || x.toType === 'pdx_data');
+    const pathTypeIds = this.state.definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
+
+    const fileRelation = this.state.relationsFrom.find(x => pathTypeIds.indexOf(x.toType) !== -1 );
 
     if (fileRelation) {
-      return `${this.props.project.root}/${fileRelation.toId}`;
+      return `${this.props.project.rootPath}/${fileRelation.toId}`;
     }
 
     return '';
@@ -227,7 +229,7 @@ class StructureItemView extends Component {
           enabled: true
         },
       },
-      dataSource: this.getDataSource(this.props.project.root, this.props.match.params.type, this.props.match.params.id),
+      dataSource: this.getDataSource(this.props.project.rootPath, this.props.match.params.type, this.props.match.params.id),
       stateKey: `typeView-${this.props.match.params.type}-${this.props.match.params.id}`,
       pageSize: 1000,
       style: {

@@ -95,7 +95,7 @@ export default class App extends Component {
     switch (newTab) {
       default:
       case 'fileview': this.props.history.push('/fileview/' + this.state.project.rootPath); break;
-      case 'structure': this.props.history.push('/structure/'); break;
+      case 'structure': this.props.history.push('/structure'); break;
       case 'projects': this.props.history.push('/projects'); break;
     }
   }
