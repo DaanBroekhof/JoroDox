@@ -24,10 +24,14 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
+    // Disabled Uglify because is does not support ES6
+    // Fixme: Re-enable somehow
+    /*
     new UglifyJSPlugin({
       parallel: true,
       sourceMap: true
     }),
+    */
 
     new BundleAnalyzerPlugin({
       analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',

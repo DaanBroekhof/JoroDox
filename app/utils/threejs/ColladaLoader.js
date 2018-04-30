@@ -2776,11 +2776,4 @@ THREE.ColladaLoader.prototype = {
 
 };
 
-class ColladaLoader {
-  constructor(manager) {
-    this.manager = (manager !== undefined) ? manager : THREE.DefaultLoadingManager;
-  }
-}
-ColladaLoader.prototype = THREE.ColladaLoader.prototype;
-
-export default ColladaLoader;
+export default THREE.ColladaLoader;
