@@ -96,7 +96,7 @@ export default class BackgroundTask {
   }
 
   sendRequest(type, data) {
-    ipc.send('background-request', {taskId: this.taskId, type, data});
+    ipc.send('background-request', {taskId: this.taskId, taskType: this.constructor.getTaskType(), type, data});
   }
 
   sendResponse(data) {

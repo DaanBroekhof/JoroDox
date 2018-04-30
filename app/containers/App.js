@@ -16,6 +16,10 @@ import StructureItemView from '../components/StructureItemView';
 import StructureView from '../components/StructureView';
 import ProgressInfo from '../components/ProgressInfo';
 import ProjectsPage from '../components/ProjectsPage';
+import {incrementVersion} from "../actions/database";
+import WatchDirectoryTask from "../utils/tasks/WatchDirectoryTask";
+import JdxDatabase from "../utils/JdxDatabase";
+import {connect} from "react-redux";
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 
@@ -36,7 +40,7 @@ const theme = createMuiTheme({
   },
 });
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
 
@@ -52,6 +56,7 @@ export default class App extends Component {
         rootPath: '/',
         definitionType: 'eu4',
         isCurrent: true,
+        watchDirectory: true,
       };
       projects.push(currentProject);
     }
@@ -70,10 +75,35 @@ export default class App extends Component {
       customSearchWindowHtmlPath: getGlobal('searchWindowDir') + '/search-window.html',
       customCssPath: getGlobal('searchWindowDir') + '/default-style.css',
     });
+
+    this.startWatcher();
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.keyPressListener, false);
+  }
+
+  startWatcher() {
+    if (this.watcher) {
+      this.watcher.task.close();
+    }
+    if (!this.state.project.watchDirectory) {
+      return;
+    }
+
+    this.watcher = WatchDirectoryTask.start(
+      {rootDir: this.state.project.rootPath},
+      (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
+      (data) => {
+        const names = _(data).filter(x => x.eventType !== 'dirChange').map('filename').uniq().value();
+
+        return JdxDatabase.loadByPaths(this.state.project, names, null, 'Change detected...').then(() => {
+          // this.props.incrementDatabaseVersion();
+          this.props.dispatch(incrementVersion());
+          return this;
+        });
+      }
+    );
   }
 
   keyPressListener(event) {
@@ -88,6 +118,7 @@ export default class App extends Component {
 
     this.setState({project: newProjectState, projects: newProjectsState}, () => {
       localStorage.setItem('projects', JSON.stringify(this.state.projects));
+      this.startWatcher();
     });
   };
 
@@ -155,3 +186,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default connect(null, null)(App);

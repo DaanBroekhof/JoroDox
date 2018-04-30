@@ -153,7 +153,7 @@ export default class JdxDatabase {
     });
   }
 
-  static async loadByPaths(project, paths, types, taskTitle) {
+  static async loadByPaths(project, paths, typeIds, taskTitle) {
     if (!taskTitle) {
       taskTitle = 'Loading from paths...';
     }
@@ -161,9 +161,9 @@ export default class JdxDatabase {
 
     let result = null;
     if (paths === null) {
-      result = await FileLoaderTask.start({taskTitle, project, searchPath: '.', typeDefinition: _(definition.types).find(x => x.id === 'files')});
+      result = await FileLoaderTask.start({taskTitle, project, searchPath: '.', typeDefinition: definition.types.find(x => x.id === 'files')});
     } else {
-      result = await FileLoaderTask.start({taskTitle, project, exactPaths: paths, typeDefinition: _(definition.types).find(x => x.id === 'files')});
+      result = await FileLoaderTask.start({taskTitle, project, exactPaths: paths, typeDefinition: definition.types.find(x => x.id === 'files')});
     }
 
     if (result.deleted.length || result.changed.length) {
@@ -175,6 +175,8 @@ export default class JdxDatabase {
       });
       console.log(deleted + ' deleted');
     }
+
+    const types = definition.types.filter(x => typeIds === null || typeIds.indexOf(x.id) !== -1);
 
     if (result.added.length || result.changed.length) {
       const updatePaths = [...result.added, ...result.changed];

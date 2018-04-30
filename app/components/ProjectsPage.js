@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Paper, Typography, FormControl, InputLabel, Input, Select, MenuItem, Button} from 'material-ui';
+import {Paper, Typography, FormControl, InputLabel, Input, Select, MenuItem, Button, FormControlLabel, Checkbox, FormLabel} from 'material-ui';
 
 const {dialog} = require('electron').remote;
 
@@ -40,6 +40,23 @@ export default class ProjectsPage extends Component {
             <MenuItem value="eu4">Europa Universalis 4</MenuItem>
             <MenuItem value="stellaris">Stellaris</MenuItem>
           </Select>
+        </FormControl>
+        <br />
+        <FormControl margin="normal">
+          <FormLabel component="legend">Options</FormLabel>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={this.props.project.watchDirectory}
+                onChange={(event) => {
+                  this.props.handleChange({watchDirectory: event.target.checked})
+                }}
+                value="1"
+                color="primary"
+              />
+            }
+            label="Watch project files and directories for changes"
+          />
         </FormControl>
       </Paper>
     );
