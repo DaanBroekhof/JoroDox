@@ -4,8 +4,9 @@ const Menu = require('electron').Menu;
 const shell = require('electron').shell;
 
 class MenuBuilder {
-  constructor(mainWindow) {
-    this.mainWindow = mainWindow;
+  constructor(window, backgroundWindow) {
+    this.window = window;
+    this.backgroundWindow = backgroundWindow;
   }
 
   buildMenu(windowSpecific) {
@@ -23,7 +24,7 @@ class MenuBuilder {
 
     const menu = Menu.buildFromTemplate(template);
     if (windowSpecific) {
-      this.mainWindow.setMenu(menu);
+      this.window.setMenu(menu);
     } else {
       Menu.setApplicationMenu(menu);
     }
@@ -32,18 +33,18 @@ class MenuBuilder {
   }
 
   setupDevelopmentEnvironment() {
-    this.mainWindow.openDevTools();
-    this.mainWindow.webContents.on('context-menu', (e, props) => {
+    this.window.openDevTools();
+    this.window.webContents.on('context-menu', (e, props) => {
       const {x, y} = props;
 
       Menu
         .buildFromTemplate([{
           label: 'Inspect element',
           click: () => {
-            this.mainWindow.inspectElement(x, y);
+            this.window.inspectElement(x, y);
           }
         }])
-        .popup(this.mainWindow);
+        .popup(this.window);
     });
   }
 
@@ -87,21 +88,31 @@ class MenuBuilder {
           label: 'Reload',
           accelerator: 'Command+R',
           click: () => {
-            this.mainWindow.webContents.reload();
+            this.window.webContents.reload();
           }
         },
         {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
           click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+            this.window.setFullScreen(!this.window.isFullScreen());
           }
         },
         {
           label: 'Toggle Developer Tools',
           accelerator: 'Alt+Command+I',
           click: () => {
-            this.mainWindow.toggleDevTools();
+            this.window.toggleDevTools();
+          }
+        },
+        {
+          label: 'Toggle Background Window',
+          click: () => {
+            if (this.backgroundWindow.isVisible()) {
+              this.backgroundWindow.hide();
+            } else {
+              this.backgroundWindow.show();
+            }
           }
         }
       ]
@@ -113,7 +124,7 @@ class MenuBuilder {
           label: 'Toggle Full Screen',
           accelerator: 'Ctrl+Command+F',
           click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+            this.window.setFullScreen(!this.window.isFullScreen());
           }
         }
       ]
@@ -172,7 +183,7 @@ class MenuBuilder {
           label: '&Close',
           accelerator: 'Ctrl+W',
           click: () => {
-            this.mainWindow.close();
+            this.window.close();
           }
         }
       ]
@@ -182,31 +193,49 @@ class MenuBuilder {
         label: '&Reload',
         accelerator: 'Ctrl+R',
         click: () => {
-          this.mainWindow.webContents.reload();
+          this.window.webContents.reload();
         }
       }, {
         label: 'Toggle &Full Screen',
         accelerator: 'F11',
         click: () => {
-          this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          this.window.setFullScreen(!this.window.isFullScreen());
         }
       }, {
         label: 'Toggle &Developer Tools',
         accelerator: 'Alt+Ctrl+I',
         click: () => {
-          this.mainWindow.toggleDevTools();
+          this.window.toggleDevTools();
+        }
+      }, {
+        label: 'Toggle Background Window',
+        click: () => {
+          if (this.backgroundWindow.isVisible()) {
+            this.backgroundWindow.hide();
+          } else {
+            this.backgroundWindow.show();
+          }
         }
       }] : [{
         label: 'Toggle &Full Screen',
         accelerator: 'F11',
         click: () => {
-          this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          this.window.setFullScreen(!this.window.isFullScreen());
         }
       }, {
         label: 'Toggle &Developer Tools',
         accelerator: 'Alt+Ctrl+I',
         click: () => {
-          this.mainWindow.toggleDevTools();
+          this.window.toggleDevTools();
+        }
+      }, {
+        label: 'Toggle Background Window',
+        click: () => {
+          if (this.backgroundWindow.isVisible()) {
+            this.backgroundWindow.hide();
+          } else {
+            this.backgroundWindow.show();
+          }
         }
       }]
     }, {

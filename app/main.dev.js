@@ -32,7 +32,9 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+const debugEnabled = (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true');
+
+if (debugEnabled) {
   require('electron-debug')();
   const path = require('path');
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -86,7 +88,7 @@ app.on('ready', async () => {
   console.log(app.getPath('userData'));
 
   backgroundWindow = new BrowserWindow({
-    show: true,
+    show: debugEnabled,
     x: backgroundWindowState.x,
     y: backgroundWindowState.y,
     width: backgroundWindowState.width,
@@ -162,10 +164,10 @@ app.on('ready', async () => {
   });
 
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const menuBuilder = new MenuBuilder(mainWindow, backgroundWindow);
   menuBuilder.buildMenu(false);
 
-  const backgroundMenuBuilder = new MenuBuilder(backgroundWindow);
+  const backgroundMenuBuilder = new MenuBuilder(backgroundWindow, backgroundWindow);
   backgroundMenuBuilder.buildMenu(true);
 
 
