@@ -9,11 +9,9 @@ import JdxDatabase from '../utils/JdxDatabase';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
-import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import {incrementVersion} from '../actions/database';
-
-const syspath = require('electron').remote.require('path');
+import ItemGrid from './ItemGrid';
 
 class StructureView extends Component {
   constructor(props) {
@@ -30,7 +28,7 @@ class StructureView extends Component {
       this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextprops.project.rootPath, nextProps.type, this.state.search));
+      //this.props.reloadGrid(this.gridSettings, this.getDataSource(nextprops.project.rootPath, nextProps.type, this.state.search));
     }
   }
 
@@ -55,71 +53,41 @@ class StructureView extends Component {
     _(this.state.definition.types).forEach(type => {
       if (type.sourceType && (!typeId || type.id === typeId)) {
         StructureLoaderTask.start(
-          {project, typeDefinition: type},
+          {project: this.props.project, typeDefinition: type},
           (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
         );
       }
     });
   }
 
-  watchDirectory() {
-    WatchDirectoryTask.start(
-      {rootDir: this.props.project.rootPath},
-      (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
-      (data) => {
-        console.log('Watch response', data);
-        const names = _(data).filter(x => x.eventType !== 'dirChange').map('filename').uniq().value();
-
-        return JdxDatabase.loadByPaths(this.props.project, names, this.state.definition.types, 'Change detected...').then(() => {
-          // this.props.incrementDatabaseVersion();
-          this.props.dispatch(incrementVersion());
-          return this;
-        });
-      }
-    );
-  }
-
   deleteRelatedTest() {
     DeleteRelatedTask.start(
-      {rootDir: this.props.project.rootPath, type: 'files', typeIds: ['common/ages/00_default.txt'], types: this.state.definition.types},
+      {project: this.props.project, type: 'files', typeIds: ['common/ages/00_default.txt'], types: this.state.definition.types},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
     );
   }
 
   loadPdxScripts() {
     PdxScriptParserTask.start(
-      {root: this.props.project.rootPath, definition: this.state.definition},
+      {project: this.props.project},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
     );
   }
 
   loadPdxData() {
     PdxDataParserTask.start(
-      {root: this.props.project.rootPath, definition: this.state.definition},
+      {project: this.props.project},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
     );
   }
 
   reloadStructure() {
-    JdxDatabase.reloadAll(this.props.project);
-    /*
-    JdxDatabase.get(this.props.project.rootPath).then(db => {
-        db.relations.clear().then(() => {
-            FileLoaderTask.start(
-                {root: this.props.project.rootPath, typeDefinition: _(this.state.definition.types).find(x => x.id === 'files')},
-                (progress, total, message) => console.log('[' + progress + '/' + total + '] ' + message),
-                (result) => console.log("done"),
-                (error) => console.log(error),
-            );
-        });
-    });
-    */
+    return JdxDatabase.reloadAll(this.props.project);
   }
 
   reloadTypeById(typeId) {
     return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
       console.log(`Finished loading ${typeId}`);
-      return;
     });
   }
 
@@ -139,7 +107,7 @@ class StructureView extends Component {
 
 
   reloadDiff() {
-    JdxDatabase.loadByPaths(this.props.project, null, this.state.definition.types, 'Synchronizing changes...');
+    JdxDatabase.loadByPaths(this.props.project, null, null, 'Synchronizing changes...');
   }
 
   render() {
@@ -150,7 +118,7 @@ class StructureView extends Component {
           .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'))
           .map(x => x.id);
         const promises = typeIds.map(typeId => db[typeId].count());
-        return Promise.all(promises).then(counts => {
+        return Promise.all(promises).then((counts) => {
           const typeCounts = {};
           counts.forEach((value, key) => {
             typeCounts[typeIds[key]] = value;
@@ -165,11 +133,6 @@ class StructureView extends Component {
     }
 
     let extendedTypes = this.state.definition.types.map(type => {
-      // return {
-      //   id: type.id,
-      //   title: type.title,
-      //   category: type.category,
-      // };
       if (type.totalCount !== this.state.typeCounts[type.id]) {
         const typeCopy = Object.assign({}, type);
         typeCopy.totalCount = this.state.typeCounts[type.id];
@@ -179,6 +142,7 @@ class StructureView extends Component {
     }).filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
     extendedTypes = _.sortBy(extendedTypes, x => x.title);
 
+    /*
     const gridSettings = {
       height: false,
       emptyDataMessage: 'Loading...',
@@ -206,7 +170,8 @@ class StructureView extends Component {
         PAGER: {
           enabled: false,
           pagingType: 'local',
-          toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => `${pageIndex * pageSize} - ${(pageIndex * pageSize) + currentRecords} of ${total}`,
+          toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => `${pageIndex * pageSize} -
+          ${(pageIndex * pageSize) + currentRecords} of ${total}`,
           pagerComponent: false
         },
         COLUMN_MANAGER: {
@@ -231,12 +196,13 @@ class StructureView extends Component {
         },
       }
     };
+    */
 
     return (
-      <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
+      <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
         <Typography variant="display2" gutterBottom>{this.props.match.params.category || this.state.definition.name} - types</Typography>
 
-        <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20}}>
+        <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20, minHeight: 25}}>
           {/*
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
@@ -246,15 +212,17 @@ class StructureView extends Component {
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadAll()}>Reload all</Button>
           {!this.props.match.params.category &&
             <span>
-              <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.watchDirectory()}>Watch directory</Button>
               <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadDiff()}>Reload diff</Button>
             </span>
           }
 
 
         </div>
+        <div className="ItemGrid">
+          <ItemGrid list={extendedTypes} databaseVersion={this.props.databaseVersion} />
+        </div>
 
-        <Grid {...gridSettings} />
+        {/*<Grid {...gridSettings} />*/}
       </Paper>
     );
   }
@@ -270,8 +238,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-//    databaseVersion: state.database,
+    databaseVersion: state.database,
   };
 };
-
-export default connect(null, null)(StructureView);
+export default connect(mapDispatchToProps, mapStateToProps)(StructureView);
