@@ -33,8 +33,8 @@ export default withRouter(class PdxMeshView extends Component {
     this.state = {
       fileTreeData,
       editFileTreeData: fileTreeData,
-      textureFiles: this.findTextureFiles(path.dirname(props.file.path)),
-      animationFiles: this.findAnimationFiles(path.dirname(props.file.path)),
+      textureFiles: props.file.path ? this.findTextureFiles(path.dirname(props.file.path)): [],
+      animationFiles:  props.file.path ? this.findAnimationFiles(path.dirname(props.file.path)): [],
       objectScene,
     };
   }

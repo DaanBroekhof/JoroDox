@@ -604,7 +604,7 @@ export default class ColladaData {
 
       this.setThreeJsLoaderHandlers();
 
-      const loader = ColladaLoader(THREE.DefaultLoadingManager);
+      const loader = new ColladaLoader(THREE.DefaultLoadingManager);
 
       let boneCount = 0;
       let triangleCount = 0;

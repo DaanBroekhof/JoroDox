@@ -9,6 +9,7 @@ import {connect} from 'react-redux';
 import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import {incrementVersion} from "../actions/database";
+import PdxMeshView from "./PdxMeshView";
 
 const minimatch = require('minimatch');
 
@@ -186,6 +187,8 @@ class StructureItemView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
 
+    const itemPath = this.getItemPath();
+
     /*
       if (!this.state.item) {
         JdxDatabase.get(this.props.root)[typeDefinition.id].where({[typeDefinition.primaryKey]: this.props.match.params.id}).first(item => {
@@ -269,6 +272,8 @@ class StructureItemView extends Component {
             </Tooltip>
           </span>
         </div>
+
+        {typeDefinition.id === 'pdx_meshes' && itemPath && <PdxMeshView file={{path: itemPath}} />}
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
 

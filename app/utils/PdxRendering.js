@@ -1067,7 +1067,7 @@ export default class PdxRendering {
 
     loadCollada(string, path) {
       const deferred = $q.defer();
-      const loader = ColladaLoader();
+      const loader = new ColladaLoader();
       loader.options.convertUpAxis = true;
 
       let boneCount = 0;
