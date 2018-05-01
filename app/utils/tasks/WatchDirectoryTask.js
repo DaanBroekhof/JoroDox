@@ -35,8 +35,6 @@ export default class WatchDirectoryTask extends BackgroundTask {
 
       const info = jetpack.inspect(path.join(args.rootDir, filename));
 
-      console.log({filename, rawEventType, info});
-
       let eventType = rawEventType;
       if (!info && rawEventType === 'rename') {
         eventType = 'delete';
@@ -57,7 +55,7 @@ export default class WatchDirectoryTask extends BackgroundTask {
       this.lastEventTimestamp = new Date().getTime();
       const eventTimestamp = this.lastEventTimestamp;
 
-      new Promise(resolve => setTimeout(resolve, 100)).then(() => {
+      new Promise(resolve => setTimeout(resolve, 200)).then(() => {
         if (this.lastEventTimestamp === eventTimestamp) {
           console.log(eventsBuffer.length);
           const events = eventsBuffer;

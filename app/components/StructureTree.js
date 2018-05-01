@@ -33,7 +33,8 @@ export default class StructureTree extends React.Component {
     }
     if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
       if (nextProps.match) {
-        this.doOpenToType(this.tree.getRootNode(), nextProps.match.params.category, nextProps.match.params.type);
+        // I think we don't want to navigate here... but not 100% sure
+        //this.doOpenToType(this.tree.getRootNode(), nextProps.match.params.category, nextProps.match.params.type);
       }
     }
   }
