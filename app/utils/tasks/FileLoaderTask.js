@@ -45,6 +45,10 @@ export default class FileLoaderTask extends DbBackgroundTask {
       if (type === 'file') {
         filesList = [searchPath];
       } else {
+        if (!searchPath.endsWith('/') && searchPattern !== '') {
+          throw new Error('Path prefix `'+ searchPath +'` should end with a /.');
+        }
+
         filesList = await localJetpack.findAsync(searchPath, {
           matching: searchPattern,
           recursive: true,
