@@ -53,6 +53,11 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
     const entryRegex = /^\s(.+):([0-9]+)?\s*"(.*)("|[^"]$)(\s#\s*(.*))?$/;
 
+    // Remove UTF8 BOM >:(
+    if (data.charCodeAt(0) === 0xFEFF) {
+      data = data.slice(1);
+    }
+
     data.split('\n').forEach((line, lineNr) => {
       // empty line (with a comment perhaps)
       if (line.match(/^\s*(#\s*(.*))?$/u)) { return; }

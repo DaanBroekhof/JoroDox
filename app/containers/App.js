@@ -16,10 +16,11 @@ import StructureItemView from '../components/StructureItemView';
 import StructureView from '../components/StructureView';
 import ProgressInfo from '../components/ProgressInfo';
 import ProjectsPage from '../components/ProjectsPage';
-import {incrementVersion} from "../actions/database";
-import WatchDirectoryTask from "../utils/tasks/WatchDirectoryTask";
-import JdxDatabase from "../utils/JdxDatabase";
-import {connect} from "react-redux";
+import EventEditor from '../components/EventEditor';
+import {incrementVersion} from '../actions/database';
+import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
+import JdxDatabase from '../utils/JdxDatabase';
+import {connect} from 'react-redux';
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 
@@ -164,12 +165,12 @@ class App extends Component {
           </AppBar>
           <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
             <Switch>
-              <Route path="/structure/c/:category" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
               <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
             <Switch>
+              <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={this.state.project} {...props.match.params} />} />
               <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} {...props} />} />
               <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={this.state.project} {...props} />} />
               <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={this.state.project} {...props} />} />

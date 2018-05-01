@@ -61,6 +61,7 @@ export default class JdxDatabase {
 
     const rootHash = crypto.createHash('md5').update(`${definition.name}||${root}`).digest('hex').substring(0, 8);
     const db = new Dexie(`JdxDatabase-${rootHash}`, {allowEmptyDB: true});
+    console.log('Loading DB `JdxDatabase-'+ rootHash +'`');
 
     // Hacky way to allow empty DB editing
     /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */
@@ -319,5 +320,77 @@ export default class JdxDatabase {
       throw new Error('Unknown project definition type: `' + id + '`.');
     }
     return this.definitions[id];
+  }
+
+  static async loadRelations(project, type, id) {
+    const definition = this.getDefinition(project.definitionType);
+
+    const typeDefinition = definition.types.find(x => x.id === type);
+
+    if (!typeDefinition) {
+      throw new Error('Unknown type');
+    }
+
+    id = id.toString();
+
+    const db = await JdxDatabase.get(project);
+
+    const stores = _.uniq(definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
+    stores.push('relations');
+
+    const promisesFrom = [];
+    const promisesTo = [];
+    for (const store of stores) {
+      promisesFrom.push(db[store].where(['fromType', 'fromId']).equals([typeDefinition.id, id]).toArray());
+      promisesTo.push(db[store].where(['toType', 'toId']).equals([typeDefinition.id, id]).toArray());
+    }
+    return {
+      relationsFrom: await Promise.all(promisesFrom).then((v) => [].concat(...v)).then((v) => _.sortBy(v, ['toKey', 'toType', 'toId'])),
+      relationsTo: await Promise.all(promisesTo).then((v) => [].concat(...v)).then((v) => _.sortBy(v, ['fromKey', 'fromType', 'fromId'])),
+    };
+  }
+
+  static getItemPath(project, item, relationsFrom) {
+    if (item && item.path) {
+      return `${project.rootPath}/${item.path}`;
+    }
+
+    const definition = this.getDefinition(project.definitionType);
+
+    const pathTypeIds = definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
+
+    const fileRelation = relationsFrom.find(x => pathTypeIds.indexOf(x.toType) !== -1 );
+
+    if (fileRelation) {
+      return `${project.rootPath}/${fileRelation.toId}`;
+    }
+
+    return false;
+  }
+
+  static findTypeDefinition(project, type) {
+    const definition = this.getDefinition(project.definitionType);
+
+    const typeDefinition = definition.types.find(x => x.id === type);
+
+    if (!typeDefinition) {
+      throw new Error('Unknown type definition `' + type + '`.');
+    }
+
+    return typeDefinition;
+  }
+
+  static async getItem(project, type, id) {
+    const db = await JdxDatabase.get(project);
+    const typeDefinition = this.findTypeDefinition(project, type);
+
+    return db[typeDefinition.id].where({[typeDefinition.primaryKey]: id}).first();
+  }
+
+  static async getItems(project, type, ids) {
+    const db = await JdxDatabase.get(project);
+    const typeDefinition = this.findTypeDefinition(project, type);
+
+    return db[typeDefinition.id].where(typeDefinition.primaryKey).anyOf(ids).toArray();
   }
 }

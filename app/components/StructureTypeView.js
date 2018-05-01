@@ -10,7 +10,7 @@ import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import StructureScannerTask from '../utils/tasks/StructureScannerTask';
-import {incrementVersion} from "../actions/database";
+import {incrementVersion} from '../actions/database';
 
 class StructureTypeView extends Component {
   constructor(props) {

@@ -274,6 +274,7 @@ class StructureItemView extends Component {
         </div>
 
         {typeDefinition.id === 'pdx_meshes' && itemPath && <PdxMeshView file={{path: itemPath}} />}
+        {typeDefinition.id === 'events' && <Link to={`/structure/e/events/${this.props.match.params.id}`}>Event editor</Link>}
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
 

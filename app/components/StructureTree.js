@@ -235,7 +235,9 @@ export default class StructureTree extends React.Component {
             if (node.info.view === 'category') {
               this.tree.openNode(node, {async: true});
             }
-            this.navigateToNode(node, history);
+            //if (this.props.match.params.kind === 'c' || this.props.match.params.kind === 't') {
+            //  this.navigateToNode(node, history);
+            //}
           }}
           onClusterWillChange={() => {}}
           onClusterDidChange={() => {}}

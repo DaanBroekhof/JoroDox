@@ -102,7 +102,7 @@ class StructureView extends Component {
         console.log(`Loaded ${type.id}`);
         return result;
       });
-    }), Promise.resolve());
+    }), Promise.resolve()).then(() => this.props.incrementDatabaseVersion());
   }
 
 
@@ -228,17 +228,15 @@ class StructureView extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    incrementDatabaseVersion: () => {
-      dispatch(incrementVersion());
-    }
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  incrementDatabaseVersion: () => {
+    dispatch(incrementVersion());
+  }
+});
 
 const mapStateToProps = state => {
   return {
     databaseVersion: state.database,
   };
 };
-export default connect(mapDispatchToProps, mapStateToProps)(StructureView);
+export default connect(mapStateToProps, mapDispatchToProps)(StructureView);
