@@ -51,7 +51,8 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     let type = null;
     const result = {};
 
-    const entryRegex = /^\s(.+):([0-9]+)?\s*"(.*)("|[^"]$)(\s#\s*(.*))?$/;
+    const entryRegex = /^\s(.+):([0-9]+)?\s*"(.*)"(\s*#\s*(.*))?\s*$/;
+    const entryRegexNoEndQuote = /^\s(.+):([0-9]+)?\s*"(.*)[^"]\s*$/;
 
     // Remove UTF8 BOM >:(
     if (data.charCodeAt(0) === 0xFEFF) {
@@ -60,10 +61,17 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
     data.split('\n').forEach((line, lineNr) => {
       // empty line (with a comment perhaps)
-      if (line.match(/^\s*(#\s*(.*))?$/u)) { return; }
+      if (line.match(/^\s*(#\s*(.*))?\s*$/u)) {
+        return;
+      }
 
       // Entry line (with optional comment)
-      const entryMatch = line.match(entryRegex);
+      let entryMatch = line.match(entryRegex);
+      // No match? try detecting regex without ending quote
+      if (!entryMatch) {
+        entryMatch = line.match(entryRegexNoEndQuote);
+      }
+
       if (entryMatch) {
         if (!type) {
           console.log(`Error parsing file \`${filePath}\`, line ${lineNr + 1}: No type found before this line`);
@@ -84,8 +92,10 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
         result[type] = {};
         return;
       }
+
       if (!entryMatch) {
-        console.log(`Error parsing file \`${filePath}\`, line ${lineNr + 1}: could not parse line`);
+        console.error(`Error parsing file \`${filePath}\`, line ${lineNr + 1}: could not parse line`);
+        console.log(line);
       }
     });
 

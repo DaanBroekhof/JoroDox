@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Paper, Typography, FormControl, InputLabel, Input, Select, MenuItem, Button, FormControlLabel, Checkbox, FormLabel} from 'material-ui';
+import JdxDatabase from "../utils/JdxDatabase";
 
 const {dialog} = require('electron').remote;
 
@@ -13,10 +14,13 @@ export default class ProjectsPage extends Component {
       this.props.handleChange({rootPath: dir[0]});
     }
   };
+  clearCaches = () => {
+    JdxDatabase.clearAll(this.props.project);
+  };
 
   render() {
     return (
-      <Paper style={{flex: 1, margin: 20, padding: 20}}>
+      <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
         <Typography variant="display2" gutterBottom>Project settings</Typography>
         <FormControl margin="normal" fullWidth>
           <InputLabel htmlFor="root-path">Root path</InputLabel>
@@ -58,6 +62,12 @@ export default class ProjectsPage extends Component {
             label="Watch project files and directories for changes"
           />
         </FormControl>
+        <br />
+        <FormControl margin="normal">
+          <FormLabel component="legend">Actions</FormLabel>
+        </FormControl>
+        <br />
+        <Button color="primary" variant="raised" style={{marginRight: '10px'}} onClick={this.clearCaches}>Clear game data cache</Button>
       </Paper>
     );
   }

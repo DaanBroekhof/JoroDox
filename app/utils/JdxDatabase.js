@@ -15,7 +15,7 @@ import Eu4Definition from '../definitions/eu4';
 import StellarisDefinition from '../definitions/stellaris';
 
 export default class JdxDatabase {
-  static db;
+  static db = {};
 
   static parserToTask = {
     StructureLoader: StructureLoaderTask,
@@ -29,9 +29,15 @@ export default class JdxDatabase {
     DeleteRelated: DeleteRelatedTask,
   };
 
+  static projectToDbName(project) {
+    const rootHash = crypto.createHash('md5').update(`${project.rootPath}`).digest('hex').substring(0, 8);
+
+    return `JdxDatabase-${rootHash}`;
+  }
+
   static async get(project) {
-    if (this.db) {
-      return Promise.resolve(this.db);
+    if (this.db[project.rootPath] && this.db[project.rootPath].isOpen()) {
+      return Promise.resolve(this.db[project.rootPath]);
     }
     const root = project.rootPath;
     const definition = this.getDefinition(project.definitionType);
@@ -59,19 +65,18 @@ export default class JdxDatabase {
 
     stores = _(stores).mapValues(x => x.split(',').sort().join(',')).value();
 
-    const rootHash = crypto.createHash('md5').update(`${definition.name}||${root}`).digest('hex').substring(0, 8);
-    const db = new Dexie(`JdxDatabase-${rootHash}`, {allowEmptyDB: true});
-    console.log('Loading DB `JdxDatabase-'+ rootHash +'`');
+    const dbName = this.projectToDbName(project);
+    const db = new Dexie(dbName, {allowEmptyDB: true});
+    console.log('Loading DB `'+ dbName +'`');
 
     // Hacky way to allow empty DB editing
     /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */
     db._allowEmptyDB = true;
 
     const currentStores = [];
-    let currentVerNo = 0;
 
     await db.open();
-    currentVerNo = db.verno;
+    let currentVerNo = db.verno;
     db.tables.forEach(table => {
       const primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
       const schemaSyntax = primKeyAndIndexes.map(index => index.src).join(',');
@@ -115,9 +120,15 @@ export default class JdxDatabase {
       console.log('Creating stores:', newStores);
     }
 
-    this.db = db;
+    this.db[project.rootPath] = db;
 
     return db.open();
+  }
+
+  static async clearAll(project) {
+    this.db = {};
+    console.log(this.projectToDbName(project));
+    return Dexie.delete(this.projectToDbName(project));
   }
 
   static getSourceTypePath(type, defaultPath) {

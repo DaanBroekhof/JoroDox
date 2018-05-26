@@ -3872,7 +3872,7 @@ export default {
           },
           {
             name: 'Direction',
-            dataIndex: ['data', 'wind_direction'],
+            dataIndex: 'wind_direction',
           },
         ],
       },
@@ -3952,7 +3952,7 @@ export default {
       primaryKey: 'path',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'map/random/tiles',
+        pathPrefix: 'map/random/tiles/',
         pathPattern: 'map/random/tiles/*.txt',
       },
       sourceTransform: {

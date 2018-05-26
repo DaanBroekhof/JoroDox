@@ -32,11 +32,6 @@ export default class FileLoaderTask extends DbBackgroundTask {
         searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
       }
 
-      if (args.exactPaths) {
-        searchPath = args.searchPath;
-        searchPattern = searchPattern.replace(new RegExp(`^${_.escapeRegExp(searchPath)}`), '');
-      }
-
       const type = localJetpack.exists(searchPath);
       if (!type || type === 'other') {
         this.finish([]);
@@ -45,8 +40,8 @@ export default class FileLoaderTask extends DbBackgroundTask {
       if (type === 'file') {
         filesList = [searchPath];
       } else {
-        if (!searchPath.endsWith('/') && searchPattern !== '') {
-          throw new Error('Path prefix `'+ searchPath +'` should end with a /.');
+        if (searchPath !== '.' && !searchPath.endsWith('/') && searchPattern !== '') {
+          throw new Error('Path prefix `' + searchPath + '` should end with a /.');
         }
 
         filesList = await localJetpack.findAsync(searchPath, {

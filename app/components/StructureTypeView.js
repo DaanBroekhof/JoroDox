@@ -31,7 +31,7 @@ class StructureTypeView extends Component {
       this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath || nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, this.state.search));
+      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project, nextProps.match.params.type, this.state.search));
     }
   }
 

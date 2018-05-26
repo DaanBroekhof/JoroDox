@@ -292,6 +292,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       if (definition.sourceTransform.customFields) {
         this.getCustomFields(item, definition.sourceTransform.customFields);
       }
+      if (item[definition.primaryKey] === undefined) {
+        console.error('Primary key `' + definition.primaryKey + '` not found.', item);
+        return;
+      }
       item[definition.primaryKey] = item[definition.primaryKey].toString();
       items.push(item);
 
