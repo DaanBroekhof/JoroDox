@@ -96,18 +96,21 @@ class StructureView extends Component {
       .filter(x => x.reader === 'StructureLoader')
       .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
 
-    types.reduce((promise, type) => promise.then(() => {
-      console.log(`Starting ${type.id}`);
-      return JdxDatabase.reloadTypeById(this.props.project, type.id).then(result => {
-        console.log(`Loaded ${type.id}`);
-        return result;
-      });
-    }), Promise.resolve()).then(() => this.props.incrementDatabaseVersion());
+    JdxDatabase.reloadTypesByIds(project, types).then(() => {
+      if (!this.props.match.params.category) {
+        this.props.handleProjectChange({lastGlobalUpdate: new Date()});
+      }
+      this.props.incrementDatabaseVersion();
+    });
   }
 
 
   reloadDiff() {
-    JdxDatabase.loadByPaths(this.props.project, null, null, 'Synchronizing changes...');
+    JdxDatabase.loadByPaths(this.props.project, null, null, 'Synchronizing changes...').then(() => {
+      if (!this.props.match.params.category) {
+        this.props.handleProjectChange({lastGlobalUpdate: new Date()});
+      }
+    });
   }
 
   render() {
@@ -200,8 +203,10 @@ class StructureView extends Component {
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
-        <Typography variant="display2" gutterBottom>{this.props.match.params.category || this.state.definition.name} - types</Typography>
-
+        <Typography variant="display2">{this.props.match.params.category || this.state.definition.name} - Game Data</Typography>
+        <Typography variant="subheading" gutterBottom style={{color: 'grey'}}>
+          Last global change: {this.props.project.lastGlobalUpdate ? (new Date(this.props.project.lastGlobalUpdate)).toLocaleString() : <i>- unknown -</i>}
+        </Typography>
         <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20, minHeight: 25}}>
           {/*
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />

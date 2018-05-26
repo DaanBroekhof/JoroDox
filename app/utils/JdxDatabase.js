@@ -253,6 +253,16 @@ export default class JdxDatabase {
     return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
   }
 
+  static async reloadTypesByIds(project, types) {
+    return types.reduce((promise, type) => promise.then(() => {
+      console.log(`Starting ${type.id}`);
+      return JdxDatabase.reloadTypeById(project, type.id).then(result => {
+        console.log(`Loaded ${type.id}`);
+        return result;
+      });
+    }), Promise.resolve());
+  }
+
   static async reloadTypeById(project, typeId, filterTypes, taskTitle) {
     const definition = this.getDefinition(project.definitionType);
     const type = _(definition.types).find(x => x.id === typeId);

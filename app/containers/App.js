@@ -58,6 +58,7 @@ class App extends Component {
         definitionType: 'eu4',
         isCurrent: true,
         watchDirectory: true,
+        lastGlobalUpdate: null,
       };
       projects.push(currentProject);
     }
@@ -100,6 +101,7 @@ class App extends Component {
 
         return JdxDatabase.loadByPaths(this.state.project, names, null, 'Change detected...').then(() => {
           // this.props.incrementDatabaseVersion();
+          this.changeProject({lastGlobalUpdate: new Date()}, true);
           this.props.dispatch(incrementVersion());
           return this;
         });
@@ -113,13 +115,15 @@ class App extends Component {
     }
   }
 
-  changeProject = (newSettings) => {
+  changeProject = (newSettings, noWatcher) => {
     const newProjectState = {...(this.state.project), ...newSettings};
     const newProjectsState = this.state.projects.map(p => (p.isCurrent ? newProjectState : p));
 
     this.setState({project: newProjectState, projects: newProjectsState}, () => {
       localStorage.setItem('projects', JSON.stringify(this.state.projects));
-      this.startWatcher();
+      if (!noWatcher) {
+        this.startWatcher();
+      }
     });
   };
 
@@ -171,10 +175,10 @@ class App extends Component {
             </Switch>
             <Switch>
               <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={this.state.project} {...props.match.params} />} />
-              <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} {...props} />} />
+              <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
               <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={this.state.project} {...props} />} />
               <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={this.state.project} {...props} />} />
-              <Route path="/structure" component={(props) => <StructureView project={this.state.project} {...props} />} />
+              <Route path="/structure" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
               <Route path="/fileview/:path(.*)" component={FileView} />
               <Route path="/projects" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
               <Route path="/settings" component={SettingsPage} />

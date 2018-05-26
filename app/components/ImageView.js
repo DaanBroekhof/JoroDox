@@ -70,13 +70,15 @@ export default class ImageView extends Component {
 
         <div style={{
            border: '1px solid #eee',
-           padding: 0,
+           padding: 10,
            display: 'flex',
+           alignItems: 'center',
+           flexDirection: 'column',
            backgroundImage: 'linear-gradient(45deg, #EEEEEE 25%, transparent 25%), linear-gradient(-45deg, #EEEEEE 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #EEEEEE 75%), linear-gradient(-45deg, transparent 75%, #EEEEEE 75%)',
            backgroundSize: '20px 20px',
            backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
         }}
-        >{imgSrc && <img src={imgSrc} style={{display: 'inline-block', margin: 0, objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto'}}/>}
+        >{imgSrc && <img src={imgSrc} style={{display: 'block', margin: 0, objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto'}}/>}
         </div>
       </div>
     );

@@ -10,6 +10,7 @@ import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import {incrementVersion} from "../actions/database";
 import PdxMeshView from "./PdxMeshView";
+import ImageView from "./ImageView";
 
 const minimatch = require('minimatch');
 
@@ -273,7 +274,8 @@ class StructureItemView extends Component {
           </span>
         </div>
 
-        {typeDefinition.id === 'pdx_meshes' && itemPath && <PdxMeshView file={{path: itemPath}} />}
+        {typeDefinition.id === 'pdx_meshes' && itemPath && <div><PdxMeshView file={{path: itemPath}} /><br /></div>}
+        {typeDefinition.id === 'indexed_bmps' && itemPath && <div><ImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'events' && <Link to={`/structure/e/events/${this.props.match.params.id}`}>Event editor</Link>}
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
