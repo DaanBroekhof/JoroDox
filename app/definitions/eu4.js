@@ -4279,7 +4279,7 @@ export default {
       id: 'dds_images',
       title: 'DDS images',
       category: 'Raw data',
-      reader: 'DdsTextureParser',
+      reader: 'DdsImageParser',
       primaryKey: 'path',
       listView: {
         pageSize: 100,
@@ -4753,6 +4753,32 @@ export default {
           {
             name: 'Color',
             dataIndex: 'color',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'map_terrain_textures',
+      title: 'Map terrain textures',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'dds_images',
+        pathPrefix: 'map/terrain/',
+        pathPattern: 'map/terrain/*.dds',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
             linkTo: '[self]',
           },
         ],

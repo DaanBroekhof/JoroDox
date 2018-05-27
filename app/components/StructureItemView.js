@@ -9,8 +9,9 @@ import {connect} from 'react-redux';
 import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import {incrementVersion} from "../actions/database";
-import PdxMeshView from "./PdxMeshView";
-import ImageView from "./ImageView";
+import PdxMeshView from './PdxMeshView';
+import ImageView from './ImageView';
+import DdsImageView from './DdsImageView';
 
 const minimatch = require('minimatch');
 
@@ -276,6 +277,7 @@ class StructureItemView extends Component {
 
         {typeDefinition.id === 'pdx_meshes' && itemPath && <div><PdxMeshView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'indexed_bmps' && itemPath && <div><ImageView file={{path: itemPath}} /><br /></div>}
+        {typeDefinition.id === 'dds_images' && itemPath && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'events' && <Link to={`/structure/e/events/${this.props.match.params.id}`}>Event editor</Link>}
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />

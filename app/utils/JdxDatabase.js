@@ -9,6 +9,7 @@ import LuaScriptParserTask from './tasks/LuaScriptParserTask';
 import CsvFileParserTask from './tasks/CsvFileParserTask';
 import PdxYmlFileParserTask from './tasks/PdxYmlFileParserTask';
 import IndexedBmpParserTask from './tasks/IndexedBmpParserTask';
+import DdsImageParserTask from './tasks/DdsImageParserTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
 import Eu4Definition from '../definitions/eu4';
@@ -26,6 +27,7 @@ export default class JdxDatabase {
     CsvFileParser: CsvFileParserTask,
     PdxYmlFileParser: PdxYmlFileParserTask,
     IndexedBmpParser: IndexedBmpParserTask,
+    DdsImageParser: DdsImageParserTask,
     DeleteRelated: DeleteRelatedTask,
   };
 

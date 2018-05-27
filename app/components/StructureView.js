@@ -96,7 +96,7 @@ class StructureView extends Component {
       .filter(x => x.reader === 'StructureLoader')
       .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
 
-    JdxDatabase.reloadTypesByIds(project, types).then(() => {
+    JdxDatabase.reloadTypesByIds(this.props.project, types).then(() => {
       if (!this.props.match.params.category) {
         this.props.handleProjectChange({lastGlobalUpdate: new Date()});
       }
