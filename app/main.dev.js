@@ -133,9 +133,14 @@ app.on('ready', async () => {
 
   mainWindow.on('close', () => {
     mainWindowState.saveState(mainWindow);
+    app.quit();
   });
   mainWindow.on('closed', () => {
     // mainWindow = null;
+  });
+
+  app.on('window-all-closed', () => {
+    app.quit();
   });
 
   backgroundWindow.on('close', () => {
