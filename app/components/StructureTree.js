@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
-import {Icon} from 'material-ui';
+import Icon from '@material-ui/core/Icon';
 import {Route} from 'react-router';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 import FileView from './FileView';
-import JdxDatabase from "../utils/JdxDatabase";
+import JdxDatabase from '../utils/JdxDatabase';
 
 const jetpack = require('electron').remote.require('fs-jetpack');
 const syspath = require('electron').remote.require('path');

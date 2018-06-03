@@ -1,11 +1,14 @@
 // @flow
 import React, {Component} from 'react';
 import {withRouter} from 'react-router';
-import {
-  Button, Select, Table, TableBody, TableCell,
-  TableHead,
-  TableRow, TextField, Typography
-} from 'material-ui';
+import Typography from '@material-ui/core/Typography';
+import Select from '@material-ui/core/Select';
+import Button from '@material-ui/core/Button';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import PdxData from '../utils/PdxData';
 import PdxDataView from './PdxDataView';
 import PdxMesh from '../utils/PdxMesh';

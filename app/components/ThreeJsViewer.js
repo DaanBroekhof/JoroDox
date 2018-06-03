@@ -1,7 +1,9 @@
 // @flow
 import React, {Component} from 'react';
 import * as THREE from 'three';
-import {Checkbox, FormControlLabel, FormGroup} from 'material-ui';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
 
 const OrbitControls = require('../utils/threejs/OrbitControls')(THREE);
 

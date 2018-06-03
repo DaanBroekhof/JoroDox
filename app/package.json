@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "bmp-js": "^0.0.3",
-    "fs-jetpack": "^1.2.0"
+    "fs-jetpack": "^1.2.0",
+    "csv-parse": "^2.1.0"
   }
 }

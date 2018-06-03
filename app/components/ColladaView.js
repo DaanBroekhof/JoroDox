@@ -2,7 +2,14 @@
 import * as THREE from 'three';
 import {withRouter} from 'react-router';
 import React, {Component} from 'react';
-import {Button, Checkbox, Table, TableBody, TableCell, TableHead, TableRow, Typography} from 'material-ui';
+import Typography from '@material-ui/core/Typography';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+
 import PdxData from '../utils/PdxData';
 import PdxMesh from '../utils/PdxMesh';
 import ColladaData from '../utils/ColladaData';

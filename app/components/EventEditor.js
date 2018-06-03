@@ -1,7 +1,14 @@
 // @flow
 import React, {Component} from 'react';
 
-import {Icon, IconButton, Paper, Tooltip, Typography, TextField, FormControl} from 'material-ui';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import TextField from '@material-ui/core/TextField';
+
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';

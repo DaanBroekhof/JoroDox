@@ -1,7 +1,11 @@
 // @flow
 import React, {Component} from 'react';
 
-import {Icon, IconButton, Paper, Tooltip, Typography} from 'material-ui';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import {applyGridConfig, Grid, Actions} from 'react-redux-grid';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
@@ -278,7 +282,11 @@ class StructureItemView extends Component {
         {typeDefinition.id === 'pdx_meshes' && itemPath && <div><PdxMeshView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'indexed_bmps' && itemPath && <div><ImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'dds_images' && itemPath && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
+        {typeDefinition.sourceType && typeDefinition.sourceType.id === 'dds_images' && itemPath && <div><DdsImageView file={{path: itemPath}} flipY={typeDefinition.sourceType.flipY} /><br /></div>}
+        {typeDefinition.sourceType && typeDefinition.sourceType.id === 'files' && itemPath && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'events' && <Link to={`/structure/e/events/${this.props.match.params.id}`}>Event editor</Link>}
+        {typeDefinition.id !== 'dds_images' && typeDefinition.sourceType.id !== 'dds_images' && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
+        {itemPath && (_.endsWith(itemPath, '.tga') || _.endsWith(itemPath, '.png') || _.endsWith(itemPath, '.jpg')) && <div><ImageView file={{path: itemPath}} /><br /></div>}
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
 

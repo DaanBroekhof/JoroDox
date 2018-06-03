@@ -1,12 +1,20 @@
 import React, {Component} from 'react';
-import {Paper, Typography, FormControl, InputLabel, Input, Select, MenuItem, Button, FormControlLabel, Checkbox, FormLabel} from 'material-ui';
-import JdxDatabase from "../utils/JdxDatabase";
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormLabel from '@material-ui/core/FormLabel';
+import JdxDatabase from '../utils/JdxDatabase';
 
 const {dialog} = require('electron').remote;
 
 export default class ProjectsPage extends Component {
-
-
   openDirectory = () => {
     const dir = dialog.showOpenDialog({properties: ['openDirectory', 'showHiddenFiles']});
 

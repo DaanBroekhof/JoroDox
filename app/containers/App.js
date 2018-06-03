@@ -3,8 +3,15 @@ import React, {Component} from 'react';
 import SplitterLayout from 'react-splitter-layout';
 import {Link} from 'react-router-dom';
 import {Switch, Route} from 'react-router';
-import {Button, MuiThemeProvider, createMuiTheme, Toolbar, Typography, Tabs, Tab} from 'material-ui';
-import AppBar from 'material-ui/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
+import {connect} from 'react-redux';
+
 import searchInPage from 'electron-in-page-search';
 import FileTree from '../components/FileTree';
 import FileView from '../components/FileView';
@@ -20,7 +27,6 @@ import EventEditor from '../components/EventEditor';
 import {incrementVersion} from '../actions/database';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
-import {connect} from 'react-redux';
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 

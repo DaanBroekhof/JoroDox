@@ -1,4 +1,5 @@
 import BackgroundTask from './BackgroundTask';
+
 const {fork} = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -9,7 +10,6 @@ export default class IndexedBmpParserForkTask extends BackgroundTask {
   }
 
   async execute(args) {
-
     const fileName = 'ForkIndexedBmp.js';
     let cwd = path.join(__dirname, '..');
 
@@ -19,7 +19,14 @@ export default class IndexedBmpParserForkTask extends BackgroundTask {
     }
 
     return new Promise((resolve, reject) => {
-      const forkedIndexedBmp = fork(path.join(cwd, fileName), [], {cwd});
+      // Check existence of file
+      const filePath = path.join(cwd, fileName);
+      if (!fs.existsSync(filePath)) {
+        reject(new Error('Cannot find: ' + filePath));
+      }
+
+      const forkedIndexedBmp = fork(path.join(cwd, fileName));
+
       forkedIndexedBmp.on('message', (m) => {
         resolve(m);
       });

@@ -4,7 +4,8 @@ import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 
 import {Route} from 'react-router';
-import {Icon} from 'material-ui';
+import Icon from '@material-ui/core/Icon';
+
 import FileView from './FileView';
 
 const jetpack = require('electron').remote.require('fs-jetpack');

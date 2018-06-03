@@ -4387,7 +4387,7 @@ export default {
     {
       id: 'gfx_cursor_images',
       title: 'Cursor images',
-      category: 'Graphics',
+      category: 'User interface',
       reader: 'StructureLoader',
       primaryKey: 'path',
       sourceType: {
@@ -4477,7 +4477,8 @@ export default {
       reader: 'StructureLoader',
       primaryKey: 'path',
       sourceType: {
-        id: 'files',
+        id: 'dds_images',
+        flipY: true,
         pathPrefix: 'gfx/event_pictures/',
         pathPattern: 'gfx/event_pictures/**/*.dds',
       },
@@ -4537,7 +4538,7 @@ export default {
       reader: 'StructureLoader',
       primaryKey: 'path',
       sourceType: {
-        id: 'files',
+        id: 'dds_images',
         pathPrefix: 'gfx/loadingscreens/',
         pathPattern: 'gfx/loadingscreens/*.dds',
       },
@@ -4766,6 +4767,7 @@ export default {
       primaryKey: 'path',
       sourceType: {
         id: 'dds_images',
+        flipY: true,
         pathPrefix: 'map/terrain/',
         pathPattern: 'map/terrain/*.dds',
       },
@@ -4806,6 +4808,85 @@ export default {
           {
             name: 'Color',
             dataIndex: 'color',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'gfx_font_textures',
+      title: 'Font Textures',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'dds_images',
+        pathPrefix: 'gfx/',
+        pathPattern: 'gfx/fonts/*.dds',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'gfx_interface_images',
+      title: 'Interface Images',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'dds_images',
+        pathPrefix: 'gfx/interface/',
+        pathPattern: 'gfx/interface/**/*.+(dds|tga)',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'gfx_model_textures',
+      title: '3D Model Textures',
+      category: 'Graphics',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'dds_images',
+        flipY: true,
+        pathPrefix: 'gfx/models/',
+        pathPattern: 'gfx/models/**/*.dds',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
             linkTo: '[self]',
           },
         ],

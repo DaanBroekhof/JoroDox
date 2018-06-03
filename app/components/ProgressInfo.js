@@ -1,10 +1,7 @@
 // @flow
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
-import styles from './Home.css';
-import {Paper, Typography} from 'material-ui';
-import CircularProgress from 'material-ui/es/Progress/CircularProgress';
-import LinearProgress from 'material-ui/es/Progress/LinearProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const ipc = require('electron').ipcRenderer;
 

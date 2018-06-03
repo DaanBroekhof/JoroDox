@@ -1,6 +1,8 @@
 // @flow
 import React, {Component} from 'react';
-import {Button, Paper, Typography} from 'material-ui';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import _ from 'lodash';
 import {Grid} from 'react-redux-grid';
 import {Link} from 'react-router-dom';

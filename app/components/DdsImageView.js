@@ -36,7 +36,7 @@ export default class DdsImageView extends Component {
     this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
     this.camera.up = new THREE.Vector3(0, 1, 0);
     this.camera.position.x = 0;
-    this.camera.position.y = 100;
+    this.camera.position.y = 75;
     this.camera.position.z = 0;
 
     const c = new OrbitControls(this.camera, this.canvas);
@@ -81,7 +81,9 @@ export default class DdsImageView extends Component {
       const quadGeometry = new THREE.PlaneGeometry(this.imageMaterial.map.image.width / 10, this.imageMaterial.map.image.height / 10);
       this.imagePlane = new THREE.Mesh(quadGeometry, this.imageMaterial);
       this.imagePlane.lookAt(new THREE.Vector3(0, 1, 0));
-      this.imagePlane.scale.y = -1; // This is to counteract the flipY that WebGL does on textures
+      if (this.props.flipY) {
+        this.imagePlane.scale.y = -1; // This is to counteract the flipY that WebGL does on textures
+      }
       this.scene.add(this.imagePlane);
     }
 

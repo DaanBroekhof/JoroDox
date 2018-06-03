@@ -1,17 +1,19 @@
 // @flow
 import React, {Component} from 'react';
-
-const jetpack = require('electron').remote.require('fs-jetpack');
-
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import filesize from 'filesize';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
-
 import PdxScriptView from './PdxScriptView';
 import PdxDataView from './PdxDataView';
 import ImageView from './ImageView';
-import {Icon, IconButton, Paper, Tooltip, Typography} from 'material-ui';
-import filesize from 'filesize';
 import PdxMeshView from './PdxMeshView';
 import ColladaView from './ColladaView';
+
+const jetpack = require('electron').remote.require('fs-jetpack');
 
 export default class FileView extends Component {
   static getFileType(file) {
