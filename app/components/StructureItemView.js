@@ -285,7 +285,7 @@ class StructureItemView extends Component {
         {typeDefinition.sourceType && typeDefinition.sourceType.id === 'dds_images' && itemPath && <div><DdsImageView file={{path: itemPath}} flipY={typeDefinition.sourceType.flipY} /><br /></div>}
         {typeDefinition.sourceType && typeDefinition.sourceType.id === 'files' && itemPath && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'events' && <Link to={`/structure/e/events/${this.props.match.params.id}`}>Event editor</Link>}
-        {typeDefinition.id !== 'dds_images' && typeDefinition.sourceType.id !== 'dds_images' && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
+        {typeDefinition.id !== 'dds_images' && typeDefinition.sourceType && typeDefinition.sourceType.id !== 'dds_images' && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {itemPath && (_.endsWith(itemPath, '.tga') || _.endsWith(itemPath, '.png') || _.endsWith(itemPath, '.jpg')) && <div><ImageView file={{path: itemPath}} /><br /></div>}
 
         <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
