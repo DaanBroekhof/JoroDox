@@ -11,7 +11,7 @@ export default class ThreeJS {
     const images = [];
     texture.image = images;
 
-    jetpack.readAsync(file, 'buffer').then((buffer) => {
+    texture.loadedPromise = jetpack.readAsync(file, 'buffer').then((buffer) => {
       if (!buffer) {
         console.error(`Could not load DDS texture file \`${file}\``);
         return;
@@ -19,6 +19,18 @@ export default class ThreeJS {
 
       /* eslint no-underscore-dangle: ["error", { "allow": ["ddsLoader", "_parser"] }] */
       const texDatas = ddsLoader._parser(buffer.buffer, true);
+
+      // For some weird reason `format` may be the WebGL constant instead of the ThreeJS constant
+      // See: https://github.com/mrdoob/three.js/blob/master/src/constants.js
+      if (texDatas.format === 33777) {
+        texDatas.format = THREE.RGBA_S3TC_DXT1_Format;
+      } else if (texDatas.format === 33778) {
+        texDatas.format = THREE.RGBA_S3TC_DXT3_Format;
+      } else if (texDatas.format === 33779) {
+        texDatas.format = THREE.RGBA_S3TC_DXT5_Format;
+      } else if (texDatas.format === 33776) {
+        texDatas.format = THREE.RGB_S3TC_DXT1_Format;
+      }
 
       if (texDatas.width === 0 && texDatas.height === 0) {
         const greyTexture = new Uint8Array(4);

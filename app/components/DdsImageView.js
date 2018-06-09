@@ -18,25 +18,56 @@ export default class DdsImageView extends Component {
   }
 
   componentDidMount() {
-    this.createScene();
+    this.loadDdsFile();
   }
 
   componentDidUpdate() {
-    this.createScene();
+    this.loadDdsFile();
   }
 
-  createScene() {
+  loadDdsFile() {
+    if (this.loadingFile) {
+      return;
+    }
+    this.loadingFile = true;
+
+    const texture = ThreeJS.loadDdsToTexture(this.props.file.path);
+
+    return texture.loadedPromise.then(() => {
+      const newState = {
+        width: texture.image.width,
+        height: texture.image.height,
+        viewWidth: texture.image.width,
+        viewHeight: texture.image.height,
+      };
+
+      const widthScale = this.canvas.clientWidth / newState.width;
+      const heightScale = 600 / newState.height;
+
+      newState.viewWidth *= Math.min(1, widthScale, heightScale);
+      newState.viewHeight *= Math.min(1, widthScale, heightScale);
+
+      return this.setState(newState, () => this.createScene(texture));
+    });
+  }
+
+  createScene(texture) {
     if (this.hasRendered) {
       return;
     }
 
     this.hasRendered = true;
 
+    const canvasWidth = this.canvas.clientWidth;
+    const canvasHeight = this.state.viewHeight + 20;
+
+    console.log('mooo')
+
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
+    this.camera = new THREE.OrthographicCamera(canvasWidth / -2, canvasWidth / 2, canvasHeight / 2, canvasHeight / -2, 0.1, 100);
     this.camera.up = new THREE.Vector3(0, 1, 0);
     this.camera.position.x = 0;
-    this.camera.position.y = 75;
+    this.camera.position.y = 10;
     this.camera.position.z = 0;
 
     const c = new OrbitControls(this.camera, this.canvas);
@@ -48,15 +79,16 @@ export default class DdsImageView extends Component {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
       alpha: true,
+      antialias: false,
     });
-    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+    this.renderer.setSize(canvasWidth, canvasHeight);
 
     // General lights
     this.scene.add(new THREE.AmbientLight(0xcccccc));
 
     // Image material
     this.imageMaterial = new THREE.MeshBasicMaterial();
-    this.imageMaterial.map = ThreeJS.loadDdsToTexture(this.props.file.path);
+    this.imageMaterial.map = texture;
     this.imageMaterial.map.minFilter = THREE.LinearFilter;
     this.imageMaterial.map.fileName = '';
     this.imageMaterial.map.flipY = true;
@@ -73,12 +105,7 @@ export default class DdsImageView extends Component {
     if (!this.imageMaterial.sizeAdjusted && this.imageMaterial.map.image && this.imageMaterial.map.image.width) {
       this.imageMaterial.sizeAdjusted = true;
 
-      this.setState({
-        width: this.imageMaterial.map.image.width,
-        height: this.imageMaterial.map.image.height,
-      });
-
-      const quadGeometry = new THREE.PlaneGeometry(this.imageMaterial.map.image.width / 10, this.imageMaterial.map.image.height / 10);
+      const quadGeometry = new THREE.PlaneGeometry(this.state.viewWidth, this.state.viewHeight);
       this.imagePlane = new THREE.Mesh(quadGeometry, this.imageMaterial);
       this.imagePlane.lookAt(new THREE.Vector3(0, 1, 0));
       if (this.props.flipY) {
@@ -108,7 +135,7 @@ export default class DdsImageView extends Component {
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
           }}
           >
-            <canvas ref={canvas => { this.canvas = canvas; }} style={{display: 'block', width: '100%', minHeight: 600, flexGrow: 1, cursor: 'move'}} />
+            <canvas ref={canvas => { this.canvas = canvas; }} style={{display: 'block', width: '100%', height: this.state.viewHeight + 20, flexGrow: 1, cursor: 'move'}} />
           </div>
         </div>
       </div>
