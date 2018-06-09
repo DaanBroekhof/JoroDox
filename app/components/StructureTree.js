@@ -16,7 +16,7 @@ export default class StructureTree extends React.Component {
 
     this.state = {
       treeData: null,
-      definition: JdxDatabase.getDefinition(props.project.definitionType),
+      definition: JdxDatabase.getDefinition(props.project.gameType),
     };
   }
 
@@ -28,9 +28,11 @@ export default class StructureTree extends React.Component {
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
       this.setTreeState(nextProps.project.rootPath);
     }
-    if (nextProps.project.definitionType !== this.props.project.definitionType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+
+    if (nextProps.project.gameType !== this.props.project.gameType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)}, () => this.setTreeState(nextProps.project.rootPath));
     }
+
     if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
       if (nextProps.match) {
         // I think we don't want to navigate here... but not 100% sure

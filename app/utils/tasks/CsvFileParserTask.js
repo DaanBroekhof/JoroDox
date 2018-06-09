@@ -19,7 +19,7 @@ export default class CsvFileParserTask extends DbBackgroundTask {
 
   async execute(args) {
     const db = await JdxDatabase.get(args.project);
-    const definition = JdxDatabase.getDefinition(args.project.definitionType);
+    const definition = JdxDatabase.getDefinition(args.project.gameType);
 
     this.progress(0, 1, 'Finding CSV files...');
 

@@ -61,12 +61,16 @@ class App extends Component {
     if (!currentProject) {
       currentProject = {
         rootPath: '/',
-        definitionType: 'eu4',
+        gameType: 'eu4',
         isCurrent: true,
         watchDirectory: true,
         lastGlobalUpdate: null,
       };
       projects.push(currentProject);
+    }
+
+    if (!currentProject.gameType) {
+      currentProject.gameType = 'eu4';
     }
 
     this.state = {
@@ -177,6 +181,7 @@ class App extends Component {
             <Switch>
               <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
+              <Route path="/projects" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
             <Switch>

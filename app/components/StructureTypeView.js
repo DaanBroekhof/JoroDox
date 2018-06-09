@@ -24,7 +24,7 @@ class StructureTypeView extends Component {
 
     this.state = {
       search: '',
-      definition: JdxDatabase.getDefinition(props.project.definitionType),
+      definition: JdxDatabase.getDefinition(props.project.gameType),
     };
   }
 
@@ -33,8 +33,8 @@ class StructureTypeView extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.project.definitionType !== this.props.project.definitionType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+    if (nextProps.project.gameType !== this.props.project.gameType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath || nextProps.databaseVersion !== this.props.databaseVersion) {
       this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project, nextProps.match.params.type, this.state.search));

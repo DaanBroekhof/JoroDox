@@ -44,8 +44,8 @@ export default class ProjectsPage extends Component {
         <FormControl margin="normal">
           <InputLabel htmlFor="age-helper">Game type</InputLabel>
           <Select
-            value={this.props.project.definitionType}
-            onChange={(event) => this.props.handleChange({definitionType: event.target.value})}
+            value={this.props.project.gameType}
+            onChange={(event) => this.props.handleChange({gameType: event.target.value})}
             input={<Input name="definition-type" id="definition-type" />}
           >
             <MenuItem value=""><em>None</em></MenuItem>

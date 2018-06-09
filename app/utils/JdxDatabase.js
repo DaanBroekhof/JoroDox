@@ -42,7 +42,7 @@ export default class JdxDatabase {
       return Promise.resolve(this.db[project.rootPath]);
     }
     const root = project.rootPath;
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     if (!root) {
       throw new Error(`Empty root dir '${root}'`);
@@ -142,7 +142,7 @@ export default class JdxDatabase {
   }
 
   static async loadTypeFiles(project, typeId, taskTitle) {
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     const type = _(definition.types).find(x => x.id === typeId);
 
@@ -158,7 +158,7 @@ export default class JdxDatabase {
   static async loadPdxScriptFiles(project, typeId, taskTitle) {
     const type = _(project.definition.types).find(x => x.id === typeId);
     const root = project.rootPath;
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     return PdxScriptParserTask.start({
       taskTitle,
@@ -171,7 +171,7 @@ export default class JdxDatabase {
     if (!taskTitle) {
       taskTitle = 'Loading from paths...';
     }
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     let result = null;
     if (paths === null) {
@@ -235,7 +235,7 @@ export default class JdxDatabase {
   }
 
   static async reloadTypePaths(project, typeId, paths, taskTitle) {
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
     const type = _(definition.types).find(x => x.id === typeId);
 
     if (!taskTitle) {
@@ -266,7 +266,7 @@ export default class JdxDatabase {
   }
 
   static async reloadTypeById(project, typeId, filterTypes, taskTitle) {
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
     const type = _(definition.types).find(x => x.id === typeId);
 
     if (!taskTitle) {
@@ -294,7 +294,7 @@ export default class JdxDatabase {
   }
 
   static async reloadAll(project) {
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
     const db = await JdxDatabase.get(project);
 
     const taskTitle = 'Loading all...';
@@ -346,7 +346,7 @@ export default class JdxDatabase {
   }
 
   static async loadRelations(project, type, id) {
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     const typeDefinition = definition.types.find(x => x.id === type);
 
@@ -378,7 +378,7 @@ export default class JdxDatabase {
       return `${project.rootPath}/${item.path}`;
     }
 
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     const pathTypeIds = definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
 
@@ -392,7 +392,7 @@ export default class JdxDatabase {
   }
 
   static findTypeDefinition(project, type) {
-    const definition = this.getDefinition(project.definitionType);
+    const definition = this.getDefinition(project.gameType);
 
     const typeDefinition = definition.types.find(x => x.id === type);
 

@@ -28,7 +28,7 @@ class StructureItemView extends Component {
       item: null,
       relationsFrom: [],
       relationsTo: [],
-      definition: JdxDatabase.getDefinition(props.project.definitionType),
+      definition: JdxDatabase.getDefinition(props.project.gameType),
     };
   }
 
@@ -39,8 +39,8 @@ class StructureItemView extends Component {
   componentWillReceiveProps(nextProps) {
     this.loadRelations(nextProps);
 
-    if (nextProps.project.definitionType !== this.props.project.definitionType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+    if (nextProps.project.gameType !== this.props.project.gameType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
 
     if (nextProps.databaseVersion !== this.props.databaseVersion) {
@@ -286,9 +286,9 @@ class StructureItemView extends Component {
         {typeDefinition.sourceType && typeDefinition.sourceType.id === 'files' && itemPath && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'events' && <Link to={`/structure/e/events/${this.props.match.params.id}`}>Event editor</Link>}
         {typeDefinition.id !== 'dds_images' && typeDefinition.sourceType && typeDefinition.sourceType.id !== 'dds_images' && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
-        {itemPath && (_.endsWith(itemPath, '.tga') || _.endsWith(itemPath, '.png') || _.endsWith(itemPath, '.jpg')) && <div><ImageView file={{path: itemPath}} /><br /></div>}
+        {itemPath && (_.endsWith(itemPath, '.tga') || _.endsWith(itemPath, '.png') || _.endsWith(itemPath, '.jpg') || _.endsWith(itemPath, '.bmp')) && <div><ImageView file={{path: itemPath}} /><br /></div>}
 
-        <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />
+        {true && <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />}
 
         {this.state.relationsFrom.length > 0 && (
           <div>

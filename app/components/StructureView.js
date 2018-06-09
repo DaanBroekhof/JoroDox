@@ -21,13 +21,13 @@ class StructureView extends Component {
 
     this.state = {
       typeCounts: {},
-      definition: JdxDatabase.getDefinition(props.project.definitionType),
+      definition: JdxDatabase.getDefinition(props.project.gameType),
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.project.definitionType !== this.state.definitionType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+    if (nextProps.project.gameType !== this.state.gameType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
       //this.props.reloadGrid(this.gridSettings, this.getDataSource(nextprops.project.rootPath, nextProps.type, this.state.search));

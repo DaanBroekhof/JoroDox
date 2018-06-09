@@ -20,7 +20,7 @@ class EventEditor extends Component {
   constructor(props) {
     super(props);
 
-    const definition = JdxDatabase.getDefinition(props.project.definitionType);
+    const definition = JdxDatabase.getDefinition(props.project.gameType);
 
     this.state = {
       item: null,
@@ -40,8 +40,8 @@ class EventEditor extends Component {
   componentWillReceiveProps(nextProps) {
     this.loadItemData(nextProps);
 
-    if (nextProps.project.definitionType !== this.props.project.definitionType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.definitionType)});
+    if (nextProps.project.gameType !== this.props.project.gameType) {
+      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
 
     if (nextProps.databaseVersion !== this.props.databaseVersion) {

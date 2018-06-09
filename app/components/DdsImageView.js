@@ -10,8 +10,8 @@ export default class DdsImageView extends Component {
     super(props);
 
     this.state = {
-      width: null,
-      height: null,
+      width: 0,
+      height: 0,
     };
 
     this.rotation = 0;
