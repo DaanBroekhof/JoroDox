@@ -25,7 +25,9 @@ export default class PdxScript {
     do {
       token = this.readToken(base);
 
-      if (token === false) { break; }
+      if (token === false) {
+        break;
+      }
 
       const varScope = {
         id: this.lastId, type: 'object', name: token, children: [], depth: 1, value: null, data: {}, comments: []
@@ -58,8 +60,8 @@ export default class PdxScript {
 
           varScope.value = value;
           varScope.data = value;
-          varScope.type = 'property';
-          varScope.icon = 'asterisk';
+          varScope.type = 'property'; // This should not be here, presentational
+          varScope.icon = 'asterisk'; // This should not be here, presentational
         }
       }
 
@@ -83,7 +85,9 @@ export default class PdxScript {
     let token = null;
     let prevToken = null;
     do {
-      if (token !== null) { prevToken = token; }
+      if (token !== null) {
+        prevToken = token;
+      }
 
       token = this.readToken(scope);
 
@@ -113,7 +117,7 @@ export default class PdxScript {
           }
 
           propertyScope.type = 'property';
-          propertyScope.icon = 'asterisk';
+          propertyScope.icon = 'asterisk'; // This should not be here, presentational
           propertyScope.value = token;
           propertyScope.data = token;
         }
@@ -132,22 +136,26 @@ export default class PdxScript {
         // Reset token for new property
         prevToken = null;
         token = null;
-      } else if (prevToken !== null) {
+      } else if (prevToken !== null && scope.children.length === 0) {
         // value list style object
-        if (scope.value === null) { scope.value = []; }
+        if (scope.value === null) {
+          scope.value = [];
+        }
 
-        scope.icon = 'list';
+        scope.icon = 'list'; // Should not be here.
 
         scope.value.push(prevToken);
 
         scope.data = scope.value;
+      } else if (prevToken !== null && scope.children.length !== 0) {
+        this.errors.push(`Unexpected list value \`${prevToken}\` at line \`${this.currentLine}\`, scope already contains key-value pairs.`);
       }
 
       if (token === '}') {
         if (scope.children.length === 0 && scope.value === null) {
           // Empty array input
           scope.value = [];
-          scope.icon = 'list';
+          scope.icon = 'list'; // Should not be here.
 
           scope.data = scope.value;
         }
@@ -173,11 +181,15 @@ export default class PdxScript {
     }
 
     // Keep track of deepest scope in current line (for comments)
-    if (!this.lineScope || scope.depth > this.lineScope.depth) { this.lineScope = scope; }
+    if (!this.lineScope || scope.depth > this.lineScope.depth) {
+      this.lineScope = scope;
+    }
 
     let token = '';
 
-    if (this.data[this.currentOffset] === '"') { return this.readString(scope); }
+    if (this.data[this.currentOffset] === '"') {
+      return this.readString(scope);
+    }
 
     while (this.currentOffset < this.data.length) {
       if (this.data[this.currentOffset] === '#') {
@@ -198,12 +210,18 @@ export default class PdxScript {
       this.currentOffset += 1;
 
       // '=', '{' can only be a solo operator
-      if (token === '=' || token === '{') { break; }
+      if (token === '=' || token === '{') {
+        break;
+      }
 
       // Whitespace breaks token
-      if (this.whiteSpace.indexOf(this.data[this.currentOffset]) !== -1) { break; }
+      if (this.whiteSpace.indexOf(this.data[this.currentOffset]) !== -1) {
+        break;
+      }
       // Closing tag breaks tokens
-      if (this.data[this.currentOffset] === '}') { break; }
+      if (this.data[this.currentOffset] === '}') {
+        break;
+      }
     }
 
     return token === '' ? false : token;
@@ -214,9 +232,11 @@ export default class PdxScript {
     let comment = '';
 
     while (this.currentOffset < this.data.length) {
-      if (comment === '' && (this.data[this.currentOffset] === ' ' || this.data[this.currentOffset] === '\t'))
-        ; // Skip whitespace after '#'
-      else { comment += this.data[this.currentOffset]; }
+      if (comment === '' && (this.data[this.currentOffset] === ' ' || this.data[this.currentOffset] === '\t')) {
+        // Skip whitespace after '#'
+      } else {
+        comment += this.data[this.currentOffset];
+      }
       this.currentOffset += 1;
       if (this.data[this.currentOffset] === '\n') {
         this.currentOffset += 1;
@@ -304,7 +324,9 @@ export default class PdxScript {
         // Array of non-strings = same key used multiple times
         if (Array.isArray(value) && 'multipleKeys' in value) {
           for (let i = 0; i < value.length; i += 1) {
-            if (value[i] !== '') { txt += `${indentTxtProp + key} = ${this.writeData(value[i], indent + 1)}\n`; }
+            if (value[i] !== '') {
+              txt += `${indentTxtProp + key} = ${this.writeData(value[i], indent + 1)}\n`;
+            }
           }
         } else
         if (value !== '') {
