@@ -3100,7 +3100,7 @@ export default {
       sourceType: {
         id: 'files',
         pathPrefix: 'sound/',
-        pathPattern: 'sound/**.wav',
+        pathPattern: 'sound/**/*.wav',
       },
       sourceTransform: {
         type: 'fileData',
@@ -3158,7 +3158,7 @@ export default {
         type: 'keyValues',
         path: ['data', 'data'],
         keyName: 'name',
-        valueName: 'filePath',
+        valueName: 'properties',
       },
       listView: {
         pageSize: 100,
@@ -4326,8 +4326,8 @@ export default {
       }
     },
     {
-      id: 'ambient_model_animations',
-      title: 'Ambient model animations',
+      id: 'ambient_object_animations',
+      title: 'Ambient object animations',
       category: 'Graphics',
       reader: 'StructureLoader',
       primaryKey: 'id',
@@ -4840,6 +4840,84 @@ export default {
       },
     },
     {
+      id: 'gfx_font_images',
+      title: 'Font Images',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'files',
+        pathPrefix: 'gfx/fonts/',
+        pathPattern: 'gfx/fonts/*.tga',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'gfx_font_definitions',
+      title: 'Font Definitions',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'files',
+        pathPrefix: 'gfx/fonts/',
+        pathPattern: 'gfx/fonts/*.fnt',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'gfx_fx_shaders',
+      title: 'FX Shaders',
+      category: 'Graphics',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'files',
+        pathPrefix: 'gfx/FX/',
+        pathPattern: 'gfx/FX/*.+(shader|fxh)',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
       id: 'gfx_interface_images',
       title: 'Interface Images',
       category: 'User interface',
@@ -4876,6 +4954,241 @@ export default {
         flipY: true,
         pathPrefix: 'gfx/models/',
         pathPattern: 'gfx/models/**/*.dds',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_gui_items',
+      title: 'Interface GUI items',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'id',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'interface/',
+        pathPattern: 'interface/*.gui',
+      },
+      sourceTransform: {
+        type: 'typesListData',
+        path: ['data', 'data', 'guiTypes'],
+        types: ['*'],
+        idPath: ['name'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'id',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Type',
+            dataIndex: ['type'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_assets',
+      title: 'Interface Assets',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'id',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'interface/assets/',
+        pathPattern: 'interface/assets/*.gfx',
+      },
+      sourceTransform: {
+        type: 'typesListData',
+        path: ['data', 'data', 'objectTypes'],
+        types: ['pdxmesh'],
+        idPath: ['name'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'id',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_gui_spritetypes',
+      title: 'Interface GUI sprite types',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'id',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'interface/',
+        pathPattern: 'interface/*.gfx',
+      },
+      sourceTransform: {
+        type: 'typesListData',
+        path: ['data', 'data', 'spriteTypes'],
+        types: ['*'],
+        idPath: ['name'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'id',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Type',
+            dataIndex: ['type'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_gui_objecttypes',
+      title: 'Interface GUI object types',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'id',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'interface/',
+        pathPattern: 'interface/*.gfx',
+      },
+      sourceTransform: {
+        type: 'typesListData',
+        path: ['data', 'data', 'objectTypes'],
+        types: ['*'],
+        idPath: ['name'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'id',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Type',
+            dataIndex: ['type'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_gui_bitmapfonts',
+      title: 'Interface GUI bitmapfonts',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'id',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'interface/',
+        pathPattern: 'interface/*.gfx',
+      },
+      sourceTransform: {
+        type: 'typesListData',
+        path: ['data', 'data', 'bitmapfonts'],
+        types: ['*'],
+        idPath: ['name'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'id',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Type',
+            dataIndex: ['type'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_credits',
+      title: 'Interface Credits',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'files',
+        pathPrefix: 'interface/',
+        pathPattern: 'interface/credits.txt',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'interface_news_banner',
+      title: 'Interface News Banner',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'interface/',
+        pathPattern: 'interface/news_banner_data.txt',
+      },
+      sourceTransform: {
+        type: 'fileData',
+        keyName: 'path',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Path',
+            dataIndex: 'path',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
+      id: 'patchnotes',
+      title: 'Patch notes',
+      category: 'User interface',
+      reader: 'StructureLoader',
+      primaryKey: 'path',
+      sourceType: {
+        id: 'files',
+        pathPrefix: 'patchnotes/',
+        pathPattern: 'patchnotes/*.txt',
       },
       sourceTransform: {
         type: 'fileData',
