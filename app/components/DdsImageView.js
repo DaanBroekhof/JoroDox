@@ -135,7 +135,7 @@ export default class DdsImageView extends Component {
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
           }}
           >
-            <canvas ref={canvas => { this.canvas = canvas; }} style={{display: 'block', width: '100%', height: this.state.viewHeight + 20, flexGrow: 1, cursor: 'move'}} />
+            <canvas ref={canvas => { this.canvas = canvas; }} style={{display: 'block', width: '100%', height: Math.max(10, this.state.viewHeight + 20), flexGrow: 1, cursor: 'move'}} />
           </div>
         </div>
       </div>
