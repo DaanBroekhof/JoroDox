@@ -12,7 +12,7 @@ import IndexedBmpParserTask from './tasks/IndexedBmpParserTask';
 import DdsImageParserTask from './tasks/DdsImageParserTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
-import Eu4Definition from '../definitions/eu4';
+import Eu4Definition from '../definitions/eu4/index';
 import StellarisDefinition from '../definitions/stellaris';
 
 export default class JdxDatabase {
