@@ -32,7 +32,7 @@ export default class JdxDatabase {
   };
 
   static projectToDbName(project) {
-    const rootHash = crypto.createHash('md5').update(`${project.rootPath}`).digest('hex').substring(0, 8);
+    const rootHash = project.id;
 
     return `JdxDatabase-${rootHash}`;
   }

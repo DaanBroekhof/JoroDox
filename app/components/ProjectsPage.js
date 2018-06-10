@@ -29,7 +29,19 @@ export default class ProjectsPage extends Component {
   render() {
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-        <Typography variant="display2" gutterBottom>Project settings</Typography>
+        <Typography variant="display2" gutterBottom>Project `{this.props.project.name}` settings</Typography>
+        <FormControl margin="normal" fullWidth>
+          <InputLabel htmlFor="root-path">Name</InputLabel>
+          <Input
+            id="name"
+            value={this.props.project.name}
+            autoFocus
+            onChange={(event) => {
+              const newValue = event.target.value;
+              this.props.handleChange({name: newValue});
+            }}
+          />
+        </FormControl>
         <FormControl margin="normal" fullWidth>
           <InputLabel htmlFor="root-path">Root path</InputLabel>
           <Input

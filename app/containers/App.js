@@ -24,6 +24,7 @@ import StructureView from '../components/StructureView';
 import ProgressInfo from '../components/ProgressInfo';
 import ProjectsPage from '../components/ProjectsPage';
 import EventEditor from '../components/EventEditor';
+import ProjectsTree from '../components/ProjectsTree';
 import {incrementVersion} from '../actions/database';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
@@ -60,7 +61,10 @@ class App extends Component {
 
     if (!currentProject) {
       currentProject = {
+        id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10),
+        name: 'New Project',
         rootPath: '/',
+        subPaths: [],
         gameType: 'eu4',
         isCurrent: true,
         watchDirectory: true,
@@ -72,6 +76,10 @@ class App extends Component {
     if (!currentProject.gameType) {
       currentProject.gameType = 'eu4';
     }
+
+    //currentProject.subPaths = [
+    //  'F:\\Games\\Steam\\steamapps\\common\\Europa Universalis IV\\dlc\\dlc18',
+    //];
 
     this.state = {
       project: currentProject,
@@ -137,6 +145,26 @@ class App extends Component {
     });
   };
 
+  selectProject = (projectId) => {
+    let currentProject = null;
+    const newProjectsState = this.state.projects.map(p => {
+      p.isCurrent = projectId === p.id;
+      if (!currentProject && projectId === p.id) {
+        currentProject = p;
+      }
+      return p;
+    });
+
+    if (currentProject.id === this.state.project.id) {
+      return;
+    }
+
+    this.setState({project: currentProject, projects: newProjectsState}, () => {
+      localStorage.setItem('projects', JSON.stringify(this.state.projects));
+      this.startWatcher();
+    });
+  };
+
   handleTab = (event, newTab) => {
     switch (newTab) {
       default:
@@ -181,7 +209,7 @@ class App extends Component {
             <Switch>
               <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
-              <Route path="/projects" render={(props) => <StructureTree project={this.state.project} {...props} />} />
+              <Route path="/projects" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProject} {...props} />} />
               <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
             <Switch>
