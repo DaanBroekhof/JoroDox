@@ -66,6 +66,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       result = this.sourceTransformByFileData(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'typesList') {
       result = this.sourceTransformByTypesList(sourceItems, definition);
+    } else if (definition.sourceTransform.type === 'typesListData') {
+      result = this.sourceTransformByTypesListData(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'stringValues') {
       result = this.sourceTransformByStringValues(sourceItems, definition);
     } else {
@@ -232,7 +234,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     sourceItems.forEach(sourceItem => {
       const namespaceValues = {};
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value) => {
-        if (_.includes(definition.sourceTransform.types, value.name)) {
+        if (_.includes(definition.sourceTransform.types, value.name) || _.includes(definition.sourceTransform.types, '*')) {
           const item = {
             namespace: namespaceValues,
             comments: value.comments.join('\n'),
@@ -241,6 +243,12 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             type: value.name,
             data: value.data,
           };
+
+          if (item.id === undefined) {
+            console.error("Item does not have a valid ID", item);
+            return;
+          }
+
           if (definition.sourceTransform.filenamePattern) {
             const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
             if (found) {
@@ -266,8 +274,72 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             toId: sourceItem.path,
           }));
         } else {
-          namespaceValues[value.name] = value.data;
+          if (!definition.sourceTransform.disableNamespace) {
+            namespaceValues[value.name] = value.data;
+          }
         }
+      });
+    });
+
+    return {items, relations};
+  }
+
+  sourceTransformByTypesListData(sourceItems, definition) {
+    const items = [];
+    const relations = [];
+
+    let nr = 0;
+    sourceItems.forEach(sourceItem => {
+      let itemSets = _.get(sourceItem, definition.sourceTransform.path);
+
+      if (!_.isArray(itemSets)) {
+        itemSets = [itemSets];
+      }
+      itemSets.forEach(itemSet => {
+        _.forOwn(itemSet, (values, key) => {
+          if (_.includes(definition.sourceTransform.types, key) || _.includes(definition.sourceTransform.types, '*')) {
+            values = !_.isArray(values) ? [values] : values;
+
+            values.forEach(value => {
+              const item = {
+                nr: nr.toString(),
+                id: definition.sourceTransform.idPath ? _.get(value, definition.sourceTransform.idPath) : null,
+                type: key,
+                data: value,
+              };
+
+              if (item.id === undefined) {
+                console.error("Item does not have a valid ID", item);
+                return;
+              }
+
+              if (definition.sourceTransform.filenamePattern) {
+                const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
+                if (found) {
+                  item[definition.sourceTransform.filenamePatternKey] = found[1];
+                }
+              }
+
+              if (definition.sourceTransform.customFields) {
+                this.getCustomFields(item, definition.sourceTransform.customFields);
+              }
+
+              if (item[definition.primaryKey] !== undefined)
+                item[definition.primaryKey] = item[definition.primaryKey].toString();
+              items.push(item);
+
+              nr += 1;
+              relations.push(this.addRelationId({
+                fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+                fromType: definition.id,
+                fromId: item[definition.primaryKey],
+                toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+                toType: definition.sourceType.id,
+                toId: sourceItem.path,
+              }));
+            });
+          }
+        });
       });
     });
 
