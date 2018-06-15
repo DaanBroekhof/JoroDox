@@ -1,0 +1,849 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/province_conditions.json",
+  "type": "object",
+  "definitions": {
+    "province_conditions": {
+      "$mergeProps": [
+        {
+          "$ref": "#/definitions/province_conditions_scopes"
+        },
+        {
+          "$ref": "#/definitions/province_conditions_properties"
+        },
+        {
+          "$ref": "province_conditions.json#/definitions/institution"
+        },
+        {
+          "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions"
+        }
+      ]
+    },
+    "province_conditions_scopes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "AND": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            }
+          }
+        },
+        "OR": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            }
+          }
+        },
+        "NOT": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            }
+          }
+        },
+        "ROOT": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "if" : {
+          "$mergeProps": [
+            {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "$ref": "province_conditions.json#/definitions/province_conditions"
+                }
+              }
+            },
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+        "else_if" : {
+          "$mergeProps": [
+            {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "$ref": "province_conditions.json#/definitions/province_conditions"
+                }
+              }
+            },
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+        "else" : {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "owner": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "controller": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "sea_zone": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "area": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "region": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "all_empty_neighbor_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "all_province_in_state": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "all_neighbor_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_empty_neighbor_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_province_in_state": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_friendly_coast_border_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_neighbor_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "all_core_country": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_core_country": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        }
+      }
+    },
+    "province_conditions_properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "area": {
+          "description": "Returns true if the province is part of the area X.",
+          "$reg": "identifiers.json#/definitions/area"
+        },
+        "artillery_in_province": {
+          "description": "Returns true if there are artillery units from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "base_manpower": {
+          "description": "Returns true if the base manpower of the province is at least X.",
+          "type": "number"
+        },
+        "base_production": {
+          "description": "Returns true if the base production of the province is at least X.",
+          "type": "number"
+        },
+        "base_tax": {
+          "description": "Returns true if the base tax of the province is at least X.",
+          "type": "number"
+        },
+        "can_build": {
+          "description": "Returns true if the specified building can be built in the province.",
+          "$reg": "identifiers.json#/definitions/building"
+        },
+        "can_spawn_rebels": {
+          "description": "Returns true if the specified rebel faction is a valid rebel faction of the province.",
+          "$reg": "identifiers.json#/definitions/faction"
+        },
+        "cavalry_in_province": {
+          "description": "Returns true if there are cavalry units from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "colonial_region": {
+          "description": "Returns true if the province is part of the colonial region X.",
+          "$reg": "identifiers.json#/definitions/colonial_region"
+        },
+        "colonysize": {
+          "description": "Returns true if colony is at least size X.",
+          "type": "number"
+        },
+        "construction_progress": {
+          "description": "Returns true if the construction progress is at least X%.",
+          "type": "number"
+        },
+        "continent": {
+          "description": "Returns true if the province is located on continent X.",
+          "$reg": "identifiers.json#/definitions/continent"
+        },
+        "controlled_by": {
+          "description": "Returns true if the province is controlled by X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "country_or_vassal_holds": {
+          "description": "Returns true if the province is part of the specified country or its subjects.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "culture": {
+          "description": "Returns true if the province culture is X.",
+          "$reg": "identifiers.json#/definitions/culture"
+        },
+        "culture_group": {
+          "description": "Returns true if the country/province has a culture of the specified culture group.",
+          "$reg": "identifiers.json#/definitions/culture_group"
+        },
+        "current_institution_growth": {
+          "description": "Returns true, if the country/province has an institution growth of at least X for the first not embraced institution.",
+          "type": "number"
+        },
+        "devastation": {
+          "description": "Returns true if the devastation of the province is at least X.",
+          "type": "number"
+        },
+        "development": {
+          "description": "Returns true if the development of the province is at least X.",
+          "type": "number"
+        },
+        "fort_level": {
+          "description": "Returns true if the fort in the province has at least level X.",
+          "type": "number"
+        },
+        "galleys_in_province": {
+          "description": "Returns true if there are galleys from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "garrison": {
+          "description": "Returns true if the garrison is at X men.\r\nNote: The localisation is misleading.",
+          "type": "number"
+        },
+        "had_province_flag": {
+          "description": "Returns true if the province flag X was last set for the province at least Y days ago.",
+          "type": "object"
+        },
+        "has_building": {
+          "description": "Returns true if there is the specified building in the province.",
+          "$reg": "identifiers.json#/definitions/building"
+        },
+        "has_cardinal": {
+          "description": "Returns true if the province has a cardinal in the curia.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_climate": {
+          "description": "Returns true if the province has climate X.",
+          "$reg": "identifiers.json#/definitions/map_climate"
+        },
+        "has_colonist": {
+          "description": "Returns true if scoped province has an active colonist",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_construction": {
+          "description": "Returns true if there is the specified construction in progress in the province.\r\nPossible values are core, culture, building, merchant, diplomat, missionary, army, navy, canal, great_project etc.",
+          "$reg": "identifiers.json#/definitions/mission"
+        },
+        "has_discovered": {
+          "description": "Returns true if the country X has discovered the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_empty_adjacent_province": {
+          "description": "Returns true if an adjacent province is uncolonized.\r\nWarning: Works only with 'yes'.",
+          "anyOf": [
+            {
+              "$reg": "special_values.json#/definitions/yes"
+            }
+          ]
+        },
+        "has_estate": {
+          "description": "Returns true if the province is controlled by the estate X.",
+          "$reg": "identifiers.json#/definitions/estate"
+        },
+        "has_great_project": {
+          "description": "Returns true if the country has the specified great project.",
+          "$reg": "identifiers.json#/definitions/great_project"
+        },
+        "has_heir_leader_from": {
+          "description": "Returns true if an army in the province is led by an heir from X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_influencing_fort": {
+          "description": "Returns true if the province has an influencing fort.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_local_modifier_value": {
+          "description": "Returns true if the value of the specified modifier is at least X for the province.",
+          "type": "object"
+        },
+        "has_merchant": {
+          "description": "Returns true if the scoped country has an active merchant in the trade node.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_missionary": {
+          "description": "Returns true if the province has an active missionary.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_most_province_trade_power": {
+          "description": "Returns true if the country X has most amount of trade power in trade node.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_owner_accepted_culture": {
+          "description": "Returns true if the culture of the province is accepted by its owner.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_owner_culture": {
+          "description": "Returns true if the province has the culture of its owner.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_owner_religion": {
+          "description": "Returns true if the province has the religion of its owner.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_port": {
+          "description": "Returns true if it is a coastal province.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_province_flag": {
+          "description": "Returns true if the province has the province flag X.",
+          "$reg": "identifiers.json#/definitions/country_flag"
+        },
+        "has_province_modifier": {
+          "description": "Returns true if province has the province modifier X.",
+          "$reg": "identifiers.json#/definitions/modifier"
+        },
+        "has_rebel_faction": {
+          "description": "Returns true if the province is controlled by (the specified) rebel faction.",
+          "$reg": "identifiers.json#/definitions/faction",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/faction"
+            },
+            {
+              "$reg": "special_values.json#/definitions/rebels_unknown"
+            }
+          ]
+        },
+        "has_ruler_leader_from": {
+          "description": "Returns true if an army in the province is led by a ruler from X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_seat_in_parliament": {
+          "description": "Returns true if the province has a seat in parliament.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_siege": {
+          "description": "Returns true if the province has siege.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_state_patriach": {
+          "description": "Returns true, if the province has any state patriarch.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "has_terrain": {
+          "description": "Returns true if the province has terrain X.",
+          "$reg": "identifiers.json#/definitions/map_terrain_terrain"
+        },
+        "has_trade_modifier": {
+          "description": "Returns true the specified country has the trade modifier X in the trade node.",
+          "type": "object"
+        },
+        "has_trader": {
+          "description": "Returns true if the specified country has a merchant in the trade node.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_winter": {
+          "description": "Returns true if the province has winter X.",
+          "$reg": "identifiers.json#/definitions/map_climate"
+        },
+        "heavy_ships_in_province": {
+          "description": "Returns true if there are heavy ships from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "highest_value_trade_node": {
+          "description": "Returns true if the trade node is the highest valued trade node in the world.\r\nThe value is calculated as total trade value minus outgoing trade value.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "infantry_in_province": {
+          "description": "Returns true if there are infantry units from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_backing_current_issue": {
+          "description": "Returns true if the province is backing the current issue in the parliament.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_blockaded": {
+          "description": "Returns true if the province is blockaded.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_capital": {
+          "description": "Returns true if the province is a capital.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_city": {
+          "description": "Returns true if the province is a city, i.e. has a population of at least 1000.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_claim": {
+          "description": "Returns true if the specified country has a claim on the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_colony": {
+          "description": "Returns true if the province is a colony.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_core": {
+          "description": "Returns true if the country X has a core on the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_empty": {
+          "description": "Returns true if province is empty",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_enemy": {
+          "description": "Returns true the country views country X as an enemy.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_in_capital_area": {
+          "description": "Returns true if the province is in the capital area of its owner (i.e. has a land connection to the ownerâ€™s capital through whose provinces).",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_institution_origin": {
+          "description": "Returns true if the province is the origin of the specified institution.",
+          "$reg": "identifiers.json#/definitions/institution"
+        },
+        "is_island": {
+          "description": "Returns true if the province is an island, i.e. has no neighboring land province and no reachable province via a strait.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_looted": {
+          "description": "Returns true if the province is looted.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_node_in_trade_company_region": {
+          "description": "Returns true, if the province's trade node is in a trade company region.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_overseas": {
+          "description": "Returns true if the province is overseas",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_owned_by_trade_company": {
+          "description": "Returns true if the province belongs to a trade company.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_part_of_hre": {
+          "description": "Returns true if the country/province is part of the HRE.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_permanent_claim": {
+          "description": "Returns true if the province is a permanent claim of X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_prosperous": {
+          "description": "Returns true if the province is prosperous. NOTE: Does not have a tooltip.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_religion_grant_colonial_claim": {
+          "description": "Returns true if the province has been granted to any country, to no country or to a specific country.",
+          "anyOf": [
+            {
+              "$reg": "special_values.json#/definitions/boolean"
+            },
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_sea": {
+          "description": "Returns true if the province is sea.\r\nMostly used for trade nodes.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_state": {
+          "description": "Returns true if the province is in a state.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_state_core": {
+          "description": "Returns true if the country X has a state core on the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_statists_in_power": {
+          "description": "Returns true if in the country the statists are in power.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_strongest_trade_power": {
+          "description": "Returns true if the specified country has the most trade power in the area.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_territorial_core": {
+          "description": "Returns true if the country X has a territorial core on the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "is_territory": {
+          "description": "Returns true if the province is in a territory.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_wasteland": {
+          "description": "Returns true if the province is wasteland.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "island": {
+          "description": "Returns true if the province is an island, i.e. has no neighboring land provinces.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "light_ships_in_province": {
+          "description": "Returns true if there are light ships from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "likely_rebels": {
+          "description": "Returns true if the province has the specified rebel faction as likely rebels.",
+          "$reg": "identifiers.json#/definitions/faction"
+        },
+        "local_autonomy": {
+          "description": "Returns true if the province has a local autonomy of at least X.",
+          "type": "number"
+        },
+        "local_autonomy_above_min": {
+          "description": "Returns true, if the province's local autonomy is at least X above the local development's minimun value.",
+          "type": "number"
+        },
+        "months_since_defection": {
+          "description": "Returns true if the province defected within the last X months.",
+          "type": "number"
+        },
+        "nationalism": {
+          "description": "Returns true if province has at least X years of separatism remaining.",
+          "type": "number"
+        },
+        "native_ferocity": {
+          "description": "Returns true if ferocity of natives in the province is at least X.",
+          "type": "number"
+        },
+        "native_hostileness": {
+          "description": "Returns true if hostileness of natives in the province is at least X.",
+          "type": "number"
+        },
+        "native_size": {
+          "description": "Returns true if size of natives in the province is at least X.",
+          "type": "number"
+        },
+        "num_free_building_slots": {
+          "description": "Returns true if the province has at least X building slots remaining.",
+          "type": "number"
+        },
+        "num_of_times_improved": {
+          "description": "Returns true if the development of the province was improved at least X times.",
+          "type": "number"
+        },
+        "num_of_units_in_province": {
+          "description": "Returns true if the specified country has at least X units of the specified type in the province. (type and who are not needed, if not included will default to all.)",
+          "type": "object"
+        },
+        "owned_by": {
+          "description": "Returns true if the province is owned by the country X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "previous_owner": {
+          "description": "Returns true if the previous owner of the province was X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "privateer_power": {
+          "description": "Returns true if the country has at least X trade power from privateering in the trade node.",
+          "type": "object"
+        },
+        "province_distance": {
+          "description": "Returns true, if the distance between specified provinces is at least X.",
+          "type": "object"
+        },
+        "province_group": {
+          "description": "Returns true if the province belongs to the specified province group.",
+          "$reg": "identifiers.json#/definitions/province_group"
+        },
+        "province_id": {
+          "description": "Returns true if the province has the ID X.",
+          "$reg": "identifiers.json#/definitions/province_id"
+        },
+        "province_trade_power": {
+          "description": "Returns true if trade power generated by the province is at least X.",
+          "type": "number"
+        },
+        "pure_unrest": {
+          "description": "Returns true if the province has a base unrest of at least X.",
+          "type": "number"
+        },
+        "range": {
+          "description": "Returns true if the province is within the range of the specified country.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "region": {
+          "description": "Returns true if the province is part of the region X.",
+          "$reg": "identifiers.json#/definitions/region"
+        },
+        "religion": {
+          "description": "Returns true if the country/province has religion X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
+          "$reg": "identifiers.json#/definitions/religion"
+        },
+        "same_continent": {
+          "description": "Returns true, if specified provinces are on the same continent. If used in country scope, capitals are checked.",
+          "anyOf": [
+            {
+              "$reg": "special_values.json#/definitions/capital_unknown"
+            },
+            {
+              "$reg": "special_values.json#/definitions/province_scope"
+            }
+          ]
+        },
+        "sieged_by": {
+          "description": "Returns true if the province is being besieged by country X.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "superregion": {
+          "description": "Returns true if the province belongs to the superregion X.",
+          "$reg": "identifiers.json#/definitions/region"
+        },
+        "trade_company_size": {
+          "description": "Returns true if the trade company has at least X provinces.",
+          "type": "number"
+        },
+        "trade_goods": {
+          "description": "Returns true if the province is producing the trade good X.",
+          "$reg": "identifiers.json#/definitions/trade_good"
+        },
+        "trade_range": {
+          "description": "Returns true if the trade node is within the trade range of the specified country.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "trade_share": {
+          "description": "Returns true if the country controls at least X% of the trade in the specified trade node.",
+          "type": "object"
+        },
+        "transports_in_province": {
+          "description": "Returns true if there are transports from the specified country in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "unit_has_leader": {
+          "description": "Returns true if any unit is in the province has a leader.\r\nWarning: Works only with 'yes'.",
+          "anyOf": [
+            {
+              "$reg": "special_values.json#/definitions/yes"
+            }
+          ]
+        },
+        "unit_in_battle": {
+          "description": "Returns true if any unit in the province is in a battle.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "unit_in_siege": {
+          "description": "Returns true if any unit in the province is in a siege.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "units_in_province": {
+          "description": "Returns true if the specified country has units in the province.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "unrest": {
+          "description": "Returns true if the unrest in the province is at least X.",
+          "type": "number"
+        }
+      }
+    },
+    "institution": {
+      "$identifierProperties": {
+        "institution": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

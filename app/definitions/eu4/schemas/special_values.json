@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/special_values.json",
+  "type": "object",
+  "definitions": {
+    "boolean": {
+      "type": "string",
+      "enum": ["yes", "no"]
+    },
+    "emperor": {
+      "type": "string",
+      "enum": ["emperor"]
+    }
+  }
+}

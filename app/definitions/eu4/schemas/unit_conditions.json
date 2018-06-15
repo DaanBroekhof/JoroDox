@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/unit_conditions.json",
+  "type": "object",
+  "definitions": {
+    "unit_conditions": {
+      "type": "object",
+      "properties": {
+        "unit_owner": {
+          "AND": {
+            "$ref": "unit_conditions.json#/definitions/unit_conditions"
+          },
+          "OR": {
+            "$ref": "unit_conditions.json#/definitions/unit_conditions"
+          },
+          "NOT": {
+            "$ref": "unit_conditions.json#/definitions/unit_conditions"
+          },
+
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      }
+    }
+  }
+}

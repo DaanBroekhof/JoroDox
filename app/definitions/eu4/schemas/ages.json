@@ -1,0 +1,124 @@
+{
+  "$id": "http://jorodox.org/schemas/ages.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "type": "number"
+        },
+        "can_start": {
+          "$mergeProps": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"}
+          ]
+        },
+        "religious_conflicts": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "absolutism": {
+          "type": "object",
+          "properties": {
+            "harsh_treatment": {
+              "type": "number"
+            },
+            "stability": {
+              "type": "number"
+            },
+            "decrease_autonomy_command": {
+              "type": "number"
+            },
+            "strengthen_government": {
+              "type": "number"
+            },
+            "increase_autonomy_command": {
+              "type": "number"
+            },
+            "debase_currency": {
+              "type": "number"
+            },
+            "execute_rebel_acceptance_command": {
+              "type": "number"
+            },
+            "seat_in_parliament": {
+              "type": "number"
+            },
+            "war_exhaustion": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "harsh_treatment",
+            "stability",
+            "decrease_autonomy_command",
+            "strengthen_government",
+            "increase_autonomy_command",
+            "debase_currency",
+            "execute_rebel_acceptance_command",
+            "seat_in_parliament",
+            "war_exhaustion"
+          ]
+        },
+        "objectives": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.*$": {
+              "$mergeProps": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "allow": {
+                      "$ref": "country_conditions.json#/definitions/country_conditions"
+                    }
+                  }
+                },
+                {"$ref": "country_conditions.json#/definitions/country_conditions"}
+              ]
+            }
+          }
+        },
+        "abilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "properties": {
+                "allow": {
+                  "$ref": "country_conditions.json#/definitions/country_conditions"
+                },
+                "effect": {
+                  "$ref": "country_commands.json#/definitions/country_commands"
+                },
+                "modifier": {
+                  "$ref": "country_modifiers.json#/definitions/country_modifiers"
+                },
+                "rule": {
+                  "type": "object"
+                },
+                "ai_will_do": {
+                  "$ref": "country_factor.json#/definitions/country_factor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "start",
+        "objectives",
+        "abilities"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

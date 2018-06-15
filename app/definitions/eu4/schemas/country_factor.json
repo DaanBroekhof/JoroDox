@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/country_factor.json",
+  "type": "object",
+  "definitions": {
+    "country_factor": {
+      "type": "object",
+      "properties": {
+        "factor": {
+          "type": "number"
+        },
+        "modifier": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

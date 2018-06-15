@@ -88,9 +88,13 @@ class StructureTypeView extends Component {
         (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
         (result) => {
           resolve(result);
+          console.log('results');
           console.log(result);
         },
-        (error) => { reject(error); },
+        (error) => {
+          reject(error);
+          console.error(error);
+        },
       );
     });
   }
@@ -257,7 +261,7 @@ class StructureTypeView extends Component {
               <IconButton onClick={() => this.reloadTypeById(this.props.match.params.type)}><Icon color="action">refresh</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Scan data" placement="bottom">
-              <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">download</Icon></IconButton>
+              <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">print</Icon></IconButton>
             </Tooltip>
           </span>
         </div>

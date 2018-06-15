@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/tradenode_conditions.json",
+  "type": "object",
+  "definitions": {
+    "tradenode_conditions": {
+      "$mergeProps": [
+        {
+          "$ref": "#/definitions/tradenode_conditions_scopes"
+        },
+        {
+          "$ref": "#/definitions/tradenode_conditions_properties"
+        },
+        {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        }
+      ]
+    },
+    "tradenode_conditions_scopes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "AND": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+            }
+          }
+        },
+        "OR": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+            }
+          }
+        },
+        "NOT": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+            }
+          }
+        },
+        "most_province_trade_power": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "strongest_trade_power": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "all_privateering_country": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "all_trade_node_member_country": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "any_privateering_country": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "any_trade_node_member_country": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "any_trade_node_member_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "all_trade_node_member_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        }
+      }
+    },
+    "tradenode_conditions_properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "has_merchant": {
+          "description": "Returns true if the scoped country has an active merchant in the trade node.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_most_province_trade_power": {
+          "description": "Returns true if the country X has most amount of trade power in trade node.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "has_trade_modifier": {
+          "description": "Returns true the specified country has the trade modifier X in the trade node.",
+          "type": "object"
+        },
+        "has_trader": {
+          "description": "Returns true if the specified country has a merchant in the trade node.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "highest_value_trade_node": {
+          "description": "Returns true if the trade node is the highest valued trade node in the world.\r\nThe value is calculated as total trade value minus outgoing trade value.",
+          "$reg": "special_values.json#/definitions/boolean"
+        },
+        "is_strongest_trade_power": {
+          "description": "Returns true if the specified country has the most trade power in the area.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "privateer_power": {
+          "description": "Returns true if the country has at least X trade power from privateering in the trade node.",
+          "type": "object"
+        },
+        "trade_range": {
+          "description": "Returns true if the trade node is within the trade range of the specified country.",
+          "anyOf": [
+            {
+              "$reg": "identifiers.json#/definitions/country_tag"
+            },
+            {
+              "$reg": "special_values.json#/definitions/country_scope"
+            }
+          ]
+        },
+        "trade_share": {
+          "description": "Returns true if the country controls at least X% of the trade in the specified trade node.",
+          "type": "object"
+        }
+      }
+    }
+  }
+}

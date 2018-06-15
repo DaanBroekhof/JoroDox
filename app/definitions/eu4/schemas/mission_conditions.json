@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/mission_conditions.json",
+  "type": "object",
+  "definitions": {
+    "mission_conditions": {
+      "type": "object",
+      "properties": {
+        "AND": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "mission_conditions.json#/definitions/mission_conditions"
+            }
+          }
+        },
+        "OR": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "mission_conditions.json#/definitions/mission_conditions"
+            }
+          }
+        },
+        "NOT": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "mission_conditions.json#/definitions/mission_conditions"
+            }
+          }
+        },
+
+        "all_target_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "any_target_province": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/identifiers.json",
+  "definitions": {
+    "age": {
+      "type": "string"
+    },
+    "country_tag": {
+      "type": "string"
+    },
+    "global_flag": {
+      "type": "string"
+    },
+    "continent": {
+      "type": "string"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "jorodox",
   "productName": "Jorodox",
-  "version": "0.8.0",
+  "version": "2.0.0-beta",
   "description": "Tool for assisting in creating mods for Paradox Development Studio games like Europa Universalis 4, Crusader Kings 2, Stellaris, and others.",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -193,6 +193,10 @@
     "webpack-merge": "^4.1.1"
   },
   "dependencies": {
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "latest",
+    "ajv": "^6.5.1",
+    "ajv-merge-patch": "^3.0.0",
     "async": "^2.6.0",
     "bmp-js": "^0.0.3",
     "devtron": "^1.4.0",
@@ -205,10 +209,9 @@
     "history": "^4.7.2",
     "iconv-lite": "^0.4.19",
     "infinite-tree": "^1",
+    "json-schema-traverse": "^0.4.1",
     "lodash": "^4.17.4",
     "luaparse": "^0.2.1",
-    "@material-ui/core": "latest",
-    "@material-ui/icons": "latest",
     "mime": "^2.2.0",
     "object-hash": "^1.2.0",
     "project-version": "^1.0.0",
@@ -231,6 +234,7 @@
     "three": "^0.87.1",
     "three-addons": "^1.1.0",
     "typeface-roboto": "^0.0.41",
+    "uri-js": "^4.2.2",
     "webworker-promise": "^0.4.0",
     "worker-loader": "^1.1.0"
   },

@@ -1,14 +1,18 @@
-import BackgroundTask from './BackgroundTask';
 import JdxDatabase from '../JdxDatabase';
-import Dexie from 'dexie/dist/dexie';
+import _ from 'lodash';
 import DbBackgroundTask from './DbBackgroundTask';
-// import SchemaTrainer from "json-schema-trainer";
+import * as URI from "uri-js";
+import * as iconv from "iconv-lite/lib/index";
+import CsvReaderHelper from '../CsvReaderHelper';
 
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
 const minimatch = require('minimatch');
+const Ajv = require('ajv');
+const PatchMergeAjv = require('ajv-merge-patch');
 
-import _ from 'lodash';
+
+
 
 const $schema = 'http://json-schema.org/draft-04/schema#';
 const defaultOptions = {
@@ -25,7 +29,19 @@ const defaultOptions = {
 
 // Find the Schema type for a JavaScript object
 const getSchemaType = (object) => {
-  if (_.isNull(object)) { return 'null'; } else if (_.isBoolean(object)) { return 'boolean'; } else if (_.isNumber(object)) { return 'number'; } else if (_.isString(object)) { return 'string'; } else if (_.isArray(object)) { return 'array'; } else if (_.isObject(object)) { return 'object'; }
+  if (_.isNull(object)) {
+    return 'null';
+  } else if (_.isBoolean(object)) {
+    return 'boolean';
+  } else if (_.isNumber(object)) {
+    return 'number';
+  } else if (_.isString(object)) {
+    return 'string';
+  } else if (_.isArray(object)) {
+    return 'array';
+  } else if (_.isObject(object)) {
+    return 'object';
+  }
 
   return null;
 };
@@ -89,11 +105,19 @@ class SchemaTrainerProperty {
         this.values = _.union(this.values, [object]);
 
         if (options.setMinNumber) {
-          if (_.has(this, 'minNumber')) { this.minNumber = Math.max(object, this.minNumber); } else { this.minNumber = object; }
+          if (_.has(this, 'minNumber')) {
+            this.minNumber = Math.max(object, this.minNumber);
+          } else {
+            this.minNumber = object;
+          }
         }
 
         if (options.setMaxNumber) {
-          if (_.has(this, 'maxNumber')) { this.maxNumber = Math.min(object, this.maxNumber); } else { this.maxNumber = object; }
+          if (_.has(this, 'maxNumber')) {
+            this.maxNumber = Math.min(object, this.maxNumber);
+          } else {
+            this.maxNumber = object;
+          }
         }
 
         return;
@@ -106,7 +130,11 @@ class SchemaTrainerProperty {
         if (options.setRequired) {
           const required = _.keys(object);
 
-          if (!this.requiredProperties) { this.requiredProperties = required; } else { this.requiredProperties = _.intersection(this.requiredProperties, required); }
+          if (!this.requiredProperties) {
+            this.requiredProperties = required;
+          } else {
+            this.requiredProperties = _.intersection(this.requiredProperties, required);
+          }
         }
 
         return;
@@ -124,8 +152,8 @@ class SchemaTrainerProperty {
 
         _.forEach(object, (item) => itemsProp.train(item));
 
-
       default:
+        break;
     }
   }
 
@@ -236,22 +264,195 @@ export default class StructureScannerTask extends DbBackgroundTask {
     return 'StructureScannerTask';
   }
 
-  execute(args) {
-    console.log('moooxxx');
-    JdxDatabase.get(args.project).then(db => {
-      const definition = args.typeDefinition;
+  async execute(args) {
+    const db = await JdxDatabase.get(args.project);
+    const definition = args.typeDefinition;
 
-      console.log('mooo');
+    const items = await db[definition.id].toArray();
+/*
+    const schemaTrainer = new SchemaTrainer();
 
-      db[definition.id].toArray(items => {
-        const schemaTrainer = new SchemaTrainer();
+    items.forEach(item => {
+      schemaTrainer.train(item);
+    });
+    */
+    //console.log(schemaTrainer.toJS());
+    //console.log(JSON.stringify(schemaTrainer.toJS()));
+    //console.log(javascriptStringify(schemaTrainer.toJS()));
 
-        items.forEach(item => {
-          schemaTrainer.train(item.data);
+
+    //await CsvReaderHelper.exportConditionFromCsv();
+    //return;
+
+
+    let ajv = new Ajv();
+
+    const resolveMergeProps = (schema, parentSchema, it) => {
+      const mergedSchema = {
+        type: 'object',
+        properties: {},
+        patternProperties: {},
+        $identifierProperties: {},
+      };
+
+      schema.forEach(subSchema => {
+        if (subSchema.$ref) {
+          const resolvedUri = URI.resolve(it.baseId, subSchema.$ref);
+
+          // Local reference
+          if (_.startsWith(resolvedUri, it.baseId) && !it.baseIdOverwritten) {
+            const ref = subSchema.$ref;
+            subSchema = _.get(it.root.schema, resolvedUri.slice(it.baseId.length + 1).split('/'));
+            if (!subSchema) {
+              throw new ajv.constructor.MissingRefError(it.baseId, ref);
+            }
+          } else {
+            const resolvedRef = ajv.getSchema(resolvedUri);
+            if (!resolvedRef || !resolvedRef.schema) {
+              throw new ajv.constructor.MissingRefError(it.baseId, subSchema.$ref);
+            }
+            subSchema = resolvedRef.schema;
+
+            if (subSchema.$mergeProps) {
+              const refUri = resolvedUri.split('#')[0] + '#';
+              subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {...it, baseId: refUri, baseIdOverwritten: true});
+            }
+          }
+        }
+
+        if (subSchema.$mergeProps) {
+          subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, it);
+        }
+
+        if (subSchema.properties) {
+          _.forOwn(subSchema.properties, (val, prop) => {
+            if (!mergedSchema.properties[prop]) {
+              mergedSchema.properties[prop] = val;
+            }
+          });
+        }
+        if (subSchema.patternProperties) {
+          _.forOwn(subSchema.patternProperties, (val, prop) => {
+            if (!mergedSchema.patternProperties[prop]) {
+              mergedSchema.patternProperties[prop] = val;
+            }
+          });
+        }
+        if (subSchema.$identifierProperties) {
+          _.forOwn(subSchema.$identifierProperties, (val, prop) => {
+            if (!mergedSchema.$identifierProperties[prop]) {
+              mergedSchema.$identifierProperties[prop] = val;
+            }
+          });
+        }
+      });
+
+      return mergedSchema;
+    };
+    ajv.addKeyword('$mergeProps', {
+      macro: resolveMergeProps,
+    });
+
+
+    ajv.addKeyword('$makeArray', {
+      type: 'object',
+      errors: false,
+      modifying: true,
+      valid: true,
+      compile: function (schema, parentSchema) {
+        return function (data, dataPath, object, key) {
+          // skip if value only
+          if (!object) return;
+
+          const outArray = [];
+          _.forOwn(data, (subItem, subItemKey) => {
+            if (_.isArray(subItem)) {
+              subItem.forEach(item => {
+                outArray.push({[subItemKey]: item});
+              });
+            } else {
+              outArray.push({[subItemKey]: subItem});
+            }
+          });
+
+          object[key] = outArray;
+          return true;
+        };
+      }
+    });
+
+    const identifierMatchers = {
+      institution: (id) => {
+        return (new Set(['renaissance'])).has(id);
+      },
+      vassal_type: (id) => {
+        return (new Set(['vassal', 'colony', 'personal_union'])).has(id);
+      },
+    };
+    ajv.addKeyword('$identifierProperties', {
+      type: 'object',
+      //errors: false,
+      //modifying: true,
+      //valid: true,
+
+      compile: function (schema, parentSchema) {
+        const propertyNames = new Set(_.keys(parentSchema.properties));
+        const validators = {};
+
+        _.forOwn(schema, (identifierSchema, identifierType) => {
+          validators[identifierType] = ajv.compile(identifierSchema);
         });
 
-        this.finish(schemaTrainer.toJS());
-      });
+        return function v(data, dataPath, object, key) {
+          for (const dataKey of _.keys(data)) {
+            // We don't want to match identifiers if this is already matched (optimalization/order preference)
+            if (propertyNames.has(dataKey)) {
+              continue;
+            }
+
+            for (const identifierType of _.keys(validators)) {
+              if (identifierMatchers[identifierType] && identifierMatchers[identifierType](dataKey)) {
+                const result = validators[identifierType](data[dataKey]);
+                if (!result) {
+                  v.errors = validators[identifierType].errors;
+                  return result;
+                }
+                return true;
+              }
+            }
+
+            v.errors = [{
+              keyword: '$identifierProperties',
+              dataPath,
+              message: 'Unknown property key `' + dataKey + '`.',
+              data,
+              params: {
+                key
+              }
+            }];
+
+            return false;
+          }
+          return true;
+        };
+      }
     });
+
+
+    JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
+    console.log(ajv.getSchema('http://jorodox.org/schemas/country_conditions.json#/definitions/country_conditions'));
+    console.log(ajv);
+
+    const validater = ajv.getSchema('http://jorodox.org/schemas/achievements.json');
+    console.log(validater);
+
+    items.forEach(item => {
+      const valid = validater(item);
+      if (!valid) {
+        console.log(item.name, validater.errors[0]);
+      }
+    });
+
+    return true;
   }
 }

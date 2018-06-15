@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/country_commands.json",
+  "type": "object",
+  "definitions": {
+    "country_commands": {
+      "type": "object",
+      "properties": {
+        "set_country_flag": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

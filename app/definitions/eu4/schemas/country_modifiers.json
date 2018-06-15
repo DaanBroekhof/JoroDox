@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/country_modifiers.json",
+  "type": "object",
+  "definitions": {
+    "country_modifiers": {
+      "type": "object",
+      "properties": {
+        "ae_impact": {
+          "type": "number"
+        },
+        "war_taxes_cost_modifier": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

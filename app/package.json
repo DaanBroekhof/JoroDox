@@ -1,7 +1,7 @@
 {
   "name": "jorodox",
   "productName": "Jorodox Mod Tool",
-  "version": "0.8.0",
+  "version": "2.0.0-beta",
   "description": "Tool for assisting in creating mods for Paradox Development Studio games like Europa Universalis 4, Crusader Kings 2, Stellaris, and others.",
   "main": "./main.prod.js",
   "author": {

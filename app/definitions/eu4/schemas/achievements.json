@@ -1,0 +1,40 @@
+{
+  "$id": "http://jorodox.org/schemas/achievements.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "possible": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "happened": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "provinces_to_highlight": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "visible": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      },
+      "required": [
+        "id",
+        "possible",
+        "happened"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "properties"
+  ]
+}
