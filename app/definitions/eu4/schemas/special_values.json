@@ -7,9 +7,60 @@
       "type": "string",
       "enum": ["yes", "no"]
     },
+    "any": {
+      "type": "string",
+      "enum": ["any"]
+    },
+    "yes": {
+      "type": "string",
+      "enum": ["yes"]
+    },
+    "capital": {
+      "type": "string",
+      "enum": ["CAPITAL"]
+    },
     "emperor": {
       "type": "string",
       "enum": ["emperor"]
+    },
+    "monarch_power_type": {
+      "type": "string",
+      "enum": ["ADM", "DIP", "MIL"]
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}$"
+    },
+    "country_scope": {
+      "type": "string",
+      "enum": ["ROOT", "FROM", "PREV", "THIS"]
+    },
+    "country_tag_or_scope": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        {
+          "$ref": "special_values.json#/definitions/country_scope"
+        }
+      ]
+    },
+    "province_scope": {
+      "type": "string",
+      "enum": ["ROOT", "FROM", "PREV", "THIS"]
+    },
+    "country_or_number": {
+      "$mergeProps": [
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        {
+          "$ref": "special_values.json#/definitions/country_scope"
+        }
+      ]
     }
   }
 }

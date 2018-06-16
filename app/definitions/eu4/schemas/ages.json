@@ -71,7 +71,6 @@
             "^.*$": {
               "$mergeProps": [
                 {
-                  "type": "object",
                   "properties": {
                     "allow": {
                       "$ref": "country_conditions.json#/definitions/country_conditions"

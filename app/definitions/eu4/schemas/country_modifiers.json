@@ -4,13 +4,877 @@
   "type": "object",
   "definitions": {
     "country_modifiers": {
-      "type": "object",
       "properties": {
+        "administrative_efficiency": {
+          "description": "Modifies the base core creation cost, diplo-annexation costs and the impact of province development on overextension and warscore cost. (Multiplicative)",
+          "type": "number"
+        },
+        "advisor_cost": {
+          "description": "Modifies the base cost of advisors. (Multiplicative)",
+          "type": "number"
+        },
+        "advisor_pool": {
+          "description": "Adds to the pool size for advisors. (Additive)",
+          "type": "number"
+        },
         "ae_impact": {
+          "description": "Modifies the total size of Aggressive Expansion gained during actions that confer it. (Multiplicative)",
+          "type": "number"
+        },
+        "all_power_cost": {
+          "description": "Modifies the monarch power cost of every action that costs monarch power. (Multiplicative)",
+          "type": "number"
+        },
+        "amount_of_banners": {
+          "description": "Modifies the maximum amount of banners available. (Multiplicative)",
+          "type": "number"
+        },
+        "army_tradition": {
+          "description": "Adds to the rate of Army Tradition gained each year. (Additive)",
+          "type": "number"
+        },
+        "army_tradition_decay": {
+          "description": "Adds to the decay rate of Army Tradition. (Additive)",
+          "type": "number"
+        },
+        "army_tradition_from_battle": {
+          "description": "Modifies the Army Tradition bonus when gained through battles. (Multiplicative)",
+          "type": "number"
+        },
+        "artillery_bonus_vs_fort": {
+          "description": "Adds to the bonus artillery get versus forts. (Additive)",
+          "type": "number"
+        },
+        "artillery_cost": {
+          "description": "Modifies the base cost of artillery units. (Multiplicative)",
+          "type": "number"
+        },
+        "artillery_power": {
+          "description": "Modifies the power artillery gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "autonomy_change_time": {
+          "description": "Modifies the cooldown for the autonomy reduction and increase buttons. (Multiplicative)",
+          "type": "number"
+        },
+        "backrow_artillery_damage": {
+          "description": "Modifies the bonus damage artillery inflict when in the backrow during combat. (Multiplicative)",
+          "type": "number"
+        },
+        "blockade_efficiency": {
+          "description": "Modifies the efficiency of blockades against enemies. (Multiplicative)",
+          "type": "number"
+        },
+        "build_cost": {
+          "description": "Modifies all building costs. (Multiplicative)",
+          "type": "number"
+        },
+        "build_time": {
+          "description": "Modifies all building construction times. (Multiplicative)",
+          "type": "number"
+        },
+        "capture_ship_chance": {
+          "description": "Adds to the chance for ship capture during naval battles. (Additive)",
+          "type": "number"
+        },
+        "caravan_power": {
+          "description": "Modifies the bonus trade power inland nodes receive from trade power sources. (Multiplicative)",
+          "type": "number"
+        },
+        "cav_to_inf_ratio": {
+          "description": "Adds to the ratio required to negate the Insufficient Support penalty. (Additive)",
+          "type": "number"
+        },
+        "cavalry_cost": {
+          "description": "Modifies the base cost of cavalry units. (Multiplicative)",
+          "type": "number"
+        },
+        "cavalry_flanking": {
+          "description": "Modifies the effectiveness of cavalry flanking. (Multiplicative)",
+          "type": "number"
+        },
+        "cavalry_power": {
+          "description": "Modifies the power cavalry gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "church_power_modifier": {
+          "description": "Modifies the effectiveness of church power gains. (Multiplicative)",
+          "type": "number"
+        },
+        "claim_duration": {
+          "description": "Modifies the duration of claims. (Multiplicative)",
+          "type": "number"
+        },
+        "colonist_placement_chance": {
+          "description": "Adds to the base colonial placement chance for colonists, which is the chance that additional settlers will be spawned whilst the colonist is present. (Additive)",
+          "type": "number"
+        },
+        "colonists": {
+          "description": "Modifies the base colonist count for a country. (Additive)",
+          "type": "number"
+        },
+        "core_creation": {
+          "description": "Modifies the base core creation cost. (Multiplicative)",
+          "type": "number"
+        },
+        "core_decay_on_your_own": {
+          "description": "Modifies the rate at which the cores of a country will decay when under the ownership of a different country. (Multiplicative)",
+          "type": "number"
+        },
+        "culture_conversion_cost": {
+          "description": "Modifies the diplomatic power cost for culture conversion in provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "defensiveness": {
+          "description": "Modifies the siege defensiveness that affects siege phase length. (Multiplicative)",
+          "type": "number"
+        },
+        "development_cost": {
+          "description": "Modifies the development cost for provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "devotion": {
+          "description": "Adds to the yearly rate of devotion.\nDoes not appear or have an effect if a country's government does not use devotion. (Additive)",
+          "type": "number"
+        },
+        "diplomatic_annexation_cost": {
+          "description": "Modifies the diplomatic power cost for annexation. (Multiplicative)",
+          "type": "number"
+        },
+        "diplomatic_reputation": {
+          "description": "Adds to a country's diplomatic reputation. (Additive)",
+          "type": "number"
+        },
+        "diplomatic_upkeep": {
+          "description": "Adds to the maximum number of free diplomatic relations. (Additive)",
+          "type": "number"
+        },
+        "diplomats": {
+          "description": "Adds to a country's diplomat count. (Additive)",
+          "type": "number"
+        },
+        "discipline": {
+          "description": "Modifies the discipline of land units. (Multiplicative)",
+          "type": "number"
+        },
+        "discovered_relations_impact": {
+          "description": "Modifies the relations impact applied to a country when discovered commiting an espionage action. (Multiplicative)",
+          "type": "number"
+        },
+        "drill_decay_modifier": {
+          "description": "Modifies the army drill decay rate per year. (Multiplicative)",
+          "type": "number"
+        },
+        "drill_gain_modifier": {
+          "description": "Modifies the army drill gains while drilling (Multiplicative)",
+          "type": "number"
+        },
+        "embargo_efficiency": {
+          "description": "Modifies the effectiveness of embargoing another country. (Multiplicative)",
+          "type": "number"
+        },
+        "embracement_cost": {
+          "description": "Modifies the ducat cost for embracing an institution. (Multiplicative)",
+          "type": "number"
+        },
+        "enemy_core_creation": {
+          "description": "Modifies the cost of coring provinces for enemies that have your cores. (Multiplicative)",
+          "type": "number"
+        },
+        "enforce_religion_cost": {
+          "description": "Modifies the warscore cost for the Enforce Religion peace term. (Multiplicative)",
+          "type": "number"
+        },
+        "envoy_travel_time": {
+          "description": "Modifies diplomat travel time during actions. (Multiplicative)",
+          "type": "number"
+        },
+        "fabricate_claims_cost": {
+          "description": "Modifies diplomatic power cost for fabricating claim. (Multiplicative)",
+          "type": "number"
+        },
+        "female_advisor_chance": {
+          "description": "Modifies the base chance rate for female advisors. (Multiplicative)",
+          "type": "number"
+        },
+        "fire_damage": {
+          "description": "Modifies the fire damage done by land units. (Multiplicative)",
+          "type": "number"
+        },
+        "fire_damage_received": {
+          "description": "Modifies the fire damage taken by land units. (Multiplicative)",
+          "type": "number"
+        },
+        "fort_maintenance_modifier": {
+          "description": "Modifies the base fort maintenance cost. (Multiplicative)",
+          "type": "number"
+        },
+        "free_leader_pool": {
+          "description": "Adds to the maximum amount of free leaders. (Additive)",
+          "type": "number"
+        },
+        "galley_cost": {
+          "description": "Modifies the base cost of galley ships. (Multiplicative)",
+          "type": "number"
+        },
+        "galley_power": {
+          "description": "Modifies the power galley ships gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "garrison_size": {
+          "description": "Modifies the base garrison size in provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "general_cost": {
+          "description": "Modifies the base military power cost for recruiting Generals. (Multiplicative)",
+          "type": "number"
+        },
+        "global_autonomy": {
+          "description": "Adds to the monthly rate of autonomy in owned provinces. (Additive)",
+          "type": "number"
+        },
+        "global_colonial_growth": {
+          "description": "Adds to the base yearly colonial growth gain. (Additive)",
+          "type": "number"
+        },
+        "global_foreign_trade_power": {
+          "description": "Modifies the trade power for a country in tradenodes that are not domestic. (Multiplicative)",
+          "type": "number"
+        },
+        "global_garrison_growth": {
+          "description": "Modifies the base garrison growth in provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "global_heretic_missionary_strength": {
+          "description": "Adds to the base missionary strength against heretic religions. (Additive)",
+          "type": "number"
+        },
+        "global_institution_spread": {
+          "description": "Modifies the rate of spread for institutions in all owned provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "global_manpower": {
+          "description": "Adds to the country's total manpower pool. 1 equals 1000 men. (Additive)",
+          "type": "number"
+        },
+        "global_manpower_modifier": {
+          "description": "Modifies a country's total manpower pool. (Multiplicative)",
+          "type": "number"
+        },
+        "global_missionary_strength": {
+          "description": "Adds to the base missionary strength against all religions. (Additive)",
+          "type": "number"
+        },
+        "global_naval_engagement_modifier": {
+          "description": "Modifies the maximum naval engagement width. (Multiplicative)",
+          "type": "number"
+        },
+        "global_own_trade_power": {
+          "description": "Modifies the trade power for a country in tradenodes that are domestic. (Multiplicative)",
+          "type": "number"
+        },
+        "global_prov_trade_power_modifier": {
+          "description": "Modifies the base trade power of owned provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "global_regiment_cost": {
+          "description": "Modifies the base unit cost for all land units. (Multiplicative)",
+          "type": "number"
+        },
+        "global_regiment_recruit_speed": {
+          "description": "Modifies the base speed at which land units are recruited. (Multiplicative)",
+          "type": "number"
+        },
+        "global_sailors": {
+          "description": "Adds to a country's maximum sailor pool. (Additive)",
+          "type": "number"
+        },
+        "global_sailors_modifier": {
+          "description": "Modifies a country's maximum sailor pool. (Multiplicative)",
+          "type": "number"
+        },
+        "global_ship_cost": {
+          "description": "Modifies the base cost of all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "global_ship_recruit_speed": {
+          "description": "Modifies the base recruitmend speed of all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "global_ship_repair": {
+          "description": "Modifies the base repair speed (in port) of all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "global_ship_trade_power": {
+          "description": "Modifies the trade power ships grant when protecting trade. (Multiplicative)",
+          "type": "number"
+        },
+        "global_spy_defence": {
+          "description": "Modifies the base effectiveness of counter-espionage against enemy spies. (Multiplicative)",
+          "type": "number"
+        },
+        "global_tariffs": {
+          "description": "Modifies the tariff income from colonial nations. (Multiplicative)",
+          "type": "number"
+        },
+        "global_tax_income": {
+          "description": "Adds to the base tax income per year (i.e. 12 equals 1 extra per month). (Additive)",
+          "type": "number"
+        },
+        "global_tax_modifier": {
+          "description": "Modifies the base tax income by a percentage. (Multiplicative)",
+          "type": "number"
+        },
+        "global_trade_goods_size_modifier": {
+          "description": "Modifies the base trade good size of owned provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "global_trade_power": {
+          "description": "Modifies the trade power in all tradenodes for a country. (Multiplicative)",
+          "type": "number"
+        },
+        "global_unrest": {
+          "description": "Adds to the base unrest value. (Additive)",
+          "type": "number"
+        },
+        "harmonization_speed": {
+          "description": "Modifies the rate at which harmonization occurs. (Multiplicative)",
+          "type": "number"
+        },
+        "harsh_treatment_cost": {
+          "description": "Modifies the military power cost for using harsh treatment. (Multiplicative)",
+          "type": "number"
+        },
+        "heavy_ship_cost": {
+          "description": "Modifies the base cost of heavy ships. (Multiplicative)",
+          "type": "number"
+        },
+        "heavy_ship_power": {
+          "description": "Modifies the power heavy ships gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "heir_chance": {
+          "description": "Modifies the base chance for an heir during the heir generation tick. (Multiplicative)",
+          "type": "number"
+        },
+        "horde_unity": {
+          "description": "Adds to the yearly rate of horde unity.\nDoes not appear or have an effect if a country's government does not use horde unity. (Additive)",
+          "type": "number"
+        },
+        "hostile_attrition": {
+          "description": "Adss to the attrition enemies take in a country's provinces. (Additive)",
+          "type": "number"
+        },
+        "idea_cost": {
+          "description": "Modifies the monarch power cost of purchasable ideas. (Multiplicative)",
+          "type": "number"
+        },
+        "imperial_authority": {
+          "description": "Modifies the impact of Imperial Authority gains. (Multiplicative)",
+          "type": "number"
+        },
+        "imperial_authority_value": {
+          "description": "Adds to the rate of Imperial Authority gained per month. (Additive)",
+          "type": "number"
+        },
+        "imperial_mandate": {
+          "description": "Adds to the rate of Mandate gained per month. (Additive)",
+          "type": "number"
+        },
+        "improve_relation_modifier": {
+          "description": "Modifies the speed of the Improve Relations diplomatic action. (Multiplicative)",
+          "type": "number"
+        },
+        "infantry_cost": {
+          "description": "Modifies the base cost of infantry units. (Multiplicative)",
+          "type": "number"
+        },
+        "infantry_power": {
+          "description": "Modifies the power infantry gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "inflation_action_cost": {
+          "description": "Modifies the administrative power cost for reducing inflation. (Multiplicative)",
+          "type": "number"
+        },
+        "inflation_reduction": {
+          "description": "Adds to the base yearly inflation rate. (Additive)",
+          "type": "number"
+        },
+        "innovativeness_gain": {
+          "description": "Modifies the amount of Innovativeness gained (Multiplicative)",
+          "type": "number"
+        },
+        "institution_spread_from_true_faith": {
+          "description": "Modifies the rate of spread for institutions in owned provinces following the owner's religion. (Multiplicative)",
+          "type": "number"
+        },
+        "interest": {
+          "description": "Adds to the base interest rate. (Additive)",
+          "type": "number"
+        },
+        "land_attrition": {
+          "description": "Modifies the attrition taken by land units. (Multiplicative)",
+          "type": "number"
+        },
+        "land_forcelimit": {
+          "description": "Adds to a country's forcelimit. (Additive)",
+          "type": "number"
+        },
+        "land_forcelimit_modifier": {
+          "description": "Modifies a country's forcelimit. (Multiplicative)",
+          "type": "number"
+        },
+        "land_maintenance_modifier": {
+          "description": "Modifies the maintenance cost of all land units. (Multiplicative)",
+          "type": "number"
+        },
+        "land_morale": {
+          "description": "Modifies the land morale of land units. (Multiplicative)",
+          "type": "number"
+        },
+        "leader_land_fire": {
+          "description": "Adds to the minimum fire pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "leader_land_manuever": {
+          "description": "Adds to the minimum manuever pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "leader_land_shock": {
+          "description": "Adds to the minimum shock pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "leader_naval_fire": {
+          "description": "Adds to the minimum fire pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "leader_naval_manuever": {
+          "description": "Adds to the minimum manuever pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "leader_naval_shock": {
+          "description": "Adds to the minimum shock pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "leader_siege": {
+          "description": "Adds to the minimum siege pip count a leader can be generated with. (Additive)",
+          "type": "number"
+        },
+        "legitimacy": {
+          "description": "Adds to the yearly rate of legitimacy.\nDoes not appear or have an effect if a country's government does not use legitimacy. (Additive)",
+          "type": "number"
+        },
+        "liberty_desire": {
+          "description": "Adds to subject liberty desire against their overlord. (Additive)",
+          "type": "number"
+        },
+        "liberty_desire_from_subject_development": {
+          "description": "Adds to the subject liberty desire from development against their overlord. (Multiplicative)",
+          "type": "number"
+        },
+        "light_ship_cost": {
+          "description": "Modifies the base cost of light ships. (Multiplicative)",
+          "type": "number"
+        },
+        "light_ship_power": {
+          "description": "Modifies the power light ships gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "loot_amount": {
+          "description": "Modifies the amount of loot taken at once during looting. (Multiplicative)",
+          "type": "number"
+        },
+        "manpower_recovery_speed": {
+          "description": "Modifies the rate at which manpower is recovered. (Multiplicative)",
+          "type": "number"
+        },
+        "max_absolutism": {
+          "description": "Adds to the maximum value of absolutism. Internally absolutism bonuses do not scale above 100. (Additive)",
+          "type": "number"
+        },
+        "max_states": {
+          "description": "Adds to the maximum number of states a country can support. (Additive)",
+          "type": "number"
+        },
+        "merc_maintenance_modifier": {
+          "description": "Modifies the maintenance cost of all mercenary units. (Multiplicative)",
+          "type": "number"
+        },
+        "mercenary_cost": {
+          "description": "Modifies the base cost for mercenary units. (Multiplicative)",
+          "type": "number"
+        },
+        "mercenary_discipline": {
+          "description": "Modifies the discipline of mercenary units. (Multiplicative)",
+          "type": "number"
+        },
+        "merchants": {
+          "description": "Adds to the base merchant count for a country. (Additive)",
+          "type": "number"
+        },
+        "meritocracy": {
+          "description": "Adds to the yearly rate of meritocracy. Does not appear or have an effect if a country's government does not use meritocracy. (Additive)",
+          "type": "number"
+        },
+        "migration_cooldown": {
+          "description": "Modifies the cooldown for the migration action for primitive nations that can migrate. (Multiplicative)",
+          "type": "number"
+        },
+        "min_autonomy": {
+          "description": "Sets the minimum autonomy level allowed in all owned provinces. (Constant)",
+          "type": "number"
+        },
+        "missionaries": {
+          "description": "Adds to the base missionary count for a country. (Additive)",
+          "type": "number"
+        },
+        "monarch_admin_power": {
+          "description": "Adds to the base ADM skill a ruler, heir and consort can be generated with.\nDoes not effect rulers created with fixed = yes. (Additive)",
+          "type": "number"
+        },
+        "monarch_diplomatic_power": {
+          "description": "Adds to the base DIP skill a ruler, heir and consort can be generated with.\nDoes not effect rulers created with fixed = yes. (Additive)",
+          "type": "number"
+        },
+        "monarch_military_power": {
+          "description": "Adds to the base MIL skill a ruler, heir and consort can be generated with.\nDoes not effect rulers created with fixed = yes. (Additive)",
+          "type": "number"
+        },
+        "monthly_fervor_increase": {
+          "description": "Adds to the rate of fervor gained per month. (Additive)",
+          "type": "number"
+        },
+        "monthly_karma": {
+          "description": "Adds to the rate of karma gained per month. (Additive)",
+          "type": "number"
+        },
+        "monthly_militarized_society": {
+          "description": "Adds to the monthly rate of militarisation for governments with the militarisation mechanic. (Additive)",
+          "type": "number"
+        },
+        "monthly_piety": {
+          "description": "Adds to the rate of piety gained per month. (Additive)",
+          "type": "number"
+        },
+        "monthly_splendor": {
+          "description": "Adds to the monthly rate of splendor points. (Additive)",
+          "type": "number"
+        },
+        "movement_speed": {
+          "description": "Modifies the base movement speed for all land units. (Multiplicative)",
+          "type": "number"
+        },
+        "native_advancement_cost": {
+          "description": "Modifies the monarch power cost of native advancements. (Multiplicative)",
+          "type": "number"
+        },
+        "native_assimilation": {
+          "description": "Modifies the bonus from assimilation in colonies. Native assimilation is bonus to goods produced depends on the native population. (Multiplicative)",
+          "type": "number"
+        },
+        "native_uprising_chance": {
+          "description": "Adds to the chance of native uprisings in a colony province. (Multiplicative)",
+          "type": "number"
+        },
+        "naval_attrition": {
+          "description": "Modifies the naval attrition taken by ships. (Multiplicative)",
+          "type": "number"
+        },
+        "naval_forcelimit": {
+          "description": "Adds to a country's naval forcelimit. (Additive)",
+          "type": "number"
+        },
+        "naval_forcelimit_modifier": {
+          "description": "Modifies a country's naval forcelimit. (Multiplicative)",
+          "type": "number"
+        },
+        "naval_maintenance_modifier": {
+          "description": "Modifies the naval maintenance for all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "naval_morale": {
+          "description": "Modifies the naval morale of all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "naval_tradition_from_battle": {
+          "description": "Modifies the base Navy Tradition gained from battles. (Multiplicative)",
+          "type": "number"
+        },
+        "navy_tradition": {
+          "description": "Adds to the yearly Navy Tradition rate. (Additive)",
+          "type": "number"
+        },
+        "navy_tradition_decay": {
+          "description": "Adds to the decay rate of Navy Tradition. (Additive)",
+          "type": "number"
+        },
+        "num_accepted_cultures": {
+          "description": "Adds to the maximum number of accepted cultures a country can have. (Additive)",
+          "type": "number"
+        },
+        "papal_influence": {
+          "description": "Adds to the rate of papal influence gained per year. (Additive)",
+          "type": "number"
+        },
+        "placed_merchant_power": {
+          "description": "Modifies the additional trade power when a merchant present in a tradenode. (Additive)",
+          "type": "number"
+        },
+        "possible_condottieri": {
+          "description": "Modifies the base condottieri limit. (Multiplicative)",
+          "type": "number"
+        },
+        "possible_mercenaries": {
+          "description": "Modifies the base mercenary limit. (Multiplicative)",
+          "type": "number"
+        },
+        "prestige": {
+          "description": "Adds to the base yearly rate of prestige. (Additive)",
+          "type": "number"
+        },
+        "prestige_decay": {
+          "description": "Adds to the base rate of prestige decay. (Additive)",
+          "type": "number"
+        },
+        "prestige_from_land": {
+          "description": "Modifies the prestige bonus from combat. (Multiplicative)",
+          "type": "number"
+        },
+        "prestige_from_naval": {
+          "description": "Modifies the prestige gained through naval battles. (Multiplicative)",
+          "type": "number"
+        },
+        "prestige_per_development_from_conversion": {
+          "description": "Adds to the prestige bonus gained per development when successfully converting a province to a state religion. (Additive)",
+          "type": "number"
+        },
+        "privateer_efficiency": {
+          "description": "Modifies the effectiveness of privateers in a tradenode. (Multiplicative)",
+          "type": "number"
+        },
+        "production_efficiency": {
+          "description": "Modifies the base production income by a percentage. (Multiplicative)",
+          "type": "number"
+        },
+        "promote_culture_cost": {
+          "description": "Modifies the diplomatic power cost for promoting a culture. (Multiplicative)",
+          "type": "number"
+        },
+        "province_warscore_cost": {
+          "description": "Modifies the warscore cost for taking provinces. (Multiplicative)",
+          "type": "number"
+        },
+        "range": {
+          "description": "Modifies the base colonisation range, used for exploration, colonisation and coring province that border sea. (Multiplicative)",
+          "type": "number"
+        },
+        "raze_power_gain": {
+          "description": "Modifies the amount of monarch power gained from razing. (Multiplicative)",
+          "type": "number"
+        },
+        "rebel_support_efficiency": {
+          "description": "Modifies the effectiveness of supported rebels in other countries. (Multiplicative)",
+          "type": "number"
+        },
+        "recover_army_morale_speed": {
+          "description": "Modifies the army morale recovery speed. (Multiplicative)",
+          "type": "number"
+        },
+        "recover_navy_morale_speed": {
+          "description": "Modifies the morale recovery rate of ships. (Multiplicative)",
+          "type": "number"
+        },
+        "reduced_liberty_desire": {
+          "description": "Adds to the liberty desire subjects have against their overlord. Applied to the overlord. (Additive)",
+          "type": "number"
+        },
+        "reduced_liberty_desire_on_same_continent": {
+          "description": "Adds to the liberty desire subjects have against their overlord if on the same continent. Applied to the overlord. (Additive)",
+          "type": "number"
+        },
+        "reinforce_cost_modifier": {
+          "description": "Modifies the cost of reinforcements when units are reinforced. (Multiplicative)",
+          "type": "number"
+        },
+        "reinforce_speed": {
+          "description": "Modifies the rate at which units are reinforced with new men. (Multiplicative)",
+          "type": "number"
+        },
+        "religious_unity": {
+          "description": "Adds to the base religious unity value for a country. (Additive)",
+          "type": "number"
+        },
+        "republican_tradition": {
+          "description": "Adds to the yearly rate of republican tradition.\nDoes not appear or have an effect if a country's government does not use republican tradition. (Additive)",
+          "type": "number"
+        },
+        "reserves_organisation": {
+          "description": "Modifies the morale damage taken by units in reserves (i.e. not in battle, but engaged with another unit) (Multiplicative)",
+          "type": "number"
+        },
+        "rival_border_fort_maintenance": {
+          "description": "Modifies the base fort maintenance cost for forts in provinces that border rivals. (Multiplicative)",
+          "type": "number"
+        },
+        "rival_change_cost": {
+          "description": "Modifies the diplomatic power cost to change rivals. (Multiplicative)",
+          "type": "number"
+        },
+        "sailor_maintenance_modifer": {
+          "description": "Modifies the sailor maintenance for all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "sailors_recovery_speed": {
+          "description": "Modifies the sailor recovery rate for all ships. (Multiplicative)",
+          "type": "number"
+        },
+        "same_culture_advisor_cost": {
+          "description": "Modifies the advisor cost for advisors that share the same culture as the country's court they're in. (Multiplicative)",
+          "type": "number"
+        },
+        "ship_durability": {
+          "description": "Modifies the durability of all ships. (discipline for ships) (Multiplicative)",
+          "type": "number"
+        },
+        "ship_power_propagation": {
+          "description": "Modifies the propagation of trade power from ships protecting trade. (Multiplicative)",
+          "type": "number"
+        },
+        "shock_damage": {
+          "description": "Modifies the shock damage done by land units. (Multiplicative)",
+          "type": "number"
+        },
+        "shock_damage_received": {
+          "description": "Modifies the shock damage taken by land units. (Multiplicative)",
+          "type": "number"
+        },
+        "siege_ability": {
+          "description": "Modifies the siege ability that affects siege phase length. Reverse concept of defensiveness. (Multiplicative)",
+          "type": "number"
+        },
+        "siege_blockade_progress": {
+          "description": "Modifies the bonus siege status by blockaded. (Additive)",
+          "type": "number"
+        },
+        "spy_offence": {
+          "description": "Modifies the base effectiveness of spies against enemies. (Multiplicative)",
+          "type": "number"
+        },
+        "stability_cost_modifier": {
+          "description": "Modifies the administrative power cost of raising stability. (Multiplicative)",
+          "type": "number"
+        },
+        "state_maintenance_modifier": {
+          "description": "Modifies the maintenance cost for states. (Multiplicative)",
+          "type": "number"
+        },
+        "sunk_ship_morale_hit_recieved": {
+          "description": "Modifies the morale damage taken during battle by losing ships. (Multiplicative)",
+          "type": "number"
+        },
+        "technology_cost": {
+          "description": "Modifies the monarch power cost of all technologies. (Multiplicative)",
+          "type": "number"
+        },
+        "tolerance_heathen": {
+          "description": "Adds to the base tolerance for heathens within a country. (Additive)",
+          "type": "number"
+        },
+        "tolerance_heretic": {
+          "description": "Adds to the base tolerance for heretics within a country. (Additive)",
+          "type": "number"
+        },
+        "tolerance_own": {
+          "description": "Adds to the base tolerance for the true faith within a country. (Additive)",
+          "type": "number"
+        },
+        "trade_efficiency": {
+          "description": "Modifies a country's trade income. (Maximum is 200%) (Multiplicative)",
+          "type": "number"
+        },
+        "trade_range_modifier": {
+          "description": "Modifies the trade range used to determine if a country can place a merchant in a tradenode. (Multiplicative)",
+          "type": "number"
+        },
+        "trade_steering": {
+          "description": "Modifies the bonus to trade power used for steering when determining which outgoing node trade is steered to. If you have a merchant present, it also slightly increases the outgoing value. (Multiplicative)",
+          "type": "number"
+        },
+        "transport_cost": {
+          "description": "Modifies the base cost of transport ships. (Multiplicative)",
+          "type": "number"
+        },
+        "transport_power": {
+          "description": "Modifies the power transport ships gain from unit pips. (Multiplicative)",
+          "type": "number"
+        },
+        "unjustified_demands": {
+          "description": "Modifies the weighting of demands in peace treaties. (Multiplicative)",
+          "type": "number"
+        },
+        "vassal_forcelimit_bonus": {
+          "description": "Modifies the bonus to a country's forcelimit from their subjects. (Multiplicative)",
+          "type": "number"
+        },
+        "vassal_income": {
+          "description": "Modifies the bonus to a country's income from their subjects. (Multiplicative)",
+          "type": "number"
+        },
+        "war_exhaustion": {
+          "description": "Adds to the monthly war exhaustion rate. (Additive)",
+          "type": "number"
+        },
+        "war_exhaustion_cost": {
+          "description": "Modifies the diplomatic power cost for reducing war exhaustion. (Multiplicative)",
           "type": "number"
         },
         "war_taxes_cost_modifier": {
+          "description": "Modifies the military power cost for raising war taxes. (Multiplicative)",
           "type": "number"
+        },
+        "warscore_cost_vs_other_religion": {
+          "description": "Modifies the warscore costs for peace terms whilst in war against countries of a different religion. (Multiplicative)",
+          "type": "number"
+        },
+        "yearly_absolutism": {
+          "description": "Adds to the yearly base rate of absolutism. (Additive)",
+          "type": "number"
+        },
+        "yearly_army_professionalism": {
+          "description": "Modifies the rate of Army Professionalism gained each year. (Multiplicative)",
+          "type": "number"
+        },
+        "yearly_corruption": {
+          "description": "Adds to the yearly rate of corruption. (Additive)",
+          "type": "number"
+        },
+        "yearly_harmony": {
+          "description": "Adds to the rate of harmony gained per year. (Additive)",
+          "type": "number"
+        },
+        "yearly_tribal_allegiance": {
+          "description": "Adds to the yearly rate of tribal allegiance for governments with the tribal allegiance mechanic. (Additive)",
+          "type": "number"
+        },
+        "years_of_nationalism": {
+          "description": "Adds to the base nationalism value of provinces when conquered. (Additive)",
+          "type": "number"
+        }
+      },
+      "$identifierProperties": {
+        "static_modifiers": {
+          "type": "number"
+        },
+        "factions": {
+          "description": "Adds to the monthly rate of faction influence. \nGenerated automatically for all factions in /Europa Universalis IV/common/factions. (Additive)",
+          "type": "number",
+          "postFix": "_influence"
+        },
+        "technology_groups": {
+          "description": "Modifies the monarch power cost of <tech> technologies. \nGenerated automatically for all technology tables in /Europa Universalis IV/common/technology.txt. (Multiplicative)",
+          "type": "number",
+          "postFix": "_cost_modifier"
         }
       }
     }

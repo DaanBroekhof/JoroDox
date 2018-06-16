@@ -248,6 +248,33 @@ export default {
       },
     },
     {
+      id: 'map_provincegroups',
+      title: 'Map province groups',
+      category: 'Map information',
+      reader: 'StructureLoader',
+      primaryKey: 'name',
+      sourceType: {
+        id: 'pdx_scripts',
+        path: 'map/provincegroups.txt',
+      },
+      sourceTransform: {
+        type: 'keyValues',
+        path: ['data', 'data'],
+        keyName: 'name',
+        valueName: 'provinces',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'name',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
       id: 'map_season',
       title: 'Map seasons',
       category: 'Map information',

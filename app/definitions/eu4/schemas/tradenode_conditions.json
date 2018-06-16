@@ -78,10 +78,10 @@
           "description": "Returns true if the scoped country has an active merchant in the trade node.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -89,10 +89,10 @@
           "description": "Returns true if the country X has most amount of trade power in trade node.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -104,25 +104,25 @@
           "description": "Returns true if the specified country has a merchant in the trade node.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "highest_value_trade_node": {
           "description": "Returns true if the trade node is the highest valued trade node in the world.\r\nThe value is calculated as total trade value minus outgoing trade value.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_strongest_trade_power": {
           "description": "Returns true if the specified country has the most trade power in the area.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -134,10 +134,10 @@
           "description": "Returns true if the trade node is within the trade range of the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },

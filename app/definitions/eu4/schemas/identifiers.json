@@ -2,17 +2,198 @@
   "$schema": "http://json-schema.org/schema#",
   "$id": "http://jorodox.org/schemas/identifiers.json",
   "definitions": {
-    "age": {
+    "ages": {
       "type": "string"
     },
-    "country_tag": {
+    "country_tags": {
       "type": "string"
     },
-    "global_flag": {
+    "global_flags": {
       "type": "string"
     },
-    "continent": {
+    "continents": {
+      "type": "string"
+    },
+    "tradegoods": {
+      "type": "string"
+    },
+    "dlcs": {
+      "type": "string"
+    },
+    "event_target_unknown": {
+      "type": "string"
+    },
+    "religions": {
+      "type": "string"
+    },
+    "institutions": {
+      "type": "string"
+    },
+    "advisortypes": {
+      "type": "string"
+    },
+    "advisor_id_unknown": {
+      "type": "string"
+    },
+    "ai_attitudes": {
+      "type": "string"
+    },
+    "subject_types": {
+      "type": "string"
+    },
+    "map_provinces": {
+      "type": "number"
+    },
+    "cultures": {
+      "type": "string"
+    },
+    "leader_personalities": {
+      "type": "string"
+    },
+    "debates": {
+      "type": "string"
+    },
+    "culture_groups": {
+      "type": "string"
+    },
+    "icons_unknown": {
+      "type": "string"
+    },
+    "estates": {
+      "type": "string"
+    },
+    "factions": {
+      "type": "string"
+    },
+    "idea_groups": {
+      "type": "string"
+    },
+    "governments": {
+      "type": "string"
+    },
+    "policies": {
+      "type": "string"
+    },
+    "consort_flags": {
+      "type": "string"
+    },
+    "fetishist_cults": {
+      "type": "string"
+    },
+    "cb_types": {
+      "type": "string"
+    },
+    "church_aspects": {
+      "type": "string"
+    },
+    "consort_flags_unknown": {
+      "type": "string"
+    },
+    "country_flags": {
+      "type": "string"
+    },
+    "modifiers": {
+      "type": "string"
+    },
+    "disasters": {
+      "type": "string"
+    },
+    "influence_modifiers": {
+      "type": "string"
+    },
+    "loyalty_modifiers": {
+      "type": "string"
+    },
+    "government_mechanics": {
+      "type": "string"
+    },
+    "heir_name": {
+      "type": "string"
+    },
+    "ideas": {
+      "type": "string"
+    },
+    "leader_name": {
+      "type": "string"
+    },
+    "personal_deities": {
+      "type": "string"
+    },
+    "map_regions": {
+      "type": "string"
+    },
+    "ruler_name": {
+      "type": "string"
+    },
+    "rebel_types": {
+      "type": "string"
+    },
+    "unit_types": {
+      "type": "string"
+    },
+    "leagues_unknown": {
+      "type": "string"
+    },
+    "incidents": {
+      "type": "string"
+    },
+    "missions": {
+      "type": "string"
+    },
+    "custom_nation_points_unknown": {
+      "type": "number"
+    },
+    "opinion_modifiers": {
+      "type": "string"
+    },
+    "trading_policies": {
+      "type": "string"
+    },
+    "map_areas": {
+      "type": "string"
+    },
+    "buildings": {
+      "type": "string"
+    },
+    "colonial_regions": {
+      "type": "string"
+    },
+    "map_climates": {
+      "type": "string"
+    },
+    "great_projects": {
+      "type": "string"
+    },
+    "province_modifiers": {
+      "type": "string"
+    },
+    "map_terrain_terrain": {
+      "type": "string"
+    },
+    "map_region": {
+      "type": "string"
+    },
+    "religion_groups": {
+      "type": "string"
+    },
+    "map_continent": {
+      "type": "string"
+    },
+    "province_flags": {
+      "type": "string"
+    },
+    "map_provincegroups": {
+      "type": "string"
+    },
+    "trade_modifiers": {
+      "type": "string"
+    },
+    "leader_flags": {
+      "type": "string"
+    },
+    "technology_groups": {
       "type": "string"
     }
+
   }
 }

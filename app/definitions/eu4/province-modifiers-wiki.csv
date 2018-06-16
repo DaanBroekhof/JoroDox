@@ -1,0 +1,105 @@
+Military[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+max_attrition,max_attrition = 5,Adds to the maximum attrition that can be experienced in a province.,Additive,1.1
+attrition,attrition = 5,Adds to the base attrition in a province.,Additive,1.1
+local_hostile_attrition,local_hostile_attrition = 5,Adds to the base attrition for enemies in a province.,Additive,1.4
+fort_level,fort_level = 1,"Adds to the fort level in a province, determining how difficult it is to siege.",Additive,1.8
+garrison_growth,garrison_growth = 0.05,Modifies the rate of garrison growth in a province.,Multiplicative,1.1
+local_defensiveness,local_defensiveness = 0.1,"Modifies the defensiveness of a province, impacting siege phase length.",Multiplicative,1.1
+local_friendly_movement_speed,local_friendly_movement_speed = 0.1,Modifies the movement speed of units in a province that are considered friendly.,Multiplicative,1.2
+local_hostile_movement_speed,local_hostile_movement_speed = 0.1,Modifies the movement speed of units in a province that are considered enemies.,Multiplicative,1.2
+local_manpower,local_manpower = 1,Adds to the base manpower value. 1 equals 1000 men.,Additive,1.1
+local_manpower_modifier,local_manpower_modifier = 0.25,Modifies the manpower efficiency in a province.,Multiplicative,1.1
+local_regiment_cost,local_regiment_cost = -0.25,Modifies the recruitment cost of land units in a province.,Multiplicative,1.1
+regiment_recruit_speed,regiment_recruit_speed = -0.25,Modifies the recruitment speed of land units in a province.,Multiplicative,1.1
+supply_limit,supply_limit = 1,Adds to the base supply limit of a province.,Additive,1.1
+supply_limit_modifier,supply_limit_modifier = 0.25,Modifies the supply limit efficiency of a province.,Multiplicative,1.1
+local_amount_of_banners,local_amount_of_banners = 0.1,Modiifes the amount of banners that can be raised from a province.,Multiplicative,1.2
+Navy[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+local_naval_engagement_modifier,local_naval_engagement_modifier = 0.1,Modifies the naval engagement width in a province. Only usable in sea provinces.,Multiplicative,1.16
+local_sailors,local_sailors = 1,Adds to the sailors value for a province. 1 equals 1 sailor.,Additive,1.16
+local_sailors_modifier,local_sailors_modifier = 0.1,Modifies the sailors efficiency of a province.,Multiplicative,1.16
+local_ship_cost,local_ship_cost = -0.2,Modifies the cost of ship recruitment in a province.,Multiplicative,1.1
+local_ship_repair,local_ship_repair = 0.2,Modifies the speed of ship repair in a province.,Multiplicative,1.1
+ship_recruit_speed,ship_recruit_speed = -0.25,Modifies the recruitment speed of ships in a province.,Multiplicative,1.1
+Colonisation[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+local_colonial_growth,local_colonial_growth = 10,Adds to the colonial growth in a colony province.,Additive,1.1
+local_colonist_placement_chance,local_colonist_placement_chance = 0.05,Adds to the placement chance in a colony province.,Additive,1.1
+Economy[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+inflation_reduction_local,inflation_reduction_local = 0.1,Adds to the base yearly inflation value. Requires every province in a country to have the modifier to work however.,Additive,1.1
+local_state_maintenance_modifier,local_state_maintenance_modifier = -0.25,Modifies the state maintenance cost for the state that a province belongs to.,Multiplicative,1.16
+local_build_cost,local_build_cost = -0.25,Modifies the cost of constructing buildings in a province.,Multiplicative,1.1
+local_build_time,local_build_time = -0.25,Modifies the construction speed of buildings in a province.,Multiplicative,1.1
+local_monthly_devastation,local_monthly_devastation = -0.1,Adds to the devastation rate in a province.,Additive,1.2
+local_production_efficiency,local_production_efficiency = 0.1,Modifies the production efficiency in a province.,Multiplicative,1.1
+local_tax_modifier,local_tax_modifier = 0.1,Modifies the tax efficiency in a province.,Multiplicative,1.1
+tax_income,tax_income = 12,Adds to the yearly tax income of a province.,Additive,1.1
+allowed_num_of_buildings,allowed_num_of_buildings = 1,Adds to the maximum number of building slots in a province.,Additive,1.12
+local_development_cost,local_development_cost = -0.1,"Modifies the monarch power cost for development in a province. 
+Converts to local_tax_modifier in for non-Common Sense owners.",Multiplicative,1.12
+local_institution_spread,local_institution_spread = 0.1,Modifies the spread of institutions in a province.,Multiplicative,1.18
+local_core_creation,local_core_creation = -0.25,Modifies the cost of coring in a province.,Multiplicative,1.18
+cs_only_local_development_cost,cs_only_local_development_cost = -0.25,"Modifies the monarch power cost for development in a province. 
+Does not appear or affect non-Common Sense owners.",Multiplicative,1.23
+Trade[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+province_trade_power_modifier,province_trade_power_modifier = 0.1,Modifies the trade power efficiency in a province.,Multiplicative,1.1
+province_trade_power_value,province_trade_power_value = 0.5,Adds to the trade power in a province.,Additive,1.1
+trade_goods_size_modifier,trade_goods_size_modifier = 0.25,Modifies the goods produced efficiency in a province.,Multiplicative,1.12
+trade_goods_size,trade_goods_size = 0.5,Adds to the trade good size in a province,Additive,1.12
+trade_value_modifier,trade_value_modifier = 0.1,Modifies the base trade value in a province.,Multiplicative,1.1
+trade_value,trade_value = 1,Adds to the base trade value in a province.,Additive,1.1
+Religion[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+local_missionary_strength,local_missionary_strength = 0.01,Adds to the missionary strength in a province. 1 equals 100% strength.,Additive,1.1
+religious_conversion_resistance,religious_conversion_resistance = 0.1,Adds to conversion resistance from Centres of Reformation.,Additive,1.2
+Culture[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+local_culture_conversion_cost,local_culture_conversion_cost = -0.25,Modifies the culture conversion cost in a province.,Multiplicative,1.22
+Stability[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+local_unrest,local_unrest = -1,Adds to the unrest value in a province.,Additive,1.8
+local_autonomy,local_autonomy = 0.05,Adds to the autonomy rate in a province.,Additive,1.8
+local_years_of_nationalism,local_years_of_nationalism = -5,Adds to the base nationalism value in a province.,Additive,1.2
+min_local_autonomy,min_local_autonomy = 50,Sets the minimum autonomy value a province can have.,Constant,1.16
+Rule modifiers[edit],,,,
+,This section may contain outdated information that is inaccurate for the current version of the game. The last version it was verified as up to date for was 1.24.,,,
+Age[edit],,,,
+,,,,
+Only usable in Age bonuses.,,,,
+,,,,
+Modifier,Example,Description,Effect Type,Version Added
+attack_bonus_in_capital_terrain,attack_bonus_in_capital_terrain = yes,Grants attack bonus in provinces with the same terrain as capital province.,Constant,1.2
+can_bypass_forts,can_bypass_forts = yes,Allows units to ignore fort zones of control.,Constant,1.2
+can_chain_claim,can_chain_claim = yes,Allows claims to be enacted through already claimed provinces.,Constant,1.2
+can_colony_boost_development,can_colony_boost_development = yes,"Grants bonus 1 tax, production and manpower on completed colonies.",Constant,1.2
+can_transfer_vassal_wargoal,can_transfer_vassal_wargoal = yes,Allows usage of the Transfer Subject peace term at half cost.,Constant,1.2
+force_march_free,force_march_free = yes,Allows usage of the force march action for free.,Constant,1.2
+free_maintenance_on_expl_conq,free_maintenance_on_expl_conq = yes,Removes maintenance cost for explorers and conquisadors.,Constant,1.2
+ignore_coring_distance,ignore_coring_distance = yes,"Allows coring in any uncored province, regardless of distance.",Constant,1.2
+Ideas[edit],,,,
+,,,,
+Only usable in Ideas.,,,,
+,,,,
+Modifier,Example,Description,Effect Type,Version Added
+cb_on_government_enemies,cb_on_government_enemies = yes,Acts a visible script flag. Can be checked in triggers with cb_on_government_enemies = yes,Constant,1.1
+cb_on_religious_enemies,cb_on_religious_enemies = yes,Acts a visible script flag. Can be checked in triggers with cb_on_religious_enemies = yes,Constant,1.1
+cb_on_primitives,cb_on_primitives = yes,Allows claims to be fabricated on overseas provinces in Colonial regions.,Constant,1.1
+cb_on_overseas,cb_on_overseas = yes,Allows claims to be fabricated on overseas provinces in Trade Company regions.,Constant,1.1
+idea_claim_colonies,idea_claim_colonies = yes,Allows claims to be fabricated on overseas provinces in Colonial regions that are owned by by another nation that is alo overseas.,Constant,1.1
+may_explore,may_explore = yes,Allows the recruitment of explorers and conquisadors.,Constant,1.1
+may_perform_slave_raid,may_perform_slave_raid = yes,Allows ships to perform slave raids.,Constant,1.16
+may_recruit_female_generals,may_recruit_female_generals = yes,Allows the recruitment of female generals.,Constant,1.11
+no_religion_penalty,no_religion_penalty = yes,Removes the penalties associated with negative religious tolerance.,Constant,1.1
+reduced_stab_impacts,reduced_stab_impacts = yes,Reduces the stability hits when taking diplomatic actions that cause them (i.e. Break Marriage).,Constant,1.1
+sea_repair,sea_repair = yes,Allows ships to repair in coastal sea zones adjacent to owned provinces.,Constant,1.1
+may_establish_frontier,may_establish_frontier = yes,Allows the usage of the Siberean Frontier mechanic.,Constant,1.22
+extra_manpower_at_religious_war,extra_manpower_at_religious_war = yes,Grants an increase in manpower recovery by a factor of 3 during religious wars.,Constant,1.1
+auto_explore_adjacent_to_colony,auto_explore_adjacent_to_colony = yes,Grants the abiliy to automatically discover undiscovered provinces adjacent to colonies.,Constant,1.1
+Banners[edit],,,,
+Modifier,Example,Description,Effect Type,Version Added
+has_banners,has_banners = 1,Allows the usage of Manchu banner units. Country scope.,Constant,1.2
+local_has_banners,local_has_banners = 1,Allows Manchu banner units to be raised in owned provinces. Province scope.,Constant,1.2

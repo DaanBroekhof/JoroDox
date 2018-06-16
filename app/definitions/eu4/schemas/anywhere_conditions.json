@@ -4,31 +4,123 @@
   "type": "object",
   "definitions": {
     "anywhere_conditions": {
+      "$mergeProps": [
+        {
+          "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions_dual_scopes"
+        },
+        {
+          "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions_identifier_dual_scopes"
+        },
+        {
+          "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions_properties"
+        }
+      ]
+    },
+    "anywhere_conditions_dual_scopes": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "emperor": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "revolution_target": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "crusade_target": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        }
+      ]
+    },
+    "anywhere_conditions_identifier_dual_scopes": {
+      "$identifierProperties": {
+        "map_provinces": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "country_tags": {
+          "$mergeProps": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_area": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_region": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_superregion": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_provincegroups": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_continent": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "trade_companies": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "colonial_regions": {
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        }
+      }
+    },
+    "anywhere_conditions_properties": {
       "type": "object",
       "properties": {
+        "is_date": {
+          "description": "If the current date is X or later.",
+          "$ref": "special_values.json#/definitions/date"
+        },
+
+
         "allows_female_emperor": {
           "description": "Returns true if females can become emperor.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "always": {
           "description": "Returns true under all circumstances if set to yes, returns false under all circumstances if set to no.",
-          "$reg": "special_values.json#/definitions/boolean"
-        },
-        "calc_true_if": {
-          "description": "Returns true if at least amount number of targets within the specified scope match the specified conditions",
-          "type": "object"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "check_variable": {
           "description": "Returns true if the specified variable is at least X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "which": {"type": "string"},
+            "value": {}
+          },
+          "required": ["which", "value"]
         },
         "current_age": {
           "description": "Returns true, if the current age is X.",
-          "$reg": "identifiers.json#/definitions/age"
-        },
-        "custom_trigger_tooltip": {
-          "description": "Hides the enclosed condition so that it is still required but cannot be seen by human players and displays the specified tooltip in its place.",
-          "type": "object"
+          "$ref": "identifiers.json#/definitions/ages"
         },
         "empire_of_china_reform_level": {
           "description": "Returns true, if at least X Empire of China reforms are enacted. Works similar to [i]hre_reform_level[/i]",
@@ -36,7 +128,7 @@
         },
         "exists": {
           "description": "Returns true if country X exists.",
-          "$reg": "identifiers.json#/definitions/country_tag"
+          "$ref": "identifiers.json#/definitions/country_tags"
         },
         "had_global_flag": {
           "description": "Returns true if the global flag X was last set at least Y days ago.",
@@ -44,31 +136,31 @@
         },
         "has_changed_nation": {
           "description": "Returns true if playing as a released vassal.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_dlc": {
           "description": "Returns true if the DLC X is enabled.",
-          "$reg": "identifiers.json#/definitions/dlc"
+          "$ref": "identifiers.json#/definitions/dlcs"
         },
         "has_first_revolution_started": {
           "description": "Returns true if a revolution has happened in the world.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_game_started": {
           "description": "Returns true if the game has started.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_global_flag": {
           "description": "Returns true if the specified global flag is set.",
-          "$reg": "identifiers.json#/definitions/global_flag"
+          "$ref": "identifiers.json#/definitions/global_flags"
         },
         "has_saved_event_target": {
           "description": "Returns true if the specified event target has been saved.",
-          "$reg": "identifiers.json#/definitions/event_target_unknown"
+          "$ref": "identifiers.json#/definitions/event_target_unknown"
         },
         "has_switched_nation": {
           "description": "Returns true if the player has changed nation by playing as a released vassal.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "hidden_trigger": {
           "description": "Hides the enclosed conditions so that they are still required but cannot be seen by human players.",
@@ -76,19 +168,19 @@
         },
         "hre_heretic_religion": {
           "description": "Returns true if the specified religion is the opposition religion of the HRE.\r\nNote: No localisation for the negation.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "hre_leagues_enabled": {
           "description": "Returns true religious leagues are enabled.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "hre_reform_level": {
           "description": "Returns true if the Xth imperial reform is enacted.",
@@ -96,23 +188,23 @@
         },
         "hre_religion": {
           "description": "Returns true if the specified religion is the dominant faith of the HRE.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "hre_religion_locked": {
           "description": "Returns true if an official faith of the HRE has been permanently established.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "hre_religion_treaty": {
           "description": "Returns true if the treaty of religious peace in the HRE has been signed.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "hre_size": {
           "description": "Returns true if the HRE contains at least X members.",
@@ -128,15 +220,15 @@
         },
         "ironman": {
           "description": "Returns true if the ironman mode is enabled",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_imperial_ban_allowed": {
           "description": "Returns true if the emperor has a casus belli on occupiers of the Empire.\r\nNote: Enabled/Disabled with Call for Reichsreform.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_institution_enabled": {
           "description": "Returns true if the specified institution has been discovered.",
-          "$reg": "identifiers.json#/definitions/institution"
+          "$ref": "identifiers.json#/definitions/institutions"
         },
         "is_month": {
           "description": "Returns true if the current month is at least X (zero based).",
@@ -144,15 +236,15 @@
         },
         "is_random_new_world": {
           "description": "Returns true if playing with a random New World.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_reformation_center": {
           "description": "Returns true if the province is a reformation center.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_religion_enabled": {
           "description": "Returns true if the specified religion is enabled.",
-          "$reg": "identifiers.json#/definitions/religion"
+          "$ref": "identifiers.json#/definitions/religions"
         },
         "is_variable_equal": {
           "description": "Returns true if the specified variable is equal to X.",
@@ -164,11 +256,11 @@
         },
         "normal_or_historical_nations": {
           "description": "Returns true if game is set to use normal or historical nations.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "normal_province_values": {
           "description": "Returns true if game is set to use normal province values.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "num_of_electors": {
           "description": "Returns true if there are at least X electors of the HRE.",
@@ -176,7 +268,7 @@
         },
         "papacy_active": {
           "description": "Returns true if the papacy is active.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "real_day_of_year": {
           "description": "Returns true, if today is X. Refers to the actual real day (probably takes system time).",
@@ -196,15 +288,15 @@
         },
         "revolution_target_exists": {
           "description": "Returns true if there is a revolutionary target in the world.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "start_date": {
           "description": "Returns true if the start date of the campaign is X.",
-          "$reg": "special_values.json#/definitions/date"
+          "$ref": "special_values.json#/definitions/date"
         },
         "started_in": {
           "description": "Returns true if the start date of the campaign is X or after.",
-          "$reg": "special_values.json#/definitions/date"
+          "$ref": "special_values.json#/definitions/date"
         },
         "total_number_of_cardinals": {
           "description": "Returns true if the total number of cardinals is at least X.",

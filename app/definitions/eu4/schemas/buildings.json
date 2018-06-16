@@ -1,0 +1,86 @@
+{
+  "$id": "http://jorodox.org/schemas/buildings.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cost": {
+          "type": "number"
+        },
+        "time": {
+          "type": "number"
+        },
+        "one_per_country": {
+          "description": "Optional, limits construction to one per country",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_in_gold_provinces": {
+          "description": "Optional, whether this building can be built in Gold producing provinces",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "indestructible": {
+          "description": "Optional, exempts this building from being destroyed via bankruptcy",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "onmap": {
+          "description": "Optional, whether this building should display a 3D map model",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "influencing_fort": {
+          "description": "Optional, whether this building operates like a fort",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "manufactory": {
+          "description": "Optional. Provinces with the listed tradegoods can construct this building.",
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/tradegoods"
+          }
+        },
+        "trigger": {
+          "description": "Optional. Province scope. Limits construction of building if not met.",
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "modifier": {
+          "description": "The modifier the building applies to the province. Country-scope modifiers used here will apply to the owning country of the building instead.",
+          "$mergeProps": [
+            {"$ref": "province_modifiers.json#/definitions/province_modifiers"},
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+          ]
+        },
+        "ai_will_do": {
+          "description": "The importance the AI places on constructing this building.",
+          "$ref": "country_factor.json#/definitions/country_factor"
+        },
+        "on_built": {
+          "description": "Optional. On action that fires when built. THIS = Province, FROM = Builder (not necessarily owner, can be overlord)",
+          "type": "object"
+        },
+        "on_destroyed": {
+          "description": "Optional. On action that fires when destroyed. (not obsoleted) THIS = Province, FROM = Destroyer",
+          "type": "object"
+        },
+        "on_obsolete": {
+          "description": "Optional. On action that fires when obsoleted. (not destroyed) THIS = Province, FROM = Destroyer",
+          "type": "object"
+        }
+      },
+      "required": [
+        "cost",
+        "time",
+        "ai_will_do"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

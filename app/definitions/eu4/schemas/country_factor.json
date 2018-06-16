@@ -10,7 +10,12 @@
           "type": "number"
         },
         "modifier": {
-          "type": "object"
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "country_factor.json#/definitions/country_factor"
+            }
+          }
         }
       }
     }

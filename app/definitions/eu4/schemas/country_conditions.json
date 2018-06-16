@@ -62,6 +62,9 @@
         "any_army": {
           "$ref": "unit_conditions.json#/definitions/unit_conditions"
         },
+        "all_ally": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
         "all_coalition_member": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
@@ -150,7 +153,12 @@
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "any_owned_province": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            }
+          }
         },
         "any_province": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
@@ -173,45 +181,109 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "monthly_income": {
+          "description": "If monthly income is higher than X, or higher than scope Y.",
+          "anyOf": [
+            {"type": "number"},
+            {"$ref": "special_values.json#/definitions/country_scope"}
+          ]
+        },
+        "num_of_regiments_at_full_drill": {
+          "description": "Number of regiments at full drill is higher than X.",
+          "type": "number"
+        },
+        "num_of_captured_ships_with_boarding_doctrine": {
+          "description": "Number of captures ships is higher than X.",
+          "type": "number"
+        },
+        "innovativeness": {
+          "description": "Value of innovativeness is higher than X.",
+          "type": "number"
+        },
+        "army_professionalism": {
+          "description": "Value of army professionalism is X or higher.",
+          "type": "number"
+        },
+        "num_of_different_religions_in_court": {
+          "description": "Number of different religions is X or higher.",
+          "type": "number"
+        },
+        "num_of_different_cultures_in_court": {
+          "description": "Number of different cultures is X or higher.",
+          "type": "number"
+        },
+        "num_of_trade_companies": {
+          "description": "Number of trade companies is X or higher.",
+          "type": "number"
+        },
+        "custom_trigger_tooltip": {
+          "description": "Hides the enclosed condition so that it is still required but cannot be seen by human players and displays the specified tooltip in its place.",
+          "type": "object",
+          "$mergeProps": [
+            {"properties": {"tooltip": {"type": "string"}}},
+            {"$ref": "country_conditions.json#/definitions/country_conditions"}
+          ]
+        },
+        "calc_true_if": {
+          "description": "Returns true if at least amount number of targets within the specified scope match the specified conditions",
+          "type": "object",
+          "$mergeProps": [
+            {"properties": {"amount": {"type": "number"}}},
+            {"$ref": "country_conditions.json#/definitions/country_conditions"}
+          ]
+        },
+        "hidden_trigger": {
+          "description": "Hides the enclosed conditions so that they are still required but cannot be seen by human players.",
+          "$mergeProps": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"}
+          ]
+        },
+        "mission_completed": {
+          "description": "If this mission is completed by this country.",
+          "$ref": "identifiers.json#/definitions/missions"
+        },
+        "owns_all_islands": {
+          "description": "If the country owns all the island..?",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "num_of_consorts": {
+          "description": "Number of consorts is X or higher.",
+          "type": "number"
+        },
+
+
         "absolutism": {
           "description": "Returns true if the country has at least X absolutism.",
           "type": "number"
         },
         "accepted_culture": {
           "description": "Returns true if the country accepts the specified culture.",
-          "$reg": "identifiers.json#/definitions/culture",
+          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/culture"
+              "$ref": "identifiers.json#/definitions/cultures"
             },
             {
-              "$reg": "special_values.json#/definitions/province_scope"
+              "$ref": "special_values.json#/definitions/province_scope"
             }
           ]
         },
         "active_major_mission": {
           "description": "Returns true if X is the current mission ot the country.",
-          "$reg": "identifiers.json#/definitions/mission"
+          "$ref": "identifiers.json#/definitions/missions"
         },
         "adm": {
           "description": "Returns true if the country has a ruler with at least as high administrative skill as the ruler of the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "adm_power": {
           "description": "Returns true if the country has at least as much administrative power than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -221,39 +293,38 @@
         },
         "advisor": {
           "description": "Returns true if the country has an advisor of the specified type.",
-          "$reg": "identifiers.json#/definitions/advisor"
+          "$ref": "identifiers.json#/definitions/advisortypes"
         },
         "advisor_exists": {
           "description": "Returns true if the advisor X exists.",
-          "$reg": "identifiers.json#/definitions/advisor_id_unknown"
+          "$ref": "identifiers.json#/definitions/advisor_id_unknown"
         },
         "ai": {
           "description": "Returns true if the country is controlled by the AI.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "ai_attitude": {
           "description": "Returns true if the country has the specified attitude towards country X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "attitude": {"$ref": "identifiers.json#/definitions/ai_attitudes"}
+          },
+          "required": ["who", "attitude"]
         },
         "alliance_with": {
           "description": "Returns true if the country has an alliance with X.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "army_size": {
           "description": "Returns true if the country has an army with at least as much soldiers than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -263,18 +334,17 @@
         },
         "army_strength": {
           "description": "Returns true, if the country's army size is at least the size of X times the army size of the specified country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "required"]
         },
         "army_tradition": {
           "description": "Returns true if the country has an at least as high army tradition as the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+         "$ref": "special_values.json#/definitions/country_or_number"
         },
         "artillery_fraction": {
           "description": "Returns true if the ratio of the artillery fraction to the army size of the country is at least X.",
@@ -282,16 +352,16 @@
         },
         "at_war_with_religious_enemy": {
           "description": "Returns true if the country is at war with any country of a different religion.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "authority": {
           "description": "Returns true if the Inti country has at least as much authority as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -321,42 +391,54 @@
         },
         "border_distance": {
           "description": "Returns true if distance between the borders of the countries is at least X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "distance": {"$ref": "identifiers.json#/definitions/ai_attitudes"}
+          },
+          "required": ["who", "distance"]
         },
         "can_be_overlord": {
           "description": "Returns true, if country meets the conditions defined in the subject type's [i]is_potential_overlord[/i] section.",
-          "$reg": "identifiers.json#/definitions/subject_type"
+          "$ref": "identifiers.json#/definitions/subject_types"
         },
         "can_create_vassals": {
           "description": "Returns true if the country can create a vassal.\r\nWarning: Interprets anything after â€˜=â€™ as â€œyesâ€�.\r\nNote: Works only for independent countries.",
           "anyOf": [
             {
-              "$reg": "special_values.json#/definitions/yes"
+              "$ref": "special_values.json#/definitions/yes"
             }
           ]
         },
         "can_heir_be_child_of_consort": {
           "description": "Returns true if the countryâ€™s heir can potentially be the consortâ€™s child.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "can_justify_trade_conflict": {
           "description": "Returns true if the country can justify a trade conflict against country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "capital": {
           "description": "Returns true if the country's capital is the province with the ID X.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "capital_distance": {
           "description": "Returns true if distance between the capitals of the countries is at least X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "distance": {"type": "number"}
+          },
+          "required": ["who", "distance"]
         },
         "capital_trade_node": {
           "description": "Returns true if trade node capital is X",
@@ -370,10 +452,10 @@
           "description": "Returns true if the country has at least as much church power as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -381,16 +463,16 @@
           "description": "Returns true if the country is the target of a coalition.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "colony_claim": {
           "description": "Returns true if country has claim on colony",
-          "$reg": "identifiers.json#/definitions/country_tag"
+          "$ref": "identifiers.json#/definitions/country_tags"
         },
         "consort_adm": {
           "description": "Returns true if the country has a consort with an administrative skill of at least X.",
@@ -402,13 +484,13 @@
         },
         "consort_culture": {
           "description": "Returns true, if the country's consort has the specified culture. Can utilise Event Scope Values.",
-          "$reg": "identifiers.json#/definitions/culture",
+          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/culture"
+              "$ref": "identifiers.json#/definitions/cultures"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -418,7 +500,7 @@
         },
         "consort_has_personality": {
           "description": "Returns true if the countryâ€™s consort has the specified personality.",
-          "$reg": "identifiers.json#/definitions/leader_personality"
+          "$ref": "identifiers.json#/definitions/leader_personalities"
         },
         "consort_mil": {
           "description": "Returns true if the country has a consort with an military skill of at least X.",
@@ -426,28 +508,28 @@
         },
         "consort_religion": {
           "description": "Returns true, if the country's consort has the specified religion. Can utilise Event Scope Values.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "controls": {
           "description": "Returns true if the province with id X is controlled by the country.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "core_claim": {
           "description": "Returns true if the country has a core on any province owned by country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -461,19 +543,19 @@
         },
         "culture_group": {
           "description": "Returns true if the country/province has a culture of the specified culture group.",
-          "$reg": "identifiers.json#/definitions/culture_group"
+          "$ref": "identifiers.json#/definitions/culture_groups"
         },
         "culture_group_claim": {
           "description": "Returns true if country's primary culture is the same culture group as any province owned by country X.",
-          "$reg": "identifiers.json#/definitions/country_tag"
+          "$ref": "identifiers.json#/definitions/country_tags"
         },
         "current_debate": {
           "description": "Returns true if the parliament of the country debates about X.",
-          "$reg": "identifiers.json#/definitions/debate"
+          "$ref": "identifiers.json#/definitions/debates"
         },
         "current_icon": {
           "description": "Returns true, if the country has the specified (orthodox) icon.",
-          "$reg": "identifiers.json#/definitions/unknown_icon"
+          "$ref": "identifiers.json#/definitions/icons_unknown"
         },
         "current_institution_growth": {
           "description": "Returns true, if the country/province has an institution growth of at least X for the first not embraced institution.",
@@ -487,10 +569,10 @@
           "description": "Returns true if the country is in a defensive war with country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -502,32 +584,25 @@
           "description": "Returns true if the country has at least as much devotion as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "dip": {
           "description": "Returns true if the country has a ruler with at least as high diplomatic skill as the ruler of the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "dip_power": {
           "description": "Returns true if the country has at least as much diplomatic power than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -537,36 +612,29 @@
         },
         "diplomatic_reputation": {
           "description": "Returns true if the country has at least as much diplomatic reputation as the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "dominant_culture": {
           "description": "Returns true if the dominant culture in the country is X.",
-          "$reg": "identifiers.json#/definitions/culture",
+          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/culture"
+              "$ref": "identifiers.json#/definitions/cultures"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "dominant_religion": {
           "description": "Returns true if the dominant religion in the country is X.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -574,10 +642,10 @@
           "description": "Returns true if the country has at least as much doom than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -585,40 +653,82 @@
           "description": "Returns true if both countries are ruled by the same dynasty.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "employed_advisor": {
           "description": "Returns true if the country has employed an advisor with the specified characteristics.\r\n(Any combinations of type, home_religion and home_culture are permitted.)",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "is_male": {"$ref": "special_values.json#/definitions/boolean"},
+            "home_religion": {"$ref": "identifiers.json#/definitions/religions"},
+            "home_culture": {"$ref": "identifiers.json#/definitions/religions"},
+            "type": {"$ref": "identifiers.json#/definitions/advisortypes"}
+          },
+          "required": []
         },
         "estate_influence": {
           "description": "Returns true if the estate X in the country has at least Y influence.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {"$ref": "identifiers.json#/definitions/estates"},
+            "influence": {"type": "number"}
+          },
+          "required": ["estate", "influence"]
         },
         "estate_loyalty": {
           "description": "Returns true if the estate X in the country has at least Y loyalty.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {"$ref": "identifiers.json#/definitions/estates"},
+            "loyalty": {"type": "number"}
+          },
+          "required": ["estate", "loyalty"]
         },
         "estate_territory": {
           "description": "Returns true if the estate X in the country controls at least Y% of the total development.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {"$ref": "identifiers.json#/definitions/estates"},
+            "territory": {"type": "number"}
+          },
+          "required": ["estate", "territory"]
         },
         "exists": {
           "description": "Returns true if the scoped country exists.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "anyOf": [
+            {
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
+            },
+            {
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          ]
         },
         "faction_in_power": {
           "description": "Returns true if the faction in power of the country is X.",
-          "$reg": "identifiers.json#/definitions/faction"
+          "$ref": "identifiers.json#/definitions/factions"
         },
         "faction_influence": {
           "description": "Returns true if the faction X of the country has at least Y influence.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "faction": {"$ref": "identifiers.json#/definitions/factions"},
+            "influence": {"type": "number"}
+          },
+          "required": ["estate", "influence"]
         },
         "federation_size": {
           "description": "Returns true if the federation with the country has at least X members.",
@@ -630,7 +740,7 @@
         },
         "full_idea_group": {
           "description": "Returns true if the country has completed the X idea group.",
-          "$reg": "identifiers.json#/definitions/idea"
+          "$ref": "identifiers.json#/definitions/idea_groups"
         },
         "galley_fraction": {
           "description": "Returns true if the ratio of the galley fraction to the navy size of the country is at least X.",
@@ -646,7 +756,7 @@
         },
         "government": {
           "description": "Returns true if the country has government type X.\r\nNote: can search for the 3 government groups (monarchy, republic, theocracy), for a specific government type (feudal_monarchy, absolute_monarchy, etc.) or tribal",
-          "$reg": "identifiers.json#/definitions/government"
+          "$ref": "identifiers.json#/definitions/governments"
         },
         "government_rank": {
           "description": "Returns true if the country has a government rank of X or higher.",
@@ -660,28 +770,52 @@
           "description": "Returns true if the country is guaranteed by X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "had_active_policy": {
           "description": "Returns true, if the country still has and had the specified policy for at least X days.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "policy": {"$ref": "identifiers.json#/definitions/policies"},
+            "days": {"type": "number"}
+          },
+          "required": ["policy", "days"]
         },
         "had_consort_flag": {
           "description": "Returns true if the consort flag X was last set at least Y days ago",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flag": {"$ref": "identifiers.json#/definitions/consort_flags"},
+            "days": {"type": "number"}
+          },
+          "required": ["flag", "days"]
         },
         "had_country_flag": {
           "description": "Returns true if the country flag X was last set for the country at least Y days ago.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flag": {"$ref": "identifiers.json#/definitions/country_flags"},
+            "days": {"type": "number"}
+          },
+          "required": ["flag", "days"]
         },
         "had_heir_flag": {
           "description": "Returns true if the heir flag X was last set at least Y days ago",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flag": {"$ref": "identifiers.json#/definitions/leader_flags"},
+            "days": {"type": "number"}
+          },
+          "required": ["flag", "days"]
         },
         "had_recent_war": {
           "description": "Returns true if the country fought a war within the last X years.",
@@ -689,7 +823,13 @@
         },
         "had_ruler_flag": {
           "description": "Returns true if the ruler flag X was last set for the current ruler at least Y days ago",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flag": {"$ref": "identifiers.json#/definitions/leader_flags"},
+            "days": {"type": "number"}
+          },
+          "required": ["flag", "days"]
         },
         "harmonization_progress": {
           "description": "Returns true, if the country's current harmonization progress is at least at X.",
@@ -701,200 +841,231 @@
         },
         "has_active_debate": {
           "description": "Returns true if the country has ongoing debate in parliament.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_active_fervor": {
           "description": "Returns true if the country has activated a fervor effect.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_active_policy": {
           "description": "Returns true if country has the specified policy active.",
-          "$reg": "identifiers.json#/definitions/policy"
+          "$ref": "identifiers.json#/definitions/policies"
         },
         "has_adopted_cult": {
           "description": "Returns true if the country has adopted the specified cult.",
-          "$reg": "identifiers.json#/definitions/fetishist_cults"
+          "$ref": "identifiers.json#/definitions/fetishist_cults"
         },
         "has_advisor": {
           "description": "Returns true if the country has hired an advisor.\r\nWarning: Inteprets every right side argument as yes.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_age_ability": {
           "description": "Returns true, if the country has the specified age ability.",
-          "$reg": "identifiers.json#/definitions/age"
+          "$ref": "identifiers.json#/definitions/ages"
         },
         "has_any_disaster": {
           "description": "Returns true if the country is currently in a disaster.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_border_with_religious_enemy": {
           "description": "Returns true if the country borders any country of a different religion.\r\nWarning: Interprets anything after â€˜=â€™ as â€œyesâ€�.",
           "anyOf": [
             {
-              "$reg": "special_values.json#/definitions/yes"
+              "$ref": "special_values.json#/definitions/yes"
             }
           ]
         },
         "has_casus_belli": {
           "description": "Returns true if the country has a casus belli of type X against country Y.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {"$ref": "identifiers.json#/definitions/cb_types"},
+            "target": {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
+          },
+          "required": ["type", "target"]
         },
         "has_casus_belli_against": {
           "description": "Returns true if the country has a casus belli against country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "has_church_aspect": {
           "description": "Returns true if the country has enabled the church aspect X.",
-          "$reg": "identifiers.json#/definitions/church_aspect"
+          "$ref": "identifiers.json#/definitions/church_aspects"
         },
         "has_colonial_parent": {
           "description": "Returns true if the specified country is the colonial parent of the country.",
-          "$reg": "identifiers.json#/definitions/country_tag"
+          "$ref": "identifiers.json#/definitions/country_tags"
         },
         "has_commanding_three_star": {
           "description": "Returns true, if country has a three star general.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_consort": {
           "description": "Returns true if the country has a consort.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_consort_flag": {
           "description": "Returns true if the consort flag X is set.",
-          "$reg": "identifiers.json#/definitions/consort_flag_unknown"
+          "$ref": "identifiers.json#/definitions/consort_flags_unknown"
         },
         "has_consort_regency": {
           "description": "Returns true if the country has a consort regency.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_country_flag": {
           "description": "Returns true if the flag X is set for the country.",
-          "$reg": "identifiers.json#/definitions/country_flag"
+          "$ref": "identifiers.json#/definitions/country_flags"
         },
         "has_country_modifier": {
           "description": "Returns true if the country has the modifier X.",
-          "$reg": "identifiers.json#/definitions/modifier"
+          "$ref": "identifiers.json#/definitions/modifiers"
         },
         "has_custom_ideas": {
           "description": "Returns true if the country has custom ideas.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_disaster": {
           "description": "Returns true if the country is currently in the disaster X.",
-          "$reg": "identifiers.json#/definitions/disaster"
+          "$ref": "identifiers.json#/definitions/disasters"
         },
         "has_disaster_progress": {
           "description": "Returns true if the disaster progress of the specified disaster is at least X in the country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "disaster": {"$ref": "identifiers.json#/definitions/disasters"},
+            "value": {"type": "number"}
+          },
+          "required": ["type", "target"]
         },
         "has_discovered": {
           "description": "Returns true if the country has discovered the province with the ID X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/province_id"
+              "$ref": "identifiers.json#/definitions/map_provinces"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             },
             {
-              "$reg": "special_values.json#/definitions/province_scope"
+              "$ref": "special_values.json#/definitions/province_scope"
             }
           ]
         },
         "has_divert_trade": {
           "description": "Returns true if the protectorate has divert trade to its overlord.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_embargo_rivals": {
           "description": "Returns true if the subject nation is embargoing overlord's rivals.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_estate": {
           "description": "Returns true if the country has estate X.",
-          "$reg": "identifiers.json#/definitions/estate"
+          "$ref": "identifiers.json#/definitions/estates"
         },
         "has_estate_influence_modifier": {
           "description": "Returns true if the estate X in the country has the influence modifier Y.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {"$ref": "identifiers.json#/definitions/estates"},
+            "modifier": {"$ref": "identifiers.json#/definitions/influence_modifiers"}
+          },
+          "required": ["estate", "modifier"]
         },
         "has_estate_loyalty_modifier": {
           "description": "Returns true if the estate X in the country has the loyalty modifier Y.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {"$ref": "identifiers.json#/definitions/estates"},
+            "modifier": {"$ref": "identifiers.json#/definitions/loyalty_modifiers"}
+          },
+          "required": ["estate", "modifier"]
         },
         "has_faction": {
           "description": "Returns true if the country has the specified faction.",
-          "$reg": "identifiers.json#/definitions/faction"
+          "$ref": "identifiers.json#/definitions/factions"
         },
         "has_factions": {
           "description": "Returns true if country has factions.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_female_consort": {
           "description": "Returns true if the country has a female consort.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_female_heir": {
           "description": "Returns true if the country has a female heir.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_foreign_consort": {
           "description": "Returns true if the country has foreign consort.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_foreign_heir": {
           "description": "Returns true if the country has foreign heir.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_friendly_reformation_center": {
           "description": "Returns true if the country has a friendly center of reformation.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_given_consort_to": {
           "description": "Returns true if the scoped country has given a consort to the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "has_global_modifier_value": {
           "description": "Returns true if the value of the specified modifier is at least X for the country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "which": {"$ref": "identifiers.json#/definitions/modifiers"},
+            "value": {"type": "number"},
+            "extra_shortcut": {"$ref": "special_values.json#/definitions/boolean"}
+          },
+          "required": ["which", "value"]
         },
         "has_government_mechanic": {
           "description": "Returns true, if the country uses the specified government mechanic.",
-          "$reg": "identifiers.json#/definitions/government_mechanic"
+          "$ref": "identifiers.json#/definitions/government_mechanics"
         },
         "has_guaranteed": {
           "description": "Returns true if the country has guaranteed country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "has_harmonized_with": {
           "description": "Returns true, if the country has harmonized with the specified religion or religion group.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -902,36 +1073,36 @@
           "description": "Returns true if the country has an heir (named X).",
           "anyOf": [
             {
-              "$reg": "special_values.json#/definitions/boolean"
+              "$ref": "special_values.json#/definitions/boolean"
             },
             {
-              "$reg": "identifiers.json#/definitions/heir_name_unknown"
+              "$ref": "identifiers.json#/definitions/heir_name"
             }
           ]
         },
         "has_heir_flag": {
           "description": "Returns true if the heir flag X is set.",
-          "$reg": "identifiers.json#/definitions/country_flag"
+          "$ref": "identifiers.json#/definitions/country_flags"
         },
         "has_hostile_reformation_center": {
           "description": "Returns true if the country has a hostile center of reformation.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_idea": {
           "description": "Returns true if the country has the X idea.",
-          "$reg": "identifiers.json#/definitions/idea"
+          "$ref": "identifiers.json#/definitions/ideas"
         },
         "has_idea_group": {
           "description": "Returns true if the country has chosen the X idea group.",
-          "$reg": "identifiers.json#/definitions/idea"
+          "$ref": "identifiers.json#/definitions/idea_groups"
         },
         "has_institution": {
           "description": "Returns true if the country has the specified institution.",
-          "$reg": "identifiers.json#/definitions/institution"
+          "$ref": "identifiers.json#/definitions/institutions"
         },
         "has_leader": {
           "description": "Returns true if the country has the leader \"X\".",
-          "$reg": "identifiers.json#/definitions/leader_name_unknown"
+          "$ref": "identifiers.json#/definitions/leader_name"
         },
         "has_leader_with": {
           "description": "Returns true if the country has a leader with at least the specified stats.\r\nadmiral = yes and general = yes can be used as further limitation.",
@@ -939,15 +1110,21 @@
         },
         "has_matching_religion": {
           "description": "Returns true if the countries have the same religion or syncretic faith.",
-          "$reg": "special_values.json#/definitions/country_scope"
+          "$ref": "special_values.json#/definitions/country_scope"
         },
         "has_new_dynasty": {
           "description": "Returns true if the country has a new dynasty.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_opinion": {
           "description": "Returns true if the country has at least value opinion of the country specified by who.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "has_opinion_diff": {
           "description": "Returns true if opinion difference between country X and Y, is at least Z",
@@ -955,106 +1132,124 @@
         },
         "has_opinion_modifier": {
           "description": "Returns true if the country has the opinion modifier modifier towards the country specified by who.\r\nCan also specify a value of the modifier (but it is not displayed).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "modifier": {"$ref": "identifiers.json#/definitions/modifiers"}
+          },
+          "required": ["who", "modifier"]
         },
         "has_parliament": {
           "description": "Returns true if the country has a parliament.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_personal_deity": {
           "description": "Returns true if the ruler of the country has picked the specified personal deity.",
-          "$reg": "identifiers.json#/definitions/personal_deity"
+          "$ref": "identifiers.json#/definitions/personal_deities"
         },
         "has_privateers": {
           "description": "Returns true if the country has privateers in any trade node.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_promote_investments": {
           "description": "Returns true if the country is promoting investments in the specified trade company (region).",
-          "$reg": "identifiers.json#/definitions/region"
+          "$ref": "identifiers.json#/definitions/map_regions"
         },
         "has_regency": {
           "description": "Returns true if the country has a regency.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_removed_fow": {
           "description": "Returns true if the country has lifted the fog of war from the specified country.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_ruler": {
           "description": "Returns true if the country has a ruler named \"X\".",
-          "$reg": "identifiers.json#/definitions/ruler_name"
+          "$ref": "identifiers.json#/definitions/ruler_name"
         },
         "has_ruler_flag": {
           "description": "Returns true if the ruler flag X is set for the country.",
-          "$reg": "identifiers.json#/definitions/country_flag"
+          "$ref": "identifiers.json#/definitions/country_flags"
         },
         "has_ruler_modifier": {
           "description": "Returns true the country has the modifier X until the ruler changes.",
-          "$reg": "identifiers.json#/definitions/modifier"
+          "$ref": "identifiers.json#/definitions/modifiers"
         },
         "has_scutage": {
           "description": "Returns true if the vassal pays scutage.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_secondary_religion": {
           "description": "Returns true if the county has a secondary religion.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_send_officers": {
           "description": "Returns true if the protectorate has received officers.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_spawned_rebels": {
           "description": "Returns true if rebels of the specified type are active in the country.",
-          "$reg": "identifiers.json#/definitions/rebel_type"
+          "$ref": "identifiers.json#/definitions/rebel_types"
         },
         "has_spawned_supported_rebels": {
           "description": "Returns true if rebels which were supported by the secified country are active in the country.",
-          "$reg": "special_values.json#/definitions/country_scope"
+          "$ref": "special_values.json#/definitions/country_scope"
         },
         "has_spy_network_from": {
           "description": "Returns true if the country X has a spy network of at least the specified size in the country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "has_spy_network_in": {
           "description": "Returns true if the country has a spy network of at least the specified size in country X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "has_subsidize_armies": {
           "description": "Returns true if the march has subsidizes armies.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_support_loyalists": {
           "description": "Returns true if the subject nation receives support for loyalists.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_truce": {
           "description": "Returns true if the country has truce.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "has_unified_culture_group": {
           "description": "Returns true, if the country owns all provinces of its culture group.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "has_unit_type": {
           "description": "Returns true if the country has selected unit type X as preferable unit.",
-          "$reg": "identifiers.json#/definitions/unit_type"
+          "$ref": "identifiers.json#/definitions/unit_types"
         },
         "has_unlocked_cult": {
           "description": "Returns true if the country has unlocked the specified cult.",
-          "$reg": "identifiers.json#/definitions/fetishist_cults"
+          "$ref": "identifiers.json#/definitions/fetishist_cults"
         },
         "has_wartaxes": {
           "description": "Returns true if the country has raised war taxes.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "heavy_ship_fraction": {
           "description": "Returns true if the ratio of the heavy ship fraction to the navy size of the country is at least X.",
@@ -1074,13 +1269,13 @@
         },
         "heir_culture": {
           "description": "Returns true, if the country's heir has the specified culture. Can utilise Event Scope Values.",
-          "$reg": "identifiers.json#/definitions/culture",
+          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/culture"
+              "$ref": "identifiers.json#/definitions/cultures"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1094,7 +1289,7 @@
         },
         "heir_has_personality": {
           "description": "Returns true if the countryâ€™s heir has the specified personality.",
-          "$reg": "identifiers.json#/definitions/leader_personality"
+          "$ref": "identifiers.json#/definitions/leader_personalities"
         },
         "heir_has_ruler_dynasty": {
           "description": "Returns true if the countryâ€™s heir and ruler have the same dynasty.",
@@ -1108,22 +1303,22 @@
           "description": "Returns true if the country has an heir with nationality X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "heir_religion": {
           "description": "Returns true, if the country's heir has the specified religion. Can utilise Event Scope Values.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1131,10 +1326,10 @@
           "description": "Returns true if the countries are historical friends.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1142,10 +1337,10 @@
           "description": "Returns true if the countries are historical rivals",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1153,24 +1348,30 @@
           "description": "Returns true if the country has at least as much horde unity as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "in_golden_age": {
           "description": "Returns true, if the country currently is in a golden age.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "in_league": {
           "description": "Returns true if the countries is in the X league.",
-          "$reg": "identifiers.json#/definitions/league_unknown"
+          "$ref": "identifiers.json#/definitions/leagues_unknown"
         },
         "incident_variable_value": {
           "description": "Returns true, if the value of the specified incident is at least X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "incident": {"$ref": "identifiers.json#/definitions/incidents"},
+            "value": {"type": "number"}
+          },
+          "required": ["incident", "value"]
         },
         "infantry_fraction": {
           "description": "Returns true if the ratio of the infantry fraction to the army size of the country is at least X.",
@@ -1180,16 +1381,22 @@
           "description": "Returns true if the country has at least as much inflation as the country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "institution_difference": {
           "description": "Returns true if the country has embraced at least X more institutions than the specified country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "invested_papal_influence": {
           "description": "Returns true if the country has invested at least X papal influence in the election of the next papal controller.",
@@ -1197,247 +1404,261 @@
         },
         "is_advisor_employed": {
           "description": "Returns true if the advisor with the ID X is employed.",
-          "$reg": "identifiers.json#/definitions/advisor_id_unknown"
+          "$ref": "identifiers.json#/definitions/advisor_id_unknown"
         },
         "is_at_war": {
           "description": "Returns true if the country is at war.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_bankrupt": {
           "description": "Returns true if the country is bankrupt.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_claim": {
           "description": "Returns true if the country has a claim on the province with the ID X.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "is_client_nation": {
           "description": "Returns true if the country is a client state.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_client_nation_of": {
           "description": "Returns true if the country is a client state of X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_colonial_nation": {
           "description": "Returns true if the country is a non-independent colonial nation.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_colonial_nation_of": {
           "description": "Returns true if the country is a colonial nation of X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_core": {
           "description": "Returns true if the country has a core on the province with the ID X.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "is_crusade_target": {
           "description": "Returns true if the country is the target of a crusade.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_defender_of_faith": {
           "description": "Returns true if the country is the defender of the faith.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_dynamic_tag": {
           "description": "Returns true, if the country is a dynamically created tag (e.g. client states).",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_elector": {
           "description": "Returns true if the country is an elector of the HRE.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_emperor": {
           "description": "Returns true if the country is the emperor of the HRE.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_emperor_of_china": {
           "description": "Returns true if the country is the emperor of China.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_excommunicated": {
           "description": "Returns true if the ruler of the country is excommunicated.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_federation_leader": {
           "description": "Returns true if the country is a federation leader.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_female": {
           "description": "Returns true if ruler of the country is female.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_force_converted": {
           "description": "Returns true if country has been force-converted via either religious rebels or an Enforce Religion peace treaty.\r\nNote: The subject interaction Enforce Religion does not cause the subject to be considered as force-converted.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_former_colonial_nation": {
           "description": "Returns true if the country is a colonial nation that has gained independence.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_great_power": {
           "description": "Returns true if the country is a great power.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_harmonizing_with": {
           "description": "Returns true, if the country is currently harmonizing with the specified religion or religion group.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_heir_leader": {
           "description": "Returns true if the heir of the country is a general.\r\nNote: Proper localisation for the negation only with NOT = â€¦.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_coalition": {
           "description": "Returns true if the country is in a coalition.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_coalition_war": {
           "description": "Returns true if the country is fighting a coalition war.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_deficit": {
           "description": "Returns true if the country is running a deficit.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_league_war": {
           "description": "Returns true if the country is in a religious league war.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_trade_league": {
           "description": "Returns true if the country is a member of a trade league.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_trade_league_with": {
           "description": "Returns true if the country is a member of the same trade league as country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_in_war": {
           "description": "Returns true if the country is at war and the mentioned conditions are fulfilled.\r\nPossible are: attacker_leader, defender_leader, casus_belli, defenders, attackers, participants, war_score, start_date, duration, war_goal_province.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "attacker_leader": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "defender_leader": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "casus_belli": {"$ref": "identifiers.json#/definitions/cb_types"},
+            "defenders": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "attackers": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "participants": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "war_score": {"type": "number"},
+            "start_date": {"$ref": "special_values.json#/definitions/date"},
+            "war_goal_province": {"$ref": "identifiers.json#/definitions/map_provinces"},
+            "duration": {"type": "number"}
+          },
+          "required": []
         },
         "is_incident_active": {
           "description": "Returns true, if the specified incident is active.",
-          "$reg": "identifiers.json#/definitions/incident"
+          "$ref": "identifiers.json#/definitions/incidents"
         },
         "is_incident_happened": {
           "description": "Returns true, if the specified incident already happened.",
-          "$reg": "identifiers.json#/definitions/incident"
+          "$ref": "identifiers.json#/definitions/incidents"
         },
         "is_incident_possible": {
           "description": "Returns true, if the specified incident can possibly happen.",
-          "$reg": "identifiers.json#/definitions/incident"
+          "$ref": "identifiers.json#/definitions/incidents"
         },
         "is_incident_potential": {
           "description": "Returns true, if the specified incident is visible and therefor can happen in the future.",
-          "$reg": "identifiers.json#/definitions/incident"
+          "$ref": "identifiers.json#/definitions/incidents"
         },
         "is_league_enemy": {
           "description": "Returns true if country X is league enemy of the country('s league).",
-          "$reg": "special_values.json#/definitions/country_scope"
+          "$ref": "special_values.json#/definitions/country_scope"
         },
         "is_league_friend": {
           "description": "Returns true, if the country is in the same religious league as the specified country.",
-          "$reg": "special_values.json#/definitions/country_scope"
+          "$ref": "special_values.json#/definitions/country_scope"
         },
         "is_league_leader": {
           "description": "Returns true if the country leads a religious league.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_lesser_in_union": {
           "description": "Returns true if the country is the lesser partner in a personal union.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_march": {
           "description": "Returns true if the country is a march.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_monarch_leader": {
           "description": "Returns true if the rulerof the country is a general.\r\nNote: Proper localisation for the negation only with NOT = â€¦.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_neighbor_of": {
           "description": "Returns true if the country is neighbor of X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_nomad": {
           "description": "Returns true if country's government is nomadic.\r\n(Note: Only the Steppe Nomads government is flagged as nomadic.)",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_orangists_in_power": {
           "description": "Returns true if in the country the orangists are in power.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_origin_of_consort": {
           "description": "Returns true if the specified country is the origin country of the scoped countryâ€™s consort.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_overseas_subject": {
           "description": "Returns true if the subject is overseas.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_papal_controller": {
           "description": "Returns true if the country is the papal controller.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_part_of_hre": {
           "description": "Returns true if the country/province is part of the HRE.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_playing_custom_nation": {
           "description": "Returns true if the country is a player-designed custom nation.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_possible_march": {
           "description": "Returns true if vassal X is a possible march of the country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1445,82 +1666,82 @@
           "description": "Returns true if country X is releasable as vassal of the country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_previous_papal_controller": {
           "description": "Returns true if the country is the previous papal controller.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_protectorate": {
           "description": "Returns true if the country is a protectorate",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_religion_reformed": {
           "description": "Returns true if the country has reformed their religion.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_revolution_target": {
           "description": "Returns true if the country is the revolution target.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_rival": {
           "description": "Returns true if country X is a rival of the country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_state_core": {
           "description": "Returns true if the country has a state core on the province with the ID X.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "is_subject": {
           "description": "Returns true if the country is a subject.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_subject_of": {
           "description": "Returns true if the country is a subject of X.",
-          "$reg": "identifiers.json#/definitions/country_tag"
+          "$ref": "identifiers.json#/definitions/country_tags"
         },
         "is_subject_of_type": {
           "description": "Returns true if the country is a subject of subject type.",
-          "$reg": "identifiers.json#/definitions/subject_type"
+          "$ref": "identifiers.json#/definitions/subject_types"
         },
         "is_territorial_core": {
           "description": "Returns true if the country has a territorial core on the province with the ID X.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "is_threat": {
           "description": "Returns true if country X is threatened by the country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "is_trade_league_leader": {
           "description": "Returns true if the country is the leader of a trade league.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_tribal": {
           "description": "Returns true if the country has a tribal government.\r\n(Note: Government types that allow migration are not considered tribal.)",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "is_vassal": {
           "description": "Returns true if the country is a vassal.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "isolationism": {
           "description": "Returns true, if the country has a isolationism level of at least X.",
@@ -1534,10 +1755,10 @@
           "description": "Returns true if the country is the junior partner in a personal union under country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1545,10 +1766,10 @@
           "description": "Returns true if the country has at least as much karma as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1556,10 +1777,10 @@
           "description": "Returns true if the country has knowledge of country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1567,10 +1788,13 @@
           "description": "Returns true if the country has a land force limit of at least as much regiments than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1582,25 +1806,31 @@
           "description": "Returns true if the country has an at least as high morale of armies as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "last_mission": {
           "description": "Returns true if the last mission of the country was the specified mission.",
-          "$reg": "identifiers.json#/definitions/mission"
+          "$ref": "identifiers.json#/definitions/missions"
         },
         "legitimacy": {
           "description": "Returns true if the country has at least as much legitimacy as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1608,10 +1838,13 @@
           "description": "Returns true, if the country has at least as much legitimacy equivalent (legitmacy, republican tradition, devotion, horde unity, meritocracy etc.) as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1619,10 +1852,13 @@
           "description": "Returns true if the country has at least as much legitimacy or horde unity as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1636,7 +1872,7 @@
         },
         "luck": {
           "description": "Returns true if the country is a lucky nation. (AI controlled counties only.)",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "manpower": {
           "description": "Returns true if the country has at least  available manpower.",
@@ -1650,10 +1886,10 @@
           "description": "Returns true if the country is a march under country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1661,10 +1897,10 @@
           "description": "Returns true if the country has a royal marriage with X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1682,23 +1918,19 @@
         },
         "mil": {
           "description": "Returns true if the country has a ruler with at least as high military skill as the ruler of the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "mil_power": {
           "description": "Returns true if the country has at least as much military power than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1706,10 +1938,13 @@
           "description": "Returns true if the country has an at least as high monthly income as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1719,7 +1954,13 @@
         },
         "military_strength": {
           "description": "Returns true, if the country's military strength (army size & navy size combined) is at least the size of X times the military strength of the specified country",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "months_of_ruling": {
           "description": "Returns true if the country has a ruler that has ruled for at least X months.",
@@ -1727,20 +1968,23 @@
         },
         "nation_designer_points": {
           "description": "Returns true if at least X points were used when creating the custom nation.",
-          "$reg": "identifiers.json#/definitions/custom_nation_points_unknown"
+          "$ref": "identifiers.json#/definitions/custom_nation_points_unknown"
         },
         "national_focus": {
           "description": "Returns true if country has set the national focus to X.",
-          "$reg": "special_values.json#/definitions/power_type"
+          "$ref": "special_values.json#/definitions/monarch_power_type"
         },
         "naval_forcelimit": {
           "description": "Returns true if the country has a naval force limit of at least as much ships than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1752,25 +1996,37 @@
           "description": "Returns true if the country has an at least as high morale of navies as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "naval_strength": {
           "description": "Returns true, if the country's navy size is at least the size of X times the navy size of the specified country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "navy_size": {
           "description": "Returns true if the country has a navy tradition as much ships than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1782,10 +2038,13 @@
           "description": "Returns true if the country has an at least as high navy tradition as specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1801,10 +2060,13 @@
           "description": "Returns true if the country has at least as much admirals than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1816,10 +2078,13 @@
           "description": "Returns true if the country has at least as much allies than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1827,10 +2092,13 @@
           "description": "Returns true if the country has at least as much artillery regiments than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1838,10 +2106,13 @@
           "description": "Returns true if the country has at least as much church aspects than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1853,10 +2124,13 @@
           "description": "Returns true if the country has at least as much cardinals than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1864,10 +2138,13 @@
           "description": "Returns true if the country has at least as much cavalry regiments than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1875,10 +2152,13 @@
           "description": "Returns true if the country owns at least as much cities than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1898,10 +2178,13 @@
           "description": "Returns true if the country has at least as much conquistadors than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1929,10 +2212,13 @@
           "description": "Returns true if the country has at least as much explorers than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1944,10 +2230,13 @@
           "description": "Returns true if the country has at least as much galleys than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1955,10 +2244,13 @@
           "description": "Returns true if the country has at least as much generals than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1974,10 +2266,13 @@
           "description": "Returns true if the country has at least as much heavy ships than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1985,10 +2280,13 @@
           "description": "Returns true if the country has at least as much infantry regiments than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -1996,10 +2294,13 @@
           "description": "Returns true if the country has at least as much light ships than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2007,10 +2308,13 @@
           "description": "Returns true if the country has taken at least as much loans than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2018,10 +2322,13 @@
           "description": "Returns true if the country has at least as much marches than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2029,10 +2336,13 @@
           "description": "Returns true if the country has at least as much mercenaries than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2050,16 +2360,24 @@
         },
         "num_of_owned_provinces_with": {
           "description": "Returns true if at least X provinces of the scoped country match the specified condition(s).",
-          "type": "object"
+          "type": "object",
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"value": {"type": "number"}}}
+          ],
+          "required": ["value"]
         },
         "num_of_ports": {
           "description": "Returns true if the country has at least as much home ports than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2075,10 +2393,13 @@
           "description": "Returns true if the country has at least as much protectorates than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2094,10 +2415,13 @@
           "description": "Returns true if there are at least as much rebel armies in the country than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2105,25 +2429,37 @@
           "description": "Returns true if the country has at least as much rebel controlled provinces than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "num_of_religion": {
           "description": "Float value: Returns true if the ratio of the provinces with the specified religion to the total provinces of the country is at least X.\r\nInteger value: Returns true if the country has at least X provinces with the specified religion.\r\nIt is also possible to specify the secondary religion by secondary = yes.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "religion": {"$ref": "identifiers.json#/definitions/religions"},
+            "value": {"type": "number"}
+          },
+          "required": ["religion", "value"]
         },
         "num_of_revolts": {
           "description": "Returns true if the country has at least as much rebel controlled provinces than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2131,10 +2467,13 @@
           "description": "Returns true if the country has at least as much royal marriages than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2162,10 +2501,13 @@
           "description": "Returns true if the country owns at least as much total ports than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2181,10 +2523,13 @@
           "description": "Returns true if the country has at least as much transports than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2196,10 +2541,13 @@
           "description": "Returns true if the country has at least as much personal unions than the specified country. Note: this no longer works. personal_union = x is the new format, eg personal_union = 2.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2211,10 +2559,13 @@
           "description": "Returns true if the country has at least as much vassals than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2222,10 +2573,13 @@
           "description": "Returns true if the country receives war reparations from at least as much countries than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2233,10 +2587,13 @@
           "description": "Returns true if the country has at least as much ships privateering than the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2244,10 +2601,10 @@
           "description": "Returns true if the country is in an offensive war with country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2259,10 +2616,10 @@
           "description": "Returns true if the country is the overlord of X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2272,23 +2629,23 @@
         },
         "owns": {
           "description": "Returns true if the country owns the specified province.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "owns_core_province": {
           "description": "Returns true if the country owns and has a core on the specified province.",
-          "$reg": "identifiers.json#/definitions/province_id"
+          "$ref": "identifiers.json#/definitions/map_provinces"
         },
         "owns_or_non_sovereign_subject_of": {
           "description": "Returns true, if the country or a subject that is not categorized as \"sovereign\" (e.g. tributary states are excluded) owns the specified province.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/province_id"
+              "$ref": "identifiers.json#/definitions/map_provinces"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             },
             {
-              "$reg": "special_values.json#/definitions/province_scope"
+              "$ref": "special_values.json#/definitions/province_scope"
             }
           ]
         },
@@ -2296,13 +2653,13 @@
           "description": "Returns true, if the country or a subject owns the specified province.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/province_id"
+              "$ref": "identifiers.json#/definitions/map_provinces"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             },
             {
-              "$reg": "special_values.json#/definitions/province_scope"
+              "$ref": "special_values.json#/definitions/province_scope"
             }
           ]
         },
@@ -2310,10 +2667,10 @@
           "description": "Returns true if the country has at least as much papal influence as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2327,16 +2684,16 @@
         },
         "personality": {
           "description": "Returns true if the country has a ruler which personality is X.",
-          "$reg": "identifiers.json#/definitions/leader_personality"
+          "$ref": "identifiers.json#/definitions/leader_personalities"
         },
         "piety": {
           "description": "Returns true if the country has at least as much piety as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2344,50 +2701,36 @@
           "description": "Returns true if an elector has the country X is the preferred emperor.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "prestige": {
           "description": "Returns true if the country has at least as much prestige as the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "primary_culture": {
           "description": "Returns true if the country's primary culture is X.",
-          "$reg": "identifiers.json#/definitions/culture",
+          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/culture"
+              "$ref": "identifiers.json#/definitions/cultures"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "primitives": {
           "description": "Returns true if the country is primitive.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "production_efficiency": {
           "description": "Returns true if the country has an at least as high production efficiency as the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "production_income_percentage": {
           "description": "Returns true if the ratio of production income to total income is at least X.",
@@ -2395,27 +2738,38 @@
         },
         "production_leader": {
           "description": "Returns true if the country is the production leader of the trade good X.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "trade_goods": {"$ref": "identifiers.json#/definitions/tradegoods"}
+          },
+          "required": ["trade_goods"]
         },
         "provinces_on_capital_continent_of": {
           "description": "Returns true if the country has a province on the continent with the capital of the specified country.",
-          "$reg": "special_values.json#/definitions/country_scope"
+          "$ref": "special_values.json#/definitions/country_scope"
         },
         "religion": {
           "description": "Returns true if the country/province has religion X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
-          "$reg": "identifiers.json#/definitions/religion"
+          "$ref": "identifiers.json#/definitions/religions"
         },
         "religion_group": {
           "description": "Returns true if the country/province has a religion of the specified religious group.",
-          "$reg": "identifiers.json#/definitions/religion"
+          "$ref": "identifiers.json#/definitions/religions"
         },
         "religion_group_claim": {
           "description": "Returns true if the country has the same religion as country X",
-          "$reg": "identifiers.json#/definitions/religion"
+          "$ref": "identifiers.json#/definitions/religions"
         },
         "religious_school": {
           "description": "Returns true, if the country has the specified religious school.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "religious_unity": {
           "description": "Returns true if the country's religious unity is at least X.",
@@ -2435,7 +2789,13 @@
         },
         "reverse_has_opinion_modifier": {
           "description": "Returns true if the country specified by who has the opinion modifier modifier towards the country.\r\nCan also specify a value of the modifier (but it is not displayed).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "modifier": {"$ref": "identifiers.json#/definitions/opinion_modifiers"}
+          },
+          "required": ["who", "modifier"]
         },
         "revolt_percentage": {
           "description": "Returns true if at least the Xth part of the provinces of the country have revolts.",
@@ -2451,33 +2811,33 @@
         },
         "ruler_culture": {
           "description": "Returns true, if the country's ruler has the specified culture. Can utilise Event Scope Values.",
-          "$reg": "identifiers.json#/definitions/culture",
+          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/culture"
+              "$ref": "identifiers.json#/definitions/cultures"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "ruler_has_personality": {
           "description": "Returns true if the countryâ€™s ruler has the specified personality.",
-          "$reg": "identifiers.json#/definitions/leader_personality"
+          "$ref": "identifiers.json#/definitions/leader_personalities"
         },
         "ruler_is_foreigner": {
           "description": "Returns true if the country has foreign ruler.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "ruler_religion": {
           "description": "Returns true, if the country's ruler has the specified religion. Can utilise Event Scope Values.",
-          "$reg": "identifiers.json#/definitions/religion",
+          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/religion"
+              "$ref": "identifiers.json#/definitions/religions"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2493,25 +2853,25 @@
           "description": "Returns true, if specified provinces are on the same continent. If used in country scope, capitals are checked.",
           "anyOf": [
             {
-              "$reg": "special_values.json#/definitions/capital_unknown"
+              "$ref": "special_values.json#/definitions/capital"
             },
             {
-              "$reg": "special_values.json#/definitions/province_scope"
+              "$ref": "special_values.json#/definitions/province_scope"
             }
           ]
         },
         "secondary_religion": {
           "description": "Returns true the secondary religion of the country is X.",
-          "$reg": "identifiers.json#/definitions/religion"
+          "$ref": "identifiers.json#/definitions/religions"
         },
         "senior_union_with": {
           "description": "Returns true if the country is the senior partner in a personal union over country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2521,14 +2881,7 @@
         },
         "stability": {
           "description": "Returns true if the country has at least as much stability than the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "statists_vs_orangists": {
           "description": "Returns true if Statists vs Orangists is at least X.",
@@ -2542,23 +2895,16 @@
           "description": "Returns true if the country has claimed the throne of the country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "tag": {
           "description": "Returns true if the country is the specified country.",
-          "anyOf": [
-            {
-              "$reg": "identifiers.json#/definitions/country_tag"
-            },
-            {
-              "$reg": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "tariff_value": {
           "description": "Returns true if the colonial nation pays at least X% tariffs.",
@@ -2574,7 +2920,10 @@
         },
         "technology_group": {
           "description": "Returns true if the countries have the same technology group.",
-          "$reg": "special_values.json#/definitions/country_scope"
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/country_scope"},
+            {"$ref": "identifiers.json#/definitions/technology_groups"}
+          ]
         },
         "tolerance_to_this": {
           "description": "Returns true if the country has a tolerance of at least X towards the religion of the country or scoped province.",
@@ -2584,10 +2933,10 @@
           "description": "Returns true if the country has at least as much total base tax as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2603,10 +2952,10 @@
           "description": "Returns true if country X is embargoing the country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2614,10 +2963,10 @@
           "description": "Returns true if the country is embargoing country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2629,24 +2978,47 @@
           "description": "[description needed]",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "trading_bonus": {
           "description": "Returns true if the country has the â€˜trading inâ€™ bonus of the specified trade good.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "trade_goods": {"$ref": "identifiers.json#/definitions/tradegoods"},
+            "value": {"$ref": "special_values.json#/definitions/boolean"}
+          },
+          "required": ["trade_goods", "value"]
         },
         "trading_part": {
           "description": "Returns true if the country has access to X% of the world market of the specified trade good.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "trade_goods": {"$ref": "identifiers.json#/definitions/tradegoods"},
+            "value": {"type": "number"}
+          },
+          "required": ["trade_goods", "value"]
         },
         "trading_policy_in_node": {
           "description": "Returns true, if the country has the specified trading policy in the specified trade node. Can also use \"policy = any\".",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "node": {"$ref": "special_values.json#/definitions/province_scope"},
+            "policy": {
+              "anyOf": [
+                {"$ref": "identifiers.json#/definitions/trading_policies"},
+                {"$ref": "special_values.json#/definitions/any"}
+              ]
+            }
+          },
+          "required": ["trade_goods", "value"]
         },
         "transport_fraction": {
           "description": "Returns true if the ratio of the transport fraction to the navy size of the country is at least X.",
@@ -2656,10 +3028,13 @@
           "description": "Returns true if the country has at least as much ducats in its treasury as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "type": "number"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2671,85 +3046,85 @@
           "description": "Returns true if the country has a truce with X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "unit_type": {
           "description": "Returns true if the country has units of type X.",
-          "$reg": "identifiers.json#/definitions/unit_type"
+          "$ref": "identifiers.json#/definitions/unit_types"
         },
         "uses_authority": {
           "description": "Returns true if the country uses authority mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_blessings": {
           "description": "Returns true if the country uses blessings mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_church_aspects": {
           "description": "Returns true if the country uses church aspects mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_cults": {
           "description": "Returns true if the country uses cults mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_devotion": {
           "description": "Returns true, if the country uses devotion instead of legitimacy.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_doom": {
           "description": "Returns true if the country uses doom mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_fervor": {
           "description": "Returns true if the country uses fervor mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_isolationism": {
           "description": "Returns true, if the country uses the isolationism mechanic.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_karma": {
           "description": "Returns true if the country uses karma mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_papacy": {
           "description": "Returns true if the country uses papacy mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_patriarch_authority": {
           "description": "Returns true if the country uses patriarch authority mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_personal_deities": {
           "description": "Returns true if the country uses personal deities mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_piety": {
           "description": "Returns true if the country uses piety mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_religious_icons": {
           "description": "Returns true, if the country uses religious icons.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "uses_syncretic_faiths": {
           "description": "Returns true if the country uses syncretic faiths mechanics.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "vassal_of": {
           "description": "Returns true if the country is a vassal of country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2757,10 +3132,10 @@
           "description": "Returns true if the country has at least as much war exhaustion as the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
@@ -2770,26 +3145,32 @@
         },
         "war_score_against": {
           "description": "Returns true if the coutry has a warscore of at least X against the specified country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "war_with": {
           "description": "Returns true if the country is at war with country X.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         },
         "was_player": {
           "description": "Returns true if the country was controlled by a human player.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "will_back_next_reform": {
           "description": "Returns true if the member of the HRE is backing the next imperial reform.",
-          "$reg": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "yearly_corruption_increase": {
           "description": "Returns true if the country has a yearly corruption increase of at least X.",
@@ -2801,16 +3182,22 @@
         },
         "years_in_vassalage_under": {
           "description": "Returns true if the country is a vassal of the specified country for at least X years.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "years": {"type": "number"}
+          },
+          "required": ["who", "years"]
         },
         "years_of_income": {
           "description": "Returns true if the country's treasury contains ducats of at least the yearly income of the specified country.",
           "anyOf": [
             {
-              "$reg": "identifiers.json#/definitions/country_tag"
+              "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
-              "$reg": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_scope"
             }
           ]
         }
@@ -2818,22 +3205,22 @@
     },
     "identifier_keys": {
       "$identifierProperties": {
-        "institution": {
+        "institutions": {
           "type": "number"
         },
-        "vassal_type": {
+        "subject_types": {
           "type": "number"
         },
-        "building": {
+        "buildings": {
           "type": "number"
         },
-        "idea_group": {
+        "idea_groups": {
           "type": "number"
         },
-        "religion": {
+        "religions": {
           "type": "number"
         },
-        "trade_good": {
+        "tradegoods": {
           "type": "number"
         }
       }

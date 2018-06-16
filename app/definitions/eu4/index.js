@@ -8,6 +8,9 @@ import audioTypes from './types/audio';
 
 import agesSchema from './schemas/ages';
 import achievementsSchema from './schemas/achievements';
+import advisorTypesSchema from './schemas/advisortypes';
+import buildingSchema from './schemas/buildings';
+
 import countryCommands from './schemas/country_commands';
 import countryConditions from './schemas/country_conditions';
 import countryFactor from './schemas/country_factor';
@@ -15,7 +18,6 @@ import countryModifiers from './schemas/country_modifiers';
 import identifiers from './schemas/identifiers';
 import specialValues from './schemas/special_values';
 import anywhereConditions from './schemas/anywhere_conditions';
-import identifierConditions from './schemas/identifier_conditions';
 import missionConditions from './schemas/mission_conditions';
 import provinceConditions from './schemas/province_conditions';
 import tradenodeConditions from './schemas/tradenode_conditions';
@@ -37,6 +39,8 @@ export default {
   schemas: [
     agesSchema,
     achievementsSchema,
+    advisorTypesSchema,
+    buildingSchema,
 
     specialValues,
     countryCommands,
@@ -45,7 +49,6 @@ export default {
     countryModifiers,
     identifiers,
     anywhereConditions,
-    identifierConditions,
     missionConditions,
     provinceConditions,
     tradenodeConditions,

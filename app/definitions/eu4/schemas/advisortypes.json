@@ -1,0 +1,46 @@
+{
+  "$id": "http://jorodox.org/schemas/advisortypes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "$mergeProps": [
+        {
+          "properties": {
+            "monarch_power": {
+              "$ref": "special_values.json#/definitions/monarch_power_type"
+            },
+            "skill_scaled_modifier": {
+              "$ref": "country_modifiers.json#/definitions/country_modifiers"
+            },
+            "allow_only_male": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "allow_only_female": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "chance": {
+              "$ref": "country_factor.json#/definitions/country_factor"
+            },
+            "ai_will_do": {
+              "$ref": "country_factor.json#/definitions/country_factor"
+            }
+          }
+        },
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+      ],
+      "required": [
+        "monarch_power",
+        "chance"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

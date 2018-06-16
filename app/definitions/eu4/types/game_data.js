@@ -69,7 +69,7 @@ export default {
           type: 'arrayValuesByPath',
           path: ['data', 'historical_idea_groups'],
           fromName: 'country_historical_idea_groups',
-          toType: 'ideas',
+          toType: 'idea_groups',
           toName: 'idea_group',
         },
       ],
@@ -1064,14 +1064,14 @@ export default {
       },
     },
     {
-      id: 'ideas',
-      title: 'Ideas',
+      id: 'idea_groups',
+      title: 'Idea groups',
       reader: 'StructureLoader',
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/{type.id}/',
-        pathPattern: 'common/{type.id}/*.txt',
+        pathPrefix: 'common/ideas/',
+        pathPattern: 'common/ideas/*.txt',
       },
       sourceTransform: {
         type: 'keyValues',
