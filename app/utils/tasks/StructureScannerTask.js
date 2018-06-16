@@ -281,18 +281,34 @@ export default class StructureScannerTask extends DbBackgroundTask {
     //console.log(javascriptStringify(schemaTrainer.toJS()));
 
 
-    //await CsvReaderHelper.exportConditionFromCsv();
+    //await CsvReaderHelper.exportModifiersFromCsv();
     //return;
 
 
-    let ajv = new Ajv();
+    const hashCode = function(string) {
+      let hash = 0, i, chr;
+      if (string.length === 0) return hash;
+      for (i = 0; i < string.length; i++) {
+        chr = string.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash;
+    };
+
+    //let ajv = new Ajv({extendRefs: true});
+    let ajv = new Ajv({extendRefs: true});
 
     const resolveMergeProps = (schema, parentSchema, it) => {
       const mergedSchema = {
-        type: 'object',
-        properties: {},
-        patternProperties: {},
-        $identifierProperties: {},
+        $makeArray: {
+          type: 'array',
+          items: {
+            properties: {},
+            patternProperties: {},
+            $identifierProperties: {},
+          }
+        }
       };
 
       schema.forEach(subSchema => {
@@ -300,7 +316,7 @@ export default class StructureScannerTask extends DbBackgroundTask {
           const resolvedUri = URI.resolve(it.baseId, subSchema.$ref);
 
           // Local reference
-          if (_.startsWith(resolvedUri, it.baseId) && !it.baseIdOverwritten) {
+          if (_.startsWith(resolvedUri, it.root.schema.$id) && !it.baseIdOverwritten) {
             const ref = subSchema.$ref;
             subSchema = _.get(it.root.schema, resolvedUri.slice(it.baseId.length + 1).split('/'));
             if (!subSchema) {
@@ -315,7 +331,7 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
             if (subSchema.$mergeProps) {
               const refUri = resolvedUri.split('#')[0] + '#';
-              subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {...it, baseId: refUri, baseIdOverwritten: true});
+              subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {...it, baseId: refUri, baseIdOverwritten: false});
             }
           }
         }
@@ -326,22 +342,43 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
         if (subSchema.properties) {
           _.forOwn(subSchema.properties, (val, prop) => {
-            if (!mergedSchema.properties[prop]) {
-              mergedSchema.properties[prop] = val;
+            if (!mergedSchema.$makeArray.items.properties[prop]) {
+              mergedSchema.$makeArray.items.properties[prop] = val;
+            }
+          });
+        }
+        if (subSchema.$makeArray && subSchema.$makeArray.items.properties) {
+          _.forOwn(subSchema.$makeArray.items.properties, (val, prop) => {
+            if (!mergedSchema.$makeArray.items.properties[prop]) {
+              mergedSchema.$makeArray.items.properties[prop] = val;
             }
           });
         }
         if (subSchema.patternProperties) {
           _.forOwn(subSchema.patternProperties, (val, prop) => {
-            if (!mergedSchema.patternProperties[prop]) {
-              mergedSchema.patternProperties[prop] = val;
+            if (!mergedSchema.$makeArray.items.patternProperties[prop]) {
+              mergedSchema.$makeArray.items.patternProperties[prop] = val;
+            }
+          });
+        }
+        if (subSchema.$makeArray && subSchema.$makeArray.items.patternProperties) {
+          _.forOwn(subSchema.$makeArray.items.patternProperties, (val, prop) => {
+            if (!mergedSchema.$makeArray.items.patternProperties[prop]) {
+              mergedSchema.$makeArray.items.patternProperties[prop] = val;
             }
           });
         }
         if (subSchema.$identifierProperties) {
           _.forOwn(subSchema.$identifierProperties, (val, prop) => {
-            if (!mergedSchema.$identifierProperties[prop]) {
-              mergedSchema.$identifierProperties[prop] = val;
+            if (!mergedSchema.$makeArray.items.$identifierProperties[prop]) {
+              mergedSchema.$makeArray.items.$identifierProperties[prop] = val;
+            }
+          });
+        }
+        if (subSchema.$makeArray && subSchema.$makeArray.items.$identifierProperties) {
+          _.forOwn(subSchema.$makeArray.items.$identifierProperties, (val, prop) => {
+            if (!mergedSchema.$makeArray.items.$identifierProperties[prop]) {
+              mergedSchema.$makeArray.items.$identifierProperties[prop] = val;
             }
           });
         }
@@ -356,51 +393,106 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
     ajv.addKeyword('$makeArray', {
       type: 'object',
-      errors: false,
-      modifying: true,
-      valid: true,
-      compile: function (schema, parentSchema) {
-        return function (data, dataPath, object, key) {
+      compile: (schema, parentSchema, it) => {
+        const subSchema = it.util.copy(schema);
+        const magicId = hashCode(JSON.stringify(subSchema));
+        subSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_'+ Math.floor(Math.random() * 10000000) +'.json';
+        if (!it.self._makeArraySchemaCache) {
+          it.self._makeArraySchemaCache = {};
+        }
+
+        const validatorPrep = () => {
+          if (!it.self._makeArraySchemaCache[magicId]) {
+            it.self._makeArraySchemaCache[magicId] = ajv.compile(subSchema);
+            //console.log("Generating "+ magicId);
+          } else {
+            //console.log("Using "+ magicId);
+          }
+
+          return it.self._makeArraySchemaCache[magicId];
+        };
+
+        return function v(data, dataPath, object, key) {
+          //return false;
           // skip if value only
-          if (!object) return;
+          //if (!object || key === undefined) {
+          //  return true;
+          //}
 
           const outArray = [];
+          let firstObj = null;
           _.forOwn(data, (subItem, subItemKey) => {
             if (_.isArray(subItem)) {
               subItem.forEach(item => {
                 outArray.push({[subItemKey]: item});
               });
             } else {
-              outArray.push({[subItemKey]: subItem});
+              if (!firstObj) {
+                firstObj = {};
+              }
+              firstObj[subItemKey] = subItem;
             }
           });
+          if (firstObj) {
+            outArray.unshift(firstObj);
+          }
 
-          object[key] = outArray;
-          return true;
+          //object[key] = outArray;
+          const result = validatorPrep()(outArray);
+          v.errors = validatorPrep().errors;
+          return result;
         };
       }
     });
 
-    const identifierMatchers = {
-      institution: (id) => {
-        return (new Set(['renaissance'])).has(id);
-      },
-      vassal_type: (id) => {
-        return (new Set(['vassal', 'colony', 'personal_union'])).has(id);
-      },
+    console.log("Get keys", new Date());
+    const identifierCache = await JdxDatabase.getAllIdentifiers(args.project);
+    console.log("All keys got", new Date());
+
+    const hasIdentifier = (identifierType, id) => {
+      if (!identifierCache[identifierType]) {
+        identifierCache[identifierType] = new Set();
+        if (!db[identifierType]) {
+          console.error(`Unknown identifier type '${identifierType}'`);
+        } else {
+          console.error(`Uncached identifier type '${identifierType}'`);
+        }
+      }
+
+      return identifierCache[identifierType].has(id);
     };
+
     ajv.addKeyword('$identifierProperties', {
       type: 'object',
-      //errors: false,
-      //modifying: true,
-      //valid: true,
 
-      compile: function (schema, parentSchema) {
-        const propertyNames = new Set(_.keys(parentSchema.properties));
+      compile: function (schema, parentSchema, it) {
+        const values = _.keys(parentSchema.properties);
+        if (schema.postFix) {
+          values.map((x) => x + schema.postFix);
+        }
+        const propertyNames = new Set(values);
+        //const propertyNamesHash = propertyNames.
         const validators = {};
+        const validatorPrep = {};
 
         _.forOwn(schema, (identifierSchema, identifierType) => {
-          validators[identifierType] = ajv.compile(identifierSchema);
+          const magicId = hashCode(JSON.stringify(identifierSchema));
+          identifierSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_'+ identifierType + "-"+ Math.floor(Math.random() * 10000000) +'.json';
+
+          if (!it.self._identifierPropertiesCache) {
+            it.self._identifierPropertiesCache = {};
+          }
+
+          validatorPrep[identifierType] = () => {
+            if (!it.self._identifierPropertiesCache[magicId]) {
+              it.self._identifierPropertiesCache[magicId] = ajv.compile(identifierSchema);
+              console.log("Generating "+ identifierType);
+            } else {
+              console.log("Using "+ identifierType);
+            }
+
+            return it.self._identifierPropertiesCache[magicId];
+          };
         });
 
         return function v(data, dataPath, object, key) {
@@ -410,11 +502,18 @@ export default class StructureScannerTask extends DbBackgroundTask {
               continue;
             }
 
-            for (const identifierType of _.keys(validators)) {
-              if (identifierMatchers[identifierType] && identifierMatchers[identifierType](dataKey)) {
+            for (const identifierType of _.keys(validatorPrep)) {
+              if (hasIdentifier(identifierType, dataKey)) {
+                if (!validators[identifierType]) {
+                  validators[identifierType] = validatorPrep[identifierType]();
+                }
+
                 const result = validators[identifierType](data[dataKey]);
                 if (!result) {
                   v.errors = validators[identifierType].errors;
+                  v.errors[0].identifierType = identifierType;
+                  v.errors[0].identifier = dataKey;
+                  v.errors[0].parentDataPath = dataPath;
                   return result;
                 }
                 return true;
@@ -440,11 +539,13 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
 
     JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
-    console.log(ajv.getSchema('http://jorodox.org/schemas/country_conditions.json#/definitions/country_conditions'));
-    console.log(ajv);
 
-    const validater = ajv.getSchema('http://jorodox.org/schemas/achievements.json');
-    console.log(validater);
+    console.log("Loading "+ definition.id + " validator");
+    const validater = ajv.getSchema('http://jorodox.org/schemas/'+ definition.id +'.json');
+    console.log("Validator loaded");
+
+
+    console.log("Validating "+ definition.id);
 
     items.forEach(item => {
       const valid = validater(item);
@@ -452,6 +553,8 @@ export default class StructureScannerTask extends DbBackgroundTask {
         console.log(item.name, validater.errors[0]);
       }
     });
+
+    console.log("Done validating "+ definition.id);
 
     return true;
   }

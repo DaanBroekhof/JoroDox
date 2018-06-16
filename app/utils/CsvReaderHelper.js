@@ -5,7 +5,70 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 
 
 export default class CsvReaderHelper {
-  static async exportConditionFromCsv() {
+  static async exportModifiersFromCsv() {
+
+    //const filepath = 'F:\\Projects\\Jorodox\\app\\definitions\\eu4\\country-modifiers-wiki.csv';
+    const filepath = 'F:\\Projects\\Jorodox\\app\\definitions\\eu4\\province-modifiers-wiki.csv';
+
+    const csvData = await new Promise((resolve, reject) => {
+      csvparser(iconv.decode(jetpack.read(filepath, 'buffer'), 'win1252'), {
+        delimiter: ',',
+        skip_empty_lines: true,
+        relax_column_count: true,
+        columns: ['name', 'example', 'description', 'type', 'version_added'],
+      }, (error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+
+    const outData = {
+      Normal: {},
+      Dynamic: {},
+    };
+    csvData.forEach(modifier => {
+      modifier = JSON.parse(JSON.stringify(modifier));
+
+      if (modifier.description === '' || modifier.description === 'Description') {
+        return;
+      }
+      
+      const def = {
+        description: modifier.description + ' (' + modifier.type + ')',
+        type: 'number'
+      };
+
+      const dynamicName = modifier.name.match(/^<([a-z_]+)>([a-z_]+)$/i);
+      if (dynamicName) {
+        def.postFix = dynamicName[2];
+
+        let typeName = 'nada';
+        if (dynamicName[1] === 'faction') {
+          typeName = 'factions';
+        } else if (dynamicName[1] === 'tech') {
+          typeName = 'technology_groups';
+        } else {
+          console.log('Unknown type ', dynamicName);
+        }
+
+        outData.Dynamic[typeName] = def;
+        return;
+      }
+
+      outData.Normal[modifier.name] = def;
+    })
+
+    const sortedData = _(outData.Normal).toPairs().sortBy(0).fromPairs().value();
+
+    console.log(outData);
+
+    console.log(JSON.stringify(sortedData));
+  }
+
+  static async exportConditionsFromCsv() {
     const csvData = await new Promise((resolve, reject) => {
       csvparser(iconv.decode(jetpack.read('F:\\Projects\\Jorodox\\app\\definitions\\conditions-wiki-copy.csv', 'buffer'), 'win1252'), {
         delimiter: ',',

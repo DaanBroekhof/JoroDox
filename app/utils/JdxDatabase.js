@@ -416,4 +416,19 @@ export default class JdxDatabase {
 
     return db[typeDefinition.id].where(typeDefinition.primaryKey).anyOf(ids).toArray();
   }
+
+  static async getAllIdentifiers(project) {
+    const db = await JdxDatabase.get(project);
+
+    const identifierCache = {};
+    for (const typeDefinition of JdxDatabase.getDefinition(project.gameType).types) {
+      if (!db[typeDefinition.id]) {
+        continue;
+      }
+
+      identifierCache[typeDefinition.id] = new Set(await db[typeDefinition.id].toCollection().primaryKeys());
+    }
+
+    return identifierCache;
+  }
 }
