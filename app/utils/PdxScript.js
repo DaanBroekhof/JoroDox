@@ -123,6 +123,7 @@ export default class PdxScript {
         }
 
         if (scope.data[propertyScope.name]) {
+          // Convert key into array if there are multiple keys with the same name
           if (!Array.isArray(scope.data[propertyScope.name]) || !scope.data[propertyScope.name].multipleKeys) {
             scope.data[propertyScope.name] = [scope.data[propertyScope.name]];
             scope.data[propertyScope.name].multipleKeys = true;
@@ -130,6 +131,7 @@ export default class PdxScript {
 
           scope.data[propertyScope.name].push(propertyScope.data);
         } else {
+          // Set value
           scope.data[propertyScope.name] = propertyScope.data;
         }
 

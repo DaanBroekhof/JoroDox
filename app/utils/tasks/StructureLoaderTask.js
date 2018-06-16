@@ -412,6 +412,11 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           } else if (relation.type === 'arrayValuesByPath') {
             const values = _.get(item, relation.path);
             if (values) {
+              if (!_.isArray(values)) {
+                console.error('Relation path is not an array: ', item, relation.path);
+                return;
+              }
+
               values.forEach(relationValue => {
                 result.relations.push(this.addRelationId({
                   fromKey: relation.fromName,

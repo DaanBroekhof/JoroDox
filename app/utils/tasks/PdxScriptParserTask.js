@@ -32,6 +32,10 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
 
       const data = parser.readFile(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'));
 
+      if (parser.errors && parser.errors.length > 0) {
+        console.error(`"Error(s) parsing '${path}'`, parser.errors);
+      }
+
       if (scripts.length % 500 === 0) {
         this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} PDX scripts...`);
       }
