@@ -93,17 +93,18 @@ class StructureView extends Component {
     });
   }
 
-  reloadAll() {
+  async reloadAll() {
     const types = this.state.definition.types
       .filter(x => x.reader === 'StructureLoader')
       .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
 
-    JdxDatabase.reloadTypesByIds(this.props.project, types).then(() => {
-      if (!this.props.match.params.category) {
-        this.props.handleProjectChange({lastGlobalUpdate: new Date()});
-      }
-      this.props.incrementDatabaseVersion();
-    });
+    await JdxDatabase.deleteAllErrors(this.props.project);
+    await JdxDatabase.reloadTypesByIds(this.props.project, types);
+
+    if (!this.props.match.params.category) {
+      this.props.handleProjectChange({lastGlobalUpdate: new Date()});
+    }
+    this.props.incrementDatabaseVersion();
   }
 
 

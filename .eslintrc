@@ -40,7 +40,7 @@
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
     "react/prefer-stateless-function": "off",
     "prefer-template": "off",
-    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }]
+    "no-unused-vars": ["off", { "vars": "all", "args": "none", "ignoreRestSiblings": false }]
   },
   "plugins": [
     "flowtype",

@@ -57,7 +57,7 @@ export default class JdxDatabase {
     let stores = {
       settings: '++key',
       relations: relationDefinition,
-      jdx_errors: ['++id', 'message', 'path', 'type', 'typeId', 'severity'].join(','),
+      jdx_errors: ['++id', 'creationTime', 'message', 'path', 'type', 'typeId', 'severity'].join(','),
     };
 
     // Stores per definition type
@@ -438,8 +438,14 @@ export default class JdxDatabase {
   }
 
   static async addError(project, error) {
+    if (!error.creationTime) {
+      error.creationTime = new Date();
+    }
+    if (!error.message) {
+      error.message = '- no message -';
+    }
     const db = await JdxDatabase.get(project);
-    return await db.jdx_errors.add(error);
+    return db.jdx_errors.add(error);
   }
 
   static async getErrors(project) {
@@ -449,6 +455,11 @@ export default class JdxDatabase {
 
   static async deleteErrorsByPath(project, path) {
     const db = await JdxDatabase.get(project);
-    return await db.jdx_errors.where({path}).delete();
+    return db.jdx_errors.where({path}).delete();
+  }
+
+  static async deleteAllErrors(project) {
+    const db = await JdxDatabase.get(project);
+    return db.jdx_errors.clear();
   }
 }

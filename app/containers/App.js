@@ -213,7 +213,7 @@ class App extends Component {
               <Route path="/projects" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProject} {...props} />} />
               <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
-            <SplitterLayout vertical primaryIndex={0} primaryMinSize={100} secondaryInitialSize={100} customClassName="sub-splitter">
+            <SplitterLayout vertical primaryIndex={0} primaryMinSize={100} secondaryInitialSize={34} secondaryMinSize={34} customClassName="sub-splitter">
               <Switch>
                 <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={this.state.project} {...props.match.params} />} />
                 <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
@@ -226,7 +226,7 @@ class App extends Component {
                 <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
               </Switch>
               <Switch>
-                <Route path="/" component={(props) => <ErrorPage project={this.state.project} handleChange={this.changeProject} {...props} />} />
+                <Route path="/" render={(props) => <ErrorPage project={this.state.project} {...props} />} />
               </Switch>
             </SplitterLayout>
           </SplitterLayout>

@@ -382,6 +382,10 @@ export default {
             name: 'Time',
             dataIndex: ['data', 'time'],
           },
+          {
+            name: 'Makes obsolete',
+            dataIndex: ['data', 'make_obsolete'],
+          }
         ],
       },
     },
@@ -2038,7 +2042,6 @@ export default {
         type: 'typesList',
         path: ['data', 'children'],
         types: ['technology'],
-        idPath: [],
       },
       listView: {
         pageSize: 100,

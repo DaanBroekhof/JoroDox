@@ -15,6 +15,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     const definition = args.typeDefinition;
     const relationStorage = definition.sourceTransform.relationsStorage ? definition.sourceTransform.relationsStorage : 'relations';
 
+    this.project = args.project;
+
     if (!args.paths) {
       this.progress(0, 1, 'Removing old data...');
 
@@ -237,15 +239,23 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         if (_.includes(definition.sourceTransform.types, value.name) || _.includes(definition.sourceTransform.types, '*')) {
           const item = {
             namespace: namespaceValues,
-            comments: value.comments.join('\n'),
+            comments: value.comments.join('\n').trim(),
             nr: nr.toString(),
             id: definition.sourceTransform.idPath ? _.get(value, definition.sourceTransform.idPath) : null,
             type: value.name,
             data: value.data,
           };
 
-          if (item.id === undefined) {
-            console.error("Item does not have a valid ID", item);
+          if (definition.sourceTransform.idPath && item.id === undefined) {
+            console.error('Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.', item);
+            JdxDatabase.addError(this.project, {
+              message: 'Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.',
+              path: sourceItem.path,
+              type: definition.id,
+              typeId: null,
+              severity: 'error',
+              data: item,
+            });
             return;
           }
 
@@ -308,8 +318,16 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 data: value,
               };
 
-              if (item.id === undefined) {
-                console.error("Item does not have a valid ID", item);
+              if (definition.sourceTransform.idPath && item.id === undefined) {
+                console.error('Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.', item);
+                JdxDatabase.addError(this.project, {
+                  message: 'Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.',
+                  path: sourceItem.path,
+                  type: definition.id,
+                  typeId: null,
+                  severity: 'error',
+                  data: item,
+                });
                 return;
               }
 
@@ -366,6 +384,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       }
       if (item[definition.primaryKey] === undefined) {
         console.error('Primary key `' + definition.primaryKey + '` not found.', item);
+        JdxDatabase.addError(this.project, {
+          message: 'Primary key `' + definition.primaryKey + '` not found in item.',
+          path: sourceItem.path,
+          type: definition.id,
+          typeId: null,
+          severity: 'error',
+          data: item,
+        });
         return;
       }
       item[definition.primaryKey] = item[definition.primaryKey].toString();
@@ -414,6 +440,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             if (values) {
               if (!_.isArray(values)) {
                 console.error('Relation path is not an array: ', item, relation.path);
+                JdxDatabase.addError(this.project, {
+                  message: 'Relation path is not an array: ',
+                  path: null,
+                  type: definition.id,
+                  typeId: item[definition.primaryKey].toString(),
+                  severity: 'warning',
+                  data: [item, relation.path],
+                });
                 return;
               }
 

@@ -347,6 +347,15 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
         }
 
         console.log(item.name, validator.errors[0]);
+
+        JdxDatabase.addError(args.project, {
+          message: validator.errors[0].message,
+          path: null,
+          type: definition.id,
+          typeId: item[definition.primaryKey],
+          severity: 'error',
+          data: validator.errors[0],
+        });
       }
     });
 

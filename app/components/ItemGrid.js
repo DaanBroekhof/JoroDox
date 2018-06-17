@@ -15,7 +15,7 @@ export default class ItemGrid extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.children !== this.props.children) {
+    if (nextProps.list !== this.props.list) {
       this.loadColumns(nextProps);
     }
   }

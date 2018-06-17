@@ -126,6 +126,7 @@ class StructureTypeView extends Component {
   reloadTypeById(typeId) {
     return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
       console.log('done');
+      this.props.incrementDatabaseVersion();
       return this.props.reloadGrid(this.gridSettings);
     });
   }
