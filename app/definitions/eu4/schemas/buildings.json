@@ -16,6 +16,12 @@
         "time": {
           "type": "number"
         },
+        "make_obsolete": {
+          "description": "Optional, whether this building operates like a fort",
+
+          "$ref": "identifiers.json#/definitions/buildings"
+        },
+
         "one_per_country": {
           "description": "Optional, limits construction to one per country",
           "$ref": "special_values.json#/definitions/boolean"
@@ -36,9 +42,18 @@
           "description": "Optional, whether this building operates like a fort",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "government_specific": {
+          "description": "Optional, whether this building is specific for a government type",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "show_separate": {
+          "description": "Optional, means as a manufactory it will be shown according to the old way",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
 
         "manufactory": {
-          "description": "Optional. Provinces with the listed tradegoods can construct this building.",
+          "description": "Optional, makes listed building obsolete when this building is constructed",
           "type": "array",
           "items": {
             "$ref": "identifiers.json#/definitions/tradegoods"
@@ -47,6 +62,10 @@
         "trigger": {
           "description": "Optional. Province scope. Limits construction of building if not met.",
           "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "potential": {
+          "description": "Optional. If this building should be available",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "modifier": {
           "description": "The modifier the building applies to the province. Country-scope modifiers used here will apply to the owning country of the building instead.",
@@ -75,11 +94,7 @@
           "type": "object"
         }
       },
-      "required": [
-        "cost",
-        "time",
-        "ai_will_do"
-      ]
+      "required": []
     }
   },
   "required": [

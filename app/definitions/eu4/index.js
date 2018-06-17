@@ -20,6 +20,7 @@ import specialValues from './schemas/special_values';
 import anywhereConditions from './schemas/anywhere_conditions';
 import missionConditions from './schemas/mission_conditions';
 import provinceConditions from './schemas/province_conditions';
+import provinceModifiers from './schemas/province_modifiers';
 import tradenodeConditions from './schemas/tradenode_conditions';
 import unitConditions from './schemas/unit_conditions';
 
@@ -52,6 +53,7 @@ export default {
     missionConditions,
     provinceConditions,
     tradenodeConditions,
-    unitConditions
+    unitConditions,
+    provinceModifiers
   ]
 };
