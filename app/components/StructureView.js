@@ -4,9 +4,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import _ from 'lodash';
-import {Grid} from 'react-redux-grid';
 import {Link} from 'react-router-dom';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
+import {Column} from 'react-virtualized';
 import JdxDatabase from '../utils/JdxDatabase';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
@@ -30,7 +30,7 @@ class StructureView extends Component {
       this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
-      //this.props.reloadGrid(this.gridSettings, this.getDataSource(nextprops.project.rootPath, nextProps.type, this.state.search));
+      // reload grid?
     }
   }
 
@@ -147,62 +147,6 @@ class StructureView extends Component {
     }).filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
     extendedTypes = _.sortBy(extendedTypes, x => x.title);
 
-    /*
-    const gridSettings = {
-      height: false,
-      emptyDataMessage: 'Loading...',
-      columns: [
-        {
-          name: 'Type',
-          dataIndex: ['title'],
-          renderer: ({column, value, row}) => <Link to={`/structure/t/${row.id}`}>{value}</Link>,
-        },
-        {
-          name: 'Item count',
-          dataIndex: ['totalCount'],
-        },
-        {
-          name: 'Actions',
-          dataIndex: ['primaryKey'],
-          renderer: ({column, value, row}) => (
-            <div style={{display: 'flex'}}>
-              <Button size="small" onClick={() => { this.reloadTypeById(row.id); }}>Reload</Button>
-            </div>
-          ),
-        },
-      ],
-      plugins: {
-        PAGER: {
-          enabled: false,
-          pagingType: 'local',
-          toolbarRenderer: (pageIndex, pageSize, total, currentRecords, recordType) => `${pageIndex * pageSize} -
-          ${(pageIndex * pageSize) + currentRecords} of ${total}`,
-          pagerComponent: false
-        },
-        COLUMN_MANAGER: {
-          resizable: true,
-          //minColumnWidth: 10,
-          moveable: true,
-        },
-        LOADER: {
-          enabled: true
-        },
-      },
-//      dataSource: this.getDataSource(this.props.project, this.props.match.params.type, this.state.search),
-      data: extendedTypes,
-      stateKey: 'typeListALl',
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-      },
-      events: {
-        HANDLE_ROW_CLICK: ({row}) => {
-          // this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
-        },
-      }
-    };
-    */
-
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
         <Typography variant="display2">{this.props.match.params.category || this.state.definition.name} - Game Data</Typography>
@@ -226,10 +170,26 @@ class StructureView extends Component {
 
         </div>
         <div className="ItemGrid">
-          <ItemGrid list={extendedTypes} databaseVersion={this.props.databaseVersion} />
+          <ItemGrid list={extendedTypes} databaseVersion={this.props.databaseVersion}>
+            <Column
+              dataKey="title"
+              label="Title"
+              width={100}
+              cellRenderer={({rowData}) => <Link to={`/structure/t/${rowData.id}`}>{rowData.title}</Link>}
+            />
+            <Column
+              dataKey="totalCount"
+              label="Item count"
+              width={50}
+            />
+            <Column
+              dataKey="actions"
+              label="Actions"
+              width={50}
+              cellRenderer={({rowData}) => <div></div>}
+            />
+          </ItemGrid>
         </div>
-
-        {/*<Grid {...gridSettings} />*/}
       </Paper>
     );
   }

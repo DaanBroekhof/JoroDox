@@ -3,17 +3,38 @@ import {Column, Table, AutoSizer} from 'react-virtualized';
 import Draggable from 'react-draggable';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
+import JdxDatabase from "../utils/JdxDatabase";
 
 export default class ItemGrid extends React.Component {
   state = {
-    widths: {
-      title: 0.33,
-      totalCount: 0.33,
-      actions: 0.33
-    },
+    widths: []
   };
 
-  headerRenderer(width) {
+  componentDidMount() {
+    this.loadColumns(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.children !== this.props.children) {
+      this.loadColumns(nextProps);
+    }
+  }
+
+  loadColumns(props) {
+    if (props.children) {
+      let newWidths = [];
+      let total = 0;
+      props.children.forEach((column, i) => {
+        newWidths[i] = column.props.width;
+        total += column.props.width;
+      });
+      newWidths = newWidths.map(x => x / total);
+
+      this.setState({widths: newWidths});
+    }
+  }
+
+  headerRenderer(width, colIndex) {
     return ({
       columnData,
       dataKey,
@@ -34,6 +55,7 @@ export default class ItemGrid extends React.Component {
             onDrag={(event, {deltaX}) =>
               this.resizeRow({
                 dataKey,
+                colIndex,
                 deltaX,
                 width
               })
@@ -48,21 +70,17 @@ export default class ItemGrid extends React.Component {
     };
   }
 
-  resizeRow = ({dataKey, deltaX, width}) => {
+  resizeRow = ({dataKey, colIndex, deltaX, width}) => {
     this.setState(prevState => {
-      const prevWidths = prevState.widths;
+      const newWidths = prevState.widths.slice();
       const percentDelta = deltaX / width;
 
-      const keys = _.keys(prevState.widths);
+      newWidths[colIndex] += percentDelta;
+      newWidths[colIndex + 1] -= percentDelta;
 
-      const nextDataKey = keys[keys.indexOf(dataKey) + 1];
 
       return {
-        widths: {
-          ...prevWidths,
-          [dataKey]: prevWidths[dataKey] + percentDelta,
-          [nextDataKey]: prevWidths[nextDataKey] - percentDelta
-        }
+        widths: newWidths
       };
     });
   };
@@ -77,48 +95,42 @@ export default class ItemGrid extends React.Component {
     const fullHeight = (rowHeight * list.length) + headerHeight;
 
     return (
-      <AutoSizer>
-        {({ height, width }) => {
-          height = height - 6;
-          width = width - 2;
+      <AutoSizer disableHeight={this.props.disableHeight}>
+        {({height, width}) => {
+          height -= 6;
+          width -= 2;
 
           if (fullHeight < height) {
             height = fullHeight;
           }
+          if (this.props.disableHeight) {
+            height = fullHeight;
+          }
 
-          return <Table
-            headerHeight={headerHeight}
-            rowHeight={rowHeight}
-            height={height}
-            width={width}
-            rowCount={list.length}
-            rowGetter={({index}) => list[index]}
-            headerRowRenderer={({className, columns, style}) => {
-              // Bugfix for when paddingRight is passed (we don't want it)
-              style.paddingRight = 0;
-              return <div className={className} role="row" style={style}>{columns}</div>;
-            }}
-          >
-            <Column
-              headerRenderer={this.headerRenderer(width)}
-              dataKey="title"
-              label="Title"
-              width={widths.title * width}
-              cellRenderer={({rowData}) => <Link to={`/structure/t/${rowData.id}`}>{rowData.title}</Link>}
-            />
-            <Column
-              headerRenderer={this.headerRenderer(width)}
-              dataKey="totalCount"
-              label="Item count"
-              width={widths.totalCount * width}
-            />
-            <Column
-              dataKey="actions"
-              label="Actions"
-              width={widths.actions * width}
-              cellRenderer={({rowData}) => <div></div>}
-            />
-          </Table>;
+          return (
+            <Table
+              headerHeight={headerHeight}
+              rowHeight={rowHeight}
+              height={height}
+              width={width}
+              rowCount={list.length}
+              rowGetter={({index}) => list[index]}
+              headerRowRenderer={({className, columns, style}) => {
+                // Bugfix for when paddingRight is passed (we don't want it)
+                style.paddingRight = 0;
+                return <div className={className} role="row" style={style}>{columns}</div>;
+              }}
+            >
+              {React.Children.map(this.props.children, (child, i) => {
+                const clone = React.cloneElement(child, {
+                  width: widths[i] * width,
+                  headerRenderer: this.headerRenderer(width, i),
+                });
+
+                return clone;
+              })}
+            </Table>
+          );
         }}
       </AutoSizer>
     );
