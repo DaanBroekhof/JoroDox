@@ -17,7 +17,7 @@
     },
     "capital": {
       "type": "string",
-      "enum": ["CAPITAL"]
+      "enum": ["CAPITAL", "capital"]
     },
     "emperor": {
       "type": "string",
@@ -33,7 +33,7 @@
     },
     "country_scope": {
       "type": "string",
-      "enum": ["ROOT", "FROM", "PREV", "THIS"]
+      "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this"]
     },
     "country_tag_or_scope": {
       "anyOf": [
@@ -47,7 +47,11 @@
     },
     "province_scope": {
       "type": "string",
-      "enum": ["ROOT", "FROM", "PREV", "THIS"]
+      "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this"]
+    },
+    "government_group_or_tribal": {
+      "type": "string",
+      "enum": ["monarchy", "republic", "theocracy", "tribal"]
     },
     "country_or_number": {
       "$mergeProps": [

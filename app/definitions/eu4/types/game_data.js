@@ -2229,7 +2229,7 @@ export default {
       id: 'units',
       title: 'Units',
       reader: 'StructureLoader',
-      primaryKey: 'path',
+      primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
         pathPrefix: 'common/{type.id}/',
@@ -2238,13 +2238,15 @@ export default {
       sourceTransform: {
         type: 'fileData',
         path: ['data', 'data'],
+        filenamePattern: '/([a-z_0-9]+).txt',
+        filenamePatternKey: 'name',
       },
       listView: {
         pageSize: 100,
         columns: [
           {
-            name: 'Path',
-            dataIndex: 'path',
+            name: 'Name',
+            dataIndex: 'name',
             linkTo: '[self]',
           },
           {
@@ -2860,7 +2862,7 @@ export default {
       id: 'dlcs',
       title: 'DLCs',
       reader: 'StructureLoader',
-      primaryKey: 'path',
+      primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
         pathPrefix: 'dlc/',
@@ -2868,20 +2870,22 @@ export default {
       },
       sourceTransform: {
         type: 'fileData',
-        keyName: 'path',
+        keyName: 'name',
         path: ['data', 'data'],
+        customFields: {
+          name: {
+            type: 'get',
+            fields: ['data', 'name'],
+          },
+        },
       },
       listView: {
         pageSize: 100,
         columns: [
           {
-            name: 'Path',
-            dataIndex: 'path',
-            linkTo: '[self]',
-          },
-          {
             name: 'Name',
-            dataIndex: ['data', 'name'],
+            dataIndex: 'name',
+            linkTo: '[self]',
           },
           {
             name: 'Affects compatibility',
@@ -2891,8 +2895,8 @@ export default {
       },
     },
     {
-      id: 'missions',
-      title: 'Missions',
+      id: 'mission_series',
+      title: 'Missions series',
       reader: 'StructureLoader',
       primaryKey: 'name',
       sourceType: {
@@ -2915,12 +2919,43 @@ export default {
             linkTo: '[self]',
           },
           {
-            name: 'Type',
-            dataIndex: ['data', 'type'],
-          },
-          {
             name: 'Category',
             dataIndex: ['data', 'category'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'missions',
+      title: 'Missions',
+      reader: 'StructureLoader',
+      primaryKey: 'name',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'missions/',
+        pathPattern: 'missions/*.txt',
+      },
+      sourceTransform: {
+        type: 'keyKeyValues',
+        path: ['data', 'data'],
+        requiredProperty: 'icon', // Not sure if this is the best "identifying" property to filter on
+        keyName: 'name',
+        parentKeyName: 'mission_series',
+        valueName: 'data',
+        parentRelationType: 'mission_series',
+        parentRelationKey: 'parent_mission_series',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'name',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Mission series',
+            dataIndex: ['mission_series'],
           },
         ],
       },

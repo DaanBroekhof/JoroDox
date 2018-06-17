@@ -459,7 +459,7 @@ export default class StructureScannerTask extends DbBackgroundTask {
         }
       }
 
-      return identifierCache[identifierType].has(id);
+      return identifierCache[identifierType].has(id.toString());
     };
 
     ajv.addKeyword('$identifierProperties', {
@@ -467,9 +467,6 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
       compile: function (schema, parentSchema, it) {
         const values = _.keys(parentSchema.properties);
-        if (schema.postFix) {
-          values.map((x) => x + schema.postFix);
-        }
         const propertyNames = new Set(values);
         //const propertyNamesHash = propertyNames.
         const validators = {};
@@ -503,7 +500,15 @@ export default class StructureScannerTask extends DbBackgroundTask {
             }
 
             for (const identifierType of _.keys(validatorPrep)) {
-              if (hasIdentifier(identifierType, dataKey)) {
+              let identifierValue = dataKey;
+              if (schema.postFix) {
+                if (!_.endsWith(identifierValue, schema.postFix)) {
+                  continue;
+                }
+                identifierValue = identifierValue.substring(-schema.postFix.length);
+              }
+
+              if (hasIdentifier(identifierType, identifierValue)) {
                 if (!validators[identifierType]) {
                   validators[identifierType] = validatorPrep[identifierType]();
                 }
@@ -536,6 +541,34 @@ export default class StructureScannerTask extends DbBackgroundTask {
         };
       }
     });
+
+    ajv.addKeyword('$identifierValue', {
+      compile: function (schema, parentSchema, it) {
+        const identifierType = schema;
+        //console.log(schema);
+
+        return function v(data, dataPath, object, key) {
+          if (hasIdentifier(identifierType, data)) {
+            return true;
+          }
+
+          v.errors = [{
+            keyword: '$identifierValue',
+            dataPath,
+            message: 'Property value `' + data + '` is not a known value of `' + identifierType + '`.',
+            data,
+            identifierType,
+            key,
+            params: {
+              data
+            }
+          }];
+
+          return false;
+        };
+      }
+    });
+
 
 
     JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));

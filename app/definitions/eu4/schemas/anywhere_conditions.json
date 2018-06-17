@@ -162,10 +162,6 @@
           "description": "Returns true if the player has changed nation by playing as a released vassal.",
           "$ref": "special_values.json#/definitions/boolean"
         },
-        "hidden_trigger": {
-          "description": "Hides the enclosed conditions so that they are still required but cannot be seen by human players.",
-          "type": "object"
-        },
         "hre_heretic_religion": {
           "description": "Returns true if the specified religion is the opposition religion of the HRE.\r\nNote: No localisation for the negation.",
           "$ref": "identifiers.json#/definitions/religions",
@@ -284,7 +280,12 @@
         },
         "religion_years": {
           "description": "Returns true if the specified religion is enabled for at least X years.",
-          "type": "object"
+          "type": "object",
+          "$identifierProperties": {
+            "religions": {
+              "type": "number"
+            }
+          }
         },
         "revolution_target_exists": {
           "description": "Returns true if there is a revolutionary target in the world.",
@@ -301,10 +302,6 @@
         "total_number_of_cardinals": {
           "description": "Returns true if the total number of cardinals is at least X.",
           "type": "number"
-        },
-        "variable_arithmetic_trigger": {
-          "description": "Can use variable effects and triggers to compare or change and compare modifier and trigger values. \"variable_arithmetic_trigger\" sections can include more \"variable_arithmetic_trigger\" sections. This has to be done for effects such as \"change_variable\" or effects of \"if\" sections inside the \"variable_arithmetic_trigger\", since the game may crash otherwise.",
-          "type": "object"
         }
       }
     }

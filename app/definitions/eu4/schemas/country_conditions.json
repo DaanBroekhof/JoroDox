@@ -24,32 +24,75 @@
       "additionalProperties": false,
       "properties": {
         "AND": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "country_conditions.json#/definitions/country_conditions"
-            }
-          }
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "OR": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "country_conditions.json#/definitions/country_conditions"
-            }
-          }
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "NOT": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "country_conditions.json#/definitions/country_conditions"
-            }
-          }
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "ROOT": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
+        "variable_arithmetic_trigger": {
+          "description": "Can use variable effects and triggers to compare or change and compare modifier and trigger values. \"variable_arithmetic_trigger\" sections can include more \"variable_arithmetic_trigger\" sections. This has to be done for effects such as \"change_variable\" or effects of \"if\" sections inside the \"variable_arithmetic_trigger\", since the game may crash otherwise.",
+          "comment": "Only validates structure of the arithmetic trigger, not any of the values.",
+          "type": "object",
+          "$mergeProps": [
+            {
+              "properties": {
+                "custom_tooltip": {
+                  "type": "string"
+                },
+                "export_to_variable ": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "variable_name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "is_variable_equal": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "which": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "check_variable": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "which": {
+                      "type": "string",
+                      "value": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {"$ref": "country_conditions.json#/definitions/country_conditions"}
+          ]
+        },
+        "if" : {
+          "$ref": "country_conditions.json#/definitions/if"
+        },
+        "else_if" : {
+          "$ref": "country_conditions.json#/definitions/else_if"
+        },
+        "else" : {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+
         "colonial_parent": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
@@ -640,18 +683,14 @@
         },
         "doom": {
           "description": "Returns true if the country has at least as much doom than the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "dynasty": {
           "description": "Returns true if both countries are ruled by the same dynasty.",
           "anyOf": [
+            {
+              "type": "string"
+            },
             {
               "$ref": "identifiers.json#/definitions/country_tags"
             },
@@ -756,7 +795,10 @@
         },
         "government": {
           "description": "Returns true if the country has government type X.\r\nNote: can search for the 3 government groups (monarchy, republic, theocracy), for a specific government type (feudal_monarchy, absolute_monarchy, etc.) or tribal",
-          "$ref": "identifiers.json#/definitions/governments"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/governments"},
+            {"$ref": "special_values.json#/definitions/government_group_or_tribal"}
+          ]
         },
         "government_rank": {
           "description": "Returns true if the country has a government rank of X or higher.",
@@ -1106,7 +1148,16 @@
         },
         "has_leader_with": {
           "description": "Returns true if the country has a leader with at least the specified stats.\r\nadmiral = yes and general = yes can be used as further limitation.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "fire": {"type": "number"},
+            "shock": {"type": "number"},
+            "maneuver": {"type": "number"},
+            "siege": {"type": "number"},
+            "admiral": {"$ref": "special_values.json#/definitions/boolean"},
+            "general": {"$ref": "special_values.json#/definitions/boolean"}
+          }
         },
         "has_matching_religion": {
           "description": "Returns true if the countries have the same religion or syncretic faith.",
@@ -1128,6 +1179,7 @@
         },
         "has_opinion_diff": {
           "description": "Returns true if opinion difference between country X and Y, is at least Z",
+          "comment": "TODO: Figure out what the structure is here (not used in game)",
           "type": "object"
         },
         "has_opinion_modifier": {
@@ -1154,7 +1206,7 @@
         },
         "has_promote_investments": {
           "description": "Returns true if the country is promoting investments in the specified trade company (region).",
-          "$ref": "identifiers.json#/definitions/map_regions"
+          "$ref": "identifiers.json#/definitions/map_region"
         },
         "has_regency": {
           "description": "Returns true if the country has a regency.",
@@ -1241,7 +1293,7 @@
         },
         "has_unit_type": {
           "description": "Returns true if the country has selected unit type X as preferable unit.",
-          "$ref": "identifiers.json#/definitions/unit_types"
+          "$ref": "identifiers.json#/definitions/units"
         },
         "has_unlocked_cult": {
           "description": "Returns true if the country has unlocked the specified cult.",
@@ -1710,7 +1762,7 @@
         },
         "is_subject_of": {
           "description": "Returns true if the country is a subject of X.",
-          "$ref": "identifiers.json#/definitions/country_tags"
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "is_subject_of_type": {
           "description": "Returns true if the country is a subject of subject type.",
@@ -1722,14 +1774,7 @@
         },
         "is_threat": {
           "description": "Returns true if country X is threatened by the country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "is_trade_league_leader": {
           "description": "Returns true if the country is the leader of a trade league.",
@@ -2751,15 +2796,21 @@
         },
         "religion": {
           "description": "Returns true if the country/province has religion X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
-          "$ref": "identifiers.json#/definitions/religions"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
+          ]
         },
         "religion_group": {
           "description": "Returns true if the country/province has a religion of the specified religious group.",
-          "$ref": "identifiers.json#/definitions/religions"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/religion_groups"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
+          ]
         },
         "religion_group_claim": {
-          "description": "Returns true if the country has the same religion as country X",
-          "$ref": "identifiers.json#/definitions/religions"
+          "description": "Returns true if the country has the same religion group as country X",
+          "$ref": "identifiers.json#/definitions/religion_groups"
         },
         "religious_school": {
           "description": "Returns true, if the country has the specified religious school.",
@@ -2785,7 +2836,13 @@
         },
         "reverse_has_opinion": {
           "description": "Returns true if the country specified by who has at least value opinion of the country.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "value": {"type": "number"}
+          },
+          "required": ["who", "value"]
         },
         "reverse_has_opinion_modifier": {
           "description": "Returns true if the country specified by who has the opinion modifier modifier towards the country.\r\nCan also specify a value of the modifier (but it is not displayed).",
@@ -3055,7 +3112,10 @@
         },
         "unit_type": {
           "description": "Returns true if the country has units of type X.",
-          "$ref": "identifiers.json#/definitions/unit_types"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/technology_groups"},
+            {"$ref": "identifiers.json#/definitions/units"}
+          ]
         },
         "uses_authority": {
           "description": "Returns true if the country uses authority mechanics.",
@@ -3178,7 +3238,13 @@
         },
         "years_in_union_under": {
           "description": "Returns true if the country is in a personal union under the specified country for at least X years.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "years": {"type": "number"}
+          },
+          "required": ["who", "years"]
         },
         "years_in_vassalage_under": {
           "description": "Returns true if the country is a vassal of the specified country for at least X years.",
@@ -3224,6 +3290,32 @@
           "type": "number"
         }
       }
+    },
+    "if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        },
+        {"$ref": "country_conditions.json#/definitions/country_conditions"}
+      ]
+    },
+    "else_if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        },
+        {"$ref": "country_conditions.json#/definitions/country_conditions"}
+      ]
     }
   }
 }

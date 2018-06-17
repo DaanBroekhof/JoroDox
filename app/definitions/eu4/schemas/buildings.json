@@ -61,14 +61,17 @@
         },
         "on_built": {
           "description": "Optional. On action that fires when built. THIS = Province, FROM = Builder (not necessarily owner, can be overlord)",
+          "comment": "TODO: define this",
           "type": "object"
         },
         "on_destroyed": {
           "description": "Optional. On action that fires when destroyed. (not obsoleted) THIS = Province, FROM = Destroyer",
+          "comment": "TODO: define this",
           "type": "object"
         },
         "on_obsolete": {
           "description": "Optional. On action that fires when obsoleted. (not destroyed) THIS = Province, FROM = Destroyer",
+          "comment": "TODO: define this",
           "type": "object"
         }
       },

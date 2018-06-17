@@ -7,28 +7,13 @@
       "type": "object",
       "properties": {
         "AND": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "mission_conditions.json#/definitions/mission_conditions"
-            }
-          }
+          "$ref": "mission_conditions.json#/definitions/mission_conditions"
         },
         "OR": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "mission_conditions.json#/definitions/mission_conditions"
-            }
-          }
+          "$ref": "mission_conditions.json#/definitions/mission_conditions"
         },
         "NOT": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "mission_conditions.json#/definitions/mission_conditions"
-            }
-          }
+          "$ref": "mission_conditions.json#/definitions/mission_conditions"
         },
 
         "all_target_province": {

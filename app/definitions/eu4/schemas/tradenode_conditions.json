@@ -98,7 +98,13 @@
         },
         "has_trade_modifier": {
           "description": "Returns true the specified country has the trade modifier X in the trade node.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "key": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
+          },
+          "required": ["who", "key"]
         },
         "has_trader": {
           "description": "Returns true if the specified country has a merchant in the trade node.",
@@ -128,7 +134,13 @@
         },
         "privateer_power": {
           "description": "Returns true if the country has at least X trade power from privateering in the trade node.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "share": {"type": "number"}
+          },
+          "required": ["country", "share"]
         },
         "trade_range": {
           "description": "Returns true if the trade node is within the trade range of the specified country.",
@@ -143,7 +155,13 @@
         },
         "trade_share": {
           "description": "Returns true if the country controls at least X% of the trade in the specified trade node.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "share": {"type": "number"}
+          },
+          "required": ["country", "share"]
         }
       }
     }
