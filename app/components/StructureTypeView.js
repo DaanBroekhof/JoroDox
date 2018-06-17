@@ -16,6 +16,7 @@ import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import StructureScannerTask from '../utils/tasks/StructureScannerTask';
+import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 import {incrementVersion} from '../actions/database';
 
 class StructureTypeView extends Component {
@@ -81,6 +82,29 @@ class StructureTypeView extends Component {
 
     return new Promise((resolve, reject) => {
       StructureScannerTask.start(
+        {
+          project: this.props.project,
+          typeDefinition: type,
+        },
+        (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
+        (result) => {
+          resolve(result);
+          console.log('results');
+          console.log(result);
+        },
+        (error) => {
+          reject(error);
+          console.error(error);
+        },
+      );
+    });
+  }
+
+  validateType(typeId) {
+    const type = _(this.state.definition.types).find(x => x.id === typeId);
+
+    return new Promise((resolve, reject) => {
+      SchemaValidatorTask.start(
         {
           project: this.props.project,
           typeDefinition: type,
@@ -260,8 +284,8 @@ class StructureTypeView extends Component {
             <Tooltip id="tooltip-icon" title="Reload data" placement="bottom">
               <IconButton onClick={() => this.reloadTypeById(this.props.match.params.type)}><Icon color="action">refresh</Icon></IconButton>
             </Tooltip>
-            <Tooltip id="tooltip-icon" title="Scan data" placement="bottom">
-              <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">print</Icon></IconButton>
+            <Tooltip id="tooltip-icon" title="Validate data" placement="bottom">
+              <IconButton onClick={() => this.validateType(this.props.match.params.type)}><Icon color="action">assignment_turned_in</Icon></IconButton>
             </Tooltip>
           </span>
         </div>

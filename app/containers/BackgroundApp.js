@@ -11,6 +11,7 @@ import PdxYmlFileParserTask from '../utils/tasks/PdxYmlFileParserTask';
 import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import IndexedBmpParserTask from '../utils/tasks/IndexedBmpParserTask';
 import DdsImageParserTask from '../utils/tasks/DdsImageParserTask';
+import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 
 const ipc = require('electron').ipcRenderer;
 
@@ -50,6 +51,9 @@ export default class BackgroundApp extends Component {
           break;
         case StructureScannerTask.getTaskType():
           StructureScannerTask.handle(request);
+          break;
+        case SchemaValidatorTask.getTaskType():
+          SchemaValidatorTask.handle(request);
           break;
         case DeleteRelatedTask.getTaskType():
           DeleteRelatedTask.handle(request);

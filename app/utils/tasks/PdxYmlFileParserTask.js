@@ -25,7 +25,9 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
       const fileData = jetpack.read(filePath);
       const pdxYmlData = this.parsePdxYml(fileData, filePath);
 
-      if (results.length % 500 === 0) { this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`); }
+      if (results.length % 500 === 0) {
+        this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`);
+      }
 
       results.push({path, data: pdxYmlData});
       relations.push(this.addRelationId({
