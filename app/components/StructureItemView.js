@@ -10,6 +10,9 @@ import {applyGridConfig, Grid, Actions} from 'react-redux-grid';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
+import {Column} from 'react-virtualized';
+import ItemGrid from './ItemGrid';
+
 import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import {incrementVersion} from "../actions/database";
@@ -291,23 +294,41 @@ class StructureItemView extends Component {
         {true && <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />}
 
         {this.state.relationsFrom.length > 0 && (
-          <div>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
             <h4>References to ({this.state.relationsFrom.length})</h4>
-            <ul>
-              {this.state.relationsFrom.slice(0, 1000).map(r => (
-                <li key={r.id}>{r.toKey}: <Link to={`/structure/t/${r.toType}/${r.toId}`}>{r.toId}</Link></li>
-              ))}
-            </ul>
+            <ItemGrid list={this.state.relationsFrom.slice(0, 1000)} databaseVersion={this.props.databaseVersion} style={{minHeight: 200}} disableHeight>
+              <Column
+                width={20}
+                dataKey="type"
+                label="Type"
+                cellRenderer={({rowData}) => rowData.toKey}
+              />
+              <Column
+                width={100}
+                dataKey="ID"
+                label="ID"
+                cellRenderer={({rowData}) => <Link to={`/structure/t/${rowData.toType}/${rowData.toId}`}>{rowData.toId}</Link>}
+              />
+            </ItemGrid>
           </div>
         )}
         {this.state.relationsTo.length > 0 && (
-          <div>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
             <h4>Referenced in ({this.state.relationsTo.length})</h4>
-            <ul>
-              {this.state.relationsTo.slice(0, 1000).map(r => (
-                <li key={r.id}>{r.fromKey}: <Link to={`/structure/t/${r.fromType}/${r.fromId}`}>{r.fromId}</Link></li>
-              ))}
-            </ul>
+            <ItemGrid list={this.state.relationsTo.slice(0, 1000)} databaseVersion={this.props.databaseVersion} style={{minHeight: 200}} disableHeight>
+              <Column
+                width={20}
+                dataKey="type"
+                label="Type"
+                cellRenderer={({rowData}) => rowData.fromKey}
+              />
+              <Column
+                width={100}
+                dataKey="ID"
+                label="ID"
+                cellRenderer={({rowData}) => <Link to={`/structure/t/${rowData.fromType}/${rowData.fromId}`}>{rowData.fromId}</Link>}
+              />
+            </ItemGrid>
           </div>
         )}
 

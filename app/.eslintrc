@@ -16,7 +16,6 @@
     "flowtype/space-before-type-colon": ["error", "never"],
     "flowtype/union-intersection-spacing": ["error", "always"],
     "flowtype/use-flow-type": "error",
-    "flowtype/valid-syntax": "error",
-    "flowtype/no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }]
+    "flowtype/valid-syntax": "error"
   }
 }

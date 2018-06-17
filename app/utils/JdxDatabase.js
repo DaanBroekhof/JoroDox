@@ -1,5 +1,4 @@
 import Dexie from 'dexie/dist/dexie';
-import crypto from 'crypto';
 import _ from 'lodash';
 import StructureLoaderTask from './tasks/StructureLoaderTask';
 import FileLoaderTask from './tasks/FileLoaderTask';
@@ -38,8 +37,8 @@ export default class JdxDatabase {
   }
 
   static async get(project) {
-    if (this.db[project.rootPath] && this.db[project.rootPath].isOpen()) {
-      return Promise.resolve(this.db[project.rootPath]);
+    if (this.db[project.id] && this.db[project.id].isOpen()) {
+      return Promise.resolve(this.db[project.id]);
     }
     const root = project.rootPath;
     const definition = this.getDefinition(project.gameType);
@@ -48,23 +47,28 @@ export default class JdxDatabase {
       throw new Error(`Empty root dir '${root}'`);
     }
 
+    // Create all definitions
     const relationDefinition = _.join([
       '++id', 'fromType', 'fromKey', '[fromType+fromId]',
       '[fromType+fromId+fromKey]', 'toType', 'toKey', '[toType+toId]', '[toType+toId+toKey]'
     ], ',');
 
+    // Default stores:
     let stores = {
       settings: '++key',
+      relations: relationDefinition,
+      jdx_errors: ['++id', 'message', 'path', 'type', 'typeId', 'severity'].join(','),
     };
+
+    // Stores per definition type
     _(definition.types).forEach(type => {
       stores[type.id] = `++${type.primaryKey}${type.indexedKeys ? `,${type.indexedKeys.join(',')}` : ''}`;
       if (type.sourceTransform && type.sourceTransform.relationsStorage) {
+        // Relation table just for this type
         stores[type.sourceTransform.relationsStorage] = relationDefinition;
       }
     });
-
-    stores.relations = relationDefinition;
-
+    // Clean up store definitions so index order does not matter
     stores = _(stores).mapValues(x => x.split(',').sort().join(',')).value();
 
     const dbName = this.projectToDbName(project);
@@ -75,8 +79,8 @@ export default class JdxDatabase {
     /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */
     db._allowEmptyDB = true;
 
+    // Gather current existing stores
     const currentStores = [];
-
     await db.open();
     let currentVerNo = db.verno;
     db.tables.forEach(table => {
@@ -84,9 +88,9 @@ export default class JdxDatabase {
       const schemaSyntax = primKeyAndIndexes.map(index => index.src).join(',');
       currentStores[table.name] = schemaSyntax.split(',').sort().join(',');
     });
-
     db.close();
 
+    // Compare existing stores with desired stores
     const newStores = {};
     const deleteStores = {};
     _(stores).forOwn((v, k) => {
@@ -110,6 +114,7 @@ export default class JdxDatabase {
       console.log(newStores);
     */
 
+    // Remove/Delete stores that are changed
     db.version(currentVerNo).stores(currentStores);
     if (_(deleteStores).size()) {
       currentVerNo += 1;
@@ -122,7 +127,7 @@ export default class JdxDatabase {
       console.log('Creating stores:', newStores);
     }
 
-    this.db[project.rootPath] = db;
+    this.db[project.id] = db;
 
     return db.open();
   }
@@ -430,5 +435,20 @@ export default class JdxDatabase {
     }
 
     return identifierCache;
+  }
+
+  static async addError(project, error) {
+    const db = await JdxDatabase.get(project);
+    return await db.jdx_errors.add(error);
+  }
+
+  static async getErrors(project) {
+    const db = await JdxDatabase.get(project);
+    return db.jdx_errors;
+  }
+
+  static async deleteErrorsByPath(project, path) {
+    const db = await JdxDatabase.get(project);
+    return await db.jdx_errors.where({path}).delete();
   }
 }

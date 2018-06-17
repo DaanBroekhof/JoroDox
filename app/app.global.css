@@ -16,16 +16,23 @@ html, body, #root {
   height: 100%;
 }
 
-.layout-pane.layout-pane-primary {
+/* Force 'main' screen to fill completely */
+.splitter-layout.top-splitter > .layout-pane.layout-pane-primary {
   display: flex;
+}
+.splitter-layout.sub-splitter > .layout-pane.layout-pane-primary {
+  display: flex;
+}
+.splitter-layout.sub-splitter > .layout-pane {
+    display: flex;
 }
 
 /* File tree scroll-fixes */
-.splitter-layout .layout-pane:first-child {
+.splitter-layout.top-splitter > .layout-pane:first-child {
   display: flex !important;
 }
 
-.splitter-layout .layout-pane:first-child > div {
+.splitter-layout.top-splitter > .layout-pane:first-child > div {
   overflow-x: hidden !important;;
 }
 
@@ -46,16 +53,22 @@ html, body, #root {
   box-sizing: border-box;
 }
 
-.splitter-layout {
+.splitter-layout.top-splitter {
   position: relative !important;;
   height: auto;
   flex: 1;
 }
 
-.splitter-layout>.layout-splitter {
+.splitter-layout.top-splitter > .layout-splitter {
   min-height: 100%;
   height: auto;
 }
+
+.splitter-layout.sub-splitter > .layout-splitter {
+  xmin-height: 100%;
+  xheight: auto;
+}
+
 
 /* File tree styling */
 
@@ -390,6 +403,6 @@ a {
   padding: 0;
   flex-grow: 1;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  min-height: 100px;
+  min-height: 50px;
   box-shadow: 2px 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }

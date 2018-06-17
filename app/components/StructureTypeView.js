@@ -109,7 +109,7 @@ class StructureTypeView extends Component {
           project: this.props.project,
           typeDefinition: type,
         },
-        (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
+        (progress, total, message) => null,
         (result) => {
           resolve(result);
           console.log('results');
@@ -167,8 +167,8 @@ class StructureTypeView extends Component {
               });
             });
           } else {
-            var time = new Date().getTime();
-            console.log(time);
+            // var time = new Date().getTime();
+            // console.log(time);
             db[typeDefinition.id].count((total) => {
               db[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
                 if (typeDefinition.listView.unsetKeys) {
@@ -180,7 +180,7 @@ class StructureTypeView extends Component {
                   });
                 }
 
-                console.log(new Date().getTime() - time);
+                // console.log(new Date().getTime() - time);
                 resolve({
                   data: result,
                   total,

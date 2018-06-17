@@ -25,6 +25,7 @@ import ProgressInfo from '../components/ProgressInfo';
 import ProjectsPage from '../components/ProjectsPage';
 import EventEditor from '../components/EventEditor';
 import ProjectsTree from '../components/ProjectsTree';
+import ErrorPage from '../components/ErrorPage';
 import {incrementVersion} from '../actions/database';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
@@ -205,24 +206,29 @@ class App extends Component {
               </div>
             </Toolbar>
           </AppBar>
-          <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300}>
+          <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300} customClassName="top-splitter">
             <Switch>
               <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
               <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
               <Route path="/projects" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProject} {...props} />} />
               <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
             </Switch>
-            <Switch>
-              <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={this.state.project} {...props.match.params} />} />
-              <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
-              <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={this.state.project} {...props} />} />
-              <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={this.state.project} {...props} />} />
-              <Route path="/structure" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
-              <Route path="/fileview/:path(.*)" component={FileView} />
-              <Route path="/projects" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
-              <Route path="/settings" component={SettingsPage} />
-              <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
-            </Switch>
+            <SplitterLayout vertical primaryIndex={0} primaryMinSize={100} secondaryInitialSize={100} customClassName="sub-splitter">
+              <Switch>
+                <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={this.state.project} {...props.match.params} />} />
+                <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
+                <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={this.state.project} {...props} />} />
+                <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={this.state.project} {...props} />} />
+                <Route path="/structure" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
+                <Route path="/fileview/:path(.*)" component={FileView} />
+                <Route path="/projects" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
+                <Route path="/settings" component={SettingsPage} />
+                <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
+              </Switch>
+              <Switch>
+                <Route path="/" component={(props) => <ErrorPage project={this.state.project} handleChange={this.changeProject} {...props} />} />
+              </Switch>
+            </SplitterLayout>
           </SplitterLayout>
           <Route path="/about" component={AboutPage} />
         </div>
