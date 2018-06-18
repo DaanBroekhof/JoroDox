@@ -41,7 +41,9 @@ export default class ProjectsTree extends React.Component {
       },
     }, () => {
       this.tree.loadData(this.state.treeData);
-      this.tree.selectNode(this.tree.getNodeById(this.props.project.id));
+      if (this.props.project) {
+        this.tree.selectNode(this.tree.getNodeById(this.props.project.id));
+      }
 
       return true;
     });

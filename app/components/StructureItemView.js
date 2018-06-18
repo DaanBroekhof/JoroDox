@@ -31,7 +31,7 @@ class StructureItemView extends Component {
       item: null,
       relationsFrom: [],
       relationsTo: [],
-      definition: JdxDatabase.getDefinition(props.project.gameType),
+      definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : {types: []},
     };
   }
 
@@ -42,11 +42,11 @@ class StructureItemView extends Component {
   componentWillReceiveProps(nextProps) {
     this.loadRelations(nextProps);
 
-    if (nextProps.project.gameType !== this.props.project.gameType) {
+    if (!this.props.project || nextProps.project.gameType !== this.props.project.gameType) {
       this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
 
-    if (nextProps.databaseVersion !== this.props.databaseVersion) {
+    if (nextProps.project && nextProps.databaseVersion !== this.props.databaseVersion) {
       this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, nextProps.match.params.id));
     }
   }

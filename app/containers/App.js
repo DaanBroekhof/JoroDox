@@ -31,6 +31,9 @@ import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
+const jetpack = require('electron').remote.require('fs-jetpack');
+const crypto = require('electron').remote.require('crypto');
+
 
 const theme = createMuiTheme({
   palette: {
@@ -50,41 +53,17 @@ const theme = createMuiTheme({
 });
 
 class App extends Component {
+  static currentAppFormatVersion = 1;
+
   constructor(props) {
     super(props);
 
-    let projects = JSON.parse(localStorage.getItem('projects'));
-    if (!projects) {
-      projects = [];
-    }
-
-    let currentProject = projects.find(x => x.isCurrent);
-
-    if (!currentProject) {
-      currentProject = {
-        id: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10),
-        name: 'New Project',
-        rootPath: '/',
-        subPaths: [],
-        gameType: 'eu4',
-        isCurrent: true,
-        watchDirectory: true,
-        lastGlobalUpdate: null,
-      };
-      projects.push(currentProject);
-    }
-
-    if (!currentProject.gameType) {
-      currentProject.gameType = 'eu4';
-    }
-
-    //currentProject.subPaths = [
-    //  'F:\\Games\\Steam\\steamapps\\common\\Europa Universalis IV\\dlc\\dlc18',
-    //];
+    this.loadProjects();
+    //JdxDatabase.clearProjectDatabases();
 
     this.state = {
-      project: currentProject,
-      projects,
+      project: null,
+      projects: [],
     };
   }
 
@@ -104,11 +83,73 @@ class App extends Component {
     document.removeEventListener('keydown', this.keyPressListener, false);
   }
 
+  async createNewProject() {
+    const newProject = {
+      id: crypto.randomBytes(10).toString('hex'),
+      name: 'Unnamed Project',
+      rootPath: '',
+      subPaths: [],
+      gameType: 'eu4',
+      isCurrent: true,
+      watchDirectory: false,
+      lastGlobalUpdate: null,
+      appFormatVersion: App.currentAppFormatVersion,
+    };
+
+    const projectTable = await JdxDatabase.getProjects();
+    await projectTable.add(newProject);
+
+    this.selectProject(newProject.id);
+
+    return newProject;
+  }
+
+  async selectProject(projectId) {
+    const projectTable = await JdxDatabase.getProjects();
+    const projects = await projectTable.toArray();
+
+    for (const project of projects) {
+      if (project.id !== projectId && project.isCurrent) {
+        await projectTable.update(project.id, {isCurrent: false});
+      } else if (project.id === projectId && !project.isCurrent) {
+        await projectTable.update(project.id, {isCurrent: true});
+      }
+    }
+  }
+
+  async loadProjects() {
+    let projects = await (await JdxDatabase.getProjects()).toArray();
+
+    let currentProject = projects.find(x => x.isCurrent);
+
+    if (!currentProject && projects.length > 0) {
+      currentProject = projects[0];
+    }
+
+    if (!currentProject) {
+      currentProject = await this.createNewProject();
+      projects = await (await JdxDatabase.getProjects()).toArray();
+    }
+
+    return new Promise((resolve) => {
+      this.setState({
+        project: currentProject,
+        projects,
+      }, () => {
+        resolve();
+      });
+    });
+  }
+
   startWatcher() {
     if (this.watcher) {
       this.watcher.task.close();
     }
-    if (!this.state.project.watchDirectory) {
+    if (!this.state.project || !this.state.project.watchDirectory) {
+      return;
+    }
+
+    if (this.state.project.rootPath === '/' || !this.state.project.rootPath || !jetpack.exists(this.state.project.rootPath)) {
       return;
     }
 
@@ -134,36 +175,33 @@ class App extends Component {
     }
   }
 
-  changeProject = (newSettings, noWatcher) => {
-    const newProjectState = {...(this.state.project), ...newSettings};
-    const newProjectsState = this.state.projects.map(p => (p.isCurrent ? newProjectState : p));
+  changeProject = async (newSettings, noWatcher) => {
+    if (newSettings === true) {
+      await this.createNewProject();
+    } else if (newSettings === false) {
+      const projects = await JdxDatabase.getProjects();
+      await projects.delete(this.state.project.id);
+    } else {
+      const newProjectState = {...(this.state.project), ...newSettings};
+      const projects = await JdxDatabase.getProjects();
+      projects.put(newProjectState);
+    }
 
-    this.setState({project: newProjectState, projects: newProjectsState}, () => {
-      localStorage.setItem('projects', JSON.stringify(this.state.projects));
-      if (!noWatcher) {
-        this.startWatcher();
-      }
-    });
+    await this.loadProjects();
+
+    if (!noWatcher) {
+      this.startWatcher();
+    }
   };
 
-  selectProject = (projectId) => {
-    let currentProject = null;
-    const newProjectsState = this.state.projects.map(p => {
-      p.isCurrent = projectId === p.id;
-      if (!currentProject && projectId === p.id) {
-        currentProject = p;
-      }
-      return p;
-    });
-
-    if (currentProject.id === this.state.project.id) {
+  selectProjectCaller = async (projectId) => {
+    if (this.state.project && this.state.project.id === projectId) {
       return;
     }
 
-    this.setState({project: currentProject, projects: newProjectsState}, () => {
-      localStorage.setItem('projects', JSON.stringify(this.state.projects));
-      this.startWatcher();
-    });
+    await this.selectProject(projectId);
+
+    this.loadProjects();
   };
 
   handleTab = (event, newTab) => {
@@ -173,7 +211,7 @@ class App extends Component {
       case 'structure': this.props.history.push('/structure'); break;
       case 'projects': this.props.history.push('/projects'); break;
     }
-  }
+  };
 
   render() {
     let currentTab = false;
@@ -193,7 +231,7 @@ class App extends Component {
           <AppBar position="static">
             <Toolbar>
               <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>Jorodox Tool<br />
-                <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta</span>
+                <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta-1</span>
               </Typography>
               <div style={{display: 'flex', flexGrow: 1}}>
                 <Tabs value={currentTab} onChange={this.handleTab}>
@@ -208,10 +246,10 @@ class App extends Component {
           </AppBar>
           <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300} customClassName="top-splitter">
             <Switch>
-              <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={this.state.project} {...props} />} />
-              <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={this.state.project} {...props} />} />
-              <Route path="/projects" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProject} {...props} />} />
-              <Route path="/" render={(props) => <FileTree project={this.state.project} {...props} />} />
+              <Route path="/structure/:kind?/:type?/:id?" render={(props) => this.state.project && <StructureTree project={this.state.project} {...props} />} />
+              <Route path="/fileview/:path(.*)" render={(props) => this.state.project && <FileTree project={this.state.project} {...props} />} />
+              <Route path="/projects" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProjectCaller} {...props} />} />
+              <Route path="/" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProjectCaller} {...props} />} />
             </Switch>
             <SplitterLayout vertical primaryIndex={0} primaryMinSize={100} secondaryInitialSize={34} secondaryMinSize={34} customClassName="sub-splitter">
               <Switch>
@@ -226,7 +264,7 @@ class App extends Component {
                 <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
               </Switch>
               <Switch>
-                <Route path="/" render={(props) => <ErrorPage project={this.state.project} {...props} />} />
+                <Route path="/" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} {...props} /> : <div />)} />
               </Switch>
             </SplitterLayout>
           </SplitterLayout>

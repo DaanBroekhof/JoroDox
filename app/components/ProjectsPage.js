@@ -3,6 +3,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import Icon from '@material-ui/core/Icon';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,6 +14,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormLabel from '@material-ui/core/FormLabel';
 import JdxDatabase from '../utils/JdxDatabase';
+import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 
 const {dialog} = require('electron').remote;
 
@@ -26,10 +30,31 @@ export default class ProjectsPage extends Component {
     JdxDatabase.clearAll(this.props.project);
   };
 
+  async deleteProject() {
+    (await JdxDatabase.getProjects()).delete(this.props.project.id);
+  }
+
   render() {
+    if (!this.props.project) {
+      return (
+        <div />
+      );
+    }
+
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>
-        <Typography variant="display2" gutterBottom>Project `{this.props.project.name}` settings</Typography>
+        <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
+          <Typography variant="display2" gutterBottom>Project `{this.props.project.name}`</Typography>
+          <span style={{marginLeft: 20}}>
+            <Tooltip id="tooltip-icon" title="Delete project" placement="bottom">
+              <IconButton onClick={() => this.props.handleChange(false)}><Icon color="action">delete</Icon></IconButton>
+            </Tooltip>
+            <Tooltip id="tooltip-icon" title="Create new project" placement="bottom">
+              <IconButton onClick={() => this.props.handleChange(true)}><Icon color="action">add</Icon></IconButton>
+            </Tooltip>
+          </span>
+        </div>
+
         <FormControl margin="normal" fullWidth>
           <InputLabel htmlFor="root-path">Name</InputLabel>
           <Input

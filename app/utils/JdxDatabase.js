@@ -16,6 +16,7 @@ import StellarisDefinition from '../definitions/stellaris';
 
 export default class JdxDatabase {
   static db = {};
+  static globalDb = null;
 
   static parserToTask = {
     StructureLoader: StructureLoaderTask,
@@ -30,10 +31,103 @@ export default class JdxDatabase {
     DeleteRelated: DeleteRelatedTask,
   };
 
+
+  static GLOBAL_DB_NAME = 'JdxGlobal';
+
+  static async getGlobalDb() {
+    if (JdxDatabase.globalDb) {
+      return JdxDatabase.globalDb;
+    }
+
+    const globalStores = {
+      projects: ['id', 'name'].join(','),
+    };
+
+    JdxDatabase.globalDb = await JdxDatabase.loadDbWithStores(JdxDatabase.GLOBAL_DB_NAME, globalStores);
+
+    return JdxDatabase.globalDb;
+  }
+
+  static async clearProjectDatabases() {
+    const dbNames = new Set(await Dexie.getDatabaseNames());
+    const projects = await (await JdxDatabase.getProjects()).toArray();
+
+    dbNames.delete(JdxDatabase.GLOBAL_DB_NAME);
+    projects.forEach(project => {
+      dbNames.delete(this.projectToDbName(project));
+    });
+
+    dbNames.forEach(dbName => {
+      console.log('Deleting ' + dbName);
+      Dexie.delete(dbName);
+    });
+  }
+
+  static async getProjects() {
+    const db = await JdxDatabase.getGlobalDb();
+    return await db.projects;
+  }
+
+  static async getAllDatabases() {
+    return Dexie.getDatabaseNames();
+  }
+
   static projectToDbName(project) {
     const rootHash = project.id;
 
     return `JdxDatabase-${rootHash}`;
+  }
+
+  static async loadDbWithStores(dbName, stores) {
+    const db = new Dexie(dbName, {allowEmptyDB: true});
+    console.log('Loading DB `' + dbName + '`');
+    // Hacky way to allow empty DB editing
+    /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */
+    db._allowEmptyDB = true;
+
+    // Gather current existing stores
+    const currentStores = [];
+    await db.open();
+
+    let currentVerNo = db.verno;
+    db.tables.forEach(table => {
+      const primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
+      const schemaSyntax = primKeyAndIndexes.map(index => index.src).join(',');
+      currentStores[table.name] = schemaSyntax.split(',').sort().join(',');
+    });
+    db.close();
+
+    // Compare existing stores with desired stores
+    const newStores = {};
+    const deleteStores = {};
+    _(stores).forOwn((v, k) => {
+      if (!currentStores[k]) {
+        newStores[k] = v;
+      } else if (currentStores[k] !== v) {
+        deleteStores[k] = null;
+        newStores[k] = v;
+      }
+    });
+    _(currentStores).forOwn((v, k) => {
+      if (!stores[k]) {
+        deleteStores[k] = null;
+      }
+    });
+
+    // Remove/Delete stores that are changed
+    db.version(currentVerNo).stores(currentStores);
+    if (_(deleteStores).size()) {
+      currentVerNo += 1;
+      db.version(currentVerNo).stores(deleteStores);
+      console.log('Deleting stores:', deleteStores);
+    }
+    if (_(newStores).size()) {
+      currentVerNo += 1;
+      db.version(currentVerNo).stores(newStores);
+      console.log('Creating stores:', newStores);
+    }
+
+    return db.open();
   }
 
   static async get(project) {
@@ -42,10 +136,6 @@ export default class JdxDatabase {
     }
     const root = project.rootPath;
     const definition = this.getDefinition(project.gameType);
-
-    if (!root) {
-      throw new Error(`Empty root dir '${root}'`);
-    }
 
     // Create all definitions
     const relationDefinition = _.join([
@@ -72,64 +162,9 @@ export default class JdxDatabase {
     stores = _(stores).mapValues(x => x.split(',').sort().join(',')).value();
 
     const dbName = this.projectToDbName(project);
-    const db = new Dexie(dbName, {allowEmptyDB: true});
-    console.log('Loading DB `'+ dbName +'`');
+    this.db[project.id] = await JdxDatabase.loadDbWithStores(dbName, stores);
 
-    // Hacky way to allow empty DB editing
-    /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */
-    db._allowEmptyDB = true;
-
-    // Gather current existing stores
-    const currentStores = [];
-    await db.open();
-    let currentVerNo = db.verno;
-    db.tables.forEach(table => {
-      const primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
-      const schemaSyntax = primKeyAndIndexes.map(index => index.src).join(',');
-      currentStores[table.name] = schemaSyntax.split(',').sort().join(',');
-    });
-    db.close();
-
-    // Compare existing stores with desired stores
-    const newStores = {};
-    const deleteStores = {};
-    _(stores).forOwn((v, k) => {
-      if (!currentStores[k]) {
-        newStores[k] = v;
-      } else if (currentStores[k] !== v) {
-        deleteStores[k] = null;
-        newStores[k] = v;
-      }
-    });
-    _(currentStores).forOwn((v, k) => {
-      if (!stores[k]) {
-        deleteStores[k] = null;
-      }
-    });
-
-    /*
-      console.log(currentStores);
-      console.log(stores);
-      console.log(deleteStores);
-      console.log(newStores);
-    */
-
-    // Remove/Delete stores that are changed
-    db.version(currentVerNo).stores(currentStores);
-    if (_(deleteStores).size()) {
-      currentVerNo += 1;
-      db.version(currentVerNo).stores(deleteStores);
-      console.log('Deleting stores:', deleteStores);
-    }
-    if (_(newStores).size()) {
-      currentVerNo += 1;
-      db.version(currentVerNo).stores(newStores);
-      console.log('Creating stores:', newStores);
-    }
-
-    this.db[project.id] = db;
-
-    return db.open();
+    return this.db[project.id];
   }
 
   static async clearAll(project) {
