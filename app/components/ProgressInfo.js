@@ -16,14 +16,26 @@ export default class ProgressInfo extends Component {
       total: null,
     };
 
-    ipc.on('background-response', (sender, args) => {
-      this.setState({
-        title: args.taskTitle,
-        message: args.message,
-        total: args.total,
-        progress: args.progress,
-      });
-    });
+
+    this.eventListener = (sender, response) => {
+      if (response.type === 'progress') {
+        this.setState({
+          title: response.taskTitle,
+          message: response.message,
+          total: response.total,
+          progress: response.progress,
+        });
+      } else if (response.type === 'finished' || response.type === 'failed') {
+        this.setState({
+          message: null,
+        });
+      }
+    };
+    ipc.on('background-response', this.eventListener);
+  }
+
+  componentWillUnmount() {
+    ipc.removeListener('background-response', this.eventListener);
   }
 
   render() {

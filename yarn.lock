@@ -3036,6 +3036,10 @@ devtron@^1.4.0:
     highlight.js "^9.3.0"
     humanize-plus "^1.8.1"
 
+dexie-observable@^1.0.0-beta.4:
+  version "1.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/dexie-observable/-/dexie-observable-1.0.0-beta.4.tgz#71cead89e8a617ca220b67764089bf4bcab7ed21"
+
 dexie@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/dexie/-/dexie-2.0.4.tgz#6027a5e05879424e8f9979d8c14e7420f27e3a11"

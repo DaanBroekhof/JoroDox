@@ -337,7 +337,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     console.log('Validating ' + definition.id);
 
     const items = await db[definition.id].toArray();
-    items.forEach((item, nr) => {
+    let nr = 0;
+    for (const item of items) {
       this.progress(nr, items.length, `Validating ${items.length} items...`);
       const valid = validator(item);
       if (!valid) {
@@ -348,7 +349,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
         console.log(item.name, validator.errors[0]);
 
-        JdxDatabase.addError(args.project, {
+        await JdxDatabase.addError(args.project, {
           message: validator.errors[0].message,
           path: null,
           type: definition.id,
@@ -356,8 +357,10 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           severity: 'error',
           data: validator.errors[0],
         });
+        this.sendResponse({errorsUpdate: true});
       }
-    });
+      nr++;
+    }
 
     console.log('Done validating ' + definition.id);
     this.progress(items.length, items.length, `Validated ${items.length} items...`);

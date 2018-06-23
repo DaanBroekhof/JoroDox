@@ -13,7 +13,9 @@ import {Column} from 'react-virtualized';
 import JdxDatabase from '../utils/JdxDatabase';
 import {incrementVersion} from '../actions/database';
 import ItemGrid from './ItemGrid';
-import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
+import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
+
+const ipc = require('electron').ipcRenderer;
 
 class ErrorPage extends Component {
   constructor(props) {
@@ -25,6 +27,13 @@ class ErrorPage extends Component {
       gameType: props.project.gameType,
       errors: [],
     };
+
+    this.eventListener = (sender, response) => {
+      if (response.type === 'response' && response.data && response.data.errorsUpdate) {
+        this.loadErrors(this.props.project);
+      }
+    };
+    ipc.on('background-response', this.eventListener);
   }
 
   componentDidMount() {
@@ -43,6 +52,11 @@ class ErrorPage extends Component {
       this.loadErrors(nextProps.project);
     }
   }
+
+  componentWillUnmount() {
+    ipc.removeListener('background-response', this.eventListener);
+  }
+
 
   async loadErrors(project) {
     const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().toArray();
