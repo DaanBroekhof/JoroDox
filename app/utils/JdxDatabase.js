@@ -128,6 +128,7 @@ export default class JdxDatabase {
       db.version(currentVerNo).stores(newStores);
       console.log('Creating stores:', newStores);
     }
+    console.log('Loaded DB `' + dbName + '`');
 
     return db.open();
   }
