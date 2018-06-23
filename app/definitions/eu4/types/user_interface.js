@@ -134,7 +134,7 @@ export default {
       sourceTransform: {
         type: 'keyValues',
         path: ['data', 'data'],
-        keyName: 'name',
+        valueName: 'name',
       },
       listView: {
         pageSize: 100,
@@ -350,7 +350,7 @@ export default {
       sourceTransform: {
         type: 'typesListData',
         path: ['data', 'data', 'spriteTypes'],
-        types: ['*'],
+        types: ['*', '!cursor_offset'],
         idPath: ['name'],
       },
       listView: {
@@ -414,7 +414,7 @@ export default {
       sourceTransform: {
         type: 'typesListData',
         path: ['data', 'data', 'bitmapfonts'],
-        types: ['*'],
+        types: ['*', '!textcolors'],
         idPath: ['name'],
       },
       listView: {

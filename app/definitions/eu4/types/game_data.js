@@ -2584,7 +2584,6 @@ export default {
         type: 'typesList',
         path: ['data', 'children'],
         types: ['vassal', 'march', 'alliance', 'union', 'royal_marriage', 'dependency', 'guarantee'],
-        idPath: [],
       },
       listView: {
         pageSize: 100,

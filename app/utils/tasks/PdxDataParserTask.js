@@ -23,11 +23,25 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
     const datafiles = [];
     const relations = [];
-    filesList.each(path => {
+    filesList.each(async path => {
       const parser = new PdxData();
 
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const data = parser.readFromBuffer(new Uint8Array(jetpack.read(fullPath, 'buffer')).buffer);
+
+      if (parser.errors && parser.errors.length > 0) {
+        parser.errors.forEach(async (err) => {
+          await JdxDatabase.addError(args.project, {
+            message: err,
+            path,
+            type: 'pdx_data',
+            typeId: path,
+            severity: 'error',
+          });
+          this.sendResponse({errorsUpdate: true});
+        });
+        console.error(`"Error(s) parsing '${path}'`, parser.errors);
+      }
 
       if (datafiles.length % 50 === 0) {
         this.progress(datafiles.length, filesList.size(), `Parsing ${filesList.size()} PDX binary data objects...`);

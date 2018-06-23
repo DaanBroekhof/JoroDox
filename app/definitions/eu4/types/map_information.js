@@ -14,7 +14,6 @@ export default {
         type: 'typesList',
         path: ['data', 'children'],
         types: ['type'],
-        idPath: [],
       },
       listView: {
         pageSize: 100,
@@ -471,7 +470,6 @@ export default {
         type: 'typesList',
         path: ['data', 'children'],
         types: ['lake'],
-        idPath: [],
       },
       listView: {
         pageSize: 100,

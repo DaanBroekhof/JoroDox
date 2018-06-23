@@ -17,66 +17,18 @@ export default class PdxScript {
     this.errors = [];
 
     const base = {
-      id: this.lastId, type: 'rootScope', name: 'pdxScript', children: [], depth: 0, comments: [], data: {}
+      id: this.lastId,
+      type: 'rootScope',
+      name: 'pdxScript',
+      children: [],
+      depth: 0,
+      comments: [],
+      data: {},
+      value: null,
     };
     this.lastId += 1;
-    let token = false;
 
-    do {
-      token = this.readToken(base);
-
-      if (token === false) {
-        break;
-      }
-
-      const varScope = {
-        id: this.lastId, type: 'object', name: token, children: [], depth: 1, value: null, data: {}, comments: []
-      };
-      this.lastId += 1;
-      base.children.push(varScope);
-
-      // Copy any comments immediately above this statement to scope
-      this.moveComments(base, varScope, this.currentLine - 1);
-
-      const assign = this.readToken(varScope, true);
-      if (assign !== '=' && assign !== '{') {
-        this.errors.push(`Expected token \`=\` or \`{\` at line ${this.currentLine}\`, instead got "${assign}".`);
-      }
-
-      let value = assign;
-
-      if (assign === '=' || assign === '{') {
-        // Allow assigning with an '=' or with an '{'
-        if (assign === '=') {
-          value = this.readToken(varScope);
-        }
-        if (value === '{') {
-          this.readObject(varScope);
-        } else {
-          // Convert numeric values
-          if (!isNaN(value)) {
-            value = +value;
-          }
-
-          varScope.value = value;
-          varScope.data = value;
-          varScope.type = 'property'; // This should not be here, presentational
-          varScope.icon = 'asterisk'; // This should not be here, presentational
-        }
-      }
-
-      if (base.data[varScope.name]) {
-        if (!Array.isArray(base.data[varScope.name]) || !base.data[varScope.name].multipleKeys) {
-          base.data[varScope.name] = [base.data[varScope.name]];
-          base.data[varScope.name].multipleKeys = true;
-        }
-
-        base.data[varScope.name].push(varScope.data);
-      } else {
-        base.data[varScope.name] = varScope.data;
-      }
-    }
-    while (token !== false);
+    this.readObject(base);
 
     return base;
   }
@@ -138,33 +90,39 @@ export default class PdxScript {
         // Reset token for new property
         prevToken = null;
         token = null;
-      } else if (prevToken !== null && scope.children.length === 0) {
+      } else if (prevToken !== null) {
         // value list style object
-        if (scope.value === null) {
-          scope.value = [];
+        if (!Array.isArray(scope.value)) {
+          if (scope.value !== null) {
+            scope.value = [scope.value];
+          } else {
+            scope.value = [];
+          }
         }
-
         scope.icon = 'list'; // Should not be here.
 
         scope.value.push(prevToken);
-
-        scope.data = scope.value;
-      } else if (prevToken !== null && scope.children.length !== 0) {
-        this.errors.push(`Unexpected list value \`${prevToken}\` at line \`${this.currentLine}\`, scope already contains key-value pairs.`);
       }
 
       if (token === '}') {
-        if (scope.children.length === 0 && scope.value === null) {
-          // Empty array input
-          scope.value = [];
-          scope.icon = 'list'; // Should not be here.
-
-          scope.data = scope.value;
-        }
         break;
       }
     }
     while (token !== false);
+
+    if (scope.children.length === 0 && scope.value === null) {
+      scope.value = [];
+    }
+
+    if (Array.isArray(scope.value)) {
+      if (_.keys(scope.data).length === 0) {
+        // Empty array input
+        scope.data = scope.value;
+        scope.icon = 'list'; // Should not be here.
+      } else {
+        scope.data._array_ = scope.value;
+      }
+    }
   }
 
   readToken(scope, stopAtNewline) {
@@ -255,23 +213,7 @@ export default class PdxScript {
 
     while (this.currentOffset < this.data.length) {
       this.currentOffset += 1;
-      if (this.data[this.currentOffset] === '\\') {
-        this.currentOffset += 1;
-        if (this.data[this.currentOffset] === 't') {
-          string += '\t';
-        } else if (this.data[this.currentOffset] === 'n') {
-          string += '\n';
-        } else if (this.data[this.currentOffset] === 'r') {
-          string += '\r';
-        } else if (this.data[this.currentOffset] === '\\') {
-          string += '\\';
-        } else if (this.data[this.currentOffset] === '"') {
-          string += '"';
-        } else {
-          string += this.data[this.currentOffset];
-          this.errors.push(`Unknown escape char \`${this.data[this.currentOffset]}\` at line ${this.currentLine}`);
-        }
-      } else if (this.data[this.currentOffset] === '"') {
+      if (this.data[this.currentOffset] === '"') {
         this.currentOffset += 1;
         break;
       } else {

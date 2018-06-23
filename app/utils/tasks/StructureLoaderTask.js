@@ -64,17 +64,17 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     let result = {items: [], relations: []};
 
     if (definition.sourceTransform.type === 'keyValues') {
-      result = this.sourceTransformByKeyValues(sourceItems, definition);
+      result = await this.sourceTransformByKeyValues(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'keyKeyValues') {
-      result = this.sourceTransformByKeyKeyValues(sourceItems, definition);
+      result = await this.sourceTransformByKeyKeyValues(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'fileData') {
-      result = this.sourceTransformByFileData(sourceItems, definition);
+      result = await this.sourceTransformByFileData(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'typesList') {
-      result = this.sourceTransformByTypesList(sourceItems, definition);
+      result = await this.sourceTransformByTypesList(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'typesListData') {
-      result = this.sourceTransformByTypesListData(sourceItems, definition);
+      result = await this.sourceTransformByTypesListData(sourceItems, definition);
     } else if (definition.sourceTransform.type === 'stringValues') {
-      result = this.sourceTransformByStringValues(sourceItems, definition);
+      result = await this.sourceTransformByStringValues(sourceItems, definition);
     } else {
       console.warn(`Unknown sourceTransform type \`${definition.sourceTransform.type}\`.`);
     }
@@ -82,7 +82,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     // Add any additional relations defined
     if (relationStorage) {
       this.progress(0, 3, 'Adding additional relations...');
-      result = this.processAdditionalRelations(result, definition);
+      result = await this.processAdditionalRelations(result, definition);
     }
 
     this.progress(0, 3, 'Saving data...');
@@ -240,15 +240,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByTypesList(sourceItems, definition, skipRelations) {
+  async sourceTransformByTypesList(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
     let nr = 0;
-    sourceItems.forEach(sourceItem => {
+    sourceItems.forEach(async sourceItem => {
       const namespaceValues = {};
-      _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value) => {
-        if (_.includes(definition.sourceTransform.types, value.name) || _.includes(definition.sourceTransform.types, '*')) {
+      _.forOwn(_.get(sourceItem, definition.sourceTransform.path), async (value) => {
+        if (this.matchTypes(definition.sourceTransform.types, value.name)) {
           const item = {
             namespace: namespaceValues,
             comments: value.comments.join('\n').trim(),
@@ -259,8 +259,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           };
 
           if (definition.sourceTransform.idPath && item.id === undefined) {
-            console.error('Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.', item);
-            JdxDatabase.addError(this.project, {
+            console.error('Could not find ID in `' + definition.id + '` item for data path `' + definition.sourceTransform.idPath.join('.') + '`.', item);
+            await JdxDatabase.addError(this.project, {
               message: 'Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.',
               path: sourceItem.path,
               type: definition.id,
@@ -309,23 +309,23 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByTypesListData(sourceItems, definition, skipRelations) {
+  async sourceTransformByTypesListData(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
     let nr = 0;
-    sourceItems.forEach(sourceItem => {
+    sourceItems.forEach(async sourceItem => {
       let itemSets = _.get(sourceItem, definition.sourceTransform.path);
 
       if (!_.isArray(itemSets)) {
         itemSets = [itemSets];
       }
-      itemSets.forEach(itemSet => {
-        _.forOwn(itemSet, (values, key) => {
-          if (_.includes(definition.sourceTransform.types, key) || _.includes(definition.sourceTransform.types, '*')) {
+      itemSets.forEach(async itemSet => {
+        _.forOwn(itemSet, async (values, key) => {
+          if (this.matchTypes(definition.sourceTransform.types, key)) {
             values = !_.isArray(values) ? [values] : values;
 
-            values.forEach(value => {
+            values.forEach(async value => {
               const item = {
                 nr: nr.toString(),
                 id: definition.sourceTransform.idPath ? _.get(value, definition.sourceTransform.idPath) : null,
@@ -335,7 +335,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
               if (definition.sourceTransform.idPath && item.id === undefined) {
                 console.error('Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.', item);
-                JdxDatabase.addError(this.project, {
+                await JdxDatabase.addError(this.project, {
                   message: 'Could not find ID in item for data path `' + definition.sourceTransform.idPath.join('.') + '`.',
                   path: sourceItem.path,
                   type: definition.id,
@@ -383,11 +383,11 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByFileData(sourceItems, definition, skipRelations) {
+  async sourceTransformByFileData(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
-    sourceItems.forEach(sourceItem => {
+    sourceItems.forEach(async sourceItem => {
       const item = {};
       if (definition.sourceTransform.filenamePattern) {
         const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
@@ -403,7 +403,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       }
       if (item[definition.primaryKey] === undefined) {
         console.error('Primary key `' + definition.primaryKey + '` not found.', item);
-        JdxDatabase.addError(this.project, {
+        await JdxDatabase.addError(this.project, {
           message: 'Primary key `' + definition.primaryKey + '` not found in item.',
           path: sourceItem.path,
           type: definition.id,
@@ -433,10 +433,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  processAdditionalRelations(result, definition) {
+  matchTypes(types, type) {
+    return (_.includes(types, type) || _.includes(types, '*')) && !_.includes(types, '!' + type);
+  }
+
+  async processAdditionalRelations(result, definition) {
     if (definition.relations) {
-      definition.relations.forEach(relation => {
-        result.items.forEach(item => {
+      definition.relations.forEach(async relation => {
+        result.items.forEach(async item => {
           if (relation.type === 'byPath') {
             result.relations.push(this.addRelationId({
               fromKey: relation.fromName,
@@ -459,11 +463,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
               }));
             }
           } else if (relation.type === 'arrayValuesByPath') {
-            const values = _.get(item, relation.path);
+            let values = _.get(item, relation.path);
             if (values) {
+              if (!_.isArray(values) && values._array_) {
+                values = values._array_;
+              }
+
               if (!_.isArray(values)) {
-                console.error('Relation path is not an array: ', item, relation.path);
-                JdxDatabase.addError(this.project, {
+                console.error('Relation path for `' + definition.id + '` `' + item[definition.primaryKey].toString() + '` is not an array: ', item, relation.path);
+                await JdxDatabase.addError(this.project, {
                   message: 'Relation path is not an array: ',
                   path: null,
                   type: definition.id,

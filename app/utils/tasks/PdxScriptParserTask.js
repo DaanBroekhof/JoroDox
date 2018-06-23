@@ -22,7 +22,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
 
     const scripts = [];
     const relations = [];
-    filesList.each(path => {
+    filesList.each(async path => {
       const parser = new PdxScript();
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
 
@@ -33,14 +33,15 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
       const data = parser.readFile(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'));
 
       if (parser.errors && parser.errors.length > 0) {
-        parser.errors.forEach((err) => {
-          JdxDatabase.addError(args.project, {
+        parser.errors.forEach(async (err) => {
+          await JdxDatabase.addError(args.project, {
             message: err,
             path,
             type: 'pdx_scripts',
             typeId: path,
             severity: 'error',
           });
+          this.sendResponse({errorsUpdate: true});
         });
         console.error(`"Error(s) parsing '${path}'`, parser.errors);
       }
