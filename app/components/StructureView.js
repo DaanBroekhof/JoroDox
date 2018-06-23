@@ -21,7 +21,7 @@ class StructureView extends Component {
 
     this.state = {
       typeCounts: {},
-      definition: JdxDatabase.getDefinition(props.project.gameType),
+      definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
     };
   }
 
@@ -117,6 +117,10 @@ class StructureView extends Component {
   }
 
   render() {
+    if (!this.state.definition) {
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>No data.</p></Paper>);
+    }
+
     if (!this.loadingCounts) {
       JdxDatabase.get(this.props.project).then(db => {
         const typeIds = this.state.definition.types

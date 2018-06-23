@@ -1,4 +1,5 @@
-import Dexie from 'dexie/dist/dexie';
+import Dexie from 'dexie';
+
 import _ from 'lodash';
 import StructureLoaderTask from './tasks/StructureLoaderTask';
 import FileLoaderTask from './tasks/FileLoaderTask';
@@ -93,7 +94,8 @@ export default class JdxDatabase {
     db.tables.forEach(table => {
       const primKeyAndIndexes = [table.schema.primKey].concat(table.schema.indexes);
       const schemaSyntax = primKeyAndIndexes.map(index => index.src).join(',');
-      currentStores[table.name] = schemaSyntax.split(',').sort().join(',');
+      const primaryKey = schemaSyntax.split(',')[0];
+      currentStores[table.name] = [primaryKey].concat(schemaSyntax.split(',').slice(1).sort()).join(',');
     });
     db.close();
 
@@ -153,7 +155,7 @@ export default class JdxDatabase {
     // Stores per definition type
     _(definition.types).forEach(type => {
       stores[type.id] = `++${type.primaryKey}${type.indexedKeys ? `,${type.indexedKeys.join(',')}` : ''}`;
-      if (type.sourceTransform && type.sourceTransform.relationsStorage) {
+      if (type.sourceTransform && type.sourceTransform.relationsStorage && type.sourceTransform.relationsStorage !== false) {
         // Relation table just for this type
         stores[type.sourceTransform.relationsStorage] = relationDefinition;
       }

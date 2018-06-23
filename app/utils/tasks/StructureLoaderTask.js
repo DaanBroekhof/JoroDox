@@ -13,7 +13,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   async execute(args) {
     const db = await JdxDatabase.get(args.project);
     const definition = args.typeDefinition;
-    const relationStorage = definition.sourceTransform.relationsStorage ? definition.sourceTransform.relationsStorage : 'relations';
+    const relationStorage = definition.sourceTransform.relationsStorage !== undefined ? definition.sourceTransform.relationsStorage : 'relations';
 
     this.project = args.project;
 
@@ -21,12 +21,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       this.progress(0, 1, 'Removing old data...');
 
       await db[definition.id].clear();
-      this.progress(0, 1, 'Removing old relations...');
 
-      if (relationStorage === 'relations') {
-        await this.deleteChunked(db[relationStorage].where('fromType').equals(definition.id));
-      } else {
-        await db[relationStorage].clear();
+      if (relationStorage) {
+        this.progress(0, 1, 'Removing old relations...');
+
+        if (relationStorage === 'relations') {
+          await this.deleteChunked(db[relationStorage].where('fromType').equals(definition.id));
+        } else {
+          await db[relationStorage].clear();
+        }
       }
     }
 
@@ -76,10 +79,11 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       console.warn(`Unknown sourceTransform type \`${definition.sourceTransform.type}\`.`);
     }
 
-    this.progress(0, 3, 'Adding additional relations...');
-
     // Add any additional relations defined
-    result = this.processAdditionalRelations(result, definition);
+    if (relationStorage) {
+      this.progress(0, 3, 'Adding additional relations...');
+      result = this.processAdditionalRelations(result, definition);
+    }
 
     this.progress(0, 3, 'Saving data...');
 
@@ -87,10 +91,12 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
     // Save everything to DB
     await this.saveChunked(result.items, db[definition.id], 0, chunkSize);
-    await this.saveChunked(result.relations, db[relationStorage], 0, chunkSize);
+    if (relationStorage) {
+      await this.saveChunked(result.relations, db[relationStorage], 0, chunkSize);
+    }
   }
 
-  sourceTransformByKeyValues(sourceItems, definition) {
+  sourceTransformByKeyValues(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
     sourceItems.forEach(sourceItem => {
@@ -111,20 +117,22 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         item[definition.primaryKey] = item[definition.primaryKey].toString();
         items.push(item);
 
-        relations.push(this.addRelationId({
-          fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
-          fromType: definition.id,
-          fromId: item[definition.primaryKey],
-          toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
-          toType: definition.sourceType.id,
-          toId: sourceItem.path,
-        }));
+        if (!skipRelations) {
+          relations.push(this.addRelationId({
+            fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+            fromType: definition.id,
+            fromId: item[definition.primaryKey],
+            toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+            toType: definition.sourceType.id,
+            toId: sourceItem.path,
+          }));
+        }
       });
     });
     return {items, relations};
   }
 
-  sourceTransformByStringValues(sourceItems, definition) {
+  sourceTransformByStringValues(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
     sourceItems.forEach(sourceItem => {
@@ -161,21 +169,23 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
         items.push(item);
 
-        relations.push(this.addRelationId({
-          fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
-          fromType: definition.id,
-          fromId: item[definition.primaryKey],
-          toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
-          toType: definition.sourceType.id,
-          toId: sourceItem.path,
-        }));
+        if (!skipRelations) {
+          relations.push(this.addRelationId({
+            fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+            fromType: definition.id,
+            fromId: item[definition.primaryKey],
+            toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+            toType: definition.sourceType.id,
+            toId: sourceItem.path,
+          }));
+        }
       });
     });
     return {items, relations};
   }
 
 
-  sourceTransformByKeyKeyValues(sourceItems, definition) {
+  sourceTransformByKeyKeyValues(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -203,23 +213,25 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
           items.push(item);
 
-          relations.push(this.addRelationId({
-            fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
-            fromType: definition.id,
-            fromId: item[definition.primaryKey],
-            toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
-            toType: definition.sourceType.id,
-            toId: sourceItem.path,
-          }));
-          if (definition.sourceTransform.parentRelationType) {
+          if (!skipRelations) {
             relations.push(this.addRelationId({
-              fromKey: definition.id,
+              fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
               fromType: definition.id,
               fromId: item[definition.primaryKey],
-              toKey: definition.sourceTransform.parentKeyName,
-              toType: definition.sourceTransform.parentRelationType,
-              toId: item[definition.sourceTransform.parentKeyName],
+              toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+              toType: definition.sourceType.id,
+              toId: sourceItem.path,
             }));
+            if (definition.sourceTransform.parentRelationType) {
+              relations.push(this.addRelationId({
+                fromKey: definition.id,
+                fromType: definition.id,
+                fromId: item[definition.primaryKey],
+                toKey: definition.sourceTransform.parentKeyName,
+                toType: definition.sourceTransform.parentRelationType,
+                toId: item[definition.sourceTransform.parentKeyName],
+              }));
+            }
           }
         });
       });
@@ -228,7 +240,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByTypesList(sourceItems, definition) {
+  sourceTransformByTypesList(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -256,6 +268,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
               severity: 'error',
               data: item,
             });
+            this.sendResponse({errorsUpdate: true});
             return;
           }
 
@@ -275,14 +288,16 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           items.push(item);
 
           nr += 1;
-          relations.push(this.addRelationId({
-            fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
-            fromType: definition.id,
-            fromId: item[definition.primaryKey],
-            toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
-            toType: definition.sourceType.id,
-            toId: sourceItem.path,
-          }));
+          if (!skipRelations) {
+            relations.push(this.addRelationId({
+              fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+              fromType: definition.id,
+              fromId: item[definition.primaryKey],
+              toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+              toType: definition.sourceType.id,
+              toId: sourceItem.path,
+            }));
+          }
         } else {
           if (!definition.sourceTransform.disableNamespace) {
             namespaceValues[value.name] = value.data;
@@ -294,7 +309,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByTypesListData(sourceItems, definition) {
+  sourceTransformByTypesListData(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -328,6 +343,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                   severity: 'error',
                   data: item,
                 });
+                this.sendResponse({errorsUpdate: true});
                 return;
               }
 
@@ -347,14 +363,17 @@ export default class StructureLoaderTask extends DbBackgroundTask {
               items.push(item);
 
               nr += 1;
-              relations.push(this.addRelationId({
-                fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
-                fromType: definition.id,
-                fromId: item[definition.primaryKey],
-                toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
-                toType: definition.sourceType.id,
-                toId: sourceItem.path,
-              }));
+
+              if (!skipRelations) {
+                relations.push(this.addRelationId({
+                  fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+                  fromType: definition.id,
+                  fromId: item[definition.primaryKey],
+                  toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+                  toType: definition.sourceType.id,
+                  toId: sourceItem.path,
+                }));
+              }
             });
           }
         });
@@ -364,7 +383,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByFileData(sourceItems, definition) {
+  sourceTransformByFileData(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -392,19 +411,23 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           severity: 'error',
           data: item,
         });
+        this.sendResponse({errorsUpdate: true});
         return;
       }
       item[definition.primaryKey] = item[definition.primaryKey].toString();
       items.push(item);
 
-      relations.push(this.addRelationId({
-        fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
-        fromType: definition.id,
-        fromId: item[definition.primaryKey],
-        toKey: 'source', //definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
-        toType: definition.sourceType.id,
-        toId: sourceItem.path,
-      }));
+
+      if (!skipRelations) {
+        relations.push(this.addRelationId({
+          fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
+          fromType: definition.id,
+          fromId: item[definition.primaryKey],
+          toKey: 'source', //definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
+          toType: definition.sourceType.id,
+          toId: sourceItem.path,
+        }));
+      }
     });
 
     return {items, relations};
@@ -448,6 +471,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                   severity: 'warning',
                   data: [item, relation.path],
                 });
+                this.sendResponse({errorsUpdate: true});
                 return;
               }
 

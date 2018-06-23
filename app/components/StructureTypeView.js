@@ -25,7 +25,7 @@ class StructureTypeView extends Component {
 
     this.state = {
       search: '',
-      definition: JdxDatabase.getDefinition(props.project.gameType),
+      definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
     };
   }
 
@@ -195,7 +195,7 @@ class StructureTypeView extends Component {
   }
 
   render() {
-    if (!this.props.match.params.type) {
+    if (!this.props.match.params.type || !this.state.definition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
     }
 

@@ -77,7 +77,7 @@ export default {
         keyName: 'name',
         parentKeyName: 'language',
         parentRelationType: 'localisation_languages',
-        relationsStorage: 'localisation_relations',
+        relationsStorage: false,
         valueName: 'data',
         customFields: {
           id: {
