@@ -281,8 +281,8 @@ export default class StructureScannerTask extends DbBackgroundTask {
     //console.log(javascriptStringify(schemaTrainer.toJS()));
 
 
-    //await CsvReaderHelper.exportModifiersFromCsv();
-    //return;
+    await CsvReaderHelper.exportCountryCommands();
+    return;
 
     return true;
   }

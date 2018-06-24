@@ -164,7 +164,6 @@
         },
         "hre_heretic_religion": {
           "description": "Returns true if the specified religion is the opposition religion of the HRE.\r\nNote: No localisation for the negation.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"

@@ -209,7 +209,7 @@ export default {
       title: 'Event pictures',
       category: 'Graphics',
       reader: 'StructureLoader',
-      primaryKey: 'path',
+      primaryKey: 'name',
       sourceType: {
         id: 'dds_images',
         flipY: true,
@@ -218,6 +218,8 @@ export default {
       },
       sourceTransform: {
         type: 'fileData',
+        filenamePattern: '/([^/.]+).dds$',
+        filenamePatternKey: 'name'
       },
       listView: {
         pageSize: 100,
@@ -226,10 +228,13 @@ export default {
         ],
         columns: [
           {
+            name: 'Name',
+            dataIndex: ['name'],
+            linkTo: '[self]',
+          },
+          {
             name: 'Path',
             dataIndex: ['path'],
-            width: '75%',
-            linkTo: '[self]',
           },
         ],
       }

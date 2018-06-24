@@ -169,6 +169,14 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           // TODO: make error-path tie up with subSchema validator path
           const result = validatorPrep()(outArray);
           v.errors = validatorPrep().errors;
+          if (v.errors) {
+            v.errors = v.errors.map(err => {
+              err.dataPath = dataPath + '.' + err.dataPath;
+
+              return err;
+            });
+          }
+
           return result;
         };
       }
@@ -336,7 +344,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     console.log('Validating ' + definition.id);
 
-    const items = await db[definition.id].toArray();
+    const items = await db[definition.id].limit(500).toArray();
     let nr = 0;
     for (const item of items) {
       this.progress(nr, items.length, `Validating ${items.length} items...`);
@@ -347,8 +355,9 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           validator.errors[0].message = 'Unexpected additional property found: ' + validator.errors[0].params.additionalProperty;
         }
 
-        console.log(item.name, validator.errors[0]);
+        console.log(item[definition.primaryKey], item.comments, validator.errors[0]);
 
+        /*
         await JdxDatabase.addError(args.project, {
           message: validator.errors[0].message,
           path: null,
@@ -358,6 +367,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           data: validator.errors[0],
         });
         this.sendResponse({errorsUpdate: true});
+        */
       }
       nr++;
     }

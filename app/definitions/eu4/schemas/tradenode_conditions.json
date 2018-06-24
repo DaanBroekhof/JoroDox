@@ -102,9 +102,9 @@
           "additionalProperties": false,
           "properties": {
             "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "key": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
+            "name": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
           },
-          "required": ["who", "key"]
+          "required": ["who", "name"]
         },
         "has_trader": {
           "description": "Returns true if the specified country has a merchant in the trade node.",

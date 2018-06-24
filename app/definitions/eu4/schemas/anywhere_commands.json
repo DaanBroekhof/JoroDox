@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/anywhere_commands.json",
+  "type": "object",
+  "definitions": {
+    "anywhere_commands": {
+      "$mergeProps": [
+        {
+          "$ref": "anywhere_commands.json#/definitions/anywhere_commands_dual_scopes"
+        },
+        {
+          "$ref": "anywhere_commands.json#/definitions/anywhere_commands_identifier_dual_scopes"
+        },
+        {
+          "$ref": "anywhere_commands.json#/definitions/anywhere_commands_properties"
+        }
+      ]
+    },
+    "anywhere_commands_dual_scopes": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "emperor": {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "revolution_target": {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "crusade_target": {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            }
+          }
+        }
+      ]
+    },
+    "anywhere_commands_identifier_dual_scopes": {
+      "$identifierProperties": {
+        "map_provinces": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "country_tags": {
+          "$mergeProps": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_area": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_region": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_superregion": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_provincegroups": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "map_continent": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "trade_companies": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        },
+        "colonial_regions": {
+          "$mergeProps": [
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"properties": {"type": {"type": "string"}}}
+          ]
+        }
+      }
+    },
+    "anywhere_commands_properties": {
+      "type": "object",
+      "properties": {
+        "clear_global_event_target": {
+          "description": "Clears a specific global event target.",
+          "version_added": "1.8",
+          "type": "string"
+        },
+        "clear_global_event_targets": {
+          "description": "Clears all global event targets.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "clr_global_flag": {
+          "description": "Clears a defined global flag.",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "custom_tooltip": {
+          "description": "Displays a localized key in the effect tooltip.",
+          "version_added": "1.1",
+          "type": "string"
+        },
+        "hide_ambient_object": {
+          "description": "Hides a visible ambient object from the map/ambient_objects.txt file.",
+          "version_added": "1.19",
+          "type": "string"
+        },
+        "log": {
+          "description": "Displays a string in the game.log when executed.\nNotes: Accepts all localization commands (i.e. [Root.GetName], etc)",
+          "version_added": "1.21",
+          "type": "string"
+        },
+        "save_event_target_as": {
+          "description": "Saves the current scope as a key. Is cleared once execution ends (i.e. end of event).\nNotes: Use event_target:<key> to access the scope.",
+          "version_added": "1.8",
+          "type": "string"
+        },
+        "save_global_event_target_as": {
+          "description": "Saves the current scope as a key. Persists after execution until cleared via effect.\nNotes: Use event_target:<key> to access the scope.",
+          "version_added": "1.8",
+          "type": "string"
+        },
+        "set_global_flag": {
+          "description": "Defines a global flag.\nNotes: Flags can be appended with scopes or event targets",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "show_ambient_object": {
+          "description": "Displays a hidden ambient object from the map/ambient_objects.txt file.",
+          "version_added": "1.19",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+

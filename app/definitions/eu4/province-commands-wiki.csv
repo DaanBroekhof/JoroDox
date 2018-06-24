@@ -1,0 +1,395 @@
+<rebel type>,"<int>
+The size to use.",anti_tax_rebels = 1,Spawns the defined rebel type in the current province scope.,Rebel types found in /Europa Universalis IV/common/rebel_types/*.txt.,1.1
+<unit name>,"<scope>
+The country scope the unit belongs to","capital_scope = {
+    british_redcoat = FRA
+}",Spawns a specific unit in the current province scope for the defined country scope.,Units can be found in /Europa Universalis IV/common/units/*.txt.,1.1
+add_base_manpower,"<int>
+The amount of base manpower to add or subtract.",add_base_manpower = 1,Adds base manpower to the current province scope.,,1.1
+add_base_production,"<int>
+The amount of base production to add or subtract.",add_base_production = 1,Adds base production to the current province scope.,,1.1
+add_base_tax,"<int>
+The amount of base tax to add or subtract.",add_base_tax = 1,Adds base tax to the current province scope.,,1.1
+add_building,"<building>
+The building to add.",add_building = temple,Adds the defined building to the current province scope.,Buildings are found in /Europa Universalis IV/common/buildings/*.txt.,1.1
+add_building_construction,"building = <building>
+The building to construct.
+speed = <float>
+The speed percentage of the base building speed to use.
+cost = <float>
+The cost percentage of the base building cost to use.","add_building_construction = {
+    building = temple
+    speed = 0.5
+    cost = 0.5
+}",Starts building construction in the current province scope.,"cost and speed are a percentage of the base value, i.e. 0.5 is 50% of the base value.",1.11
+add_cardinal,"yes
+Boolean.",add_cardinal = yes,"Adds a Cardinal to the current province scope, for the current owner.",,1.8
+add_claim,"<scope>
+The country that gains the claim.","capital_scope = {
+    add_claim = FRA
+}",The defined scope gains a claim on the current province scope.,,1.1
+add_colonysize,"<int>
+The amount of settlers to add.",add_colonysize = 10,Adds settlers to the current province scope if a colony.,,1.1
+add_construction_progress,"<float>
+The amount of progress to add or subtract.",add_construction_progress = 0.05,Changes the construction progress of a great project in the current province scope.,,1.6
+add_core,"<scope>
+The country that gains the core.","capital_scope = {
+    add_core = FRA
+}",The defined scope gains a core on the current province scope.,,1.1
+add_core_construction,"yes
+Boolean.",add_core_construction = yes,"Starts core construction in the current province scope, for the current owner.",,1.11
+add_culture_construction,"yes
+Boolean.",add_culture_construction = yes,"Starts culture conversion in the current province scope, for the current owner.",,1.12
+add_devastation,"<int>
+The amount of devastation to add or subtract.",add_devastation = 1,Adds devastation to the current province scope.,,1.2
+add_great_project,"<project>
+The great project to add.",add_great_project = kiel_canal,Starts construction of a great project in the current province scope.,Great projects are found in /Europa Universalis IV/common/great_projects/*.txt.,1.6
+add_institution_embracement,"which = <institution>
+The institution to add to.
+value = <int>
+The amount of embracement to add or subtract.","add_institution_embracement = {
+    which = feudalism
+    value = 10
+}",Adds institution embracement progress for the defined institution in the current province scope.,The defined institution must be enabled for the owner of the province first.,1.18
+add_local_autonomy,"<int>
+The amount of local autonomy to add or subtract.",add_local_autonomy = 10,Adds local autonomy to the current province scope.,,1.8
+add_nationalism,"<int>
+The amount to add or subtract.",add_nationalism = 10,Adds Nationalism to the current province scope.,,1.1
+add_permanent_claim,"<scope>
+The country that gains the permanent claim.","capital_scope = {
+    add_permanent_claim = FRA
+}",The defined scope gains a permanent claim on the current province scope.,,1.14
+add_permanent_province_modifier,"name = <name>
+The event modifier to add.
+duration = <days>
+Optional. The number of days to add the province modifier for.
+hidden = yes
+Optional. Whether the province modifier is hidden in the province view.
+desc = <string
+Optional. The string used to override the automatic duration string.","add_permanent_province_modifier = {
+    name = annoyed_people
+    duration = -1
+    desc = annoyed_people_tooltip
+    hidden = yes
+}",Adds an event modifier to the current province scope as a province modifier.,Modifiers added with this effect persist through ownership changes.,1.1
+add_prosperity,"<int>
+The amount of prosperity to add or subtract.",add_prosperity = 1,Adds prosperity to the current province scope.,,1.2
+add_province_modifier,"name = <name>
+The event modifier to add.
+duration = <days>
+Optional. The number of days to add the province modifier for.
+hidden = yes
+Optional. Whether the province modifier is hidden in the province view.
+desc = <string
+Optional. The string used to override the automatic duration string.","add_province_modifier = {
+    name = annoyed_people
+    duration = -1
+    desc = annoyed_people_tooltip
+    hidden = yes
+}",Adds an event modifier to the current province scope as a province modifier.,Modifiers added with this effect are cleared automatically when the province changes ownership.,1.1
+add_province_triggered_modifier,"<modifier>
+The province triggered modifier to add.",add_province_triggered_modifier = test_modifier,Adds a province triggered modifier to the current province scope.,,1.24
+add_reform_center,"<religion>
+The religion to use.",add_reform_center = reformed,Adds a Center of Reformation for the defined religion in the current province scope.,,1.8
+add_scaled_local_adm_power,"<int>
+The amount of administrative power to add.",add_scaled_local_adm_power = 10,"Adds Administrative power to the owner of the current province scope, scaling with the base tax.",1 power per point of yearly base tax.,1.12
+add_scaled_local_dip_power,"<int>
+The amount of diplomatic power to add.",add_scaled_local_dip_power = 10,"Adds Diplomatic power to the owner of the current province scope, scaling with the base production.",1 power per point of yearly base production.,1.12
+add_scaled_local_mil_power,"<int>
+The amount of military power to add.",add_scaled_local_mil_power = 10,"Adds Military power to the owner of the current province scope, scaling with the base manpower.",1 power per point of yearly base manpower.,1.12
+add_siberian_construction,"<int>
+The initial size of the colony.",add_siberian_construction = 400,Starts a siberian colony in the current province scope.,Only works if the ROOT scope is a country that can use Siberian Frontiers.,1.22
+add_territorial_core,"<scope>
+The country that gains the territorial core.","capital_scope = {
+    add_territorial_core = FRA
+}",The defined scope gains a territorial core on the current province scope.,,1.18
+add_trade_modifier,"who = <scope>
+The country scope that receives the modifier.
+duration = <days>
+The duration of the modifier.
+power = <float>
+The amount of trade power to add or subtract.
+key = <string>
+The key to display as the modifier in the tooltip.","add_trade_modifier = {
+    who = ROOT
+    duration = 5475
+    power = 15
+    key = STRONG_MERCHANTS
+}",Adds a trade modifier for the defined country scope in the current tradenode province scope.,Can be added to any province within a tradenode.,1.1
+add_trade_node_income,"<int>
+The amount to add or subtract.",add_trade_node_income = 10,Adds income to the current tradenode province scope.,Only works when the current province scope is the location of a tradenode center.,1.1
+add_unit_construction,"type = <type>
+Which type of unit to build.
+amount = <int>
+The amount to build.
+speed = <float>
+The speed percentage of the base unit construction speed to use.
+cost = <float>
+The cost percentage of the base unit construction cost to use.
+mercenary = yes
+Optional. Makes the constructed units mercenaries.","add_unit_construction = {
+    type = light_ship
+    amount = 20
+    speed = 0.1
+    cost = 0
+}",Constructs the defined units in the current province scope.,Possible types:infantry cavalry artillery heavy_ship light_ship galley transport <unit_name>,1.1
+add_unrest,"<int>
+The amount to add or subtract.",add_unrest = 10,Adds Local Unrest to the current province scope.,Appears under Base Unrest.,1.8
+artillery,"<scope>
+The country scope the artillery belongs to","capital_scope = {
+    artillery = FRA
+}",Spawns an artillery unit in the current province scope for the defined country scope.,Uses the currently selected artillery unit.,1.1
+back_current_issue,"yes / no
+Boolean.",back_current_issue = yes,"Backs or blocks the current issue in Parliament, if the current province scope has a seat.",No effect if the owner of the province does not have a government using has_parliament.,1.12
+build_to_forcelimit,"<type> = <float>
+The type is any of the base unit types. The value is the percentage of forcelimit.","build_to_forcelimit = {
+    heavy_ship = 0.3
+    light_ship = 0.3
+    transport = 0.2
+}",Builds the defined units as a percentage of the owner's forcelimit in the current province scope.,"1 is equal to 100% of the owner's forcelimit.
+Possible types:
+infantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",1.1
+cancel_construction,"yes
+Boolean.",cancel_construction = yes,Cancels any construction ongoing in the current province scope.,"Constructions are coring, religious conversion, cultural conversion, buildings and great projects.",1.6
+cavalry,"<scope>
+The country scope the cavalry belongs to","capital_scope = {
+    cavalry = FRA
+}",Spawns an cavalry unit in the current province scope for the defined country scope.,Uses the currently selected cavalry unit.,1.1
+cede_province,"<scope>
+The country that gains ownership.","capital_scope = {
+    cede_province = FRA
+}",The defined scope gains ownership of the current province scope.,previous_owner can be used to cede ownership to the last previous owner of a province.,1.1
+change_controller,"<scope>
+The country that gains control.","capital_scope = {
+    change_controller = FRA
+}",The defined scope gains control over the current province scope.,"Control here means occupation, not ownership.",1.1
+change_culture,"<culture>
+The culture to change to.","change_culture = english
+change_culture = ENG
+change_culture = event_target:my_event_target
+change_culture = variable:my_variable",Changes the culture of the current province scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt.
+Can utilise Event Scope Values.",1.1
+change_native_ferocity,"<int>
+The amount to add or subtract.",change_native_ferocity = 5,Adds to the Native Ferocity within an uncolonized province.,,1.1
+change_native_hostileness,"<int>
+The amount to add or subtract.",change_native_hostileness = 5,Adds to the Native Hostileness within an uncolonized province.,,1.1
+change_native_size,"<int>
+The amount to add or subtract.",change_native_size = 50,Adds to the amount of natives within an uncolonized province.,,1.1
+change_province_name,"<string>
+The name to change to.","change_province_name = ""Paris""",Changes the province name of the current province scope to the defined name.,,1.1
+change_religion,"<religion>
+The religion to change to.
+<scope>
+The religion to change to, derived from the scope.","change_religion = catholic
+change_religion = CAS
+change_religion = event_target:my_event_target
+change_religion = variable:my_variable",Changes the religion of the current province scope.,"Religions are found in /Europa Universalis IV/common/religions/*.txt
+Can utilise Event Scope Values.",1.1
+change_siege,"<int>
+The process adjustment to add or subtract.",change_siege = 5,Changes the siege progress in the current province scope.,,1.1
+change_to_secondary_religion,"yes
+Boolean.",change_to_secondary_religion = yes,Changes the religion in the current province scope to the syncretic religion of its owner.,,1.14
+change_trade_goods,"<good>
+The trade good to set.",change_trade_goods = grain,Sets the trade good for the current province scope.,Trade Goods are found in /Europa Universalis IV/common/tradegoods/*.txt.,1.1
+clr_province_flag,"<flag>
+The unique string of a province flag to clear.",clr_province_flag = my_flag,Clears a defined province flag for the current province scope.,,1.1
+cossack_cavalry,"<scope>
+The country scope the cossack cavalry belongs to","capital_scope = {
+    cossack_cavalry = FRA
+}",Spawns an cossack cavalry unit in the current province scope for the defined country scope.,Uses the currently selected cavalry unit.,1.22
+create_advisor,"<advisor>
+The advisor to add.",create_advisor = treasurer,Adds the defined advisor for the owner of the current province scope.,Advisors are found in /Europa Universalis IV/common/advisors/*.txt.,1.1
+create_colony,"<int>
+The initial size of the colony.","random_empty_neighbor_province = {
+    create_colony = 200
+}",Starts a colony belonging to the owner of the ROOT province scope.,,1.1
+create_native,"<int>
+The size to use.",create_native = 1,Spawns natives in the current province scope.,Only spawnable in uncolonized provinces.,1.1
+create_pirate,"<int>
+The size to use.",create_pirate = 1,Spawns pirates in the current province scope.,Only spawnable in sea zones and land provinces with ports.,1.1
+create_revolt,"<int>
+The size to use.",create_revolt = 1,Spawns the most likely rebel type in the current province scope.,,1.1
+discover_country,"<scope>
+The country that gains vision.","upper_peru_region = {
+    discover_country = FRA
+}",The defined scope gains vision over the current province scope.,"Best used within areas, regions, etc to add vision.",1.1
+extend_province_modifier,"name = <name>
+The event modifier to extend.
+duration = <days>","extend_province_modifier = {
+    name = annoyed_people
+    duration = 365
+}",Extends the duration of an existing province modifier held by the current province scope.,Modifiers added with this effect persist through ownership changes.,1.1
+galley,"<scope>
+The country scope the ship belongs to","random_owned_province = {
+    limit = { has_port = yes }
+    galley = FRA
+}",Spawns an galley ship unit in the current province scope for the defined country scope.,"Uses the defined scope's current galley ship unit.
+Requires the current province scope to have a port.",1.1
+heavy_ship,"<scope>
+The country scope the ship belongs to","random_owned_province = {
+    limit = { has_port = yes }
+    heavy_ship = FRA
+}",Spawns an heavy ship unit in the current province scope for the defined country scope.,"Uses the defined scope's current heavy ship unit.
+Requires the current province scope to have a port.",1.1
+infantry,"<scope>
+The country scope the infantry belongs to","capital_scope = {
+    infantry = FRA
+}",Spawns an infantry unit in the current province scope for the defined country scope.,Uses the currently selected infantry unit.,1.1
+kill_leader,"<type>
+The leader type to kill. name is the specific leader name to target.","kill_leader = general
+kill_leader = random
+kill_leader = ""John Smith",Kills a leader in the current province scope if they match the type used.,"Only works if the leader is assigned to a unit that is stationed in the current province.
+Possible types:
+general admiral conquistador explorer random <leader name>",1.1
+kill_units,"who = <scope>
+Optional. Which country scopes should be affected.
+type = <type>
+Optional. Which type of units that should be affected.
+amount = <int>
+Optional. The specific amount to kill.","kill_units = {
+    who = enemy
+}
+kill_units = {
+    who = owner
+    type = infantry
+}
+kill_units = {
+    who = controller
+    type = artillery
+    amount = 5
+}",Kills units following the defined parameters in the current province scope.,"In the who parameter, you can use enemy, owner and controller.
+When used with no parameters, will kill all units within the current province scope.
+Possible types:
+infantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",1.12
+light_ship,"<scope>
+The country scope the ship belongs to","random_owned_province = {
+    limit = { has_port = yes }
+    light_ship = FRA
+}",Spawns an light ship unit in the current province scope for the defined country scope.,"Uses the defined scope's current light ship unit.
+Requires the current province scope to have a port.",1.1
+mercenary_cavalry,"<scope>
+The country scope the mercenary cavalry belongs to","capital_scope = {
+    mercenary_cavalry = FRA
+}",Spawns an mercenary cavalry unit in the current province scope for the defined country scope.,Uses the currently selected cavalry unit.,1.11
+mercenary_infantry,"<scope>
+The country scope the mercenary infantry belongs to","capital_scope = {
+    mercenary_infantry = FRA
+}",Spawns an mercenary infantry unit in the current province scope for the defined country scope.,Uses the currently selected infantry unit.,1.11
+multiply_colonysize,"<float>
+The multiplier to use.",multiply_colonysize = 2,Multiplies the settler count in the current province scope if a colony.,,1.1
+province_event,"id = <id>
+The event id to fire.
+days = <days>
+Optional. The number of days to wait after the effect is executed to fire the event.
+random = <days>
+Optional. The max number of additional days that can be added to the daysparameter for randomness.
+tooltip = <string>
+Optional. The tooltip to display in the effect tooltip country_event is used in.","province_event = {
+    id = uprising.1
+    days = 30
+    random = 15
+    tooltip = UPRISING_TOOLTIP
+}",Fire a province event for the current province scope. Appears for the owner of the province scope.,You cannot fire the same event within itself.,1.1
+recall_merchant,"<scope>
+The country scope to use.",recall_merchant = FRA,Recalls a placed merchant in the current tradenode province scope.,Only works when the current province scope is the location of a tradenode center.,1.1
+remove_building,"<building>
+The building to remove.",remove_building = temple,Removes the defined building to the current province scope.,Buildings are found in /Europa Universalis IV/common/buildings/*.txt.,1.1
+remove_cardinal,"yes
+Boolean.",remove_cardinal = yes,Removes a Cardinal in the current province scope.,,1.8
+remove_claim,"<scope>
+The country that loses their claim.","capital_scope = {
+    remove_claim = FRA
+}",The defined scope loses their claim on the current province scope.,Works for both types of claims.,1.1
+remove_core,"<scope>
+The country that loses their core.","capital_scope = {
+    remove_core = FRA
+}",The defined scope loses their core on the current province scope.,,1.1
+remove_estate,"<estate>
+Which estate to remove.",remove_estate = estate_nobles,Removes an estate in the current province scope.,Does not produce a tooltip.,1.1
+remove_loot,"who = <scope>
+The country scope that receives the loot.
+amount = <int>
+The amount of loot to take.","remove_loot = {
+    who = ROOT
+    amount = 5
+}",Removes loot from the current province scope and grants it to the defined country scope.,"The who parameter accepts enemy, which distributes the loot to all current enemies of the province owner.",1.15
+remove_province_modifier,"<modifier>
+The event modifier to remove.",remove_province_modifier = annoyed_people,Removes an already assigned province modifier from the current province scope.,,1.1
+remove_reform_center,"<religion>
+The religion to use.",remove_reform_center = reformed,Removes the Center of Reformation for the defined religion in the current province scope.,,1.8
+remove_territorial_core,"<scope>
+The country that loses their territorial core.","capital_scope = {
+    remove_territorial_core = FRA
+}",The defined scope loses their territorial core on the current province scope.,,1.18
+remove_trade_modifier,"who = <scope>
+The country scope that has the trade modifier.
+name = <string>
+The trade modifier to remove.","remove_trade_modifier = {
+    who = ROOT
+    key = STRONG_MERCHANTS
+}",Removes a trade modifier for the defined country scope in the current tradenode province scope.,,1.1
+rename_capital,"<string>
+The name to change to.","rename_capital = ""Paris""",Changes the capital name of the current province scope to the defined name.,The capital name is the second name that appears under the province name within the province window.,1.1
+send_missionary,"yes
+Boolean.",send_missionary = yes,"Starts religious conversion in the current province scope, for the current owner.",,1.12
+set_estate,"<estate>
+Which estate to use.",set_estate = estate_nobles,Adds an estate to the current province scope.,Will override a previous estate.,1.1
+set_in_empire,"yes / no
+Boolean.",set_in_empire = yes,Places the current province scope in the Holy Roman Empire.,,1.1
+set_local_autonomy,"<int>
+The amount of local autonomy to set.",set_local_autonomy = 50,Sets local autonomy for the current province scope.,,1.12
+set_province_flag,"<flag>
+An unique string to identify the province flag with.","set_province_flag = my_flag
+set_province_flag = my_flag@ROOT
+set_province_flag = my_flag@event_target:name",Defines a province flag for the current province scope.,Flags can be appended with scopes or event targets,1.1
+set_seat_in_parliament,"yes / no
+Boolean.",set_seat_in_parliament = yes,Adds the current province scope to Parliament.,No effect if the owner of the province does not have a government using has_parliament.,1.12
+spawn_rebels,"type = <type>
+The size type to use.
+size = <int>
+The size to use.
+culture = <culture> / <scope>
+Optional. The culture the rebels belong to.
+religion = <religion> / <scope>
+Optional. The religion the rebels belong to.
+unrest = <int>
+Optional. Adds this amount of unrest to the province the rebels spawn in.
+win = yes
+Optional. Changes control of the province the rebels spawn in to the rebels.
+friend = <scope>
+Optional. Associate a country with the rebels.
+leader = <string>
+Optional. Assigns the rebel leader a specific name. Can use set_saved_name.
+female = yes
+Optional. Makes the rebel leader female.
+use_heir_as_leader = yes
+Optional. Makes the owner's heir the rebel leader. Removes heir.
+use_consort_as_leader = yes
+Optional. Makes the owner's consort the rebel leader. Removes consort.","spawn_rebels = {
+    type = noble_rebels
+    size = 1
+}
+spawn_rebels = {
+    type = pretender_rebels
+    size = 2
+    leader = rebel_preacher
+}
+spawn_rebels = {
+    type = catholic_rebels
+    size = 2
+    friend = FROM
+}",Spawns the defined rebels in the current province scope.,Rebel types found in /Europa Universalis IV/common/rebel_types/*.txt.,1.1
+streltsy_infantry,"<scope>
+The country scope the streltsy infantry belongs to","capital_scope = {
+    streltsy_infantry = FRA
+}",Spawns an streltsy infantry unit in the current province scope for the defined country scope.,Uses the currently selected infantry unit.,1.22
+transport,"<scope>
+The country scope the ship belongs to","random_owned_province = {
+    limit = { has_port = yes }
+    transport = FRA
+}",Spawns an transport ship unit in the current province scope for the defined country scope.,"Uses the defined scope's current transport ship unit.
+Requires the current province scope to have a port.",1.1
+undiscover_country,"<scope>
+The country that loses vision.","upper_peru_region = {
+    undiscover_country = FRA
+}",The defined scope loses vision over the current province scope.,"Best used within areas, regions, etc to remove vision.",1.1

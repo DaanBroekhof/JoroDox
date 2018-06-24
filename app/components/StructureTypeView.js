@@ -288,6 +288,9 @@ class StructureTypeView extends Component {
             <Tooltip id="tooltip-icon" title="Validate data" placement="bottom">
               <IconButton onClick={() => this.validateType(this.props.match.params.type)}><Icon color="action">assignment_turned_in</Icon></IconButton>
             </Tooltip>
+            <Tooltip id="tooltip-icon" title="Scan" placement="bottom">
+              <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">printer</Icon></IconButton>
+            </Tooltip>
           </span>
         </div>
         <TextField

@@ -23,6 +23,14 @@
       "type": "string",
       "enum": ["emperor"]
     },
+    "owner": {
+      "type": "string",
+      "enum": ["owner"]
+    },
+    "controller": {
+      "type": "string",
+      "enum": ["controller"]
+    },
     "monarch_power_type": {
       "type": "string",
       "enum": ["ADM", "DIP", "MIL"]
@@ -42,12 +50,52 @@
         },
         {
           "$ref": "special_values.json#/definitions/country_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/emperor"
+        }
+      ]
+    },
+    "country_tag_or_scope_province": {
+      "anyOf": [
+        {
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/owner"
+        },
+        {
+          "$ref": "special_values.json#/definitions/controller"
+        }
+      ]
+    },
+    "province_id_or_scope": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        {
+          "$ref": "special_values.json#/definitions/province_scope"
         }
       ]
     },
     "province_scope": {
       "type": "string",
       "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this"]
+    },
+    "peace_offer_types": {
+      "type": "string",
+      "enum": [
+        "po_demand_provinces",
+        "po_revoke_cores",
+        "po_release_vassals",
+        "po_release_annexed",
+        "po_return_cores",
+        "po_become_vassal",
+        "po_become_tributary_state",
+        "po_form_personal_union",
+        "po_transfer_vassals"
+      ]
     },
     "government_group_or_tribal": {
       "type": "string",
@@ -65,6 +113,23 @@
           "$ref": "special_values.json#/definitions/country_scope"
         }
       ]
+    },
+    "flag_name": {
+      "type": "string"
+    },
+    "save_game_key": {
+      "type": "string"
+    },
+    "leader_types": {
+      "type": "string",
+      "enum": ["general", "admiral", "conquistador", "explorer"]
+    },
+    "leader_name": {
+      "type": "string"
+    },
+    "random": {
+      "type": "string",
+      "enum": ["random"]
     }
   }
 }

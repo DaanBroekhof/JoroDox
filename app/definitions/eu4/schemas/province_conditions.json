@@ -157,7 +157,7 @@
           "description": "Returns true if there is a supply depot in the province.",
           "$mergeProps": [
             {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"}
           ]
         },
         "has_pasha": {
@@ -166,7 +166,10 @@
         },
         "religion_group": {
           "description": "Returns true if the country/province has religion group X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
-          "$ref": "identifiers.json#/definitions/religion_groups"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/religion_groups"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"}
+          ]
         },
         "country_or_non_sovereign_subject_holds": {
           "description": "If province is held by tag or scope, or any of its non-tributary subjects.",
@@ -204,6 +207,17 @@
           "type": "object",
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
+        "can_have_center_of_reformation_trigger": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "RELIGION": {
+              "$ref": "identifiers.json#/definitions/religions"
+            }
+          }
+        },
+
+
 
         "area": {
           "description": "Returns true if the province is part of the area X.",
@@ -500,10 +514,10 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "key": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
+            "name": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
           },
-          "required": ["who", "key"]
+          "required": ["who", "name"]
         },
         "has_trader": {
           "description": "Returns true if the specified country has a merchant in the trade node.",
@@ -733,7 +747,7 @@
         },
         "likely_rebels": {
           "description": "Returns true if the province has the specified rebel faction as likely rebels.",
-          "$ref": "identifiers.json#/definitions/factions"
+          "$ref": "identifiers.json#/definitions/rebel_types"
         },
         "local_autonomy": {
           "description": "Returns true if the province has a local autonomy of at least X.",
@@ -776,7 +790,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
             "type": {"$ref": "identifiers.json#/definitions/units"},
             "amount": {"type": "number"}
           },
@@ -809,7 +823,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
             "share": {"type": "number"}
           },
           "required": ["country", "share"]
@@ -819,7 +833,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
             "distance": {"type": "number"}
           },
           "required": ["who", "distance"]
@@ -859,7 +873,8 @@
           "description": "Returns true if the country/province has religion X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/religions"},
-            {"$ref": "special_values.json#/definitions/province_scope"}
+            {"$ref": "special_values.json#/definitions/province_scope"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"}
           ]
         },
         "same_continent": {
@@ -912,7 +927,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
             "share": {"type": "number"}
           },
           "required": ["country", "share"]

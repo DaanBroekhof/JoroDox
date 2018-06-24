@@ -1,0 +1,26 @@
+set_global_flag,"<flag>
+An unique string to identify the global flag with.","set_global_flag = my_flag 
+set_global_flag = my_flag@ROOT 
+set_global_flag = my_flag@event_target:name",Defines a global flag.,Flags can be appended with scopes or event targets,1.1
+clr_global_flag,"<flag>
+The unique string of a global flag to clear.",clr_global_flag = my_flag,Clears a defined global flag.,,1.1
+custom_tooltip,"<string>
+An localized string to display in the tooltip",custom_tooltip = my_tooltip_tt,Displays a localized key in the effect tooltip.,,1.1
+log,"<string>
+An string to in the game.log","log = ""myVariable: [Root.myVariable.GetValue]""",Displays a string in the game.log when executed.,"Accepts all localization commands (i.e. [Root.GetName], etc)",1.21
+save_event_target_as,"<string>
+An unique string to identify the event target with.","capital_scope = {
+    save_event_target_as = my_province
+}",Saves the current scope as a key. Is cleared once execution ends (i.e. end of event).,Use event_target:<key> to access the scope.,1.8
+save_global_event_target_as,"<string>
+An unique string to identify the global event target with.","random_country = {
+    save_global_event_target_as = my_country
+}",Saves the current scope as a key. Persists after execution until cleared via effect.,Use event_target:<key> to access the scope.,1.8
+clear_global_event_target,"<string>
+The unique string of the global event target to clear.",clear_global_event_target = my_country,Clears a specific global event target.,,1.8
+clear_global_event_targets,"yes
+Boolean.",clear_global_event_targets = yes,Clears all global event targets.,,1.8
+show_ambient_object,"<string>
+The unique string of the ambient object to show.",show_ambient_object = nammi2_hagia_sophia_minarets_entity,Displays a hidden ambient object from the map/ambient_objects.txt file.,,1.19
+hide_ambient_object,"<string>
+The unique string of the ambient object to hide.",hide_ambient_object = nammi2_hagia_sophia_minarets_entity,Hides a visible ambient object from the map/ambient_objects.txt file.,,1.19

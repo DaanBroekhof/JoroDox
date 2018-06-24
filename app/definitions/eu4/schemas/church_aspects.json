@@ -1,0 +1,47 @@
+{
+  "$id": "http://jorodox.org/schemas/church_aspects.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cost": {
+          "type": "number"
+        },
+        "sprite": {
+          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+        },
+        "modifier": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "potential": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "is_blessing": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "ai_will_do": {
+          "description": "The importance the AI will have on using this aspect.",
+          "$ref": "country_factor.json#/definitions/country_factor"
+        }
+      },
+      "required": [
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

@@ -4,12 +4,1531 @@
   "type": "object",
   "definitions": {
     "country_commands": {
-      "type": "object",
+      "$mergeProps": [
+        {
+          "$ref": "#/definitions/country_commands_scopes"
+        },
+        {
+          "$ref": "#/definitions/country_commands_properties"
+        },
+        {
+          "$ref": "anywhere_commands.json#/definitions/anywhere_commands"
+        },
+        {
+          "$ref": "#/definitions/identifier_keys"
+        }
+      ]
+    },
+    "country_commands_scopes": {
       "properties": {
-        "set_country_flag": {
-          "type": "string"
+        "hidden_effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "tooltip": {
+          "desc": "It is possible to display the automatic tooltip that effects generate without actually executing the effects.",
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "limit": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "random": {
+          "$mergeProps": [
+            {
+              "properties": {
+                "chance": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            }
+          ]
+        },
+        "random_list": {
+          "patternProperties": {
+            "^[0-9\\.]$": {
+              "$makeArray": {
+                "type": "array",
+                "items": {
+                  "$ref": "country_commands.json#/definitions/country_commands"
+                }
+              }
+            }
+          }
+        },
+
+        "ROOT": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "root": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "FROM": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "from": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+
+
+        "if" : {
+          "$ref": "country_commands.json#/definitions/if"
+        },
+        "else_if" : {
+          "$ref": "country_commands.json#/definitions/else_if"
+        },
+        "else" : {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+
+        "colonial_parent": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "overlord": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "capital_scope": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+
+
+        "every_ally": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_coalition_member": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_elector": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_enemy_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_known_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_local_enemy": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_neighbor_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_rival_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_subject_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_ally": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_coalition_member": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_elector": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_enemy_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_local_enemy": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_known_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_neighbor_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_rival_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_subject_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_core_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "every_heretic_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "every_owned_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "every_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_core_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_heretic_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_owned_area": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_owned_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "every_trade_node": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_active_trade_node": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_trade_node": {
+          "$ref": "province_commands.json#/definitions/province_commands"
         }
       }
+    },
+    "country_commands_properties": {
+      "properties": {
+        "add_core": {
+          "description": "Add core to specific province id",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+        "add_claim": {
+          "description": "Add core to specific province id",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+        "add_stability_or_adm_power": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "discover_province": {
+          "description": "Discovers the specific province.",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+
+
+        "add_absolutism": {
+          "description": "Adds absolutism to the current scope.\nNotes: No effect if Absolutism isn't active.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_accepted_culture": {
+          "description": "Adds a new accepted culture to the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
+          "version_added": "1.1",
+          "anyOf": [
+            {
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            {
+              "$ref": "identifiers.json#/definitions/cultures"
+            }
+          ]
+        },
+        "add_active_policy": {
+          "description": "Adds a policy for the current scope.\nNotes: Policies are found in /Europa Universalis IV/common/policies/*.txt.\nWon't work if the policy triggers are not met by the country, or there are no free policy slots.",
+          "$ref": "identifiers.json#/definitions/policies",
+          "version_added": "1.21"
+        },
+        "add_adm_power": {
+          "description": "Adds Administrative power to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_adm_tech": {
+          "description": "Adds ADM technologies to the current scope.\nNotes: You cannot remove technologies.",
+          "version_added": "1.21",
+          "type": "number"
+        },
+        "add_army_professionalism": {
+          "description": "Adds Army Professionalism to the current scope.",
+          "version_added": "1.23",
+          "type": "number"
+        },
+        "add_army_tradition": {
+          "description": "Adds Army Tradition to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_authority": {
+          "description": "Adds authority to the current scope. Used in Religious Reforms that use authority.\nNotes: No effect if the country does not hold a religion using authority.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_casus_belli": {
+          "description": "Adds a casus belli for the current scope against the defined scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "add_church_aspect": {
+          "description": "Adds the defined aspect to the current scope.\nNotes: Church Aspects are found in /Europa Universalis IV/common/church_aspects/00_church_aspects.txt.\nNo effect if the country does not hold a religion using uses_church_power and the aspect set in aspects.\nDoes not work with Blessings.",
+          "$ref": "identifiers.json#/definitions/church_aspects",
+          "version_added": "1.12"
+        },
+        "add_church_power": {
+          "description": "Adds Church Power to the current scope.\nNotes: No effect if the country does not hold a religion using uses_church_power.",
+          "version_added": "1.12",
+          "type": "number"
+        },
+        "add_corruption": {
+          "description": "Adds corruption to the current scope.",
+          "version_added": "1.16",
+          "type": "number"
+        },
+        "add_country_modifier": {
+          "description": "Adds an event modifier to the current scope as a country modifier.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "add_devotion": {
+          "description": "Adds devotion to the current scope.\nNotes: No effect if not a government using has_devotion.",
+          "version_added": "1.12",
+          "type": "number"
+        },
+        "add_dip_power": {
+          "description": "Adds Diplomatic power to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_dip_tech": {
+          "description": "Adds DIP technologies to the current scope.\nNotes: You cannot remove technologies.",
+          "version_added": "1.21",
+          "type": "number"
+        },
+        "add_disaster_modifier": {
+          "description": "Applies an event modifier to the current scope that is removed when the disaster is over, or the duration runs out.\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "add_disaster_progress": {
+          "description": "Adds progress towards an already declared (conditions for disaster are met since at least a month) disaster\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
+          "version_added": "1.16",
+          "type": "object"
+        },
+        "add_doom": {
+          "description": "Adds doom to the current scope. Used in Religious Reforms that use doom.\nNotes: No effect if the country does not hold a religion using doom.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_estate_influence_modifier": {
+          "description": "Adds an influence modifier for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
+          "version_added": "1.14",
+          "type": "object"
+        },
+        "add_estate_loyalty": {
+          "description": "Adds loyalty for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
+          "version_added": "1.14",
+          "type": "object"
+        },
+        "add_estate_loyalty_modifier": {
+          "description": "Adds an loyalty modifier for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
+          "version_added": "1.14",
+          "type": "object"
+        },
+        "add_faction": {
+          "description": "Adds a faction to the current scope.\nNotes: Factions are found in /Europa Universalis IV/common/factions/.",
+          "$ref": "identifiers.json#/definitions/factions",
+          "version_added": "1.1"
+        },
+        "add_faction_influence": {
+          "description": "Adds influence for the defined faction.\nNotes: Mimics the influence boost from pressing the button in the faction window.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "add_fervor": {
+          "description": "Adds Fervor to the current scope.\nNotes: No effect if the country does not hold a religion using fervor.",
+          "version_added": "1.6",
+          "type": "number"
+        },
+        "add_government_power": {
+          "description": "Changes the pool size of one of the power pools within a government mechanic.\nNotes: List of government mechanics:\nrussian_mechanic feudal_theocracy_mechanic tribal_federation_mechanic mamluk_mechanic iqta_mechanic",
+          "version_added": "1.23",
+          "type": "object"
+        },
+        "add_harmonization_progress": {
+          "description": "Adds Harmonization Progress for the current harmonization target to the current scope.\nNotes: No effect if the country does not hold a religion using uses_harmony.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_harmonized_religion": {
+          "description": "Adds a religion to the list of Harmonized religions for the current scope.\nNotes: No effect if the country does not hold a religion using uses_harmony.",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.2"
+        },
+        "add_harmony": {
+          "description": "Adds Harmony to the current scope.\nNotes: No effect if the country does not hold a religion using uses_harmony.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_heir_claim": {
+          "description": "Adds to the current scope's heir claim.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_heir_personality": {
+          "description": "Adds the defined personality to the current heir.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
+          "$ref": "identifiers.json#/definitions/ruler_personalities",
+          "version_added": "1.18"
+        },
+        "add_heir_support": {
+          "description": "Adds to the local heir's support in an Elective Monarchy.",
+          "version_added": "1.7",
+          "type": "number"
+        },
+        "add_historical_friend": {
+          "description": "Makes the defined scope a historical friend of the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.12"
+        },
+        "add_historical_rival": {
+          "description": "Makes the defined scope a historical rival of the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.12"
+        },
+        "add_horde_unity": {
+          "description": "Adds horde unity to the current scope.\nNotes: No effect if not a government using nomad.",
+          "version_added": "1.14",
+          "type": "number"
+        },
+        "add_idea": {
+          "description": "Adds an idea for the current scope.\nNotes: Ideas are found in /Europa Universalis IV/common/ideas/*.txt.\nWon't work if the idea isn't present in a National Idea set or a taken Ideagroups set for the country.",
+          "$ref": "identifiers.json#/definitions/ideas",
+          "version_added": "1.6"
+        },
+        "add_idea_group": {
+          "description": "Adds an ideagroup for the current scope.\nNotes: Ideagroups are found in /Europa Universalis IV/common/ideas/*.txt.\nWon't work if the country doesn't have any free ideagroup slots.",
+          "$ref": "identifiers.json#/definitions/idea_groups",
+          "version_added": "1.6"
+        },
+        "add_imperial_influence": {
+          "description": "Adds Imperial Influence for the current scope.\nNotes: No effect if not emperor.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_incident_variable_value": {
+          "description": "Changes the value of an Incident for the current scope.\nNotes: Incidents are found in /Europa Universalis IV/common/isolationism/*.txt\nNo effect if the country does not hold a religion using uses_isolationism.",
+          "version_added": "1.2",
+          "type": "object"
+        },
+        "add_inflation": {
+          "description": "Adds inflation to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_isolationism": {
+          "description": "Adds Isolationism to the current scope.\nNotes: No effect if the country does not hold a religion using uses_isolationism.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_karma": {
+          "description": "Adds Karma to the current scope.\nNotes: No effect if the country does not hold a religion using uses_karma.",
+          "version_added": "1.12",
+          "type": "number"
+        },
+        "add_legitimacy": {
+          "description": "Adds legitimacy to the current scope.\nNotes: No effect if not a government monarchy.",
+          "version_added": "1.1",
+          "$ref": "special_values.json#/definitions/country_or_number"
+        },
+        "add_liberty_desire": {
+          "description": "Adds liberty desire to the current scope.\nNotes: Used on the subject to raise liberty desire for the overlord.",
+          "version_added": "1.4",
+          "type": "number"
+        },
+        "add_mandate": {
+          "description": "Adds mandate to the current scope.\nNotes: No effect if not the emperor of china.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_manpower": {
+          "description": "Adds manpower to the current scope.\nNotes: 1 is equal to 1000 manpower.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_mercantilism": {
+          "description": "Adds mercantilism to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_meritocracy": {
+          "description": "Adds meritocracy to the current scope.\nNotes: No effect if not a government using has_meritocracy.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_mil_power": {
+          "description": "Adds Military power to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_mil_tech": {
+          "description": "Adds MIL technologies to the current scope.\nNotes: You cannot remove technologies.",
+          "version_added": "1.21",
+          "type": "number"
+        },
+        "add_militarised_society": {
+          "description": "Adds militarisation to the current scope.\nNotes: No effect if not a government using militarised_society.",
+          "version_added": "1.18",
+          "type": "number"
+        },
+        "add_navy_tradition": {
+          "description": "Adds Navy Tradition to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_next_institution_embracement": {
+          "description": "Adds embracement for the current progressing institution within the current scope.\nNotes: Institutions are found in /Europa Universalis IV/common/institutions/*.txt.",
+          "version_added": "1.21",
+          "type": "number"
+        },
+        "add_opinion": {
+          "description": "Adds an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "add_papal_influence": {
+          "description": "Adds Papal Influence to the current scope.\nNotes: No effect if the country does not hold a religion using papacy.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_patriarch_authority": {
+          "description": "Adds Patriarch Authority to the current scope.\nNotes: No effect if the country does not hold a religion using has_patriarchs.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_piety": {
+          "description": "Adds Piety to the current scope.\nNotes: No effect if the country does not hold a religion using uses_piety.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_prestige": {
+          "description": "Adds prestige to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_queen_personality": {
+          "description": "Adds the defined personality to the current consort.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
+          "$ref": "identifiers.json#/definitions/ruler_personalities",
+          "version_added": "1.18"
+        },
+        "add_reform_desire": {
+          "description": "Adds Reform Desire.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_republican_tradition": {
+          "description": "Adds republican tradition to the current scope.\nNotes: No effect if not a government using republic.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_ruler_modifier": {
+          "description": "Adds an event modifier to the current scope as a ruler modifier.\nNotes: Ruler modifiers are cleared when the ruler dies.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "add_ruler_personality": {
+          "description": "Adds the defined personality to the current ruler.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
+          "$ref": "identifiers.json#/definitions/ruler_personalities",
+          "version_added": "1.18"
+        },
+        "add_sailors": {
+          "description": "Adds sailos to the current scope.\nNotes: 1 is equal to 1 sailor.",
+          "version_added": "1.16",
+          "type": "number"
+        },
+        "add_scaled_imperial_influence": {
+          "description": "Adds Imperial Influence for the current scope, scaled by the current Imperial Authority value.\nNotes: No effect if not emperor.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_scaled_republican_tradition": {
+          "description": "Adds republican tradition to the current scope.\nNotes: Scales to the government's election cycle duration.\nNo effect if not a government using republic.",
+          "version_added": "1.7",
+          "type": "number"
+        },
+        "add_splendor": {
+          "description": "Adds splendor to the current scope.\nNotes: Splendor is used to purchase Age abilities.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "add_spy_network_from": {
+          "description": "Adds spy network in the current scope for the defined scope.",
+          "version_added": "1.16",
+          "type": "object"
+        },
+        "add_spy_network_in": {
+          "description": "Adds spy network for the current scope in the defined scope.",
+          "version_added": "1.16",
+          "type": "object"
+        },
+        "add_stability": {
+          "description": "Adds stability to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_tariff_value": {
+          "description": "Adds tariff value to the current scope.\nNotes: Tariff value is the ducats sent to an overlord by subjects such as colonial nations.",
+          "version_added": "1.4",
+          "type": "number"
+        },
+        "add_treasury": {
+          "description": "Adds ducats to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_tribal_allegiance": {
+          "description": "Adds tribal allegiance to the current scope.\nNotes: No effect if not a government using tribal_federation_mechanic.",
+          "version_added": "1.23",
+          "type": "number"
+        },
+        "add_truce_with": {
+          "description": "Creates a truce between the defined scope and the current scope.\nNotes: The truce length is the default white peace truce length.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "add_trust": {
+          "description": "Adds trust with the defined scope for the current scope.\nNotes: Used in conjuction with the Diplomatic Feedback mechanic from The Cossacks DLC.",
+          "version_added": "1.2",
+          "type": "object"
+        },
+        "add_war_exhaustion": {
+          "description": "Adds war exhaustion to the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "add_yearly_manpower": {
+          "description": "Adds manpower to the current scope, as a percentage of total yearly manpower.\nNotes: 1 is equal to 100% of total yearly manpower.",
+          "version_added": "1.4",
+          "type": "number"
+        },
+        "add_yearly_sailors": {
+          "description": "Adds sailors to the current scope, as a percentage of total yearly sailors.\nNotes: 1 is equal to 100% of total yearly sailors.",
+          "version_added": "1.16",
+          "type": "number"
+        },
+        "add_years_of_income": {
+          "description": "Adds ducats equal to the years of income defined.\nNotes: 1 is equal to 1 year of income, based of a country's current monthly income.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "artillery": {
+          "description": "Spawns an artillery unit for the current scope in the defined province scope.\nNotes: Uses the currently selected artillery unit.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "break_marriage": {
+          "description": "Breaks the current scope's royal marriage with the defined scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.11"
+        },
+        "break_union": {
+          "description": "Breaks the current scope's union with the defined scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "cavalry": {
+          "description": "Spawns a cavalry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected cavalry unit.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "change_adm": {
+          "description": "Adds ADM skill to the current ruler.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "change_consort_regent_to_ruler": {
+          "description": "Makes a consort regent into the current ruler for the current scope.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.18"
+        },
+        "change_dip": {
+          "description": "Adds DIP skill to the current ruler.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "change_government": {
+          "description": "Changes the government of the current scope.\nNotes: Governments are found in /Europa Universalis IV/common/governments/*.txt.",
+          "$ref": "identifiers.json#/definitions/governments",
+          "version_added": "1.1"
+        },
+        "change_graphical_culture": {
+          "description": "Changes the current scope's graphical culture. Graphical culture determines the unit models, advisor portraits, etc that a country uses.\nNotes: Graphical cultures are found in /Europa Universalis IV/common/graphicalculturetype.txt.",
+          "$ref": "identifiers.json#/definitions/graphicalculturetypes",
+          "version_added": "1.11"
+        },
+        "change_heir_adm": {
+          "description": "Adds ADM skill to the current heir.",
+          "version_added": "1.14",
+          "type": "number"
+        },
+        "change_heir_dip": {
+          "description": "Adds DIP skill to the current heir.",
+          "version_added": "1.14",
+          "type": "number"
+        },
+        "change_heir_mil": {
+          "description": "Adds MIL skill to the current heir.",
+          "version_added": "1.14",
+          "type": "number"
+        },
+        "change_mil": {
+          "description": "Adds MIL skill to the current ruler.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "change_personal_deity": {
+          "description": "Changes the current personal deity for the current scope.\nNotes: Personal Deities are found in /Europa Universalis IV/common/personal_deities/*.txt.\nNo effect if the country does not hold a religion using personal_deity.",
+          "$ref": "identifiers.json#/definitions/personal_deities",
+          "version_added": "1.6"
+        },
+        "change_price": {
+          "description": "Changes the price of a trade good globally.\nNotes: Tradegood prices are found in /Europa Universalis IV/common/prices/*.txt\nThe new price is the base price + (base price * value)\nduration accepts -1 for unlimited duration.",
+          "version_added": "1.8",
+          "type": "object"
+        },
+        "change_primary_culture": {
+          "description": "Changes the primary culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/cultures",
+          "version_added": "1.1"
+        },
+        "change_religion": {
+          "description": "Changes the religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.\nDoes not accept TAG scopes.",
+          "version_added": "1.1",
+          "anyOf": [
+            {
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            {
+              "$ref": "identifiers.json#/definitions/religions"
+            }
+          ]
+        },
+        "change_statists_vs_orangists": {
+          "description": "Changes the Organist-Statist balance.\nNotes: Positive moves towards Orangist, negative moves towards Statists.",
+          "version_added": "1.7",
+          "type": "number"
+        },
+        "change_tag": {
+          "description": "Changes current scope to <scope> tag.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "change_technology_group": {
+          "description": "Changes the technology group of the current scope.\nNotes: Technology Groups are found in /Europa Universalis IV/common/technology.txt.\nDoesn't change units, use change_unit_type.",
+          "$ref": "identifiers.json#/definitions/technology_groups",
+          "version_added": "1.1"
+        },
+        "change_unit_type": {
+          "description": "Change the unit type for the current scope.\nNotes: The unit types correspond the the technology groups found in /Europa Universalis IV/common/technology.txt.",
+          "version_added": "1.1",
+          "anyOf": [
+            {
+              "$ref": "identifiers.json#/definitions/units"
+            },
+            {
+              "$ref": "identifiers.json#/definitions/rebel_types"
+            }
+          ]
+        },
+        "clear_global_event_target": {
+          "description": "Clears a specific global event target.",
+          "version_added": "1.8",
+          "type": "string"
+        },
+        "clear_global_event_targets": {
+          "description": "Clears all global event targets.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "clear_saved_name": {
+          "description": "Clears a saved name key.\nNotes: Use this after using the saved name in an effect.",
+          "$ref": "special_values.json#/definitions/save_game_key",
+          "version_added": "1.23"
+        },
+        "clr_consort_flag": {
+          "description": "Clears a consort flag for the current scope's consort.",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.18"
+        },
+        "clr_country_flag": {
+          "description": "Clears a defined country flag for the current scope.",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "clr_global_flag": {
+          "description": "Clears a defined global flag.",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "clr_heir_flag": {
+          "description": "Clears a heir flag for the current scope's heir.",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "clr_ruler_flag": {
+          "description": "Clears a ruler flag for the current scope's ruler.",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.7"
+        },
+        "collapse_nation": {
+          "description": "Causes owned cores of the current scope to be released as nations and for them to take a percentage of the current scope's owned provinces.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "convert_female_heir_to_general": {
+          "description": "Converts a female heir into a general.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.15"
+        },
+        "convert_female_ruler_to_general": {
+          "description": "Converts a female ruler into a general.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.15"
+        },
+        "convert_heir_to_general": {
+          "description": "Converts a male heir into a general.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "convert_ruler_to_general": {
+          "description": "Converts a male ruler into a general.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "country_event": {
+          "description": "Fire a country event for the current country scope.\nNotes: You cannot fire the same event within itself.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "create_admiral": {
+          "description": "Generates an new admiral for the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "create_advisor": {
+          "description": "Adds the defined advisor to the current scope.\nNotes: Defaults the advisor's location to the capital, and religion and culture to the current scope's.",
+          "version_added": "1.1",
+          "$ref": "identifiers.json#/definitions/advisortypes",
+          "type": "object"
+        },
+        "create_alliance": {
+          "description": "Creates an alliance between the current scope and the defined scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "create_conquistador": {
+          "description": "Generates an new conquistador for the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "create_explorer": {
+          "description": "Generates an new explorer for the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "create_general": {
+          "description": "Generates an new general for the current scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "create_guarantee": {
+          "description": "Creates an guarantee over the defined scope for the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.8"
+        },
+        "create_independent_estate": {
+          "description": "Creates an independent nation from provinces owned by the specified estate within the current scope's owned provinces.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt\nThe additional parameters for the independent nation are found within an estate's file.",
+          "$ref": "identifiers.json#/definitions/estates",
+          "version_added": "1.14"
+        },
+        "create_independent_estate_from_religion": {
+          "description": "Creates an independent nation from provinces owned by the specified estate within the current scope's owned provinces.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt\nCreated with the religion that the majority of the provinces that the defined estate own holds.\nThe additional parameters for the independent nation are found within an estate's file.",
+          "$ref": "identifiers.json#/definitions/estates",
+          "version_added": "1.14"
+        },
+        "create_march": {
+          "description": "Makes the defined scope a march subject of the current scope.\nNotes: Uses the march subject type.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.12"
+        },
+        "create_marriage": {
+          "description": "Creates a royal marriage between the current scope and the defined scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "create_subject": {
+          "description": "Makes the defined scope into the defined subject type under the current scope.\nNotes: Subject types are found in /Europa Universalis IV/common/subject_types/*.txt.",
+          "version_added": "1.2",
+          "type": "object"
+        },
+        "create_union": {
+          "description": "Makes the defined scope a junior partner in a personal union with the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "create_vassal": {
+          "description": "Makes the defined scope a vassal subject of the current scope.\nNotes: Uses the vassal subject type.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.22"
+        },
+        "custom_tooltip": {
+          "description": "Displays a localized key in the effect tooltip.",
+          "version_added": "1.1",
+          "type": "string"
+        },
+        "declare_war": {
+          "description": "Creates a no casus belli war against the defined scope for the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "declare_war_with_cb": {
+          "description": "Declares war for the current scope against the defined scope, using the defined casus belli.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_admiral": {
+          "description": "Creates an admiral with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for admirals.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_advisor": {
+          "description": "Adds the defined advisor to the current scope.\nNotes: Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt\nCan utilise Event Scope Values for the culture and religionparameters.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_conquistador": {
+          "description": "Creates a conquistador with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_consort": {
+          "description": "Creates the defined consort for the current scope.\nNotes: The skill values are not rolled for consorts, meaning the values set are the exact values a consort gets.\nThe culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.18",
+          "type": "object"
+        },
+        "define_explorer": {
+          "description": "Creates an explorer with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for explorers.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_general": {
+          "description": "Creates a general with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_heir": {
+          "description": "Creates the defined heir for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_heir_to_general": {
+          "description": "Creates a general from the heir of the current scope.",
+          "version_added": "1.8",
+          "type": "object"
+        },
+        "define_leader_to_ruler": {
+          "description": "Creates a ruler from a leader for the current scope.",
+          "version_added": "1.12",
+          "type": "object"
+        },
+        "define_ruler": {
+          "description": "Creates the defined ruler for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "define_ruler_to_general": {
+          "description": "Creates a general from the ruler for the current scope.",
+          "version_added": "1.8",
+          "type": "object"
+        },
+        "disband_rebels": {
+          "description": "Disbands all active rebels of the specified type in the provinces of the current scope.\nNotes: Rebel types are found in /Europa Universalis IV/common/rebel_types/*.txt",
+          "version_added": "1.1",
+          "$ref": "identifiers.json#/definitions/rebel_types"
+        },
+        "dismantle_empire_of_china": {
+          "description": "Removes the Empire of China and the Mandate system.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.2"
+        },
+        "dismantle_hre": {
+          "description": "Disbands the HRE and removes all members from it.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "dissolve_parliament": {
+          "description": "Disables the Parliament mechanic.\nNotes: Only effects governments with has_parliament.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.15"
+        },
+        "elector": {
+          "description": "Makes the defined scope an elector of the Holy Roman Empire.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "enable_hre_leagues": {
+          "description": "Enables the Religious Leagues.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "enable_religion": {
+          "description": "Enables an religion that has been restricted with the date parameter.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.1"
+        },
+        "end_disaster": {
+          "description": "Immediately ends an active disaster for the current scope.\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
+          "$ref": "identifiers.json#/definitions/disasters",
+          "version_added": "1.9"
+        },
+        "excommunicate": {
+          "description": "Excommunicates the defined scope. If already excommunicated, removes excommunication.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.12"
+        },
+        "exile_heir_as": {
+          "description": "Removes the current heir of the current scope, saving them to the unique string.",
+          "version_added": "1.12",
+          "type": "string"
+        },
+        "exile_ruler_as": {
+          "description": "Removes the current ruler of the current scope, saving them to the unique string.",
+          "version_added": "1.12",
+          "type": "string"
+        },
+        "force_converted": {
+          "description": "Sets whether the current scope has been force converted.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "form_coalition_against": {
+          "description": "The current scope creates or joins a coalition against the defined scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "galley": {
+          "description": "Spawns a galley unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current galley unit.\nRequires the province scope to have a port.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "grant_independence": {
+          "description": "The current scope is granted independence from their overlord.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.22"
+        },
+        "heavy_ship": {
+          "description": "Spawns a heavy ship unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current heavy ship unit.\nRequires the province scope to have a port.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "hide_ambient_object": {
+          "description": "Hides a visible ambient object from the map/ambient_objects.txt file.",
+          "version_added": "1.19",
+          "type": "string"
+        },
+        "hre_inheritable": {
+          "description": "Makes the seat of the Emperor inheritable.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "imperial_ban_allowed": {
+          "description": "Enables the Imperial Ban casus belli.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "infantry": {
+          "description": "Spawns a infantry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected infantry unit.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "inherit": {
+          "description": "The current scope inherits all of the defined scope's provinces.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "internal_hre_cb": {
+          "description": "Disables casus belli creation for HRE members against one another.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "join_league": {
+          "description": "Makes the current scope join the League that the defined scope belongs to.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.8"
+        },
+        "kill_advisor": {
+          "description": "Kills a hired advisor for the current scope.\nNotes: Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt\nDisplays the advisor death message box when used.\nOnly works for advisors that have been hired.",
+          "version_added": "1.1",
+          "anyOf": [
+            {
+              "$ref": "identifiers.json#/definitions/advisortypes"
+            },
+            {
+              "$ref": "identifiers.json#/definitions/advisor_ids"
+            }
+          ]
+        },
+        "kill_heir": {
+          "description": "Kills the heir of the current scope.\nNotes: Displays heir death message.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "kill_leader": {
+          "description": "Kills a leader held by the current scope matching the type used.\nNotes: Possible types:general admiral conquistador explorer random <leader name>",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "kill_ruler": {
+          "description": "Kills the ruler of the current scope.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "leave_league": {
+          "description": "Makes the current scope leave the League that the defined scope belongs to.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.8"
+        },
+        "light_ship": {
+          "description": "Spawns a light ship unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current light ship unit.\nRequires the province scope to have a port.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "loan_size": {
+          "description": "Changes the loan size of the current scope.\nNotes: Size is the number of months in monthly income that a single loan is equal to.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "log": {
+          "description": "Displays a string in the game.log when executed.\nNotes: Accepts all localization commands (i.e. [Root.GetName], etc)",
+          "version_added": "1.21",
+          "type": "string"
+        },
+        "mercenary_cavalry": {
+          "description": "Spawns a mercenary cavalry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected cavalry unit.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "mercenary_infantry": {
+          "description": "Spawns a mercenary infantry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected mercenary infantry unit.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "reinstate_parliament": {
+          "description": "Re-enables the Parliament mechanic after dissolve_parliament.\nNotes: Only effects governments with has_parliament.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.15"
+        },
+        "release": {
+          "description": "The current scope releases all provinces with the defined scope's cores.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "release_all_subjects": {
+          "description": "The current scope releases all possible subjects from cores.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "remove_accepted_culture": {
+          "description": "Removes an accepted culture from the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/cultures",
+          "version_added": "1.1"
+        },
+        "remove_advisor": {
+          "description": "Removes a hired advisor for the current scope.\nNotes: Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt\nDoes not display the advisor death message box when used.\nOnly works for advisors that have been hired.",
+          "$ref": "identifiers.json#/definitions/advisor_ids",
+          "version_added": "1.1"
+        },
+        "remove_advisor_by_category": {
+          "description": "Removes a hired advisor of a monarch power type for the current scope.\nNotes: Only works for advisors that have been hired.",
+          "version_added": "1.2",
+          "$ref": "identifiers.json#/definitions/advisortypes"
+        },
+        "remove_casus_belli": {
+          "description": "Removes a casus belli held against the defined scope for the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "remove_church_aspect": {
+          "description": "Removes the defined aspect from the current scope.\nNotes: Church Aspects are found in /Europa Universalis IV/common/church_aspects/00_church_aspects.txt.\nNo effect if the country does not have the aspect.\nDoes not work with Blessings.",
+          "$ref": "identifiers.json#/definitions/church_aspects",
+          "version_added": "1.12"
+        },
+        "remove_consort": {
+          "description": "Removes the current consort for the current scope.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.18"
+        },
+        "remove_country_modifier": {
+          "description": "Removes an already assigned country modifier from the current scope.",
+          "version_added": "1.1",
+          "$ref": "identifiers.json#/definitions/modifiers"
+        },
+        "remove_faction": {
+          "description": "Removes a faction from the current scope.\nNotes: Factions are found in /Europa Universalis IV/common/factions/.",
+          "$ref": "identifiers.json#/definitions/factions",
+          "version_added": "1.1"
+        },
+        "remove_fow": {
+          "description": "Removes the fog of war in the current scope for the previous scope.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "remove_heir": {
+          "description": "Removes the heir of the current scope.\nNotes: Does not display the heir death message.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "remove_heir_personality": {
+          "description": "Removes the defined personality from the current heir.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
+          "$ref": "identifiers.json#/definitions/ruler_personalities",
+          "version_added": "1.18"
+        },
+        "remove_historical_friend": {
+          "description": "Removes the historical friendship between the defined scope and the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.12"
+        },
+        "remove_historical_rival": {
+          "description": "Removes the historical rivalry between the defined scope and the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.12"
+        },
+        "remove_idea": {
+          "description": "Removes an idea for the current scope.\nNotes: Ideas are found in /Europa Universalis IV/common/ideas/*.txt.\nWon't work if the idea isn't held.",
+          "$ref": "identifiers.json#/definitions/ideas",
+          "version_added": "1.6"
+        },
+        "remove_idea_group": {
+          "description": "Removes an ideagroup for the current scope.\nNotes: Ideagroups are found in /Europa Universalis IV/common/ideas/*.txt.\nWon't work if the ideagroup isn't held.",
+          "$ref": "identifiers.json#/definitions/idea_groups",
+          "version_added": "1.6"
+        },
+        "remove_opinion": {
+          "description": "Removes an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "remove_queen_personality": {
+          "description": "Removes the defined personality from the current consort.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
+          "$ref": "identifiers.json#/definitions/ruler_personalities",
+          "version_added": "1.18"
+        },
+        "remove_religious_reforms": {
+          "description": "Removes taken religious reforms from the current scope.\nNotes: No effect if the country does not hold a religion using religious_reforms.",
+          "version_added": "1.1",
+          "type": "number"
+        },
+        "remove_ruler_personality": {
+          "description": "Removes the defined personality from the current ruler.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
+          "$ref": "identifiers.json#/definitions/ruler_personalities",
+          "version_added": "1.18"
+        },
+        "reverse_add_casus_belli": {
+          "description": "Adds a casus belli against the current scope for the defined scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "reverse_add_opinion": {
+          "description": "Adds an opinion modifier for the defined scope held against the current scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "reverse_remove_casus_belli": {
+          "description": "Removes a casus belli held by the defined scope against the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "reverse_remove_opinion": {
+          "description": "Removes an opinion modifier for the defined scope held against the current scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "revoke_reform": {
+          "description": "Removes an Imperial Reform.\nNotes: Imperial Reforms are found in /Europa Universalis IV/common/imperial_reforms/00_hre.txt.",
+          "$ref": "identifiers.json#/definitions/religious_reforms",
+          "version_added": "1.1"
+        },
+        "save_event_target_as": {
+          "description": "Saves the current scope as a key. Is cleared once execution ends (i.e. end of event).\nNotes: Use event_target:<key> to access the scope.",
+          "version_added": "1.8",
+          "type": "string"
+        },
+        "save_global_event_target_as": {
+          "description": "Saves the current scope as a key. Persists after execution until cleared via effect.\nNotes: Use event_target:<key> to access the scope.",
+          "version_added": "1.8",
+          "type": "string"
+        },
+        "set_ai_attitude": {
+          "description": "Makes the current scope (if AI) have the defined attitude against the defined scope.\nNotes: AI attitudes are found in /Europa Universalis IV/common/ai_attitudes/00_ai_attitudes.txt.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "set_ai_personality": {
+          "description": "Makes the current scope (if AI) the defined personality.\nNotes: AI personalities are found in /Europa Universalis IV/common/ai_personalities/00_ai_personalities.txt.",
+          "version_added": "1.1",
+          "type": "object"
+        },
+        "set_allow_female_emperor": {
+          "description": "Enables female rulers to become emperor.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "set_consort_culture": {
+          "description": "Changes the consort culture for the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/cultures",
+          "version_added": "1.23"
+        },
+        "set_consort_flag": {
+          "description": "Defines a consort flag for the current scope's consort.\nNotes: Flags can be appended with scopes or event targets",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.18"
+        },
+        "set_consort_religion": {
+          "description": "Changes the consort religion for the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.23"
+        },
+        "set_country_flag": {
+          "description": "Defines a country flag for the current scope.\nNotes: Flags can be appended with scopes or event targets",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "set_dynasty": {
+          "description": "Sets the dynasty of the current scope's ruler.",
+          "version_added": "1.1",
+          "type": "string"
+        },
+        "set_emperor_of_china": {
+          "description": "Sets the current Emperor of China.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.2"
+        },
+        "set_global_flag": {
+          "description": "Defines a global flag.\nNotes: Flags can be appended with scopes or event targets",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "set_government_and_rank": {
+          "description": "Changes the current scope's government and rank at the same time.\nNotes: Governments are found in /Europa Universalis IV/common/governments/*.txt.\nWill respect that governments have fixed ranks and the maximum ranks for subject types.",
+          "version_added": "1.22",
+          "type": "object"
+        },
+        "set_government_rank": {
+          "description": "Changes the government rank of the current scope.\nNotes: Default range is 1 to 3.",
+          "version_added": "1.12",
+          "type": "number"
+        },
+        "set_heir": {
+          "description": "Makes the exiled heir the ruler of the current scope.",
+          "version_added": "1.12",
+          "type": "string"
+        },
+        "set_heir_culture": {
+          "description": "Changes the heir culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/cultures",
+          "version_added": "1.23"
+        },
+        "set_heir_flag": {
+          "description": "Defines a heir flag for the current scope's heir.\nNotes: Flags can be appended with scopes or event targets",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.1"
+        },
+        "set_heir_religion": {
+          "description": "Changes the heir religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.23"
+        },
+        "set_hre_heretic_religion": {
+          "description": "Makes the defined religion the heretic religion of the HRE.",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.8"
+        },
+        "set_hre_religion": {
+          "description": "Makes the defined religion the official religion of the HRE.",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.8"
+        },
+        "set_hre_religion_locked": {
+          "description": "Locks the official and heretic religion assignments, ending the Religious Leagues.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "set_hre_religion_treaty": {
+          "description": "Ends the Religious Leagues with no set religions.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.8"
+        },
+        "set_in_empire": {
+          "description": "Places the current scope and all owned provinces (if valid) in the empire.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.12"
+        },
+        "set_incident_variable_value": {
+          "description": "Sets the value of an Incident for the current scope.\nNotes: Incidents are found in /Europa Universalis IV/common/isolationism/*.txt\nNo effect if the country does not hold a religion using uses_isolationism.",
+          "version_added": "1.2",
+          "type": "object"
+        },
+        "set_isolationism": {
+          "description": "Sets Isolationism for the current scope.\nNotes: No effect if the country does not hold a religion using uses_isolationism.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "set_karma": {
+          "description": "Sets the Karma value for the current scope.\nNotes: No effect if the country does not hold a religion using uses_karma.",
+          "version_added": "1.12",
+          "type": "number"
+        },
+        "set_mandate": {
+          "description": "Sets the mandate value for the current scope.\nNotes: No effect if not the emperor of china.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "set_meritocracy": {
+          "description": "Sets the current meritocracy for the current scope.\nNotes: No effect if not a government using has_meritocracy.",
+          "version_added": "1.2",
+          "type": "number"
+        },
+        "set_papacy_active": {
+          "description": "Enables or disables the Papacy mechanic.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "set_primitive": {
+          "description": "Toggles Primitive status for the current scope.\nNotes: Primitive status controls whether a country has ships and if they can see Primitive-only mechanics, such as Religious Reforms.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.18"
+        },
+        "set_revolution_target": {
+          "description": "Makes the defined scope the new revolutionary target.\nNotes: Use --- to remove the target and not re-assign.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "set_ruler": {
+          "description": "Makes the exiled ruler the ruler of the current scope.",
+          "version_added": "1.12",
+          "type": "string"
+        },
+        "set_ruler_culture": {
+          "description": "Changes the ruler culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/cultures",
+          "version_added": "1.23"
+        },
+        "set_ruler_flag": {
+          "description": "Defines a ruler flag for the current scope's ruler.\nNotes: Flags can be appended with scopes or event targets",
+          "$ref": "special_values.json#/definitions/flag_name",
+          "version_added": "1.7"
+        },
+        "set_ruler_religion": {
+          "description": "Changes the ruler religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
+          "$ref": "identifiers.json#/definitions/religions",
+          "version_added": "1.23"
+        },
+        "set_saved_name": {
+          "description": "Saves a name to an unique key for usage in other effects.\nNotes: Usable with define_admiral, define_explorer, define_conquistador, define_general, define_ruler, define_consort, define_heir, define_advisor and spawn_rebels.",
+          "version_added": "1.23",
+          "type": "object"
+        },
+        "set_school_opinion": {
+          "description": "Changes the current scope's school opinion towards the defined scope's school.\nNotes: -1 for negative, 0 for netural and 1 for positive.",
+          "version_added": "1.23",
+          "type": "object"
+        },
+        "show_ambient_object": {
+          "description": "Displays a hidden ambient object from the map/ambient_objects.txt file.",
+          "version_added": "1.19",
+          "type": "string"
+        },
+        "swap_free_idea_group": {
+          "description": "Re-evaluates the current scope's national idea set assignment, if they match a different set, they will switch to it.\nNotes: Used after tag changes to change Nationa Idea sets.",
+          "$ref": "special_values.json#/definitions/boolean",
+          "version_added": "1.1"
+        },
+        "switch_tag": {
+          "description": "Switches the player view to <scope> tag. Original country becomes controlled by AI.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.8"
+        },
+        "transport": {
+          "description": "Spawns a transport unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current transport unit.\nRequires the province scope to have a port.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "unlock_cult": {
+          "description": "Adds the defined cult to the current scope.\nNotes: Cults can be found in /Europa Universalis IV/common/fetishist_cults/*.txt.\nNo effect if the country does not hold a religion using fetishist_cult.",
+          "$ref": "identifiers.json#/definitions/fetishist_cults",
+          "version_added": "1.18"
+        },
+        "vassalize": {
+          "description": "Makes the defined scope a vassal subject of the current scope.\nNotes: Uses the vassal subject type.\nExact same effect as create_vassal.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "white_peace": {
+          "description": "Forces the defined scope into a white peace truce with the current scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        }
+      }
+    },
+    "identifier_keys": {
+      "$identifierProperties": {
+        "units": {
+          "description": "Spawns a specific unit for the current scope in the defined province scope.\nNotes: Units can be found in /Europa Universalis IV/common/units/*.txt.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "version_added": "1.1"
+        },
+        "institutions": {
+          "type": "number"
+        },
+        "subject_types": {
+          "type": "number"
+        },
+        "buildings": {
+          "type": "number"
+        },
+        "idea_groups": {
+          "type": "number"
+        },
+        "religions": {
+          "type": "number"
+        },
+        "tradegoods": {
+          "type": "number"
+        },
+        "advisortypes": {
+          "type": "number"
+        },
+        "scripted_effects": {
+          "anyOf": [
+            {"type": "object"},
+            {"$ref": "special_values.json#/definitions/boolean"}
+          ]
+        }
+      }
+    },
+    "if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        },
+        {"$ref": "country_commands.json#/definitions/country_commands"}
+      ]
+    },
+    "else_if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        },
+        {"$ref": "country_commands.json#/definitions/country_commands"}
+      ]
     }
   }
 }

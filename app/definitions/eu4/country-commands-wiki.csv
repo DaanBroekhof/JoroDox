@@ -1,0 +1,1193 @@
+<unit name>,"<scope>
+The province scope in which the unit spawns.","random_owned_province = {
+    limit = { has_port = yes }
+    ROOT = {
+        british_redcoat = PREV
+    }
+}",Spawns a specific unit for the current scope in the defined province scope.,Units can be found in /Europa Universalis IV/common/units/*.txt.,1.1
+add_absolutism,"<int>
+The amount of absolutism to add or subtract.",add_absolutism = 10,Adds absolutism to the current scope.,No effect if Absolutism isn't active.,1.2
+add_accepted_culture,"<culture>
+The culture to add.
+<scope>
+The culture to add, derived from the scope.","add_accepted_culture = english
+add_accepted_culture = ENG
+add_accepted_culture = event_target:my_event_target
+add_accepted_culture = variable:my_variable",Adds a new accepted culture to the current scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt.
+Can utilise Event Scope Values.",1.1
+add_active_policy,"<policy>
+The policy to add.",add_active_policy = the_statute_of_monopolies,Adds a policy for the current scope.,"Policies are found in /Europa Universalis IV/common/policies/*.txt.
+Won't work if the policy triggers are not met by the country, or there are no free policy slots.",1.21
+add_adm_power,"<int>
+The amount of power to add or subtract.",add_adm_power = 100,Adds Administrative power to the current scope.,,1.1
+add_adm_tech,"<int>
+The amount of technologies to add.",add_adm_tech = 1,Adds ADM technologies to the current scope.,You cannot remove technologies.,1.21
+add_army_professionalism,"<float>
+The amount of army professionalism to add or subtract.",add_army_professionalism = 0.05,Adds Army Professionalism to the current scope.,,1.23
+add_army_tradition,"<int>
+The amount of army tradition to add or subtract.",add_army_tradition = 10,Adds Army Tradition to the current scope.,,1.1
+add_authority,"<int>
+The amount of authority to add.",add_authority = 10,Adds authority to the current scope. Used in Religious Reforms that use authority.,No effect if the country does not hold a religion using authority.,1.1
+add_casus_belli,"target = <scope>
+The country to add the casus belli against.
+type = <cb>
+The casus belli to add.
+months = <months>
+The number of months the casus belli lasts for.","add_casus_belli = {
+    target = FRA
+    type = cb_annex
+    duration = 365
+}",Adds a casus belli for the current scope against the defined scope.,Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt,1.1
+add_church_aspect,"<aspect>
+The church aspect to add.",add_church_aspect = adult_baptism_aspect,Adds the defined aspect to the current scope.,"Church Aspects are found in /Europa Universalis IV/common/church_aspects/00_church_aspects.txt.
+No effect if the country does not hold a religion using uses_church_power and the aspect set in aspects.
+Does not work with Blessings.",1.12
+add_church_power,"<int>
+The amount of church power to add or subtract.",add_church_power = 10,Adds Church Power to the current scope.,No effect if the country does not hold a religion using uses_church_power.,1.12
+add_corruption,"<float>
+The amount to add or subtract.",add_corruption = 2,Adds corruption to the current scope.,,1.16
+add_country_modifier,"name = <name>
+The event modifier to add.
+duration = <days>
+Optional. The number of days to add the country modifier for.
+hidden = yes
+Optional. Whether the country modifier is hidden in the government view.
+desc = <string
+Optional. The string used to override the automatic duration string.","add_country_modifier = { 
+    name = the_proper_old_ways
+    duration = -1  
+    desc = PROPER_OLD_WAYS_DESC_TOOLTIP
+    hidden = yes
+}",Adds an event modifier to the current scope as a country modifier.,,1.1
+add_devotion,"<int>
+The amount of devotion to add or subtract.",add_devotion = 10,Adds devotion to the current scope.,No effect if not a government using has_devotion.,1.12
+add_dip_power,"<int>
+The amount of power to add or subtract.",add_dip_power = 100,Adds Diplomatic power to the current scope.,,1.1
+add_dip_tech,"<int>
+The amount of technologies to add.",add_dip_tech = 1,Adds DIP technologies to the current scope.,You cannot remove technologies.,1.21
+add_disaster_modifier,"name = <modifier>
+The event modifier to add.
+disaster = <disaster>
+The disaster to apply the modifier to.
+duration = <days>
+The duration for the modifier to be active for.","add_disaster_modifier = {
+    name = ""restrict_serfdom""
+    duration = -1
+    disaster = internal_conflicts
+}","Applies an event modifier to the current scope that is removed when the disaster is over, or the duration runs out.",Disasters are found in /Europa Universalis IV/common/disasters/*.txt,1.1
+add_disaster_progress,"disaster = <disaster>
+The disaster to alter.
+value = <int>
+The amount of progress to add or subtract.","add_disaster_progress = {
+    disaster = internal_conflicts
+    value = 10
+}",Adds progress towards an already declared (conditions for disaster are met since at least a month) disaster,Disasters are found in /Europa Universalis IV/common/disasters/*.txt,1.16
+add_doom,"<int>
+The amount of doom to add.",add_doom = 10,Adds doom to the current scope. Used in Religious Reforms that use doom.,No effect if the country does not hold a religion using doom.,1.1
+add_estate_influence_modifier,"estate = <estate>
+The estate to apply the modifier to.
+desc = <string>
+The text to display in the Influence tooltip for this modifier.
+influence = <int>
+The amount of influence to add or subtract.
+duration = <days>
+The duration for which this modifier is active.","add_estate_influence_modifier = {
+    estate = estate_nobles
+        desc = EST_VAL_FURTHERED_SPOUSES_FAMILY_NOBLES
+    influence = 10
+    duration = 7300
+}",Adds an influence modifier for the defined estate used by the current scope.,Estates are found in /Europa Universalis IV/common/estates/*.txt,1.14
+add_estate_loyalty,"estate = <estate>
+The estate to apply the loyalty to.
+loyalty = <int>
+The amount of loyalty to add or subtract.","add_estate_loyalty = {
+    estate = estate_nobles
+    loyalty = 10
+}",Adds loyalty for the defined estate used by the current scope.,Estates are found in /Europa Universalis IV/common/estates/*.txt,1.14
+add_estate_loyalty_modifier,"estate = <estate>
+The estate to apply the modifier to.
+desc = <string>
+The text to display in the Influence tooltip for this modifier.
+loyalty = <int>
+The amount of loyalty to add or subtract.
+duration = <days>
+The duration for which this modifier is active.","add_estate_loyalty_modifier = {
+    estate = estate_nobles
+        desc = EST_VAL_EXAMPLE
+    loyalty = 10
+    duration = 7300
+}",Adds an loyalty modifier for the defined estate used by the current scope.,Estates are found in /Europa Universalis IV/common/estates/*.txt,1.14
+add_faction,"<faction>
+The faction to add.",add_faction = temples,Adds a faction to the current scope.,Factions are found in /Europa Universalis IV/common/factions/.,1.1
+add_faction_influence,"faction = <faction>
+The faction to add influence to.
+influence = <int>
+The amount of influence to add.","add_faction_influence = {
+    faction = temples
+    influence = 10
+}",Adds influence for the defined faction.,Mimics the influence boost from pressing the button in the faction window.,1.1
+add_fervor,"<int>
+The amount of fervor to add or subtract.",add_fervor = 10,Adds Fervor to the current scope.,No effect if the country does not hold a religion using fervor.,1.6
+add_government_power,"government_mechanic = <type>
+Which government mechanic to add power to.
+which = <type>
+Which pool type to add the power to. ADM, DIP or MIL
+amount = <type>
+The amount of power to add.","add_government_power = {
+    government_mechanic = iqta_mechanic
+    which = ADM
+    amount = 10
+}",Changes the pool size of one of the power pools within a government mechanic.,"List of government mechanics:
+russian_mechanic feudal_theocracy_mechanic tribal_federation_mechanic mamluk_mechanic iqta_mechanic",1.23
+add_harmonization_progress,"<int>
+The amount of progress to add or subtract.",add_harmonization_progress = 10,Adds Harmonization Progress for the current harmonization target to the current scope.,No effect if the country does not hold a religion using uses_harmony.,1.2
+add_harmonized_religion,"<religion>
+The religion to harmonize.",add_harmonized_religion = catholic,Adds a religion to the list of Harmonized religions for the current scope.,No effect if the country does not hold a religion using uses_harmony.,1.2
+add_harmony,"<int>
+The amount of harmony to add or subtract.",add_harmony = 10,Adds Harmony to the current scope.,No effect if the country does not hold a religion using uses_harmony.,1.2
+add_heir_claim,"<int>
+The amount to add or subtract from the claim.",add_heir_claim = 10,Adds to the current scope's heir claim.,,1.1
+add_heir_personality,"<personality>
+The heir personality to add.",add_heir_personality = righteous_personality,Adds the defined personality to the current heir.,Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt,1.18
+add_heir_support,"<int>
+The amount of support to add or subtract to the local heir",add_heir_support = 10,Adds to the local heir's support in an Elective Monarchy.,,1.7
+add_historical_friend,"<scope>
+The country to add the friendship to.",add_historical_friend = FRA,Makes the defined scope a historical friend of the current scope.,,1.12
+add_historical_rival,"<scope>
+The country to add the rivalry to.",add_historical_rival = FRA,Makes the defined scope a historical rival of the current scope.,,1.12
+add_horde_unity,"<int>
+The amount of horde unity to add or subtract.",add_horde_unity = 10,Adds horde unity to the current scope.,No effect if not a government using nomad.,1.14
+add_idea,"<idea>
+The idea to add.",add_idea = military_traditions,Adds an idea for the current scope.,"Ideas are found in /Europa Universalis IV/common/ideas/*.txt.
+Won't work if the idea isn't present in a National Idea set or a taken Ideagroups set for the country.",1.6
+add_idea_group,"<ideagroup>
+The ideagroup to add.",add_idea_group = aristocracy_ideas,Adds an ideagroup for the current scope.,"Ideagroups are found in /Europa Universalis IV/common/ideas/*.txt.
+Won't work if the country doesn't have any free ideagroup slots.",1.6
+add_imperial_influence,"<int>
+The amount of influence to add or subtract.",add_imperial_influence = 10,Adds Imperial Influence for the current scope.,No effect if not emperor.,1.1
+add_incident_variable_value,"incident = <incident>
+The incident to change.
+value = <int>
+The amount to add to the incident variable.","add_incident_variable_value = {
+    incident = incident_urbanization
+    value = -1
+}",Changes the value of an Incident for the current scope.,"Incidents are found in /Europa Universalis IV/common/isolationism/*.txt
+No effect if the country does not hold a religion using uses_isolationism.",1.2
+add_inflation,"<float>
+The amount of inflation to add or subtract.",add_inflation = 2,Adds inflation to the current scope.,,1.1
+add_isolationism,"<int>
+The amount of isolationism to add or subtract.",add_isolationism = 1,Adds Isolationism to the current scope.,No effect if the country does not hold a religion using uses_isolationism.,1.2
+add_karma,"<int>
+The amount of karma to add or subtract.",add_karma = 10,Adds Karma to the current scope.,No effect if the country does not hold a religion using uses_karma.,1.12
+add_legitimacy,"<int>
+The amount of legitimacy to add or subtract.
+<scope>
+The amount of legitimacy to add or subtract, taking the value from the scope's current value.","add_legitimacy = 10
+add_legitimacy = CAS",Adds legitimacy to the current scope.,No effect if not a government monarchy.,1.1
+add_liberty_desire,"<int>
+The amount to add or subtract.",add_liberty_desire = 10,Adds liberty desire to the current scope.,Used on the subject to raise liberty desire for the overlord.,1.4
+add_mandate,"<int>
+The amount of mandate to add or subtract.",add_mandate = 10,Adds mandate to the current scope.,No effect if not the emperor of china.,1.2
+add_manpower,"<float>
+The amount of manpower to add or subtract.",add_manpower = 1,Adds manpower to the current scope.,1 is equal to 1000 manpower.,1.1
+add_mercantilism,"<int>
+The amount of mercantilism to add or subtract.",add_mercantilism = 2,Adds mercantilism to the current scope.,,1.1
+add_meritocracy,"<int>
+The amount of meritocracy to add or subtract.",add_meritocracy = 10,Adds meritocracy to the current scope.,No effect if not a government using has_meritocracy.,1.2
+add_mil_power,"<int>
+The amount of power to add or subtract.",add_mil_power = 100,Adds Military power to the current scope.,,1.1
+add_mil_tech,"<int>
+The amount of technologies to add.",add_mil_tech = 1,Adds MIL technologies to the current scope.,You cannot remove technologies.,1.21
+add_militarised_society,"<int>
+The amount of militarisation to add or subtract.",add_militarised_society = 10,Adds militarisation to the current scope.,No effect if not a government using militarised_society.,1.18
+add_navy_tradition,"<int>
+The amount of navy tradition to add or subtract.",add_navy_tradition = 10,Adds Navy Tradition to the current scope.,,1.1
+add_next_institution_embracement,"<int>
+The amount of embracement to add.",add_next_institution_embracement = 10,Adds embracement for the current progressing institution within the current scope.,Institutions are found in /Europa Universalis IV/common/institutions/*.txt.,1.21
+add_opinion,"who = <scope>
+The country the opinion modifier is for.
+modifier = <modifier>
+The opinion modifier to use.
+years = <int> Optional. Whether the modifier expires after a set amount of years.","add_opinion = {
+    who = FRA
+    modifier = renounced_as_heretics
+}",Adds an opinion modifier for the current scope held against the defined scope.,Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt,1.1
+add_papal_influence,"<int>
+The amount of papal influence to add or subtract.",add_papal_influence = 10,Adds Papal Influence to the current scope.,No effect if the country does not hold a religion using papacy.,1.1
+add_patriarch_authority,"<float>
+The amount of patriarch authority to add or subtract.",add_patriarch_authority = 0.5,Adds Patriarch Authority to the current scope.,No effect if the country does not hold a religion using has_patriarchs.,1.1
+add_piety,"<float>
+The amount of piety to add or subtract.",add_piety = 0.5,Adds Piety to the current scope.,No effect if the country does not hold a religion using uses_piety.,1.1
+add_prestige,"<float>
+The amount to add or subtract. <scope>
+The value to take from scope, to add or subtract.",add_prestige = 50,Adds prestige to the current scope.,,1.1
+add_queen_personality,"<personality>
+The consort personality to add.",add_queen_personality = righteous_personality,Adds the defined personality to the current consort.,Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt,1.18
+add_reform_desire,"<float>
+The amount reform desire to add or subtract.",add_reform_desire = 0.5,Adds Reform Desire.,,1.1
+add_republican_tradition,"<int>
+The amount of republican tradition to add or subtract.",add_republican_tradition = 10,Adds republican tradition to the current scope.,No effect if not a government using republic.,1.1
+add_ruler_modifier,"name = <name>
+The event modifier to add.
+duration = <days>
+Optional. The number of days to add the ruler modifier for.
+hidden = yes
+Optional. Whether the ruler modifier is hidden in the government view.
+desc = <string
+Optional. The string used to override the automatic duration string.","add_ruler_modifier = { 
+    name = mad_and_bad
+    duration = -1  
+    desc = MAD_AND_BAD_DESC
+    hidden = yes
+}",Adds an event modifier to the current scope as a ruler modifier.,Ruler modifiers are cleared when the ruler dies.,1.1
+add_ruler_personality,"<personality>
+The ruler personality to add.",add_ruler_personality = righteous_personality,Adds the defined personality to the current ruler.,Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt,1.18
+add_sailors,"<int>
+The amount of sailors to add or subtract.",add_sailors = 10,Adds sailos to the current scope.,1 is equal to 1 sailor.,1.16
+add_scaled_imperial_influence,"<int>
+The amount of influence to add or subtract.",add_scaled_imperial_influence = 10,"Adds Imperial Influence for the current scope, scaled by the current Imperial Authority value.",No effect if not emperor.,1.1
+add_scaled_republican_tradition,"<int>
+The amount of republican tradition to add or subtract.",add_scaled_republican_tradition = 10,Adds republican tradition to the current scope.,"Scales to the government's election cycle duration.
+No effect if not a government using republic.",1.7
+add_splendor,"<int>
+The amount to add or subtract.",add_splendor = 2,Adds splendor to the current scope.,Splendor is used to purchase Age abilities.,1.2
+add_spy_network_from,"who = <scope>
+The country to add spy network for.
+value = <int>
+The amount of spy network to add or subtract.","add_spy_network_from = {
+    who = FRA
+    value = 10
+}",Adds spy network in the current scope for the defined scope.,,1.16
+add_spy_network_in,"who = <scope>
+The country to add spy network in.
+value = <int>
+The amount of spy network to add or subtract.","add_spy_network_in = {
+    who = FRA
+    value = 10
+}",Adds spy network for the current scope in the defined scope.,,1.16
+add_stability,"<int>
+The amount to add or subtract.",add_stability = 1,Adds stability to the current scope.,,1.1
+add_tariff_value,"<float>
+The amount of tariff value to add or subtract.",add_tariff_value = 0.1,Adds tariff value to the current scope.,Tariff value is the ducats sent to an overlord by subjects such as colonial nations.,1.4
+add_treasury,"<int>
+The amount of ducats to add or subtract.",add_treasury = 50,Adds ducats to the current scope.,,1.1
+add_tribal_allegiance,"<int>
+The amount of tribal allegiance to add or subtract.",add_tribal_allegiance = 10,Adds tribal allegiance to the current scope.,No effect if not a government using tribal_federation_mechanic.,1.23
+add_truce_with,"<scope>
+The country to add a truce against.",add_truce_with = FRA,Creates a truce between the defined scope and the current scope.,The truce length is the default white peace truce length.,1.1
+add_trust,"who = <scope>
+The country trust will be added with.
+value = <int>
+The amount of trust to add or subtract.
+mutual = yes Optional. Whether to apply the trust change to both countries.","add_trust = {
+    who = FRA
+    value = 25
+    mutual = yes
+}",Adds trust with the defined scope for the current scope.,Used in conjuction with the Diplomatic Feedback mechanic from The Cossacks DLC.,1.2
+add_war_exhaustion,"<int>
+The amount to add or subtract.",add_war_exhaustion = 2,Adds war exhaustion to the current scope.,,1.1
+add_yearly_manpower,"<float>
+The amount of manpower to add or subtract.",add_yearly_manpower = 0.5,"Adds manpower to the current scope, as a percentage of total yearly manpower.",1 is equal to 100% of total yearly manpower.,1.4
+add_yearly_sailors,"<float>
+The amount of sailors to add or subtract.",add_yearly_sailors = 10,"Adds sailors to the current scope, as a percentage of total yearly sailors.",1 is equal to 100% of total yearly sailors.,1.16
+add_years_of_income,"<float>
+The amount of income to add or subtract..",add_years_of_income = 0.5,Adds ducats equal to the years of income defined.,"1 is equal to 1 year of income, based of a country's current monthly income.",1.1
+artillery,"<scope>
+The province scope in which the artillery spawns.","capital_scope = {
+    ROOT = {
+        artillery = PREV
+    }
+}",Spawns an artillery unit for the current scope in the defined province scope.,Uses the currently selected artillery unit.,1.1
+break_marriage,"<scope>
+The country to break the marriage with.",break_marriage = FRA,Breaks the current scope's royal marriage with the defined scope.,,1.11
+break_union,"<scope>
+The country to break the union with.",break_union = FRA,Breaks the current scope's union with the defined scope.,,1.1
+cavalry,"<scope>
+The province scope in which the cavalry spawns.","capital_scope = {
+    ROOT = {
+        cavalry = PREV
+    }
+}",Spawns a cavalry unit for the current scope in the defined province scope.,Uses the currently selected cavalry unit.,1.1
+change_adm,"<int>
+The amount to add or subtract from the ruler's ADM skill.",change_adm = 1,Adds ADM skill to the current ruler.,,1.1
+change_consort_regent_to_ruler,"yes
+Boolean.",change_consort_regent_to_ruler = yes,Makes a consort regent into the current ruler for the current scope.,,1.18
+change_dip,"<int>
+The amount to add or subtract from the ruler's DIP skill.",change_dip = 1,Adds DIP skill to the current ruler.,,1.1
+change_government,"<government>
+The government to change to.",change_government = dictatorship,Changes the government of the current scope.,Governments are found in /Europa Universalis IV/common/governments/*.txt.,1.1
+change_graphical_culture,"<gfxculture>
+The graphical culture to assign.",change_graphical_culture = westerngfx,"Changes the current scope's graphical culture. Graphical culture determines the unit models, advisor portraits, etc that a country uses.",Graphical cultures are found in /Europa Universalis IV/common/graphicalculturetype.txt.,1.11
+change_heir_adm,"<int>
+The amount to add or subtract from the heir's ADM skill.",change_heir_adm = 1,Adds ADM skill to the current heir.,,1.14
+change_heir_dip,"<int>
+The amount to add or subtract from the heir's DIP skill.",change_heir_dip = 1,Adds DIP skill to the current heir.,,1.14
+change_heir_mil,"<int>
+The amount to add or subtract from the heir's MIL skill.",change_heir_mil = 1,Adds MIL skill to the current heir.,,1.14
+change_mil,"<int>
+The amount to add or subtract from the ruler's MIL skill.",change_mil = 1,Adds MIL skill to the current ruler.,,1.1
+change_personal_deity,"<deity>
+The personal deity to add.",change_personal_deity = odin,Changes the current personal deity for the current scope.,"Personal Deities are found in /Europa Universalis IV/common/personal_deities/*.txt.
+No effect if the country does not hold a religion using personal_deity.",1.6
+change_price,"trade_goods = <tradegood>
+The trade good to change.
+key = <string>
+The localisation key to display in the Trade Good's price tooltip.
+value = <float>
+The percentage to change the value by.
+duration = <days>
+The duration for the value to stay changed for.","change_price = {
+    trade_goods = grain
+    key = grain_shortage
+    value = 0.5
+    duration = 3650
+}",Changes the price of a trade good globally.,"Tradegood prices are found in /Europa Universalis IV/common/prices/*.txt
+The new price is the base price + (base price * value)
+duration accepts -1 for unlimited duration.",1.8
+change_primary_culture,"<culture>
+The culture to change to, from /Europa Universalis IV/common/cultures/.<scope>
+The culture to change to, derived from the scope.","change_primary_culture = english
+change_primary_culture = ENG
+change_primary_culture = event_target:my_event_target
+change_primary_culture = variable:my_variable",Changes the primary culture of the current scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt.
+Can utilise Event Scope Values.",1.1
+change_religion,"<religion>
+The religion to change to.
+<scope>
+The religion to change to, derived from the scope.","change_religion = catholic
+change_religion = event_target:my_event_target
+change_religion = variable:my_variable",Changes the religion of the current scope.,"Religions are found in /Europa Universalis IV/common/religions/*.txt
+Can utilise Event Scope Values.
+Does not accept TAG scopes.",1.1
+change_statists_vs_orangists,"<int>
+The amount of swing towards statists or organgists.",change_statists_vs_orangists = 10,Changes the Organist-Statist balance.,"Positive moves towards Orangist, negative moves towards Statists.",1.7
+change_tag,"<scope>
+The scope to change to.","change_tag = FRA
+change_tag = ROOT
+change_tag = event_target:my_country",Changes current scope to <scope> tag.,,1.1
+change_technology_group,"<technology group>
+The technology group to change to.",change_technology_group = western,Changes the technology group of the current scope.,"Technology Groups are found in /Europa Universalis IV/common/technology.txt.
+Doesn't change units, use change_unit_type.",1.1
+change_unit_type,"<type>
+The unit type to change to.",change_unit_type = western,Change the unit type for the current scope.,The unit types correspond the the technology groups found in /Europa Universalis IV/common/technology.txt.,1.1
+clear_saved_name,"<key>
+The name key to clear.",clear_saved_name = noble_zealot,Clears a saved name key.,Use this after using the saved name in an effect.,1.23
+clr_consort_flag,"<flag>
+The unique string of the flag to clear.",clr_consort_flag = my_flag,Clears a consort flag for the current scope's consort.,,1.18
+clr_country_flag,"<flag>
+The unique string of a country flag to clear.",clr_country_flag = my_flag,Clears a defined country flag for the current scope.,,1.1
+clr_heir_flag,"<flag>
+The unique string of the flag to clear.",clr_heir_flag = my_flag,Clears a heir flag for the current scope's heir.,,1.1
+clr_ruler_flag,"<flag>
+The unique string of the flag to clear.",clr_ruler_flag = my_flag,Clears a ruler flag for the current scope's ruler.,,1.7
+collapse_nation,"yes
+Boolean",collapse_nation = yes,Causes owned cores of the current scope to be released as nations and for them to take a percentage of the current scope's owned provinces.,,1.1
+convert_female_heir_to_general,"yes
+Boolean.",convert_female_heir_to_general = yes,Converts a female heir into a general.,,1.15
+convert_female_ruler_to_general,"yes
+Boolean.",convert_female_ruler_to_general = yes,Converts a female ruler into a general.,,1.15
+convert_heir_to_general,"yes
+Boolean.",convert_heir_to_general = yes,Converts a male heir into a general.,,1.8
+convert_ruler_to_general,"yes
+Boolean.",convert_ruler_to_general = yes,Converts a male ruler into a general.,,1.8
+country_event,"id = <id>
+The event id to fire.
+days = <days>
+Optional. The number of days to wait after the effect is executed to fire the event.
+random = <days>
+Optional. The max number of additional days that can be added to the daysparameter for randomness.
+tooltip = <string>
+Optional. The tooltip to display in the effect tooltip country_event is used in.","country_event = { 
+    id = celestial_empire_events.1
+    days = 30
+    random = 15
+    tooltip = CELESTIAL_EMPIRE_TOOLTIP
+}",Fire a country event for the current country scope.,You cannot fire the same event within itself.,1.1
+create_admiral,"<int>
+The amount of navy tradition to use in generation.",create_admiral = 50,Generates an new admiral for the current scope.,,1.1
+create_advisor,"<advisor>
+The advisor to create.",create_advisor = philosopher,Adds the defined advisor to the current scope.,"Defaults the advisor's location to the capital, and religion and culture to the current scope's.",1.1
+create_alliance,"<scope>
+The country to create an alliance with.",create_alliance = FRA,Creates an alliance between the current scope and the defined scope.,,1.1
+create_conquistador,"<int>
+The amount of army tradition to use in generation.",create_conquistador = 50,Generates an new conquistador for the current scope.,,1.1
+create_explorer,"<int>
+The amount of navy tradition to use in generation.",create_explorer = 50,Generates an new explorer for the current scope.,,1.1
+create_general,"<int>
+The amount of armu tradition to use in generation.",create_general = 50,Generates an new general for the current scope.,,1.1
+create_guarantee,"<scope>
+The country to create an guarantee with.",create_guarantee = FRA,Creates an guarantee over the defined scope for the current scope.,,1.8
+create_independent_estate,"<estate>
+The estate to create the independent nation from.",create_independent_estate = estate_cossacks,Creates an independent nation from provinces owned by the specified estate within the current scope's owned provinces.,"Estates are found in /Europa Universalis IV/common/estates/*.txt
+The additional parameters for the independent nation are found within an estate's file.",1.14
+create_independent_estate_from_religion,"<estate>
+The estate to create the independent nation from.",create_independent_estate = estate_dhimmi,Creates an independent nation from provinces owned by the specified estate within the current scope's owned provinces.,"Estates are found in /Europa Universalis IV/common/estates/*.txt
+Created with the religion that the majority of the provinces that the defined estate own holds.
+The additional parameters for the independent nation are found within an estate's file.",1.14
+create_march,"<scope>
+The country to make into a march.",create_march = FRA,Makes the defined scope a march subject of the current scope.,Uses the march subject type.,1.12
+create_marriage,"<scope>
+The country to create an royal marriage with.",create_marriage = FRA,Creates a royal marriage between the current scope and the defined scope.,,1.1
+create_subject,"subject_type = <type>
+The subject type to use.
+subject = <scope>
+The scope to make the subject.","create_subject = {
+    subject_type = tributary_state
+    subject = FRA
+}",Makes the defined scope into the defined subject type under the current scope.,Subject types are found in /Europa Universalis IV/common/subject_types/*.txt.,1.2
+create_union,"<scope>
+The country to make into the junior partner.",create_union = FRA,Makes the defined scope a junior partner in a personal union with the current scope.,,1.1
+create_vassal,"<scope>
+The country to make into a vassal.",create_vassal = FRA,Makes the defined scope a vassal subject of the current scope.,Uses the vassal subject type.,1.22
+declare_war,"<scope>
+The country to declare against.",declare_war = FRA,Creates a no casus belli war against the defined scope for the current scope.,,1.1
+declare_war_with_cb,"who = <scope>
+The country declared against.
+casus_belli = <cb>
+The casus belli to use.
+war_goal_province = <province id>
+Optional. Defines the province the war was declared for, if required by the casus belli.","declare_war_with_cb = {
+    who = FRA
+    casus_belli = cb_annex
+}","Declares war for the current scope against the defined scope, using the defined casus belli.",Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt,1.1
+define_admiral,"shock = <int>
+The shock pips of the leader.
+fire = <int>
+The fire pips of the leader.
+manuever = <int>
+The manuever pips of the leader.
+siege = <int>
+The siege pips of the leader.
+name = <string>
+Optional. The name of the leader.
+female = yes
+Optional. Makes the leader female.
+trait = <trait>
+Optional. A trait automatically assigned to the leader.","define_admiral = {
+    shock = 2
+    fire = 2
+    manuever = 2
+    siege = 2
+}",Creates an admiral with the defined attributes for the current scope.,"Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.
+Siege improves Blockade Efficiency for admirals.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_advisor,"type = <type>
+The advisor type to create.
+skill = <int>
+The amount of skill the advisor has. Limited to 3 maximum.
+name = <string>
+Optional. The name to use.
+location = <province id>
+Optional. The province that the advisor comes from.
+discount = yes
+Optional. If the SCRIPTED_ADVISOR_DISCOUNT cost reduction applies to this advisor.
+female = yes
+Optional. Makes this advisor female.
+culture = <culture> / <scope>
+Optional. The culture of this advisor.
+religion = <religion> / <scope>
+Optional. The religion of this advisor.","define_advisor = {
+    type = treasurer
+    name = ""John Smith""
+    skill = 3
+    culture = english
+    religion = catholic
+}
+define_advisor = {
+    type = treasurer
+    name = rising_star_advisor
+    skill = 2
+    culture = event_target:wrong_religion_province
+    religion = event_target:wrong_religion_province
+}
+define_advisor = {
+    type = recruitmaster
+    skill = 3
+    discount = yes
+    culture = variable:new_ruler_culture
+}",Adds the defined advisor to the current scope.,"Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt
+Can utilise Event Scope Values for the culture and religionparameters.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_conquistador,"shock = <int>
+The shock pips of the leader.
+fire = <int>
+The fire pips of the leader.
+manuever = <int>
+The manuever pips of the leader.
+siege = <int>
+The siege pips of the leader.
+name = <string>
+Optional. The name of the leader.
+female = yes
+Optional. Makes the leader female.
+trait = <trait>
+Optional. A trait automatically assigned to the leader.","define_conquistador = {
+    shock = 2
+    fire = 2
+    manuever = 2
+    siege = 2
+}",Creates a conquistador with the defined attributes for the current scope.,"Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_consort,"name = <string>
+Optional. The name of the consort.
+country_of_origin = <scope>
+Optional. The origin country of the consort.
+dynasty = <string> / <scope> / original_dynasty
+Optional. The dynasty of the consort.
+age = <years>
+Optional. The age of the consort.
+adm = <int>
+Optional. The ADM skill for the consort.
+dip = <int>
+Optional. The DIP skill for the consort.
+mil = <int>
+Optional. The MIL skill for the consort.
+hide_skills = yes
+Optional. Hides the skill values for this consort. female = yes
+Optional. Forces the consort to be female.
+male = yes
+Optional. Forces the consort to be male.
+culture = <culture> / <scope>
+Optional. The culture of the consort.
+religion = <religion> / <scope>
+Optional. The religion of the consort.","define_consort = {
+    country_of_origin = ROOT
+    religion = ROOT
+    culture = ROOT
+}
+define_consort = {
+    name = ""Kösem Sultan""
+    culture = greek
+    adm = 5
+    dip = 4
+    mil = 5
+    female = yes
+}",Creates the defined consort for the current scope.,"The skill values are not rolled for consorts, meaning the values set are the exact values a consort gets.
+The culture and religion attributes can utilise Event Scope Values.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.18
+define_explorer,"shock = <int>
+The shock pips of the leader.
+fire = <int>
+The fire pips of the leader.
+manuever = <int>
+The manuever pips of the leader.
+siege = <int>
+The siege pips of the leader.
+name = <string>
+Optional. The name of the leader.
+female = yes
+Optional. Makes the leader female.
+trait = <trait>
+Optional. A trait automatically assigned to the leader.","define_explorer = {
+    shock = 2
+    fire = 2
+    manuever = 2
+    siege = 2
+}",Creates an explorer with the defined attributes for the current scope.,"Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.
+Siege improves Blockade Efficiency for explorers.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_general,"shock = <int>
+The shock pips of the leader.
+fire = <int>
+The fire pips of the leader.
+manuever = <int>
+The manuever pips of the leader.
+siege = <int>
+The siege pips of the leader.
+name = <string>
+Optional. The name of the leader.
+female = yes
+Optional. Makes the leader female.
+trait = <trait>
+Optional. A trait automatically assigned to the leader.","define_general = {
+    shock = 2
+    fire = 2
+    manuever = 2
+    siege = 2
+}",Creates a general with the defined attributes for the current scope.,"Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_heir,"name = <string>
+Optional. The name of the heir.
+dynasty = <string> / <scope> / original_dynasty
+Optional. The dynasty of the heir.
+age = <years>
+Optional. The age of the heir.
+birth_date = <date>
+Optional. The birth date of the heir. Can be used instead of the ageparameter.
+claim = <int>
+Optional. The starting legitimacy of the heir.
+adm = <int>
+Optional. The minimum ADM skill roll for the heir.
+dip = <int>
+Optional. The minimum DIP skill roll for the heir.
+mil = <int>
+Optional. The minimum MIL skill roll for the heir.
+fixed = yes
+Optional. Makes the heir skill roll fixed to the defined minimums.
+max_random_adm = <int>
+Optional. The maximum ADM skill roll for the heir.
+max_random_dip = <int>
+Optional. The maximum DIP skill roll for the heir.
+max_random_mil = <int>
+Optional. The maximum MIL skill roll for the heir.
+hide_skills = yes
+Optional. Hides the skill values for this heir. hidden = yes
+Optional. Hides the skill values for this heir. Legacy version of hide_skills.no_consort_with_heir = yes
+Optional. Makes the heir a child not of the consort, i.e. a bastardfemale = yes
+Optional. Forces the heir to be female.
+male = yes
+Optional. Forces the heir to be male.
+culture = <culture> / <scope>
+Optional. The culture of the heir.
+religion = <religion> / <scope>
+Optional. The religion of the heir.","define_heir = {
+    dynasty = ""Kamegere""
+    claim = 100                
+}
+define_heir = {
+    male = yes
+    dynasty = ROOT
+    name = ""Viracocha""
+    claim = 100
+    adm = 6
+}
+define_heir = {
+    dynasty = ROOT
+    age = 13
+    adm = 3
+    dip = 3
+    mil = 3
+    claim = 50
+    female = yes
+    no_consort_with_heir = yes
+}",Creates the defined heir for the current scope.,"The culture and religion attributes can utilise Event Scope Values.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_heir_to_general,"shock = <int>
+The shock pips of the leader.
+fire = <int>
+The fire pips of the leader.
+manuever = <int>
+The manuever pips of the leader.
+siege = <int>
+The siege pips of the leader.","define_heir_to_general = {
+    fire = 3
+    shock = 3
+    manuever = 3
+    siege = 3
+}",Creates a general from the heir of the current scope.,,1.8
+define_leader_to_ruler,"type = general / conquistador / admiral / explorer
+The leader type to pick a leader from.
+name = <string>
+The specific leader to use. Used instead of the type parameter.
+claim = <int>
+Optional. The starting legitimacy of the ruler.
+adm = <int>
+Optional. The minimum ADM skill roll for the ruler.
+dip = <int>
+Optional. The minimum DIP skill roll for the ruler.
+mil = <int>
+Optional. The minimum MIL skill roll for the ruler.
+fixed = yes
+Optional. Makes the ruler skill roll fixed to the defined minimums.","define_leader_to_ruler = {
+    type = general
+    adm = 3
+    dip = 3
+    mil = 3
+    fixed = yes
+    claim = 100
+}
+define_leader_to_ruler = {
+    name = ""John Smith""
+}",Creates a ruler from a leader for the current scope.,,1.12
+define_ruler,"name = <string>
+Optional. The name of the ruler.
+dynasty = <string> / <scope> / original_dynasty
+Optional. The dynasty of the ruler.
+age = <years>
+Optional. The age of the ruler.
+claim = <int>
+Optional. The starting legitimacy of the ruler.
+adm = <int>
+Optional. The minimum ADM skill roll for the ruler.
+dip = <int>
+Optional. The minimum DIP skill roll for the ruler.
+mil = <int>
+Optional. The minimum MIL skill roll for the ruler.
+fixed = yes
+Optional. Makes the ruler skill roll fixed to the defined minimums.
+max_random_adm = <int>
+Optional. The maximum ADM skill roll for the ruler.
+max_random_dip = <int>
+Optional. The maximum DIP skill roll for the ruler.
+max_random_mil = <int>
+Optional. The maximum MIL skill roll for the ruler.
+hide_skills = yes
+Optional. Hides the skill values for this ruler.regency = yes
+Optional. Makes this ruler as a regent.attach_leader = <string>
+Optional. The name of the leader to generate with the ruler.
+female = yes
+Optional. Forces the ruler to be female.
+male = yes
+Optional. Forces the ruler to be male.
+culture = <culture> / <scope>
+Optional. The culture of the ruler.
+religion = <religion> / <scope>
+Optional. The religion of the ruler.","define_ruler = {
+    name = ""Ntare I Kivimira""
+    dynasty = ""Cambarantama""
+    adm = 5
+    dip = 4
+    mil = 4
+    age = 20
+    claim = 95
+}
+define_ruler = {
+    culture = event_target:first_ruler_alternative_province
+    hide_skills = yes
+    age = 30
+}
+define_ruler = {
+    dynasty = ROOT
+    culture = ROOT
+    religion = ROOT
+}
+define_ruler = {
+    dip = 4
+    adm = 1
+    mil = 1                                        
+    fixed = yes
+}",Creates the defined ruler for the current scope.,"The culture and religion attributes can utilise Event Scope Values.
+The name parameter can accept a saved name variable, see set_saved_name for more context.",1.1
+define_ruler_to_general,"shock = <int>
+The shock pips of the leader.
+fire = <int>
+The fire pips of the leader.
+manuever = <int>
+The manuever pips of the leader.
+siege = <int>
+The siege pips of the leader.","define_ruler_to_general = {
+    fire = 3
+    shock = 3
+    manuever = 3
+    siege = 3
+}",Creates a general from the ruler for the current scope.,,1.8
+disband_rebels,"<type>
+The rebel type to disband.",disband_rebels = anti_tax_rebels,Disbands all active rebels of the specified type in the provinces of the current scope.,Rebel types are found in /Europa Universalis IV/common/rebel_types/*.txt,1.1
+dismantle_empire_of_china,"<yes> / <no>
+Boolean.",dismantle_empire_of_china = yes,Removes the Empire of China and the Mandate system.,,1.2
+dismantle_hre,"yes
+Boolean.",dismantle_hre = yes,Disbands the HRE and removes all members from it.,,1.1
+dissolve_parliament,"yes
+Boolean.",dissolve_parliament = yes,Disables the Parliament mechanic.,Only effects governments with has_parliament.,1.15
+elector,"<scope>
+The country to make elector.",elector = FRA,Makes the defined scope an elector of the Holy Roman Empire.,,1.1
+enable_hre_leagues,"yes
+Boolean.",enable_hre_leagues = yes,Enables the Religious Leagues.,,1.8
+enable_religion,"<religion>
+The religion to change to.",enable_religion = reformed,Enables an religion that has been restricted with the date parameter.,Religions are found in /Europa Universalis IV/common/religions/*.txt,1.1
+end_disaster,"<disaster>
+The disaster to end.",end_disaster = internal_conflicts,Immediately ends an active disaster for the current scope.,Disasters are found in /Europa Universalis IV/common/disasters/*.txt,1.9
+excommunicate,"<scope>
+The scope to excommunicate.",excommunicate = FRA,"Excommunicates the defined scope. If already excommunicated, removes excommunication.",,1.12
+exile_heir_as,"<string>
+The unique string to identify the exiled heir with.",exile_heir_as = my_exiled_heir,"Removes the current heir of the current scope, saving them to the unique string.",,1.12
+exile_ruler_as,"<string>
+The unique string to identify the exiled ruler with.",exile_ruler_as = my_exiled_ruler,"Removes the current ruler of the current scope, saving them to the unique string.",,1.12
+force_converted,"yes
+Boolean.",force_converted = yes,Sets whether the current scope has been force converted.,,1.1
+form_coalition_against,"<scope>
+The country to form against.",form_coalition_against = FRA,The current scope creates or joins a coalition against the defined scope.,,1.1
+galley,"<scope>
+The province scope in which the galley spawns.","random_owned_province = {
+    limit = { has_port = yes }
+    ROOT = {
+        galley = PREV
+    }
+}",Spawns a galley unit for the current scope in the defined province scope.,"Uses the current scope's current galley unit.
+Requires the province scope to have a port.",1.1
+grant_independence,"yes
+Boolean.",grant_independence = yes,The current scope is granted independence from their overlord.,,1.22
+heavy_ship,"<scope>
+The province scope in which the heavy ship spawns.","random_owned_province = {
+    limit = { has_port = yes }
+    ROOT = {
+        heavy_ship = PREV
+    }
+}",Spawns a heavy ship unit for the current scope in the defined province scope.,"Uses the current scope's current heavy ship unit.
+Requires the province scope to have a port.",1.1
+hre_inheritable,"yes
+Boolean.",hre_inheritable = yes,Makes the seat of the Emperor inheritable.,,1.1
+imperial_ban_allowed,"yes
+Boolean.",imperial_ban_allowed = yes,Enables the Imperial Ban casus belli.,,1.1
+infantry,"<scope>
+The province scope in which the infantry spawns.","capital_scope = {
+    ROOT = {
+        infantry = PREV
+    }
+}",Spawns a infantry unit for the current scope in the defined province scope.,Uses the currently selected infantry unit.,1.1
+inherit,"<scope>
+The country to inherit.",inherit = FRA,The current scope inherits all of the defined scope's provinces.,,1.1
+internal_hre_cb,"no
+Boolean.",internal_hre_cb = no,Disables casus belli creation for HRE members against one another.,,1.1
+join_league,"<scope>
+Which league to join.",join_league = FRA,Makes the current scope join the League that the defined scope belongs to.,,1.8
+kill_advisor,"<random>
+Kill a random advisor.
+<advisor>
+Kill a specific advisor type.
+<advisor id>
+Kill a specific advisor id.","kill_advisor = philosopher
+kill_advisor = random
+kill_advisor = 30",Kills a hired advisor for the current scope.,"Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt
+Displays the advisor death message box when used.
+Only works for advisors that have been hired.",1.1
+kill_heir,"yes
+Boolean.",kill_heir = yes,Kills the heir of the current scope.,Displays heir death message.,1.1
+kill_leader,"type = <type>
+The leader type to kill. name is the specific leader name to target.","kill_leader = {
+    type = random
+}
+kill_leader = {
+    type = general
+}
+kill_leader = {
+    type = ""John Smith""
+}",Kills a leader held by the current scope matching the type used.,Possible types:general admiral conquistador explorer random <leader name>,1.1
+kill_ruler,"yes
+Boolean.",kill_ruler = yes,Kills the ruler of the current scope.,,1.1
+leave_league,"<scope>
+Which league to leave.",leave_league = FRA,Makes the current scope leave the League that the defined scope belongs to.,,1.8
+light_ship,"<scope>
+The province scope in which the light ship spawns.","random_owned_province = {
+    limit = { has_port = yes }
+    ROOT = {
+        light_ship = PREV
+    }
+}",Spawns a light ship unit for the current scope in the defined province scope.,"Uses the current scope's current light ship unit.
+Requires the province scope to have a port.",1.1
+loan_size,"<int>
+The value to change to.",loan_size = 24,Changes the loan size of the current scope.,Size is the number of months in monthly income that a single loan is equal to.,1.1
+mercenary_cavalry,"<scope>
+The province scope in which the cavalry spawns.","capital_scope = {
+    ROOT = {
+        mercenary_cavalry = PREV
+    }
+}",Spawns a mercenary cavalry unit for the current scope in the defined province scope.,Uses the currently selected cavalry unit.,1.1
+mercenary_infantry,"<scope>
+The province scope in which the mercenary infantry spawns.","capital_scope = {
+    ROOT = {
+        mercenary_infantry = PREV
+    }
+}",Spawns a mercenary infantry unit for the current scope in the defined province scope.,Uses the currently selected mercenary infantry unit.,1.1
+reinstate_parliament,"yes
+Boolean.",reinstate_parliament = yes,Re-enables the Parliament mechanic after dissolve_parliament.,Only effects governments with has_parliament.,1.15
+release,"<scope>
+The country to release.",release = FRA,The current scope releases all provinces with the defined scope's cores.,,1.1
+release_all_subjects,"yes
+Boolean.",release_all_subjects = yes,The current scope releases all possible subjects from cores.,,1.1
+remove_accepted_culture,"<culture>
+The culture to remove, from /Europa Universalis IV/common/cultures/.<scope>
+The culture to remove, derived from the scope.","remove_accepted_culture = english
+remove_accepted_culture = ENG
+remove_accepted_culture = event_target:my_event_target
+remove_accepted_culture = variable:my_variable",Removes an accepted culture from the current scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt.
+Can utilise Event Scope Values.",1.1
+remove_advisor,"<random>
+Remove a random advisor. <advisor>
+Remove a specific advisor type
+<advisor id>
+Remove a specific advisor id.","remove_advisor = philosopher
+remove_advisor = random
+remove_advisor = 30",Removes a hired advisor for the current scope.,"Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt
+Does not display the advisor death message box when used.
+Only works for advisors that have been hired.",1.1
+remove_advisor_by_category,"<type>
+Removes an advisor by monarch power type: ADM, DIP or MIL.",remove_advisor_by_category = ADM,Removes a hired advisor of a monarch power type for the current scope.,Only works for advisors that have been hired.,1.2
+remove_casus_belli,"target = <scope>
+The country the casus belli is against.
+type = <cb>
+The casus belli to remove.","remove_casus_belli = {
+    target = FRA
+    type = cb_annex
+}",Removes a casus belli held against the defined scope for the current scope.,Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt,1.1
+remove_church_aspect,"<aspect>
+The church aspect to remove. You can also use random here to pick a random aspect.",remove_church_aspect = adult_baptism_aspect,Removes the defined aspect from the current scope.,"Church Aspects are found in /Europa Universalis IV/common/church_aspects/00_church_aspects.txt.
+No effect if the country does not have the aspect.
+Does not work with Blessings.",1.12
+remove_consort,"yes
+Boolean.",remove_consort = yes,Removes the current consort for the current scope.,,1.18
+remove_country_modifier,"<modifier>
+The event modifier to remove.",remove_country_modifier = the_proper_old_ways,Removes an already assigned country modifier from the current scope.,,1.1
+remove_faction,"<faction>
+The faction to remove.",add_faction = temples,Removes a faction from the current scope.,Factions are found in /Europa Universalis IV/common/factions/.,1.1
+remove_fow,"<months>
+The number of months to remove fog of war.","random_rival_country = {
+    limit = { war_with = ROOT }
+    remove_fow = 3
+}",Removes the fog of war in the current scope for the previous scope.,,1.1
+remove_heir,"yes
+Boolean.",remove_heir = yes,Removes the heir of the current scope.,Does not display the heir death message.,1.1
+remove_heir_personality,"<personality>
+The heir personality to remove.",remove_heir_personality = righteous_personality,Removes the defined personality from the current heir.,Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt,1.18
+remove_historical_friend,"<scope>
+The country to remove the friendship from.",remove_historical_friend = FRA,Removes the historical friendship between the defined scope and the current scope.,,1.12
+remove_historical_rival,"<scope>
+The country to remove the rivalry from.",remove_historical_rival = FRA,Removes the historical rivalry between the defined scope and the current scope.,,1.12
+remove_idea,"<idea>
+The idea to remove.",remove_idea = military_traditions,Removes an idea for the current scope.,"Ideas are found in /Europa Universalis IV/common/ideas/*.txt.
+Won't work if the idea isn't held.",1.6
+remove_idea_group,"<ideagroup>
+The ideagroup to remove.",remove_idea_group = military_traditions,Removes an ideagroup for the current scope.,"Ideagroups are found in /Europa Universalis IV/common/ideas/*.txt.
+Won't work if the ideagroup isn't held.",1.6
+remove_opinion,"who = <scope>
+The country the opinion modifier is held against.
+modifier = <modifier>
+The opinion modifier to use.","remove_opinion = {
+    who = FRA
+    modifier = renounced_as_heretics
+}",Removes an opinion modifier for the current scope held against the defined scope.,Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt,1.1
+remove_queen_personality,"<personality>
+The consort personality to remove.",remove_queen_personality = righteous_personality,Removes the defined personality from the current consort.,Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt,1.18
+remove_religious_reforms,"<int>
+The amount of religious reforms to remove.",remove_religious_reforms = 2,Removes taken religious reforms from the current scope.,No effect if the country does not hold a religion using religious_reforms.,1.1
+remove_ruler_personality,"<personality>
+The ruler personality to remove.",remove_ruler_personality = righteous_personality,Removes the defined personality from the current ruler.,Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt,1.18
+reverse_add_casus_belli,"target = <scope>
+The country to that gains the casus belli.
+type = <cb>
+The casus belli to add.
+months = <months>
+The number of months the casus belli lasts for.","reverse_add_casus_belli = {
+    target = FRA
+    type = cb_annex
+    duration = 365
+}",Adds a casus belli against the current scope for the defined scope.,Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt,1.1
+reverse_add_opinion,"who = <scope>
+The country the opinion modifier is added to.
+modifier = <modifier>
+The opinion modifier to use.
+years = <int> Optional. Whether the modifier expires after a set amount of years.","reverse_add_opinion = {
+    who = FRA
+    modifier = renounced_as_heretics
+}",Adds an opinion modifier for the defined scope held against the current scope.,Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt,1.1
+reverse_remove_casus_belli,"target = <scope>
+The country that holds the casus belli.
+type = <cb>
+The casus belli to remove.","reverse_remove_casus_belli = {
+    target = FRA
+    type = cb_annex
+}",Removes a casus belli held by the defined scope against the current scope.,Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt,1.1
+reverse_remove_opinion,"who = <scope>
+The country the opinion modifier holds.
+modifier = <modifier>
+The opinion modifier to use.","reverse_remove_opinion = {
+    who = FRA
+    modifier = renounced_as_heretics
+}",Removes an opinion modifier for the defined scope held against the current scope.,Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt,1.1
+revoke_reform,"<reform>
+The reform to remove.",revoke_reform = reichsreform,Removes an Imperial Reform.,Imperial Reforms are found in /Europa Universalis IV/common/imperial_reforms/00_hre.txt.,1.1
+set_ai_attitude,"attitude = <type>
+The attitude to use.
+who = <scope>
+Who the attitude is directed against.
+locked = <yes> / <no>
+Whether the attitude can be re-evaluated and changed.","set_ai_attitude = {
+    attitude = attitude_friendly
+    who = FRA
+    locked = yes
+}",Makes the current scope (if AI) have the defined attitude against the defined scope.,AI attitudes are found in /Europa Universalis IV/common/ai_attitudes/00_ai_attitudes.txt.,1.1
+set_ai_personality,"personality = <type>
+The personality to use.
+locked = <yes> / <no>
+Whether the personality can be re-evaluated and changed.","set_ai_personality = {
+    personality = ai_capitalist
+    locked = yes
+}",Makes the current scope (if AI) the defined personality.,AI personalities are found in /Europa Universalis IV/common/ai_personalities/00_ai_personalities.txt.,1.1
+set_allow_female_emperor,"yes
+Boolean.",set_allow_female_emperor = yes,Enables female rulers to become emperor.,,1.1
+set_consort_culture,"<culture>
+The culture to change to.","set_consort_culture = english
+set_consort_culture = CAS
+set_consort_culture = event_target:my_event_target
+set_consort_culture = variable:my_variable",Changes the consort culture for the current scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt
+Can utilise Event Scope Values.",1.23
+set_consort_flag,"<flag>
+An unique string to identify the consort flag with.","set_consort_flag = my_flag
+set_consort_flag = my_flag@ROOT
+set_consort_flag = my_flag@event_target:name",Defines a consort flag for the current scope's consort.,Flags can be appended with scopes or event targets,1.18
+set_consort_religion,"<religion>
+The religion to change to.","set_consort_religion = catholic
+set_consort_religion = CAS
+set_consort_religion = event_target:my_event_target
+set_consort_religion = variable:my_variable",Changes the consort religion for the current scope.,"Religions are found in /Europa Universalis IV/common/religions/*.txt
+Can utilise Event Scope Values.",1.23
+set_country_flag,"<flag>
+An unique string to identify the country flag with.","set_country_flag = my_flag 
+set_country_flag = my_flag@ROOT 
+set_country_flag = my_flag@event_target:name",Defines a country flag for the current scope.,Flags can be appended with scopes or event targets,1.1
+set_dynasty,"<string> / <scope> / original_dynasty
+The dynasty to set.","set_dynasty = ""Smith""
+set_dynasty = FRA
+set_dynasty = original_dynasty",Sets the dynasty of the current scope's ruler.,,1.1
+set_emperor_of_china,"<scope>
+Which country to set.",set_emperor_of_china = MNG,Sets the current Emperor of China.,,1.2
+set_government_and_rank,"government = <government>
+The government to change to.
+rank = <int>
+The rank to change to.","set_government_and_rank = { 
+    government = celestial_empire
+    rank = 3
+}",Changes the current scope's government and rank at the same time.,"Governments are found in /Europa Universalis IV/common/governments/*.txt.
+Will respect that governments have fixed ranks and the maximum ranks for subject types.",1.22
+set_government_rank,"<int>
+The rank to change to.",set_government_rank = 3,Changes the government rank of the current scope.,Default range is 1 to 3.,1.12
+set_heir,"<string>
+The unique string of an exiled heir.",set_heir = my_exiled_heir,Makes the exiled heir the ruler of the current scope.,,1.12
+set_heir_culture,"<culture>
+The culture to change to.","set_heir_culture = english
+set_heir_culture = CAS
+set_heir_culture = event_target:my_event_target
+set_heir_culture = variable:my_variable",Changes the heir culture of the current scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt
+Can utilise Event Scope Values.",1.23
+set_heir_flag,"<flag>
+An unique string to identify the heir flag with.","set_heir_flag = my_flag
+set_heir_flag = my_flag@ROOT
+set_heir_flag = my_flag@event_target:name",Defines a heir flag for the current scope's heir.,Flags can be appended with scopes or event targets,1.1
+set_heir_religion,"<religion>
+The religion to change to.","set_heir_religion = catholic
+set_heir_religion = CAS
+set_heir_religion = event_target:my_event_target
+set_heir_religion = variable:my_variable",Changes the heir religion of the current scope.,"Religions are found in /Europa Universalis IV/common/religions/*.txt
+Can utilise Event Scope Values.",1.23
+set_hre_heretic_religion,"<religion>
+Which religion to set.",set_hre_heretic_religion = catholic,Makes the defined religion the heretic religion of the HRE.,,1.8
+set_hre_religion,"<religion>
+Which religion to set.",set_hre_religion = catholic,Makes the defined religion the official religion of the HRE.,,1.8
+set_hre_religion_locked,"yes
+Boolean.",set_hre_religion_locked = yes,"Locks the official and heretic religion assignments, ending the Religious Leagues.",,1.8
+set_hre_religion_treaty,"yes
+Boolean.",set_hre_religion_treaty = yes,Ends the Religious Leagues with no set religions.,,1.8
+set_in_empire,"yes
+Boolean.",set_in_empire = yes,Places the current scope and all owned provinces (if valid) in the empire.,,1.12
+set_incident_variable_value,"incident = <incident>
+The incident to change.
+value = <int>
+The amount to set the incident variable to.","set_incident_variable_value = {
+    incident = incident_urbanization
+    value = 1
+}",Sets the value of an Incident for the current scope.,"Incidents are found in /Europa Universalis IV/common/isolationism/*.txt
+No effect if the country does not hold a religion using uses_isolationism.",1.2
+set_isolationism,"<int>
+The amount of isolationism to set.",set_isolationism = 2,Sets Isolationism for the current scope.,No effect if the country does not hold a religion using uses_isolationism.,1.2
+set_karma,"<int>
+The amount of karma to set.",set_karma = 10,Sets the Karma value for the current scope.,No effect if the country does not hold a religion using uses_karma.,1.12
+set_mandate,"<int>
+The amount of mandate to set.",set_mandate = 10,Sets the mandate value for the current scope.,No effect if not the emperor of china.,1.2
+set_meritocracy,"<int>
+The amount of meritocracy to set.",set_meritocracy = 10,Sets the current meritocracy for the current scope.,No effect if not a government using has_meritocracy.,1.2
+set_papacy_active,"yesno
+Boolean.",set_papacy_active = yes,Enables or disables the Papacy mechanic.,,1.1
+set_primitive,"<yes><no>
+Boolean.",set_primitive = no,Toggles Primitive status for the current scope.,"Primitive status controls whether a country has ships and if they can see Primitive-only mechanics, such as Religious Reforms.",1.18
+set_revolution_target,"<scope>
+The country to set.",set_revolution_target = FRA,Makes the defined scope the new revolutionary target.,Use --- to remove the target and not re-assign.,1.1
+set_ruler,"<string>
+The unique string of an exiled ruler.",set_ruler = my_exiled_ruler,Makes the exiled ruler the ruler of the current scope.,,1.12
+set_ruler_culture,"<culture>
+The culture to change to.","set_ruler_culture = english
+set_ruler_culture = CAS
+set_ruler_culture = event_target:my_event_target
+set_ruler_culture = variable:my_variable",Changes the ruler culture of the current scope.,"Cultures are found in /Europa Universalis IV/common/cultures/*.txt
+Can utilise Event Scope Values.",1.23
+set_ruler_flag,"<flag>
+An unique string to identify the ruler flag with.","set_ruler_flag = my_flag
+set_ruler_flag = my_flag@ROOT
+set_ruler_flag = my_flag@event_target:name",Defines a ruler flag for the current scope's ruler.,Flags can be appended with scopes or event targets,1.7
+set_ruler_religion,"<religion>
+The religion to change to.","set_ruler_religion = catholic
+set_ruler_religion = CAS
+set_ruler_religion = event_target:my_event_target
+set_ruler_religion = variable:my_variable",Changes the ruler religion of the current scope.,"Religions are found in /Europa Universalis IV/common/religions/*.txt
+Can utilise Event Scope Values.",1.23
+set_saved_name,"key = <string>
+The key that holds the name.
+type = advisor / simple
+The name generation type. Advisor draws from namelist, simple utilises name parameter.
+name = <string>
+The name to hold in the key. Only used with the simple type.
+scope = <scope>
+The country scope to draw the namelist from. Only used with the advisor type.","Simple:
+set_saved_name = {
+    key = simple_name
+    type = simple
+    name = ""My Simple Name""
+}
+define_ruler = {
+    name = simple_name
+}
+Advisor:
+set_saved_name = {
+    key = noble_zealot
+    type = advisor
+    scope = ROOT
+}
+spawn_rebels = {
+    size = 1
+    leader = noble_zealot
+    type = religious_rebels
+}",Saves a name to an unique key for usage in other effects.,"Usable with define_admiral, define_explorer, define_conquistador, define_general, define_ruler, define_consort, define_heir, define_advisor and spawn_rebels.",1.23
+set_school_opinion,"who = <who>
+Which country to alter opinion with.
+opinion = <opinion>
+Which opinion state to change to.","set_school_opinion = {
+    who = TUR
+    opinion = -1
+}",Changes the current scope's school opinion towards the defined scope's school.,"-1 for negative, 0 for netural and 1 for positive.",1.23
+swap_free_idea_group,"<yes>
+Boolean.",swap_free_idea_group = yes,"Re-evaluates the current scope's national idea set assignment, if they match a different set, they will switch to it.",Used after tag changes to change Nationa Idea sets.,1.1
+switch_tag,"<scope>
+The scope to switch to.","switch_tag = FRA
+switch_tag = ROOT
+switch_tag = event_target:my_country",Switches the player view to <scope> tag. Original country becomes controlled by AI.,,1.8
+transport,"<scope>
+The province scope in which the transport spawns.","random_owned_province = {
+    limit = { has_port = yes }
+    ROOT = {
+        transport = PREV
+    }
+}",Spawns a transport unit for the current scope in the defined province scope.,"Uses the current scope's current transport unit.
+Requires the province scope to have a port.",1.1
+unlock_cult,"<cult>
+The cult to unlock.",unlock_cult = yemoja_cult,Adds the defined cult to the current scope.,"Cults can be found in /Europa Universalis IV/common/fetishist_cults/*.txt.
+No effect if the country does not hold a religion using fetishist_cult.",1.18
+vassalize,"<scope>
+The country to vassalize.",vassalize = FRA,Makes the defined scope a vassal subject of the current scope.,"Uses the vassal subject type.
+Exact same effect as create_vassal.",1.1
+white_peace,"<scope>
+The country to force white peace against.",white_peace = FRA,Forces the defined scope into a white peace truce with the current scope.,,1.1
+set_global_flag,"<flag>
+An unique string to identify the global flag with.","set_global_flag = my_flag
+set_global_flag = my_flag@ROOT
+set_global_flag = my_flag@event_target:name",Defines a global flag.,Flags can be appended with scopes or event targets,1.1
+clr_global_flag,"<flag>
+The unique string of a global flag to clear.",clr_global_flag = my_flag,Clears a defined global flag.,,1.1
+custom_tooltip,"<string>
+An localized string to display in the tooltip",custom_tooltip = my_tooltip_tt,Displays a localized key in the effect tooltip.,,1.1
+log,"<string>
+An string to in the game.log","log = ""myVariable: [Root.myVariable.GetValue]""",Displays a string in the game.log when executed.,"Accepts all localization commands (i.e. [Root.GetName], etc)",1.21
+save_event_target_as,"<string>
+An unique string to identify the event target with.","capital_scope = {
+    save_event_target_as = my_province
+}",Saves the current scope as a key. Is cleared once execution ends (i.e. end of event).,Use event_target:<key> to access the scope.,1.8
+save_global_event_target_as,"<string>
+An unique string to identify the global event target with.","random_country = {
+    save_global_event_target_as = my_country
+}",Saves the current scope as a key. Persists after execution until cleared via effect.,Use event_target:<key> to access the scope.,1.8
+clear_global_event_target,"<string>
+The unique string of the global event target to clear.",clear_global_event_target = my_country,Clears a specific global event target.,,1.8
+clear_global_event_targets,"yes
+Boolean.",clear_global_event_targets = yes,Clears all global event targets.,,1.8
+show_ambient_object,"<string>
+The unique string of the ambient object to show.",show_ambient_object = nammi2_hagia_sophia_minarets_entity,Displays a hidden ambient object from the map/ambient_objects.txt file.,,1.19
+hide_ambient_object,"<string>
+The unique string of the ambient object to hide.",hide_ambient_object = nammi2_hagia_sophia_minarets_entity,Hides a visible ambient object from the map/ambient_objects.txt file.,,1.19

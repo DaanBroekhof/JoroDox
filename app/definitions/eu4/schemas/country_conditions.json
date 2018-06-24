@@ -29,10 +29,25 @@
         "OR": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
+        "or": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
         "NOT": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
+        "not": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
         "ROOT": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "root": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "FROM": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "from": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "variable_arithmetic_trigger": {
@@ -241,11 +256,11 @@
         },
         "innovativeness": {
           "description": "Value of innovativeness is higher than X.",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "army_professionalism": {
           "description": "Value of army professionalism is X or higher.",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "num_of_different_religions_in_court": {
           "description": "Number of different religions is X or higher.",
@@ -293,6 +308,37 @@
           "description": "Number of consorts is X or higher.",
           "type": "number"
         },
+        "is_free_or_tributary_trigger": {
+          "description": "If the country is free (independent) or a tributary.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "is_subject_other_than_tributary_trigger": {
+          "description": "If the country is a subject, but not a tributary.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "claim": {
+          "description": "Alias of is_claim?? (uncertain)",
+          "todo": "Figure this one out",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+        "cb_on_religious_enemies": {
+          "description": "Modifier, check if country has it.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "cb_on_government_enemies": {
+          "description": "Modifier, check if country has it.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "invasion_nation": {
+          "description": "No idea?",
+          "todo": "Figure this one out",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_migrate": {
+          "description": "If the country can migrate.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
 
 
         "absolutism": {
@@ -301,7 +347,6 @@
         },
         "accepted_culture": {
           "description": "Returns true if the country accepts the specified culture.",
-          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/cultures"
@@ -319,16 +364,13 @@
           "description": "Returns true if the country has a ruler with at least as high administrative skill as the ruler of the specified country.",
           "$ref": "special_values.json#/definitions/country_or_number"
         },
+        "ADM": {
+          "description": "Returns true if the country has a ruler with at least as high administrative skill as the ruler of the specified country.",
+          "$ref": "special_values.json#/definitions/country_or_number"
+        },
         "adm_power": {
           "description": "Returns true if the country has at least as much administrative power than the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "adm_tech": {
           "description": "Returns true if the country has an administrative technology of at least X.",
@@ -340,7 +382,7 @@
         },
         "advisor_exists": {
           "description": "Returns true if the advisor X exists.",
-          "$ref": "identifiers.json#/definitions/advisor_id_unknown"
+          "$ref": "identifiers.json#/definitions/advisor_ids"
         },
         "ai": {
           "description": "Returns true if the country is controlled by the AI.",
@@ -515,7 +557,7 @@
         },
         "colony_claim": {
           "description": "Returns true if country has claim on colony",
-          "$ref": "identifiers.json#/definitions/country_tags"
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "consort_adm": {
           "description": "Returns true if the country has a consort with an administrative skill of at least X.",
@@ -586,11 +628,14 @@
         },
         "culture_group": {
           "description": "Returns true if the country/province has a culture of the specified culture group.",
-          "$ref": "identifiers.json#/definitions/culture_groups"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/culture_groups"},
+            {"$ref": "special_values.json#/definitions/country_scope"}
+          ]
         },
         "culture_group_claim": {
           "description": "Returns true if country's primary culture is the same culture group as any province owned by country X.",
-          "$ref": "identifiers.json#/definitions/country_tags"
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "current_debate": {
           "description": "Returns true if the parliament of the country debates about X.",
@@ -625,29 +670,19 @@
         },
         "devotion": {
           "description": "Returns true if the country has at least as much devotion as the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "dip": {
           "description": "Returns true if the country has a ruler with at least as high diplomatic skill as the ruler of the specified country.",
           "$ref": "special_values.json#/definitions/country_or_number"
         },
+        "DIP": {
+          "description": "Returns true if the country has a ruler with at least as high diplomatic skill as the ruler of the specified country.",
+          "$ref": "special_values.json#/definitions/country_or_number"
+        },
         "dip_power": {
           "description": "Returns true if the country has at least as much diplomatic power than the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "dip_tech": {
           "description": "Returns true if the country has an diplomatic technology of at least level X.",
@@ -1280,6 +1315,9 @@
           "description": "Returns true if the country has truce.",
           "anyOf": [
             {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            {
               "$ref": "identifiers.json#/definitions/country_tags"
             },
             {
@@ -1433,10 +1471,10 @@
           "description": "Returns true if the country has at least as much inflation as the country X.",
           "anyOf": [
             {
-              "$ref": "identifiers.json#/definitions/country_tags"
+              "type": "number"
             },
             {
-              "$ref": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
             }
           ]
         },
@@ -1456,7 +1494,7 @@
         },
         "is_advisor_employed": {
           "description": "Returns true if the advisor with the ID X is employed.",
-          "$ref": "identifiers.json#/definitions/advisor_id_unknown"
+          "$ref": "identifiers.json#/definitions/advisor_ids"
         },
         "is_at_war": {
           "description": "Returns true if the country is at war.",
@@ -1962,6 +2000,10 @@
           "type": "number"
         },
         "mil": {
+          "description": "Returns true if the country has a ruler with at least as high military skill as the ruler of the specified country.",
+          "$ref": "special_values.json#/definitions/country_or_number"
+        },
+        "MIL": {
           "description": "Returns true if the country has a ruler with at least as high military skill as the ruler of the specified country.",
           "$ref": "special_values.json#/definitions/country_or_number"
         },
@@ -2759,7 +2801,6 @@
         },
         "primary_culture": {
           "description": "Returns true if the country's primary culture is X.",
-          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/cultures"
@@ -2880,7 +2921,7 @@
         },
         "ruler_has_personality": {
           "description": "Returns true if the countryâ€™s ruler has the specified personality.",
-          "$ref": "identifiers.json#/definitions/leader_personalities"
+          "$ref": "identifiers.json#/definitions/ruler_personalities"
         },
         "ruler_is_foreigner": {
           "description": "Returns true if the country has foreign ruler.",
@@ -3179,23 +3220,16 @@
         },
         "vassal_of": {
           "description": "Returns true if the country is a vassal of country X.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "war_exhaustion": {
           "description": "Returns true if the country has at least as much war exhaustion as the specified country.",
           "anyOf": [
             {
-              "$ref": "identifiers.json#/definitions/country_tags"
+              "type": "number"
             },
             {
-              "$ref": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
             }
           ]
         },
@@ -3215,14 +3249,7 @@
         },
         "war_with": {
           "description": "Returns true if the country is at war with country X.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "was_player": {
           "description": "Returns true if the country was controlled by a human player.",
@@ -3258,14 +3285,7 @@
         },
         "years_of_income": {
           "description": "Returns true if the country's treasury contains ducats of at least the yearly income of the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         }
       }
     },
@@ -3287,6 +3307,9 @@
           "type": "number"
         },
         "tradegoods": {
+          "type": "number"
+        },
+        "advisortypes": {
           "type": "number"
         }
       }

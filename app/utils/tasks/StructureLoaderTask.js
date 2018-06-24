@@ -196,9 +196,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             return;
           }
           const item = {};
-          if (definition.sourceTransform.keyName) { item[definition.sourceTransform.keyName] = key2; }
-          if (definition.sourceTransform.parentKeyName) { item[definition.sourceTransform.parentKeyName] = key; }
-          if (definition.sourceTransform.valueName) { item[definition.sourceTransform.valueName] = value2; }
+          if (definition.sourceTransform.keyName) {
+            item[definition.sourceTransform.keyName] = key2;
+          }
+          if (definition.sourceTransform.parentKeyName) {
+            item[definition.sourceTransform.parentKeyName] = key;
+          }
+          if (definition.sourceTransform.valueName) {
+            item[definition.sourceTransform.valueName] = value2;
+          }
           if (definition.sourceTransform.filenamePattern) {
             const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
             if (found) {

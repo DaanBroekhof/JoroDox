@@ -1,0 +1,162 @@
+{
+  "$id": "http://jorodox.org/schemas/country_events.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "comments": {
+      "type": "string"
+    },
+    "namespace": {
+      "type": "object"
+    },
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "anyOf": [
+        {"type": "string"},
+        {"type": "number"}
+      ]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "country_event",
+        "province_event"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {"type": "string"},
+            {"type": "number"}
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "desc": {
+          "$makeArray": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "trigger": {
+                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                  },
+                  "desc": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "picture": {
+          "anyOf": [
+            {
+              "$ref": "identifiers.json#/definitions/event_pictures"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "trigger": {"$ref": "country_conditions.json#/definitions/country_conditions"},
+                "picture": {"$ref": "identifiers.json#/definitions/event_pictures"}
+              }
+            }
+          ]
+        },
+        "is_triggered_only": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "fire_only_once": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "hidden": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "major": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "immediate": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "after": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "mean_time_to_happen":{
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "days": {
+              "type": "number"
+            },
+            "months": {
+              "type": "number"
+            },
+            "modifier": {
+              "$makeArray": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "country_factor.json#/definitions/country_factor"
+                    },
+                    {
+                      "$ref": "identifiers.json#/definitions/opinion_modifiers_factor"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "option":{
+          "$mergeProps": [
+            {"$ref": "country_events.json#/definitions/option_extras"},
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+          ]
+        }
+      },
+      "required": [
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "option_extras": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "highlight": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "ai_chance": {
+          "$ref": "country_factor.json#/definitions/country_factor"
+        }
+      }
+    }
+  }
+}

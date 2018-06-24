@@ -10,8 +10,15 @@ import agesSchema from './schemas/ages';
 import achievementsSchema from './schemas/achievements';
 import advisorTypesSchema from './schemas/advisortypes';
 import buildingSchema from './schemas/buildings';
+import bookmarkSchema from './schemas/bookmarks';
+import cbTypesSchema from './schemas/cb_types';
+import churchAspectsSchema from './schemas/church_aspects';
+import countryEventsSchema from './schemas/country_events';
 
 import countryCommands from './schemas/country_commands';
+import anywhereCommands from './schemas/anywhere_commands';
+import provinceCommands from './schemas/province_commands';
+
 import countryConditions from './schemas/country_conditions';
 import countryFactor from './schemas/country_factor';
 import countryModifiers from './schemas/country_modifiers';
@@ -42,9 +49,15 @@ export default {
     achievementsSchema,
     advisorTypesSchema,
     buildingSchema,
+    bookmarkSchema,
+    cbTypesSchema,
+    churchAspectsSchema,
+    countryEventsSchema,
 
     specialValues,
     countryCommands,
+    anywhereCommands,
+    provinceCommands,
     countryConditions,
     countryFactor,
     countryModifiers,

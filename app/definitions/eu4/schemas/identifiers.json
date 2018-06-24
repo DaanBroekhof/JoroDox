@@ -1,104 +1,25 @@
 {
-  "$schema": "http://json-schema.org/schema#",
   "$id": "http://jorodox.org/schemas/identifiers.json",
+  "$schema": "http://json-schema.org/schema#",
   "definitions": {
-    "ages": {
-      "$identifierValue": "ages",
-      "type": "string"
-    },
-    "country_tags": {
-      "$identifierValue": "country_tags",
-      "type": "string"
-    },
-    "global_flags": {
-      "type": "string"
-    },
-    "continents": {
-      "$identifierValue": "continents",
-      "type": "string"
-    },
-    "tradegoods": {
-      "$identifierValue": "tradegoods",
-      "type": "string"
-    },
-    "dlcs": {
-      "$identifierValue": "dlcs",
-      "type": "string"
-    },
-    "event_target_unknown": {
-      "type": "string"
-    },
-    "religions": {
-      "$identifierValue": "religions",
-      "type": "string"
-    },
-    "institutions": {
-      "$identifierValue": "institutions",
+    "advisor_ids": {
+      "$identifierValue": "advisor_ids",
       "type": "string"
     },
     "advisortypes": {
       "$identifierValue": "advisortypes",
       "type": "string"
     },
-    "advisor_id_unknown": {
+    "ages": {
+      "$identifierValue": "ages",
       "type": "string"
     },
     "ai_attitudes": {
       "$identifierValue": "ai_attitudes",
       "type": "string"
     },
-    "subject_types": {
-      "$identifierValue": "subject_types",
-      "type": "string"
-    },
-    "map_provinces": {
-      "$identifierValue": "map_provinces",
-      "type": "number"
-    },
-    "cultures": {
-      "$identifierValue": "cultures",
-      "type": "string"
-    },
-    "leader_personalities": {
-      "$identifierValue": "leader_personalities",
-      "type": "string"
-    },
-    "debates": {
-      "$identifierValue": "debates",
-      "type": "string"
-    },
-    "culture_groups": {
-      "$identifierValue": "culture_groups",
-      "type": "string"
-    },
-    "icons_unknown": {
-      "type": "string"
-    },
-    "estates": {
-      "$identifierValue": "estates",
-      "type": "string"
-    },
-    "factions": {
-      "$identifierValue": "factions",
-      "type": "string"
-    },
-    "idea_groups": {
-      "$identifierValue": "idea_groups",
-      "type": "string"
-    },
-    "governments": {
-      "$identifierValue": "governments",
-      "type": "string"
-    },
-    "policies": {
-      "$identifierValue": "policies",
-      "type": "string"
-    },
-    "consort_flags": {
-      "type": "string"
-    },
-    "fetishist_cults": {
-      "$identifierValue": "fetishist_cults",
+    "buildings": {
+      "$identifierValue": "buildings",
       "type": "string"
     },
     "cb_types": {
@@ -109,137 +30,244 @@
       "$identifierValue": "church_aspects",
       "type": "string"
     },
+    "colonial_regions": {
+      "$identifierValue": "colonial_regions",
+      "type": "string"
+    },
+    "consort_flags": {
+      "type": "string"
+    },
     "consort_flags_unknown": {
+      "type": "string"
+    },
+    "continents": {
+      "$identifierValue": "continents",
       "type": "string"
     },
     "country_flags": {
       "type": "string"
     },
-    "modifiers": {
+    "country_tags": {
+      "$identifierValue": "country_tags",
+      "type": "string"
+    },
+    "culture_groups": {
+      "$identifierValue": "culture_groups",
+      "type": "string"
+    },
+    "cultures": {
+      "$identifierValue": "cultures",
+      "type": "string"
+    },
+    "custom_nation_points_unknown": {
+      "type": "number"
+    },
+    "debates": {
+      "$identifierValue": "debates",
       "type": "string"
     },
     "disasters": {
       "$identifierValue": "disasters",
       "type": "string"
     },
-    "influence_modifiers": {
+    "dlcs": {
+      "$identifierValue": "dlcs",
       "type": "string"
     },
-    "loyalty_modifiers": {
+    "estates": {
+      "$identifierValue": "estates",
+      "type": "string"
+    },
+    "event_pictures": {
+      "$identifierValue": "event_pictures",
+      "type": "string"
+    },
+    "event_target_unknown": {
+      "type": "string"
+    },
+    "factions": {
+      "$identifierValue": "factions",
+      "type": "string"
+    },
+    "fetishist_cults": {
+      "$identifierValue": "fetishist_cults",
+      "type": "string"
+    },
+    "global_flags": {
       "type": "string"
     },
     "government_mechanics": {
       "type": "string"
     },
-    "heir_name": {
+    "governments": {
+      "$identifierValue": "governments",
       "type": "string"
     },
-    "ideas": {
-      "type": "string"
-    },
-    "leader_name": {
-      "type": "string"
-    },
-    "personal_deities": {
-      "$identifierValue": "personal_deities",
-      "type": "string"
-    },
-    "map_region": {
-      "$identifierValue": "map_region"
-    },
-    "ruler_name": {
-      "type": "string"
-    },
-    "rebel_types": {
-      "$identifierValue": "rebel_types",
-      "type": "string"
-    },
-    "units": {
-      "$identifierValue": "units",
-      "type": "string"
-    },
-    "leagues_unknown": {
-      "type": "string"
-    },
-    "incidents": {
-      "$identifierValue": "incidents",
-      "type": "string"
-    },
-    "missions": {
-      "$identifierValue": "missions",
-      "type": "string"
-    },
-    "mission_series": {
-      "$identifierValue": "mission_series",
-      "type": "string"
-    },
-    "custom_nation_points_unknown": {
-      "type": "number"
-    },
-    "opinion_modifiers": {
-      "type": "string"
-    },
-    "trading_policies": {
-      "$identifierValue": "trading_policies",
-      "type": "string"
-    },
-    "map_area": {
-      "$identifierValue": "map_area",
-      "type": "string"
-    },
-    "buildings": {
-      "$identifierValue": "buildings",
-      "type": "string"
-    },
-    "colonial_regions": {
-      "$identifierValue": "colonial_regions",
-      "type": "string"
-    },
-    "map_climates": {
-      "$identifierValue": "map_climates",
+    "graphicalculturetypes": {
+      "$identifierValue": "graphicalculturetypes",
       "type": "string"
     },
     "great_projects": {
       "$identifierValue": "great_projects",
       "type": "string"
     },
-    "province_modifiers": {
+    "heir_name": {
       "type": "string"
     },
-    "map_terrain_terrain": {
-      "$identifierValue": "map_terrain_terrain",
+    "icons_unknown": {
       "type": "string"
     },
-    "map_superregion": {
-      "$identifierValue": "map_superregion",
+    "idea_groups": {
+      "$identifierValue": "idea_groups",
       "type": "string"
     },
-    "religion_groups": {
-      "$identifierValue": "religion_groups",
+    "ideas": {
+      "type": "string"
+    },
+    "incidents": {
+      "$identifierValue": "incidents",
+      "type": "string"
+    },
+    "influence_modifiers": {
+      "type": "string"
+    },
+    "institutions": {
+      "$identifierValue": "institutions",
+      "type": "string"
+    },
+    "interface_gui_spritetypes": {
+      "$identifierValue": "interface_gui_spritetypes",
+      "type": "string"
+    },
+    "leader_flags": {
+      "type": "string"
+    },
+    "leader_name": {
+      "type": "string"
+    },
+    "leader_personalities": {
+      "$identifierValue": "leader_personalities",
+      "type": "string"
+    },
+    "leagues_unknown": {
+      "type": "string"
+    },
+    "loyalty_modifiers": {
+      "type": "string"
+    },
+    "map_area": {
+      "$identifierValue": "map_area",
+      "type": "string"
+    },
+    "map_climates": {
+      "$identifierValue": "map_climates",
       "type": "string"
     },
     "map_continent": {
-      "type": "string",
-      "$identifierValue": "map_continent"
-    },
-    "province_flags": {
+      "$identifierValue": "map_continent",
       "type": "string"
     },
     "map_provincegroups": {
       "$identifierValue": "map_provincegroups",
       "type": "string"
     },
-    "trade_modifiers": {
-      "$identifierValue": "trade_modifiers",
+    "map_provinces": {
+      "$identifierValue": "map_provinces",
+      "type": "number"
+    },
+    "map_region": {
+      "$identifierValue": "map_region"
+    },
+    "map_superregion": {
+      "$identifierValue": "map_superregion",
       "type": "string"
     },
-    "leader_flags": {
+    "map_terrain_terrain": {
+      "$identifierValue": "map_terrain_terrain",
+      "type": "string"
+    },
+    "mission_series": {
+      "$identifierValue": "mission_series",
+      "type": "string"
+    },
+    "missions": {
+      "$identifierValue": "missions",
+      "type": "string"
+    },
+    "modifiers": {
+      "type": "string"
+    },
+    "opinion_modifiers": {
+      "type": "string"
+    },
+    "opinion_modifiers_factor": {
+      "$identifierValue": "opinion_modifiers",
+      "type": "number"
+    },
+    "personal_deities": {
+      "$identifierValue": "personal_deities",
+      "type": "string"
+    },
+    "policies": {
+      "$identifierValue": "policies",
+      "type": "string"
+    },
+    "province_flags": {
+      "type": "string"
+    },
+    "province_modifiers": {
+      "type": "string"
+    },
+    "rebel_types": {
+      "$identifierValue": "rebel_types",
+      "type": "string"
+    },
+    "religion_groups": {
+      "$identifierValue": "religion_groups",
+      "type": "string"
+    },
+    "religious_reforms": {
+      "$identifierValue": "religious_reforms",
+      "type": "string"
+    },
+    "religions": {
+      "$identifierValue": "religions",
+      "type": "string"
+    },
+    "ruler_name": {
+      "type": "string"
+    },
+    "ruler_personalities": {
+      "$identifierValue": "ruler_personalities",
+      "type": "string"
+    },
+    "subject_types": {
+      "$identifierValue": "subject_types",
       "type": "string"
     },
     "technology_groups": {
       "$identifierValue": "technology_groups",
       "type": "string"
+    },
+    "trade_modifiers": {
+      "type": "string",
+      "enum": ["merchant_recalled"]
+    },
+    "tradegoods": {
+      "$identifierValue": "tradegoods",
+      "type": "string"
+    },
+    "trading_policies": {
+      "$identifierValue": "trading_policies",
+      "type": "string"
+    },
+    "units": {
+      "$identifierValue": "units",
+      "type": "string"
+    },
+    "wargoal_types": {
+      "$identifierValue": "wargoal_types",
+      "type": "string"
     }
-
   }
 }

@@ -1,0 +1,72 @@
+{
+  "$id": "http://jorodox.org/schemas/cb_types.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "valid_for_subject": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "exclusive": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "independence": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "league": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "coalition": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "support_rebels": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "ai_peace_desire": {
+          "type": "number"
+        },
+        "is_triggered_only": {
+          "$ref": "special_values.json#/definitions/boolean",
+          "description": " Triggered from within the code or by event effects. DO NOT REMOVE THE STOCK ONES."
+        },
+        "months": {
+          "type": "number",
+          "description": "The number of months this CB will be valid. Only works for triggered CBs."
+        },
+        "prerequisites": {
+          "$ref": "country_conditions.json#/definitions/country_conditions",
+          "description": "A condition that automatically activates a CB. Does not work for triggered CBs."
+        },
+        "allowed_provinces": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "attacker_disabled_po": {
+          "type": "array",
+          "items": {
+            "$ref": "special_values.json#/definitions/peace_offer_types"
+          }
+        },
+        "no_opinion_hit": {
+          "$ref": "special_values.json#/definitions/boolean",
+          "description": "If yes you get no negative opinion from this"
+        },
+        "war_goal": {
+          "$ref": "identifiers.json#/definitions/wargoal_types"
+        }
+      },
+      "required": [
+        "war_goal"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

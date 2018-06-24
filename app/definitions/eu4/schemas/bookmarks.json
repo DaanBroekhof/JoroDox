@@ -1,0 +1,61 @@
+{
+  "$id": "http://jorodox.org/schemas/bookmarks.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "i.e. NEWWORLD_NAME, which is localised in a localisation file."
+        },
+        "desc": {
+          "type": "string",
+          "description": "i.e. NEWWORLD_NAME, which is localised in a localisation file."
+        },
+        "date": {
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "center": {
+          "$ref": "identifiers.json#/definitions/map_provinces",
+          "description": "Centres the viewport in the selection view on a specific province"
+        },
+        "country": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/country_tags"
+          },
+          "description": "Adds country shield(s) to the selection view"
+        },
+        "easy_country": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/country_tags"
+          },
+          "description": "Adds country shield(s) to the selection view with a green glow."
+        },
+        "default": {
+          "$ref": "special_values.json#/definitions/boolean",
+          "description": "Makes this bookmark the automatically selected bookmark on game load. Only use once."
+        },
+        "effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        }
+      },
+      "required": [
+        "name",
+        "desc",
+        "date"
+      ]
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

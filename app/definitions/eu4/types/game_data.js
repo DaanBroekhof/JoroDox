@@ -2296,8 +2296,8 @@ export default {
       },
     },
     {
-      id: 'events',
-      title: 'Events',
+      id: 'country_events',
+      title: 'Country events',
       reader: 'StructureLoader',
       primaryKey: 'id',
       sourceType: {
@@ -2308,7 +2308,50 @@ export default {
       sourceTransform: {
         type: 'typesList',
         path: ['data', 'children'],
-        types: ['country_event', 'province_event'],
+        types: ['country_event'],
+        idPath: ['data', 'id'],
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Id',
+            dataIndex: ['id'],
+            linkTo: '[self]',
+          },
+          {
+            name: 'Type',
+            dataIndex: ['type'],
+          },
+          {
+            name: 'Comments',
+            dataIndex: ['comments'],
+          },
+          {
+            name: 'Namespace',
+            dataIndex: ['namespace', 'namespace'],
+          },
+          {
+            name: 'MTT',
+            dataIndex: ['data', 'mean_time_to_happen', 'months'],
+          },
+        ],
+      },
+    },
+    {
+      id: 'province_events',
+      title: 'Province events',
+      reader: 'StructureLoader',
+      primaryKey: 'id',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'events/',
+        pathPattern: 'events/*.txt',
+      },
+      sourceTransform: {
+        type: 'typesList',
+        path: ['data', 'children'],
+        types: ['province_event'],
         idPath: ['data', 'id'],
       },
       listView: {

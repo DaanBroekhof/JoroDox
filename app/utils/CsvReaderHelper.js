@@ -358,4 +358,167 @@ export default class CsvReaderHelper {
 
     console.log(JSON.stringify(sortedData));
   }
+
+  static async exportCountryCommands() {
+
+    const scopeType = 'anywhere';
+
+    const csvData = await new Promise((resolve, reject) => {
+      csvparser(iconv.decode(jetpack.read('F:\\Projects\\Jorodox\\app\\definitions\\eu4\\'+ scopeType +'-commands-wiki.csv', 'buffer'), 'win1252'), {
+        delimiter: ',',
+        skip_empty_lines: true,
+        relax_column_count: true,
+        columns: ['name', 'parameters', 'examples', 'description', 'notes', 'version_added'],
+      }, (error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+
+    let outData = {};
+    csvData.forEach(command => {
+      command = JSON.parse(JSON.stringify(command));
+
+      const def = {
+        description: command.description + (command.notes ? '\nNotes: ' + command.notes : ''),
+        $ref: [],
+        version_added: command.version_added,
+      };
+
+      if (command.parameters.match(/^<string>/m)) {
+        def.type = 'string';
+      }
+      if (command.parameters.match(/^<int>/m)) {
+        def.type = 'number';
+      }
+      if (command.parameters.match(/^<float>/m)) {
+        def.type = 'number';
+      }
+      if (command.parameters.match(/^<scope>/m)) {
+        def.$ref.push('special_values.json#/definitions/country_tag_or_scope');
+      }
+      if (command.parameters.match(/^<culture>/m)) {
+        def.$ref.push('identifiers.json#/definitions/cultures');
+      }
+      if (command.parameters.match(/^<policy>/m)) {
+        def.$ref.push('identifiers.json#/definitions/policies');
+      }
+      if (command.parameters.match(/^<cb>/m)) {
+        def.$ref.push('identifiers.json#/definitions/cb_types');
+      }
+      if (command.parameters.match(/^<religion>/m)) {
+        def.$ref.push('identifiers.json#/definitions/religions');
+      }
+      if (command.parameters.match(/^<personality>/m)) {
+        def.$ref.push('identifiers.json#/definitions/ruler_personalities');
+      }
+      if (command.parameters.match(/^<idea>/m)) {
+        def.$ref.push('identifiers.json#/definitions/ideas');
+      }
+      if (command.parameters.match(/^<ideagroup>/m)) {
+        def.$ref.push('identifiers.json#/definitions/idea_groups');
+      }
+      if (command.parameters.match(/^<government>/m)) {
+        def.$ref.push('identifiers.json#/definitions/governments');
+      }
+      if (command.parameters.match(/^<gfxculture>/m)) {
+        def.$ref.push('identifiers.json#/definitions/graphicalculturetypes');
+      }
+      if (command.parameters.match(/^<deity>/m)) {
+        def.$ref.push('identifiers.json#/definitions/personal_deities');
+      }
+      if (command.parameters.match(/^<technology group>/m)) {
+        def.$ref.push('identifiers.json#/definitions/technology_groups');
+      }
+      if (command.parameters.match(/^<type>/m)) {
+        def.$ref.push('identifiers.json#/definitions/units');
+      }
+      if (command.parameters.match(/^<key>/m)) {
+        def.$ref.push('special_values.json#/definitions/save_game_key');
+      }
+      if (command.parameters.match(/^Boolean/m)) {
+        def.$ref.push('special_values.json#/definitions/boolean');
+      }
+      if (command.parameters.match(/^<flag>/m)) {
+        def.$ref.push('special_values.json#/definitions/flag_name');
+      }
+      if (command.parameters.match(/^<advisor>/m)) {
+        def.$ref.push('identifiers.json#/definitions/advisortypes');
+      }
+      if (command.parameters.match(/^<estate>/m)) {
+        def.$ref.push('identifiers.json#/definitions/estates');
+      }
+      if (command.parameters.match(/^<disaster>/m)) {
+        def.$ref.push('identifiers.json#/definitions/disasters');
+      }
+      if (command.parameters.match(/^<type>/m)) {
+        def.$ref.push('identifiers.json#/definitions/rebel_types');
+      }
+      if (command.parameters.match(/^<advisor id>/m)) {
+        def.$ref.push('identifiers.json#/definitions/advisor_ids');
+      }
+      if (command.parameters.match(/^<aspect>/m)) {
+        def.$ref.push('identifiers.json#/definitions/church_aspects');
+      }
+      if (command.parameters.match(/^<faction>/m)) {
+        def.$ref.push('identifiers.json#/definitions/factions');
+      }
+      if (command.parameters.match(/^<months>/m)) {
+        def.type = 'number';
+      }
+      if (command.parameters.match(/^<reform>/m)) {
+        def.$ref.push('identifiers.json#/definitions/religious_reforms');
+      }
+      if (command.parameters.match(/^<cult>/m)) {
+        def.$ref.push('identifiers.json#/definitions/fetishist_cults');
+      }
+      if (command.parameters.match(/^<project>/m)) {
+        def.$ref.push('identifiers.json#/definitions/projects');
+      }
+      if (command.parameters.match(/^<modifier>/m)) {
+        if (scopeType === 'province') {
+          def.$ref.push('identifiers.json#/definitions/province_modifiers');
+        } else {
+          def.$ref.push('identifiers.json#/definitions/modifiers');
+        }
+      }
+      if (command.parameters.match(/^<good>/m)) {
+        def.$ref.push('identifiers.json#/definitions/tradegoods');
+      }
+      if (command.parameters.match(/^<type>/m)) {
+       // def.$ref.push('identifiers.json#/definitions/leader_personalities');
+      }
+      if (command.parameters.match(/^<building>/m)) {
+        def.$ref.push('identifiers.json#/definitions/buildings');
+      }
+
+      if (def.$ref.length > 1) {
+        def.anyOf = [];
+        def.$ref.forEach(ref => {
+          def.anyOf.push({$ref: ref});
+        });
+        delete def.$ref;
+      }
+
+      if (def.$ref && def.$ref.length === 0) {
+        delete def.$ref;
+      }
+      if (def.$ref && def.$ref.length === 1) {
+        def.$ref = def.$ref[0];
+      }
+
+      if (!def.$ref && !def.type && !def.anyOf) {
+        def.type = 'object';
+      }
+
+      outData[command.name] = def;
+    });
+
+    let sortedData = _(outData).toPairs().sortBy(0).fromPairs().value();
+
+    console.log(JSON.stringify(sortedData));
+  }
 }
