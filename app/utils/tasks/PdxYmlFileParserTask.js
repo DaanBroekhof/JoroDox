@@ -23,7 +23,7 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     filesList.each(path => {
       const filePath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const fileData = jetpack.read(filePath);
-      const pdxYmlData = this.parsePdxYml(fileData, filePath);
+      const pdxYmlData = this.parsePdxYml(args.project, fileData, filePath);
 
       if (results.length % 500 === 0) {
         this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`);
@@ -49,7 +49,7 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
   // - Double quotes need not be escaped
   // - Backslashes need to be escaped (\\)
   // - Missing " at end allowed
-  parsePdxYml(data, filePath) {
+  async parsePdxYml(project, data, filePath) {
     let type = null;
     const result = {};
 
@@ -59,9 +59,18 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     // Remove UTF8 BOM >:(
     if (data.charCodeAt(0) === 0xFEFF) {
       data = data.slice(1);
+
+      await JdxDatabase.addError(project, {
+        message: `UTF8 BOM detected in \`${filePath}\`.`,
+        path: filePath,
+        type: 'pdxyml_files',
+        typeId: filePath,
+        severity: 'warning',
+      });
+      this.sendResponse({errorsUpdate: true});
     }
 
-    data.split('\n').forEach((line, lineNr) => {
+    data.split('\n').forEach(async (line, lineNr) => {
       // empty line (with a comment perhaps)
       if (line.match(/^\s*(#\s*(.*))?\s*$/u)) {
         return;
@@ -71,12 +80,27 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
       let entryMatch = line.match(entryRegex);
       // No match? try detecting regex without ending quote
       if (!entryMatch) {
+        await JdxDatabase.addError(project, {
+          message: `Warning: Missing end quote in file \`${filePath}\`, line ${lineNr + 1}`,
+          path: filePath,
+          type: 'pdxyml_files',
+          typeId: filePath,
+          severity: 'warning',
+        });
+        this.sendResponse({errorsUpdate: true});
         entryMatch = line.match(entryRegexNoEndQuote);
       }
 
       if (entryMatch) {
         if (!type) {
-          console.log(`Error parsing file \`${filePath}\`, line ${lineNr + 1}: No type found before this line`);
+          await JdxDatabase.addError(project, {
+            message: `Error parsing file \`${filePath}\`, line ${lineNr + 1}: No type found before this line`,
+            path: filePath,
+            type: 'pdxyml_files',
+            typeId: filePath,
+            severity: 'warning',
+          });
+          this.sendResponse({errorsUpdate: true});
           return;
         }
 
@@ -97,7 +121,14 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
       if (!entryMatch) {
         console.error(`Error parsing file \`${filePath}\`, line ${lineNr + 1}: could not parse line`);
-        console.log(line);
+        await JdxDatabase.addError(project, {
+          message: `Error parsing file \`${filePath}\`, line ${lineNr + 1}: could not parse line`,
+          path: filePath,
+          type: 'pdxyml_files',
+          typeId: filePath,
+          severity: 'error',
+        });
+        this.sendResponse({errorsUpdate: true});
       }
     });
 
