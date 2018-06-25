@@ -22,6 +22,7 @@ import provinceCommands from './schemas/province_commands';
 import countryConditions from './schemas/country_conditions';
 import countryFactor from './schemas/country_factor';
 import countryModifiers from './schemas/country_modifiers';
+import ruleModifiers from './schemas/rule_modifiers';
 import identifiers from './schemas/identifiers';
 import specialValues from './schemas/special_values';
 import anywhereConditions from './schemas/anywhere_conditions';
@@ -61,6 +62,7 @@ export default {
     countryConditions,
     countryFactor,
     countryModifiers,
+    ruleModifiers,
     identifiers,
     anywhereConditions,
     missionConditions,

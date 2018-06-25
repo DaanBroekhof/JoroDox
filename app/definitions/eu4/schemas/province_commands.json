@@ -57,13 +57,50 @@
             }
           }
         },
+
+        "ROOT": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "root": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "FROM": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "from": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+
         "if" : {
-          "$ref": "province_conditions.json#/definitions/if"
+          "$ref": "province_commands.json#/definitions/if"
         },
         "else_if" : {
-          "$ref": "province_conditions.json#/definitions/else_if"
+          "$ref": "province_commands.json#/definitions/else_if"
         },
         "else" : {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+
+        "while" : {
+          "$ref": "province_commands.json#/definitions/while"
+        },
+        "trigger_switch" : {
+          "$ref": "province_commands.json#/definitions/trigger_switch"
+        },
+
+        "owner": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "controller": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "sea_zone": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "area": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "region": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
 
@@ -92,7 +129,7 @@
           "$ref": "country_commands.json#/definitions/country_commands"
         },
         "random_core_country": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "$ref": "country_commands.json#/definitions/country_commands"
         }
       }
     },
@@ -271,7 +308,11 @@
         "build_to_forcelimit": {
           "description": "Builds the defined units as a percentage of the owner's forcelimit in the current province scope.\nNotes: 1 is equal to 100% of the owner's forcelimit.\nPossible types:\ninfantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",
           "version_added": "1.1",
-          "$ref": "identifiers.json#/definitions/units"
+          "$identifierProperties": {
+            "units": {
+              "type": "number"
+            }
+          }
         },
         "cancel_construction": {
           "description": "Cancels any construction ongoing in the current province scope.\nNotes: Constructions are coring, religious conversion, cultural conversion, buildings and great projects.",
@@ -295,7 +336,10 @@
         },
         "change_culture": {
           "description": "Changes the culture of the current province scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/cultures"},
+            {"$ref": "special_values.json#/definitions/new_variable"}
+          ],
           "version_added": "1.1"
         },
         "change_native_ferocity": {
@@ -327,6 +371,9 @@
             },
             {
               "$ref": "identifiers.json#/definitions/religions"
+            },
+            {
+              "$ref": "special_values.json#/definitions/new_variable"
             }
           ]
         },
@@ -606,6 +653,40 @@
           }
         },
         {"$ref": "province_commands.json#/definitions/province_commands"}
+      ]
+    },
+    "while": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            }
+          }
+        },
+        {"$ref": "province_commands.json#/definitions/province_commands"}
+      ]
+    },
+    "trigger_switch": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "on_trigger": {
+              "$identifierValue": "<scope_key:province_conditions.json#/definitions/province_conditions>",
+              "type": "string"
+            }
+          }
+        },
+        {
+          "$identifierProperties": {
+            "<switch_value>": {
+              "$switchScope": "province_conditions.json#/definitions/province_conditions",
+              "$ref": "province_commands.json#/definitions/province_commands"
+            }
+          }
+        }
       ]
     }
   }

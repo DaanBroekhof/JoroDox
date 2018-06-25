@@ -191,8 +191,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       type: 'object',
 
       compile: (schema, parentSchema, it) => {
-        const values = _.keys(parentSchema.properties);
-        const propertyNames = new Set(values);
+        const propertyNames = new Set(_.keys(parentSchema.properties));
+        const propertyPatterns = _.keys(parentSchema.patternProperties);
         // const propertyNamesHash = propertyNames.
         const validators = {};
         const validatorPrep = {};
@@ -223,6 +223,9 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             if (propertyNames.has(dataKey)) {
               continue;
             }
+            if (propertyPatterns.find(pattern => dataKey.match(pattern))) {
+              continue;
+            }
 
             for (const identifierType of _.keys(validatorPrep)) {
               let identifierValue = dataKey;
@@ -231,6 +234,25 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                   continue;
                 }
                 identifierValue = identifierValue.substring(-schema.postFix.length);
+              }
+
+              if (identifierType === '<switch_value>') {
+                if (!data.on_trigger) {
+                  return false;
+                }
+                if (!ajv.jdxScopeKeyValidators[schema['<switch_value>'].$switchScope + '/' + data.on_trigger]) {
+                  return false;
+                }
+                const switchValueValidator = ajv.jdxScopeKeyValidators[schema['<switch_value>'].$switchScope + '/' + data.on_trigger];
+
+                const validSwitchValue = switchValueValidator({[data.on_trigger]: identifierValue});
+                if (!validSwitchValue) {
+                  v.errors = switchValueValidator.errors;
+                  v.errors[0].identifierType = identifierType;
+                  v.errors[0].identifier = dataKey;
+                  v.errors[0].parentDataPath = dataPath;
+                }
+                return validSwitchValue;
               }
 
               if (task.hasIdentifier(identifierType, identifierValue)) {
@@ -272,13 +294,34 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
   addIdentifierValueKeyword(ajv) {
     const task = this;
 
+    ajv.jdxScopeKeyValidators = {};
+
     ajv.addKeyword('$identifierValue', {
       compile: (schema, parentSchema, it) => {
         const identifierType = schema;
-        // console.log(schema);
 
         return function v(data, dataPath, object, key) {
-          if (task.hasIdentifier(identifierType, data)) {
+          const scopeKeyMatch = identifierType.match(/^<scope_key:(.+)>$/);
+          if (scopeKeyMatch) {
+            const scopeKeyRef = scopeKeyMatch[1];
+            if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
+              ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
+                $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
+                $ref: scopeKeyRef,
+              });
+            }
+            const keyValidator = ajv.jdxScopeKeyValidators[scopeKeyRef];
+
+
+            keyValidator({[data]: null});
+
+            // We only look for invalid property key errors, any other error is ok for us.
+            const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property key');
+            if (!unknownScopeKey) {
+              ajv.jdxScopeKeyValidators[scopeKeyRef + '/' + data] = keyValidator;
+              return true;
+            }
+          } else if (task.hasIdentifier(identifierType, data)) {
             return true;
           }
 
@@ -344,7 +387,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     console.log('Validating ' + definition.id);
 
-    const items = await db[definition.id].limit(500).toArray();
+    const items = await db[definition.id].limit(5000).toArray();
     let nr = 0;
     for (const item of items) {
       this.progress(nr, items.length, `Validating ${items.length} items...`);

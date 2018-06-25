@@ -3,8 +3,8 @@
   "$schema": "http://json-schema.org/schema#",
   "definitions": {
     "advisor_ids": {
-      "$identifierValue": "advisor_ids",
-      "type": "string"
+      "$identifierValue": "history_advisors",
+      "type": "number"
     },
     "advisortypes": {
       "$identifierValue": "advisortypes",
@@ -79,6 +79,10 @@
       "type": "string"
     },
     "event_pictures": {
+      "todo": "Implement DLC matching",
+      "type": "string"
+    },
+    "event_pictures_real": {
       "$identifierValue": "event_pictures",
       "type": "string"
     },
@@ -250,8 +254,7 @@
       "type": "string"
     },
     "trade_modifiers": {
-      "type": "string",
-      "enum": ["merchant_recalled"]
+      "type": "string"
     },
     "tradegoods": {
       "$identifierValue": "tradegoods",
@@ -267,6 +270,10 @@
     },
     "wargoal_types": {
       "$identifierValue": "wargoal_types",
+      "type": "string"
+    },
+    "map_terrain_categories": {
+      "$identifierValue": "map_terrain_categories",
       "type": "string"
     }
   }

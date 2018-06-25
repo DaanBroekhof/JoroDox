@@ -15,6 +15,9 @@
           "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions"
         },
         {
+          "$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"
+        },
+        {
           "$ref": "country_conditions.json#/definitions/identifier_keys"
         }
       ]
@@ -55,46 +58,7 @@
           "comment": "Only validates structure of the arithmetic trigger, not any of the values.",
           "type": "object",
           "$mergeProps": [
-            {
-              "properties": {
-                "custom_tooltip": {
-                  "type": "string"
-                },
-                "export_to_variable ": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "variable_name": {
-                      "type": "string"
-                    },
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "is_variable_equal": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "which": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "check_variable": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "which": {
-                      "type": "string",
-                      "value": {
-                        "type": "number"
-                      }
-                    }
-                  }
-                }
-              }
-            },
+            {"$ref": "special_values.json#/definitions/variable_arithmetic_trigger"},
             {"$ref": "country_conditions.json#/definitions/country_conditions"}
           ]
         },
@@ -338,6 +302,52 @@
           "description": "If the country can migrate.",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "has_leaders": {
+          "description": "If the country has at least X leaders matching the criteria.",
+
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "type": {
+              "$ref": "special_values.json#/definitions/leader_types"
+            },
+            "include_monarch": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "include_heir": {
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": ["value"]
+        },
+        "has_mil_advisor": {
+          "description": "If the country has a military advisor.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_adm_advisor": {
+          "description": "If the country has an administrative advisor.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_dip_advisor": {
+          "description": "If the country has a diplomacy advisor.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_mission": {
+          "description": "Check if scope tag has mission available.",
+          "$ref": "identifiers.json#/definitions/missions"
+        },
+        "is_statists_in_power": {
+          "description": "If the Statists are in power (Dutch government only).",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "owns_or_vassal_of": {
+          "description": "If the Statists are in power (Dutch government only).",
+          "todo": "Check?",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
 
 
 
@@ -569,14 +579,14 @@
         },
         "consort_culture": {
           "description": "Returns true, if the country's consort has the specified culture. Can utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/cultures"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
-            }
+            },
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "consort_dip": {
@@ -585,7 +595,7 @@
         },
         "consort_has_personality": {
           "description": "Returns true if the countryâ€™s consort has the specified personality.",
-          "$ref": "identifiers.json#/definitions/leader_personalities"
+          "$ref": "identifiers.json#/definitions/ruler_personalities"
         },
         "consort_mil": {
           "description": "Returns true if the country has a consort with an military skill of at least X.",
@@ -593,14 +603,14 @@
         },
         "consort_religion": {
           "description": "Returns true, if the country's consort has the specified religion. Can utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
-            }
+            },
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "controls": {
@@ -694,7 +704,6 @@
         },
         "dominant_culture": {
           "description": "Returns true if the dominant culture in the country is X.",
-          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/cultures"
@@ -706,7 +715,6 @@
         },
         "dominant_religion": {
           "description": "Returns true if the dominant religion in the country is X.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"
@@ -740,9 +748,24 @@
           "additionalProperties": false,
           "properties": {
             "is_male": {"$ref": "special_values.json#/definitions/boolean"},
+            "is_female": {"$ref": "special_values.json#/definitions/boolean"},
             "home_religion": {"$ref": "identifiers.json#/definitions/religions"},
             "home_culture": {"$ref": "identifiers.json#/definitions/religions"},
-            "type": {"$ref": "identifiers.json#/definitions/advisortypes"}
+            "type": {"$ref": "identifiers.json#/definitions/advisortypes"},
+            "category": {"$ref": "special_values.json#/definitions/monarch_power_type"},
+            "culture": {
+              "anyOf": [
+                {"$ref": "special_values.json#/definitions/country_scope"},
+                {"$ref": "identifiers.json#/definitions/cultures"},
+                {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
+              ]
+            },
+            "religion": {
+              "anyOf": [
+                {"$ref": "identifiers.json#/definitions/religions"},
+                {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
+              ]
+            }
           },
           "required": []
         },
@@ -832,6 +855,7 @@
           "description": "Returns true if the country has government type X.\r\nNote: can search for the 3 government groups (monarchy, republic, theocracy), for a specific government type (feudal_monarchy, absolute_monarchy, etc.) or tribal",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/governments"},
+            {"$ref": "special_values.json#/definitions/government_dictatorship"},
             {"$ref": "special_values.json#/definitions/government_group_or_tribal"}
           ]
         },
@@ -1136,10 +1160,12 @@
         },
         "has_harmonized_with": {
           "description": "Returns true, if the country has harmonized with the specified religion or religion group.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"
+            },
+            {
+              "$ref": "identifiers.json#/definitions/religion_groups"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
@@ -1359,14 +1385,14 @@
         },
         "heir_culture": {
           "description": "Returns true, if the country's heir has the specified culture. Can utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/cultures"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
-            }
+            },
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "heir_dip": {
@@ -1379,7 +1405,7 @@
         },
         "heir_has_personality": {
           "description": "Returns true if the countryâ€™s heir has the specified personality.",
-          "$ref": "identifiers.json#/definitions/leader_personalities"
+          "$ref": "identifiers.json#/definitions/ruler_personalities"
         },
         "heir_has_ruler_dynasty": {
           "description": "Returns true if the countryâ€™s heir and ruler have the same dynasty.",
@@ -1402,14 +1428,14 @@
         },
         "heir_religion": {
           "description": "Returns true, if the country's heir has the specified religion. Can utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
-            }
+            },
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "historical_friend_with": {
@@ -1566,6 +1592,10 @@
           "description": "Returns true if the country is the emperor of China.",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "is_enemy": {
+          "description": "Returns true the country views country X as an enemy.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
         "is_excommunicated": {
           "description": "Returns true if the ruler of the country is excommunicated.",
           "$ref": "special_values.json#/definitions/boolean"
@@ -1592,7 +1622,6 @@
         },
         "is_harmonizing_with": {
           "description": "Returns true, if the country is currently harmonizing with the specified religion or religion group.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"
@@ -1737,6 +1766,10 @@
           "description": "Returns true if the country/province is part of the HRE.",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "is_permanent_claim": {
+          "description": "Returns true if the province is a permanent claim of current country.",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
         "is_playing_custom_nation": {
           "description": "Returns true if the country is a player-designed custom nation.",
           "$ref": "special_values.json#/definitions/boolean"
@@ -1847,14 +1880,7 @@
         },
         "karma": {
           "description": "Returns true if the country has at least as much karma as the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "knows_country": {
           "description": "Returns true if the country has knowledge of country X.",
@@ -2775,14 +2801,7 @@
         },
         "piety": {
           "description": "Returns true if the country has at least as much piety as the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "preferred_emperor": {
           "description": "Returns true if an elector has the country X is the preferred emperor.",
@@ -2909,14 +2928,14 @@
         },
         "ruler_culture": {
           "description": "Returns true, if the country's ruler has the specified culture. Can utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/cultures"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
-            }
+            },
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "ruler_has_personality": {
@@ -2929,14 +2948,14 @@
         },
         "ruler_religion": {
           "description": "Returns true, if the country's ruler has the specified religion. Can utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
+            {
+              "$ref": "special_values.json#/definitions/country_scope"
+            },
             {
               "$ref": "identifiers.json#/definitions/religions"
             },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "sailors": {
@@ -3001,6 +3020,10 @@
           ]
         },
         "tag": {
+          "description": "Returns true if the country is the specified country.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
+        "TAG": {
           "description": "Returns true if the country is the specified country.",
           "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
@@ -3285,7 +3308,7 @@
         },
         "years_of_income": {
           "description": "Returns true if the country's treasury contains ducats of at least the yearly income of the specified country.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+          "$ref": "special_values.json#/definitions/country_or_number"
         }
       }
     },
@@ -3311,6 +3334,12 @@
         },
         "advisortypes": {
           "type": "number"
+        },
+        "scripted_triggers": {
+          "anyOf": [
+            {"type": "object"},
+            {"$ref": "special_values.json#/definitions/boolean"}
+          ]
         }
       }
     },

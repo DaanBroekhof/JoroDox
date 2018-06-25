@@ -9,85 +9,29 @@
           "description": "Adds to the maximum number of building slots in a province. (Additive)",
           "type": "number"
         },
-        "attack_bonus_in_capital_terrain": {
-          "description": "Grants attack bonus in provinces with the same terrain as capital province. (Constant)",
-          "type": "number"
-        },
         "attrition": {
           "description": "Adds to the base attrition in a province. (Additive)",
-          "type": "number"
-        },
-        "auto_explore_adjacent_to_colony": {
-          "description": "Grants the abiliy to automatically discover undiscovered provinces adjacent to colonies. (Constant)",
-          "type": "number"
-        },
-        "can_bypass_forts": {
-          "description": "Allows units to ignore fort zones of control. (Constant)",
-          "type": "number"
-        },
-        "can_chain_claim": {
-          "description": "Allows claims to be enacted through already claimed provinces. (Constant)",
-          "type": "number"
-        },
-        "can_colony_boost_development": {
-          "description": "Grants bonus 1 tax, production and manpower on completed colonies. (Constant)",
-          "type": "number"
-        },
-        "can_transfer_vassal_wargoal": {
-          "description": "Allows usage of the Transfer Subject peace term at half cost. (Constant)",
-          "type": "number"
-        },
-        "cb_on_government_enemies": {
-          "description": "Acts a visible script flag. Can be checked in triggers with cb_on_government_enemies = yes (Constant)",
-          "type": "number"
-        },
-        "cb_on_overseas": {
-          "description": "Allows claims to be fabricated on overseas provinces in Trade Company regions. (Constant)",
-          "type": "number"
-        },
-        "cb_on_primitives": {
-          "description": "Allows claims to be fabricated on overseas provinces in Colonial regions. (Constant)",
-          "type": "number"
-        },
-        "cb_on_religious_enemies": {
-          "description": "Acts a visible script flag. Can be checked in triggers with cb_on_religious_enemies = yes (Constant)",
           "type": "number"
         },
         "cs_only_local_development_cost": {
           "description": "Modifies the monarch power cost for development in a province. \nDoes not appear or affect non-Common Sense owners. (Multiplicative)",
           "type": "number"
         },
-        "extra_manpower_at_religious_war": {
-          "description": "Grants an increase in manpower recovery by a factor of 3 during religious wars. (Constant)",
-          "type": "number"
-        },
         "force_march_free": {
           "description": "Allows usage of the force march action for free. (Constant)",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "fort_level": {
           "description": "Adds to the fort level in a province, determining how difficult it is to siege. (Additive)",
-          "type": "number"
-        },
-        "free_maintenance_on_expl_conq": {
-          "description": "Removes maintenance cost for explorers and conquisadors. (Constant)",
           "type": "number"
         },
         "garrison_growth": {
           "description": "Modifies the rate of garrison growth in a province. (Multiplicative)",
           "type": "number"
         },
-        "has_banners": {
-          "description": "Allows the usage of Manchu banner units. Country scope. (Constant)",
-          "type": "number"
-        },
-        "idea_claim_colonies": {
-          "description": "Allows claims to be fabricated on overseas provinces in Colonial regions that are owned by by another nation that is alo overseas. (Constant)",
-          "type": "number"
-        },
         "ignore_coring_distance": {
           "description": "Allows coring in any uncored province, regardless of distance. (Constant)",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "inflation_reduction_local": {
           "description": "Adds to the base yearly inflation value. Requires every province in a country to have the modifier to work however. (Additive)",
@@ -139,7 +83,7 @@
         },
         "local_has_banners": {
           "description": "Allows Manchu banner units to be raised in owned provinces. Province scope. (Constant)",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/boolean"
         },
         "local_hostile_attrition": {
           "description": "Adds to the base attrition for enemies in a province. (Additive)",
@@ -217,28 +161,8 @@
           "description": "Adds to the maximum attrition that can be experienced in a province. (Additive)",
           "type": "number"
         },
-        "may_establish_frontier": {
-          "description": "Allows the usage of the Siberean Frontier mechanic. (Constant)",
-          "type": "number"
-        },
-        "may_explore": {
-          "description": "Allows the recruitment of explorers and conquisadors. (Constant)",
-          "type": "number"
-        },
-        "may_perform_slave_raid": {
-          "description": "Allows ships to perform slave raids. (Constant)",
-          "type": "number"
-        },
-        "may_recruit_female_generals": {
-          "description": "Allows the recruitment of female generals. (Constant)",
-          "type": "number"
-        },
         "min_local_autonomy": {
           "description": "Sets the minimum autonomy value a province can have. (Constant)",
-          "type": "number"
-        },
-        "no_religion_penalty": {
-          "description": "Removes the penalties associated with negative religious tolerance. (Constant)",
           "type": "number"
         },
         "province_trade_power_modifier": {
@@ -249,20 +173,12 @@
           "description": "Adds to the trade power in a province. (Additive)",
           "type": "number"
         },
-        "reduced_stab_impacts": {
-          "description": "Reduces the stability hits when taking diplomatic actions that cause them (i.e. Break Marriage). (Constant)",
-          "type": "number"
-        },
         "regiment_recruit_speed": {
           "description": "Modifies the recruitment speed of land units in a province. (Multiplicative)",
           "type": "number"
         },
         "religious_conversion_resistance": {
           "description": "Adds to conversion resistance from Centres of Reformation. (Additive)",
-          "type": "number"
-        },
-        "sea_repair": {
-          "description": "Allows ships to repair in coastal sea zones adjacent to owned provinces. (Constant)",
           "type": "number"
         },
         "ship_recruit_speed": {

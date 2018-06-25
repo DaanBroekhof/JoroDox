@@ -101,6 +101,10 @@
       "type": "string",
       "enum": ["monarchy", "republic", "theocracy", "tribal"]
     },
+    "government_dictatorship": {
+      "type": "string",
+      "enum": ["dictatorship"]
+    },
     "country_or_number": {
       "$mergeProps": [
         {
@@ -111,6 +115,17 @@
         },
         {
           "$ref": "special_values.json#/definitions/country_scope"
+        }
+      ]
+    },
+    "religion_or_heretic": {
+      "$mergeProps": [
+        {
+          "type": "string",
+          "enum": ["heretic"]
+        },
+        {
+          "$ref": "identifiers.json#/definitions/religions"
         }
       ]
     },
@@ -130,6 +145,82 @@
     "random": {
       "type": "string",
       "enum": ["random"]
+    },
+    "variable_operation": {
+      "anyOf": [
+        {"$ref": "special_values.json#/definitions/variable_assign_variable"},
+        {"$ref": "special_values.json#/definitions/variable_assign_value"}
+      ]
+    },
+    "variable_assign_variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "which": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "variable_assign_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "which": {"type": "string"},
+        "value": {"type": "number"}
+      }
+    },
+    "variable_arithmetic_trigger": {
+      "properties": {
+        "custom_tooltip": {
+          "type": "string"
+        },
+        "export_to_variable": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "which": {
+              "type": "string"
+            },
+            "variable_name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            },
+            "who": {
+              "type": "string"
+            }
+          }
+        },
+        "is_variable_equal": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "check_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        }
+      }
+    },
+    "new_variable": {
+      "type": "string",
+      "pattern": "^new_variable:.+$"
+    },
+    "variable": {
+      "type": "string",
+      "pattern": "^variable:.+$"
+    },
+    "new_or_existing_variable": {
+      "anyOf": [
+        {"$ref": "special_values.json#/definitions/variable"},
+        {"$ref": "special_values.json#/definitions/new_variable"}
+      ]
     }
   }
 }

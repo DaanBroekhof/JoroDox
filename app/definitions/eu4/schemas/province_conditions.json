@@ -26,13 +26,25 @@
         "AND": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
+        "and": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
         "OR": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "or": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "NOT": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
+        "not": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
         "ROOT": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "root": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "variable_arithmetic_trigger": {
@@ -40,46 +52,7 @@
           "comment": "Only validates structure of the arithmetic trigger, not any of the values.",
           "type": "object",
           "$mergeProps": [
-            {
-              "properties": {
-                "custom_tooltip": {
-                  "type": "string"
-                },
-                "export_to_variable ": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "variable_name": {
-                      "type": "string"
-                    },
-                    "value": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "is_variable_equal": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "which": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "check_variable": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "which": {
-                      "type": "string",
-                      "value": {
-                        "type": "number"
-                      }
-                    }
-                  }
-                }
-              }
-            },
+            {"$ref": "special_values.json#/definitions/variable_arithmetic_trigger"},
             {"$ref": "province_conditions.json#/definitions/province_conditions"}
           ]
         },
@@ -138,10 +111,10 @@
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "all_core_country": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "any_core_country": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         }
       }
     },
@@ -216,6 +189,11 @@
             }
           }
         },
+        "is_religious_center_province": {
+          "description": "If the province contains a religious center",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
 
 
 
@@ -252,7 +230,7 @@
         },
         "can_spawn_rebels": {
           "description": "Returns true if the specified rebel faction is a valid rebel faction of the province.",
-          "$ref": "identifiers.json#/definitions/factions"
+          "$ref": "identifiers.json#/definitions/rebel_types"
         },
         "cavalry_in_province": {
           "description": "Returns true if there are cavalry units from the specified country in the province.",
@@ -305,11 +283,17 @@
         },
         "culture": {
           "description": "Returns true if the province culture is X.",
-          "$ref": "identifiers.json#/definitions/cultures"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/cultures"},
+            {"$ref": "special_values.json#/definitions/province_scope"}
+          ]
         },
         "culture_group": {
           "description": "Returns true if the country/province has a culture of the specified culture group.",
-          "$ref": "identifiers.json#/definitions/culture_groups"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/culture_groups"},
+            {"$ref": "special_values.json#/definitions/province_scope"}
+          ]
         },
         "current_institution_growth": {
           "description": "Returns true, if the country/province has an institution growth of at least X for the first not embraced institution.",
@@ -388,8 +372,11 @@
           "$ref": "special_values.json#/definitions/yes"
         },
         "has_estate": {
-          "description": "Returns true if the province is controlled by the estate X.",
-          "$ref": "identifiers.json#/definitions/estates"
+          "description": "Returns true if the province is controlled by the estate X, or if it has any or none (yes / no).",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/estates"},
+            {"$ref": "special_values.json#/definitions/boolean"}
+          ]
         },
         "has_great_project": {
           "description": "Returns true if the country has the specified great project.",
@@ -472,7 +459,7 @@
         },
         "has_rebel_faction": {
           "description": "Returns true if the province is controlled by (the specified) rebel faction.",
-          "$ref": "identifiers.json#/definitions/factions",
+          "todo": "This correct?",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/factions"
@@ -507,7 +494,7 @@
         },
         "has_terrain": {
           "description": "Returns true if the province has terrain X.",
-          "$ref": "identifiers.json#/definitions/map_terrain_terrain"
+          "$ref": "identifiers.json#/definitions/map_terrain_categories"
         },
         "has_trade_modifier": {
           "description": "Returns true the specified country has the trade modifier X in the trade node.",
@@ -601,19 +588,12 @@
               "$ref": "special_values.json#/definitions/boolean"
             },
             {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_province"
             }
           ]
         },
         "is_empty": {
           "description": "Returns true if province is empty",
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "is_enemy": {
-          "description": "Returns true the country views country X as an enemy.",
           "$ref": "special_values.json#/definitions/boolean"
         },
         "is_in_capital_area": {
@@ -844,7 +824,7 @@
         },
         "province_id": {
           "description": "Returns true if the province has the ID X.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
         },
         "province_trade_power": {
           "description": "Returns true if trade power generated by the province is at least X.",
@@ -981,6 +961,12 @@
         "institutions": {
           "description": "Returns true if the support for the specified institution in the province is at least X.",
           "type": "number"
+        },
+        "scripted_triggers": {
+          "anyOf": [
+            {"type": "object"},
+            {"$ref": "special_values.json#/definitions/boolean"}
+          ]
         }
       }
     },

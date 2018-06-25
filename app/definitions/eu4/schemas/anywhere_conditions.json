@@ -13,6 +13,9 @@
         },
         {
           "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions_properties"
+        },
+        {
+          "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions_variables"
         }
       ]
     },
@@ -108,16 +111,6 @@
           "description": "Returns true under all circumstances if set to yes, returns false under all circumstances if set to no.",
           "$ref": "special_values.json#/definitions/boolean"
         },
-        "check_variable": {
-          "description": "Returns true if the specified variable is at least X.",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "which": {"type": "string"},
-            "value": {}
-          },
-          "required": ["which", "value"]
-        },
         "current_age": {
           "description": "Returns true, if the current age is X.",
           "$ref": "identifiers.json#/definitions/ages"
@@ -183,7 +176,6 @@
         },
         "hre_religion": {
           "description": "Returns true if the specified religion is the dominant faith of the HRE.",
-          "$ref": "identifiers.json#/definitions/religions",
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/religions"
@@ -301,6 +293,16 @@
         "total_number_of_cardinals": {
           "description": "Returns true if the total number of cardinals is at least X.",
           "type": "number"
+        }
+      }
+    },
+    "anywhere_conditions_variables": {
+      "properties": {
+        "check_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "is_variable_equal": {
+          "$ref": "special_values.json#/definitions/variable_assign_variable"
         }
       }
     }

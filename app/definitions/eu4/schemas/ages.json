@@ -96,7 +96,10 @@
                   "$ref": "country_commands.json#/definitions/country_commands"
                 },
                 "modifier": {
-                  "$ref": "country_modifiers.json#/definitions/country_modifiers"
+                  "$mergeProps": [
+                    {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+                    {"$ref": "rule_modifiers.json#/definitions/age_rule_modifiers"}
+                  ]
                 },
                 "rule": {
                   "type": "object"

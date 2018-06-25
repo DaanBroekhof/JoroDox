@@ -81,6 +81,13 @@
         "else" : {
           "$ref": "country_commands.json#/definitions/country_commands"
         },
+        "while" : {
+          "$ref": "country_commands.json#/definitions/while"
+        },
+
+        "trigger_switch" : {
+          "$ref": "country_commands.json#/definitions/trigger_switch"
+        },
 
         "colonial_parent": {
           "$ref": "country_commands.json#/definitions/country_commands"
@@ -91,7 +98,9 @@
         "capital_scope": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
-
+        "random_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
 
         "every_ally": {
           "$ref": "country_commands.json#/definitions/country_commands"
@@ -205,7 +214,11 @@
           "description": "Discovers the specific province.",
           "$ref": "special_values.json#/definitions/province_id_or_scope"
         },
-
+        "add_permanent_claim": {
+          "description": "The defined scope gains a permanent claim on the specified province.",
+          "$ref": "special_values.json#/definitions/province_id_or_scope",
+          "version_added": "1.14"
+        },
 
         "add_absolutism": {
           "description": "Adds absolutism to the current scope.\nNotes: No effect if Absolutism isn't active.",
@@ -686,7 +699,10 @@
         },
         "change_primary_culture": {
           "description": "Changes the primary culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/cultures"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.1"
         },
         "change_religion": {
@@ -698,7 +714,8 @@
             },
             {
               "$ref": "identifiers.json#/definitions/religions"
-            }
+            },
+            {"$ref": "special_values.json#/definitions/variable"}
           ]
         },
         "change_statists_vs_orangists": {
@@ -932,7 +949,12 @@
         "define_ruler": {
           "description": "Creates the defined ruler for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
           "version_added": "1.1",
-          "type": "object"
+          "todo": "Empty array here means 'remove' ruler?",
+          "anyOf": [
+            {"type": "object"},
+            {"type": "array"}
+          ]
+
         },
         "define_ruler_to_general": {
           "description": "Creates a general from the ruler for the current scope.",
@@ -1273,7 +1295,10 @@
         },
         "set_consort_culture": {
           "description": "Changes the consort culture for the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/cultures"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.23"
         },
         "set_consort_flag": {
@@ -1283,7 +1308,10 @@
         },
         "set_consort_religion": {
           "description": "Changes the consort religion for the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/religions",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.23"
         },
         "set_country_flag": {
@@ -1323,7 +1351,10 @@
         },
         "set_heir_culture": {
           "description": "Changes the heir culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/cultures"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.23"
         },
         "set_heir_flag": {
@@ -1333,7 +1364,10 @@
         },
         "set_heir_religion": {
           "description": "Changes the heir religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/religions",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.23"
         },
         "set_hre_heretic_religion": {
@@ -1408,7 +1442,10 @@
         },
         "set_ruler_culture": {
           "description": "Changes the ruler culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/cultures",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/cultures"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.23"
         },
         "set_ruler_flag": {
@@ -1418,7 +1455,10 @@
         },
         "set_ruler_religion": {
           "description": "Changes the ruler religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
-          "$ref": "identifiers.json#/definitions/religions",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/variable"}
+          ],
           "version_added": "1.23"
         },
         "set_saved_name": {
@@ -1501,6 +1541,12 @@
             {"type": "object"},
             {"$ref": "special_values.json#/definitions/boolean"}
           ]
+        },
+        "<event_target_province>": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "<event_target_country>": {
+          "$ref": "country_commands.json#/definitions/country_commands"
         }
       }
     },
@@ -1528,6 +1574,40 @@
           }
         },
         {"$ref": "country_commands.json#/definitions/country_commands"}
+      ]
+    },
+    "while": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        },
+        {"$ref": "country_commands.json#/definitions/country_commands"}
+      ]
+    },
+    "trigger_switch": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "on_trigger": {
+              "$identifierValue": "<scope_key:country_conditions.json#/definitions/country_conditions>",
+              "type": "string"
+            }
+          }
+        },
+        {
+          "$identifierProperties": {
+            "<switch_value>": {
+              "$switchScope": "country_conditions.json#/definitions/country_conditions",
+              "$ref": "country_commands.json#/definitions/country_commands"
+            }
+          }
+        }
       ]
     }
   }

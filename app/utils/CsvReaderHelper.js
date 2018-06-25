@@ -40,6 +40,10 @@ export default class CsvReaderHelper {
         description: modifier.description + ' (' + modifier.type + ')',
         type: 'number'
       };
+      if (modifier.type === 'Constant') {
+        delete def.type;
+        def.$ref = 'special_values.json#/definitions/boolean';
+      }
 
       const dynamicName = modifier.name.match(/^<([a-z_]+)>([a-z_]+)$/i);
       if (dynamicName) {

@@ -100,11 +100,13 @@
           "description": "Returns true the specified country has the trade modifier X in the trade node.",
           "type": "object",
           "additionalProperties": false,
+          "todo": "Both name and key are valid??",
           "properties": {
             "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "name": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
+            "name": {"$ref": "identifiers.json#/definitions/trade_modifiers"},
+            "key": {"$ref": "identifiers.json#/definitions/trade_modifiers"}
           },
-          "required": ["who", "name"]
+          "required": ["who"]
         },
         "has_trader": {
           "description": "Returns true if the specified country has a merchant in the trade node.",

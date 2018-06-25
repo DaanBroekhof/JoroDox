@@ -13,6 +13,9 @@
         },
         {
           "$ref": "anywhere_commands.json#/definitions/anywhere_commands_properties"
+        },
+        {
+          "$ref": "anywhere_commands.json#/definitions/anywhere_commands_variables"
         }
       ]
     },
@@ -143,6 +146,36 @@
           "description": "Displays a hidden ambient object from the map/ambient_objects.txt file.",
           "version_added": "1.19",
           "type": "string"
+        }
+      }
+    },
+    "anywhere_commands_variables": {
+      "type": "object",
+      "properties": {
+        "set_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "change_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "subtract_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "divide_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "multiply_variable": {
+          "$ref": "special_values.json#/definitions/variable_operation"
+        },
+        "export_to_variable": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "which": {"type": "string"},
+            "variable_name": {"type": "string"},
+            "value": {"type": "string"},
+            "who": {"type": "string"}
+          }
         }
       }
     }

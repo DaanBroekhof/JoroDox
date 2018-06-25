@@ -61,19 +61,25 @@
           }
         },
         "picture": {
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/event_pictures"
-            },
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "trigger": {"$ref": "country_conditions.json#/definitions/country_conditions"},
-                "picture": {"$ref": "identifiers.json#/definitions/event_pictures"}
+          "$makeArray": {
+            "anyOf": [
+              {
+                "$ref": "identifiers.json#/definitions/event_pictures"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "trigger": {
+                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                  },
+                  "picture": {
+                    "$ref": "identifiers.json#/definitions/event_pictures"
+                  }
+                }
               }
-            }
-          ]
+            ]
+          }
         },
         "is_triggered_only": {
           "$ref": "special_values.json#/definitions/boolean"
