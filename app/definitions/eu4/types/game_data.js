@@ -203,7 +203,7 @@ export default {
       sourceTransform: {
         type: 'keyKeyValues',
         path: ['data', 'data'],
-        requiredProperty: 'primary',
+        ignoreKeys: ['graphical_culture', 'male_names', 'female_names', 'dynasty_names'],
         keyName: 'name',
         parentKeyName: 'culture_group',
         valueName: 'data',

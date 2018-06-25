@@ -195,6 +195,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           if (definition.sourceTransform.requiredProperty && value2[definition.sourceTransform.requiredProperty] === undefined) {
             return;
           }
+          if (definition.sourceTransform.ignoreKeys && definition.sourceTransform.ignoreKeys.includes(key2)) {
+            return;
+          }
           const item = {};
           if (definition.sourceTransform.keyName) {
             item[definition.sourceTransform.keyName] = key2;
