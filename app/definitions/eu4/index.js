@@ -18,6 +18,8 @@ import countryEventsSchema from './schemas/country_events';
 import countryCommands from './schemas/country_commands';
 import anywhereCommands from './schemas/anywhere_commands';
 import provinceCommands from './schemas/province_commands';
+import tradenodeCommands from './schemas/tradenode_commands';
+
 
 import countryConditions from './schemas/country_conditions';
 import countryFactor from './schemas/country_factor';
@@ -59,6 +61,7 @@ export default {
     countryCommands,
     anywhereCommands,
     provinceCommands,
+    tradenodeCommands,
     countryConditions,
     countryFactor,
     countryModifiers,

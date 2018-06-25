@@ -14,10 +14,6 @@
       "$identifierValue": "ages",
       "type": "string"
     },
-    "ai_attitudes": {
-      "$identifierValue": "ai_attitudes",
-      "type": "string"
-    },
     "buildings": {
       "$identifierValue": "buildings",
       "type": "string"
@@ -164,7 +160,7 @@
       "type": "string"
     },
     "map_climates": {
-      "$identifierValue": "map_climates",
+      "$identifierValue": "map_climate",
       "type": "string"
     },
     "map_continent": {
@@ -274,6 +270,10 @@
     },
     "map_terrain_categories": {
       "$identifierValue": "map_terrain_categories",
+      "type": "string"
+    },
+    "country_events": {
+      "$identifierValue": "country_events",
       "type": "string"
     }
   }

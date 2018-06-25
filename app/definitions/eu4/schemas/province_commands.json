@@ -308,11 +308,40 @@
         "build_to_forcelimit": {
           "description": "Builds the defined units as a percentage of the owner's forcelimit in the current province scope.\nNotes: 1 is equal to 100% of the owner's forcelimit.\nPossible types:\ninfantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",
           "version_added": "1.1",
-          "$identifierProperties": {
-            "units": {
-              "type": "number"
+          "$mergeProps": [
+            {
+              "properties": {
+                "infantry": {
+                  "type": "number"
+                },
+                "cavalry": {
+                  "type": "number"
+                },
+                "artillery": {
+                  "type": "number"
+                },
+                "heavy_ship": {
+                  "type": "number"
+                },
+                "light_ship": {
+                  "type": "number"
+                },
+                "galley": {
+                  "type": "number"
+                },
+                "transport": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "$identifierProperties": {
+                "units": {
+                  "type": "number"
+                }
+              }
             }
-          }
+          ]
         },
         "cancel_construction": {
           "description": "Cancels any construction ongoing in the current province scope.\nNotes: Constructions are coring, religious conversion, cultural conversion, buildings and great projects.",
@@ -338,7 +367,7 @@
           "description": "Changes the culture of the current province scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/cultures"},
-            {"$ref": "special_values.json#/definitions/new_variable"}
+            {"$ref": "special_values.json#/definitions/variable"}
           ],
           "version_added": "1.1"
         },
@@ -370,10 +399,10 @@
               "$ref": "special_values.json#/definitions/country_tag_or_scope"
             },
             {
-              "$ref": "identifiers.json#/definitions/religions"
+              "$ref": "special_values.json#/definitions/religion_or_contrast"
             },
             {
-              "$ref": "special_values.json#/definitions/new_variable"
+              "$ref": "special_values.json#/definitions/variable"
             }
           ]
         },

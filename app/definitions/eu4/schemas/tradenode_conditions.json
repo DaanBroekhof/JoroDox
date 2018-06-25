@@ -142,7 +142,7 @@
             "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
             "share": {"type": "number"}
           },
-          "required": ["country", "share"]
+          "required": ["share"]
         },
         "trade_range": {
           "description": "Returns true if the trade node is within the trade range of the specified country.",

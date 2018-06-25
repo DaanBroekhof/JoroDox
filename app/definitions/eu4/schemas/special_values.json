@@ -69,6 +69,10 @@
         }
       ]
     },
+    "country_tag_empty": {
+      "type": "string",
+      "enum": ["---"]
+    },
     "province_id_or_scope": {
       "anyOf": [
         {
@@ -76,6 +80,9 @@
         },
         {
           "$ref": "special_values.json#/definitions/province_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
         }
       ]
     },
@@ -118,11 +125,22 @@
         }
       ]
     },
-    "religion_or_heretic": {
+    "religion_or_contrast": {
       "$mergeProps": [
         {
           "type": "string",
-          "enum": ["heretic"]
+          "enum": ["heretic", "heathen"]
+        },
+        {
+          "$ref": "identifiers.json#/definitions/religions"
+        }
+      ]
+    },
+    "religion_or_secondary": {
+      "$mergeProps": [
+        {
+          "type": "string",
+          "enum": ["secondary"]
         },
         {
           "$ref": "identifiers.json#/definitions/religions"
@@ -221,6 +239,18 @@
         {"$ref": "special_values.json#/definitions/variable"},
         {"$ref": "special_values.json#/definitions/new_variable"}
       ]
+    },
+    "event_target": {
+      "type": "string",
+      "pattern": "^event_target:.+$"
+    },
+    "construction": {
+      "type": "string",
+      "enum": ["core", "culture", "building", "merchant", "diplomat", "missionary", "army", "navy", "canal", "great_project"]
+    },
+    "ai_attitudes": {
+      "type": "string",
+      "enum": ["attitude_neutral", "atittude_rivalry", "attitude_hostile", "attitude_friendly", "attitude_defensive", "attitude_threatened", "attitude_outraged", "attitude_protective", "attitude_domineering", "attitude_overlord", "attitude_loyal", "attitude_disloyal", "attitude_rebellious", "attitude_allied"]
     }
   }
 }

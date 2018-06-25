@@ -348,7 +348,19 @@
           "todo": "Check?",
           "$ref": "special_values.json#/definitions/province_id_or_scope"
         },
-
+        "num_of_janissaries": {
+          "description": "Number of janissary units.",
+          "todo": "Check?",
+          "type": "number"
+        },
+        "has_religious_school": {
+          "description": "If the country has any religious school.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_religious_school_of": {
+          "description": "If the country has the same religious school as target.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
 
 
         "absolutism": {
@@ -384,7 +396,7 @@
         },
         "adm_tech": {
           "description": "Returns true if the country has an administrative technology of at least X.",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "advisor": {
           "description": "Returns true if the country has an advisor of the specified type.",
@@ -404,7 +416,7 @@
           "additionalProperties": false,
           "properties": {
             "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "attitude": {"$ref": "identifiers.json#/definitions/ai_attitudes"}
+            "attitude": {"$ref": "special_values.json#/definitions/ai_attitudes"}
           },
           "required": ["who", "attitude"]
         },
@@ -451,14 +463,7 @@
         },
         "authority": {
           "description": "Returns true if the Inti country has at least as much authority as the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "average_autonomy": {
           "description": "Returns true if the country has an average autonomy in its provinces of at least X.",
@@ -490,7 +495,7 @@
           "additionalProperties": false,
           "properties": {
             "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "distance": {"$ref": "identifiers.json#/definitions/ai_attitudes"}
+            "distance": {"$ref": "special_values.json#/definitions/ai_attitudes"}
           },
           "required": ["who", "distance"]
         },
@@ -545,14 +550,7 @@
         },
         "church_power": {
           "description": "Returns true if the country has at least as much church power as the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "coalition_target": {
           "description": "Returns true if the country is the target of a coalition.",
@@ -640,7 +638,7 @@
           "description": "Returns true if the country/province has a culture of the specified culture group.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/culture_groups"},
-            {"$ref": "special_values.json#/definitions/country_scope"}
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
           ]
         },
         "culture_group_claim": {
@@ -696,7 +694,7 @@
         },
         "dip_tech": {
           "description": "Returns true if the country has an diplomatic technology of at least level X.",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "diplomatic_reputation": {
           "description": "Returns true if the country has at least as much diplomatic reputation as the specified country.",
@@ -762,7 +760,7 @@
             },
             "religion": {
               "anyOf": [
-                {"$ref": "identifiers.json#/definitions/religions"},
+                {"$ref": "special_values.json#/definitions/religion_or_contrast"},
                 {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
               ]
             }
@@ -825,7 +823,7 @@
             "faction": {"$ref": "identifiers.json#/definitions/factions"},
             "influence": {"type": "number"}
           },
-          "required": ["estate", "influence"]
+          "required": ["faction", "influence"]
         },
         "federation_size": {
           "description": "Returns true if the federation with the country has at least X members.",
@@ -856,7 +854,8 @@
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/governments"},
             {"$ref": "special_values.json#/definitions/government_dictatorship"},
-            {"$ref": "special_values.json#/definitions/government_group_or_tribal"}
+            {"$ref": "special_values.json#/definitions/government_group_or_tribal"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
           ]
         },
         "government_rank": {
@@ -958,7 +957,10 @@
         },
         "has_advisor": {
           "description": "Returns true if the country has hired an advisor.\r\nWarning: Inteprets every right side argument as yes.",
-          "$ref": "special_values.json#/definitions/boolean"
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/advisortypes"}
+          ]
         },
         "has_age_ability": {
           "description": "Returns true, if the country has the specified age ability.",
@@ -1052,6 +1054,9 @@
           "anyOf": [
             {
               "$ref": "identifiers.json#/definitions/map_provinces"
+            },
+            {
+              "$ref": "identifiers.json#/definitions/map_areas"
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
@@ -1814,14 +1819,7 @@
         },
         "is_rival": {
           "description": "Returns true if country X is a rival of the country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "is_state_core": {
           "description": "Returns true if the country has a state core on the province with the ID X.",
@@ -2049,17 +2047,7 @@
         },
         "mil_tech": {
           "description": "Returns true if the country has an at least as high monthly income as the specified country.",
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "militarised_society": {
           "description": "Returns true if the country has a militarization of country of at least X.",
@@ -2826,6 +2814,12 @@
             },
             {
               "$ref": "special_values.json#/definitions/country_scope"
+            },
+            {
+              "$ref": "special_values.json#/definitions/event_target"
+            },
+            {
+              "$ref": "special_values.json#/definitions/new_or_existing_variable"
             }
           ]
         },
@@ -2857,15 +2851,17 @@
         "religion": {
           "description": "Returns true if the country/province has religion X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
           "anyOf": [
-            {"$ref": "identifiers.json#/definitions/religions"},
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
+            {"$ref": "special_values.json#/definitions/religion_or_secondary"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "religion_group": {
           "description": "Returns true if the country/province has a religion of the specified religious group.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/religion_groups"},
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope"}
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "religion_group_claim": {
@@ -2876,11 +2872,12 @@
           "description": "Returns true, if the country has the specified religious school.",
           "type": "object",
           "additionalProperties": false,
+          "todo": "Add religious schools as a type?",
           "properties": {
-            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "value": {"type": "number"}
+            "group": {"$ref": "identifiers.json#/definitions/religion_groups"},
+            "school": {"type": "string"}
           },
-          "required": ["who", "value"]
+          "required": ["group", "school"]
         },
         "religious_unity": {
           "description": "Returns true if the country's religious unity is at least X.",
@@ -3139,7 +3136,7 @@
               ]
             }
           },
-          "required": ["trade_goods", "value"]
+          "required": ["node", "policy"]
         },
         "transport_fraction": {
           "description": "Returns true if the ratio of the transport fraction to the navy size of the country is at least X.",

@@ -193,7 +193,15 @@
           "description": "If the province contains a religious center",
           "$ref": "special_values.json#/definitions/boolean"
         },
-
+        "has_latent_trade_goods": {
+          "description": "If the province has latent (undiscovered) trade goods.",
+          "todo": "check",
+          "$ref": "identifiers.json#/definitions/tradegoods"
+        },
+        "tolerance_to_this": {
+          "description": "Returns true if the country has a tolerance of at least X towards the religion of the country or scoped province.",
+          "type": "number"
+        },
 
 
 
@@ -257,7 +265,11 @@
         },
         "continent": {
           "description": "Returns true if the province is located on continent X.",
-          "$ref": "identifiers.json#/definitions/map_continent"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/map_continent"},
+            {"$ref": "special_values.json#/definitions/capital"},
+            {"$ref": "special_values.json#/definitions/province_scope"}
+          ]
         },
         "controlled_by": {
           "description": "Returns true if the province is controlled by X.",
@@ -285,14 +297,16 @@
           "description": "Returns true if the province culture is X.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/cultures"},
-            {"$ref": "special_values.json#/definitions/province_scope"}
+            {"$ref": "special_values.json#/definitions/province_scope"},
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "culture_group": {
           "description": "Returns true if the country/province has a culture of the specified culture group.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/culture_groups"},
-            {"$ref": "special_values.json#/definitions/province_scope"}
+            {"$ref": "special_values.json#/definitions/province_scope"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"}
           ]
         },
         "current_institution_growth": {
@@ -354,7 +368,7 @@
         },
         "has_construction": {
           "description": "Returns true if there is the specified construction in progress in the province.\r\nPossible values are core, culture, building, merchant, diplomat, missionary, army, navy, canal, great_project etc.",
-          "$ref": "identifiers.json#/definitions/missions"
+          "$ref": "special_values.json#/definitions/construction"
         },
         "has_discovered": {
           "description": "Returns true if the country X has discovered the province.",
@@ -854,7 +868,8 @@
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/religions"},
             {"$ref": "special_values.json#/definitions/province_scope"},
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"}
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
+            {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
         "same_continent": {
@@ -940,15 +955,8 @@
           "$ref": "special_values.json#/definitions/boolean"
         },
         "units_in_province": {
-          "description": "Returns true if the specified country has units in the province.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "description": "Returns true if the specified country has units in the province, or the total number of units is larger than X.",
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "unrest": {
           "description": "Returns true if the unrest in the province is at least X.",

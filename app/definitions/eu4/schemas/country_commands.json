@@ -190,7 +190,7 @@
           "$ref": "province_commands.json#/definitions/province_commands"
         },
         "random_active_trade_node": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "$ref": "tradenode_commands.json#/definitions/tradenode_commands"
         },
         "random_trade_node": {
           "$ref": "province_commands.json#/definitions/province_commands"
@@ -219,6 +219,11 @@
           "$ref": "special_values.json#/definitions/province_id_or_scope",
           "version_added": "1.14"
         },
+        "end_incident": {
+          "description": "End a specific incident.",
+          "$ref": "identifiers.json#/definitions/incidents"
+        },
+
 
         "add_absolutism": {
           "description": "Adds absolutism to the current scope.\nNotes: No effect if Absolutism isn't active.",
@@ -813,7 +818,15 @@
         "country_event": {
           "description": "Fire a country event for the current country scope.\nNotes: You cannot fire the same event within itself.",
           "version_added": "1.1",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {"$ref": "identifiers.json#/definitions/country_events"},
+            "tooltip": {"type": "string"},
+            "random": {"type": "number"},
+            "days": {"type": "number"}
+          },
+          "required": ["id"]
         },
         "create_admiral": {
           "description": "Generates an new admiral for the current scope.",
@@ -1155,13 +1168,21 @@
         },
         "remove_advisor": {
           "description": "Removes a hired advisor for the current scope.\nNotes: Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt\nDoes not display the advisor death message box when used.\nOnly works for advisors that have been hired.",
-          "$ref": "identifiers.json#/definitions/advisor_ids",
+          "todo": "Figure out if this one can also accept advisortypes / monarch power type, like remove_advisor_by_category",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/advisortypes"},
+            {"$ref": "identifiers.json#/definitions/advisor_ids"},
+            {"$ref": "special_values.json#/definitions/monarch_power_type"}
+          ],
           "version_added": "1.1"
         },
         "remove_advisor_by_category": {
-          "description": "Removes a hired advisor of a monarch power type for the current scope.\nNotes: Only works for advisors that have been hired.",
+          "description": "Removes a hired advisor of a monarch power type, or advisor type for the current scope.\nNotes: Only works for advisors that have been hired.",
           "version_added": "1.2",
-          "$ref": "identifiers.json#/definitions/advisortypes"
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/advisortypes"},
+            {"$ref": "special_values.json#/definitions/monarch_power_type"}
+          ]
         },
         "remove_casus_belli": {
           "description": "Removes a casus belli held against the defined scope for the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
@@ -1432,7 +1453,10 @@
         },
         "set_revolution_target": {
           "description": "Makes the defined scope the new revolutionary target.\nNotes: Use --- to remove the target and not re-assign.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/country_tag_empty"}
+          ],
           "version_added": "1.1"
         },
         "set_ruler": {

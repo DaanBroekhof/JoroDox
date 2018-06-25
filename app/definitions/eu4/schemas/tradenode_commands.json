@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/tradenode_commands.json",
+  "type": "object",
+  "definitions": {
+    "tradenode_commands": {
+      "$mergeProps": [
+        {
+          "$ref": "#/definitions/tradenode_commands_scopes"
+        },
+        {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        }
+      ]
+    },
+    "tradenode_commands_scopes": {
+      "properties": {
+        "limit": {
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+        },
+
+        "most_province_trade_power": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "strongest_trade_power": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "all_privateering_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "all_trade_node_member_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "any_privateering_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "any_trade_node_member_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "any_trade_node_member_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "all_trade_node_member_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+
+        "any_country": {
+          "todo": "figure out what this exactly mean here?",
+          "$ref": "country_commands.json#/definitions/country_commands"
+        }
+      }
+    }
+  }
+}

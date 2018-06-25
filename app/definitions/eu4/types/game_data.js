@@ -2574,7 +2574,7 @@ export default {
       id: 'history_advisors',
       title: 'History advisors',
       reader: 'StructureLoader',
-      primaryKey: 'advisor_id',
+      primaryKey: 'id',
       sourceType: {
         id: 'pdx_scripts',
         pathPrefix: 'history/advisors/',
