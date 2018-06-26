@@ -43,6 +43,24 @@
         "all_trade_node_member_province": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
+        "every_privateering_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_privateering_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_trade_node_member_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_trade_node_member_country": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "every_trade_node_member_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+        "random_trade_node_member_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
 
         "any_country": {
           "todo": "figure out what this exactly mean here?",

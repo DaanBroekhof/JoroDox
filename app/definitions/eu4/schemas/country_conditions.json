@@ -361,7 +361,20 @@
           "description": "If the country has the same religious school as target.",
           "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
-
+        "school_opinion": {
+          "description": "If the country has any religious school.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            "opinion": {"type": "number"}
+          },
+          "required": ["who", "opinion"]
+        },
+        "remove_province_modifier": {
+          "description": "Removes an already assigned province modifier from the current country scope's provinces.",
+          "$ref": "identifiers.json#/definitions/province_modifiers"
+        },
 
         "absolutism": {
           "description": "Returns true if the country has at least X absolutism.",
@@ -375,6 +388,12 @@
             },
             {
               "$ref": "special_values.json#/definitions/province_scope"
+            },
+            {
+              "$ref": "special_values.json#/definitions/event_target"
+            },
+            {
+              "$ref": "special_values.json#/definitions/new_or_existing_variable"
             }
           ]
         },

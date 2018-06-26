@@ -207,7 +207,7 @@
 
         "area": {
           "description": "Returns true if the province is part of the area X.",
-          "$ref": "identifiers.json#/definitions/map_area"
+          "$ref": "identifiers.json#/definitions/map_areas"
         },
         "artillery_in_province": {
           "description": "Returns true if there are artillery units from the specified country in the province.",
@@ -866,9 +866,10 @@
         "religion": {
           "description": "Returns true if the country/province has religion X.\r\nNote: Within province scope religion = secondary returns true if the province religion matches the secondary/syncretic religion of the owner.",
           "anyOf": [
-            {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/religion_or_secondary"},
             {"$ref": "special_values.json#/definitions/province_scope"},
             {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
+            {"$ref": "special_values.json#/definitions/event_target"},
             {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },

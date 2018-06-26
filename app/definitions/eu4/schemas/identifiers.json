@@ -155,7 +155,7 @@
     "loyalty_modifiers": {
       "type": "string"
     },
-    "map_area": {
+    "map_areas": {
       "$identifierValue": "map_area",
       "type": "string"
     },
@@ -274,7 +274,7 @@
     },
     "country_events": {
       "$identifierValue": "country_events",
-      "type": "string"
+      "type": ["string", "number"]
     }
   }
 }

@@ -21,29 +21,24 @@
       "additionalProperties": false,
       "properties": {
         "AND": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
-            }
-          }
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
         },
         "OR": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
-            }
-          }
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
         },
         "NOT": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
-            }
-          }
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
         },
+        "and": {
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+        },
+        "or": {
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+        },
+        "not": {
+          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+        },
+
         "most_province_trade_power": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
@@ -67,6 +62,14 @@
         },
         "all_trade_node_member_province": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "random_trade_node_member_province": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+
+        "any_country": {
+          "todo": "figure out what this exactly mean here?",
+          "$ref": "country_commands.json#/definitions/country_commands"
         }
       }
     },
