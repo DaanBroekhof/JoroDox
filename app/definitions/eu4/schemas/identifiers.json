@@ -58,8 +58,8 @@
     "custom_nation_points_unknown": {
       "type": "number"
     },
-    "debates": {
-      "$identifierValue": "debates",
+    "parliament_issues": {
+      "$identifierValue": "parliament_issues",
       "type": "string"
     },
     "disasters": {
@@ -275,6 +275,10 @@
     },
     "country_events": {
       "$identifierValue": "country_events",
+      "type": ["string", "number"]
+    },
+    "province_events": {
+      "$identifierValue": "province_events",
       "type": ["string", "number"]
     },
     "localization_id": {

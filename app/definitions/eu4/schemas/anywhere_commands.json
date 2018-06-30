@@ -31,6 +31,35 @@
             },
             "crusade_target": {
               "$ref": "country_commands.json#/definitions/country_commands"
+            },
+
+            "random_country": {
+              "todo": "Update wiki?",
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "random_elector": {
+              "todo": "Update wiki?",
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "random_trade_node": {
+              "todo": "Update wiki?",
+              "$ref": "province_commands.json#/definitions/province_commands"
+            },
+            "every_country": {
+              "todo": "Update wiki?",
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "every_elector": {
+              "todo": "Update wiki?",
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "every_province": {
+              "todo": "Update wiki?",
+              "$ref": "province_commands.json#/definitions/province_commands"
+            },
+            "every_trade_node": {
+              "todo": "Update wiki?",
+              "$ref": "province_commands.json#/definitions/province_commands"
             }
           }
         }
@@ -92,6 +121,7 @@
             {"properties": {"type": {"type": "string"}}}
           ]
         }
+
       }
     },
     "anywhere_commands_properties": {

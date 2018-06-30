@@ -102,12 +102,6 @@
         "all_coalition_member": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
-        "all_country": {
-          "$ref": "country_conditions.json#/definitions/country_conditions"
-        },
-        "all_elector": {
-          "$ref": "country_conditions.json#/definitions/country_conditions"
-        },
         "all_enemy_country": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
@@ -135,9 +129,6 @@
         "all_owned_province": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
-        "all_province": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
-        },
         "all_state_province": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
@@ -154,12 +145,6 @@
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "any_coalition_member": {
-          "$ref": "country_conditions.json#/definitions/country_conditions"
-        },
-        "any_country": {
-          "$ref": "country_conditions.json#/definitions/country_conditions"
-        },
-        "any_elector": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "any_enemy_country": {
@@ -194,16 +179,10 @@
             }
           }
         },
-        "any_province": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
-        },
         "any_state": {
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "any_active_trade_node": {
-          "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
-        },
-        "any_trade_node": {
           "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
         },
         "home_trade_node": {
@@ -669,7 +648,7 @@
         },
         "current_debate": {
           "description": "Returns true if the parliament of the country debates about X.",
-          "$ref": "identifiers.json#/definitions/debates"
+          "$ref": "identifiers.json#/definitions/parliament_issues"
         },
         "current_icon": {
           "description": "Returns true, if the country has the specified (orthodox) icon.",
@@ -1484,7 +1463,7 @@
         },
         "is_claim": {
           "description": "Returns true if the country has a claim on the province with the ID X.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
         },
         "is_client_nation": {
           "description": "Returns true if the country is a client state.",
@@ -1504,7 +1483,7 @@
         },
         "is_core": {
           "description": "Returns true if the country has a core on the province with the ID X.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
         },
         "is_crusade_target": {
           "description": "Returns true if the country is the target of a crusade.",

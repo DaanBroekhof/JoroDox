@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/country_events.json",
+  "$id": "http://jorodox.org/schemas/province_events.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -22,7 +22,7 @@
     "type": {
       "type": "string",
       "enum": [
-        "country_event"
+        "province_event"
       ]
     },
     "data": {
@@ -49,7 +49,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "trigger": {
-                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                    "$ref": "province_conditions.json#/definitions/province_conditions"
                   },
                   "desc": {
                     "type": "string"
@@ -70,7 +70,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "trigger": {
-                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                    "$ref": "province_conditions.json#/definitions/province_conditions"
                   },
                   "picture": {
                     "$ref": "identifiers.json#/definitions/event_pictures"
@@ -83,6 +83,9 @@
         "is_triggered_only": {
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "is_mtth_scaled_to_size": {
+          "type": "number"
+        },
         "fire_only_once": {
           "$ref": "special_values.json#/definitions/boolean"
         },
@@ -93,13 +96,13 @@
           "$ref": "special_values.json#/definitions/boolean"
         },
         "immediate": {
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "$ref": "province_commands.json#/definitions/province_commands"
         },
         "after": {
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "$ref": "province_commands.json#/definitions/province_commands"
         },
         "trigger": {
-          "$ref": "country_conditions.json#/definitions/country_conditions"
+          "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "mean_time_to_happen":{
           "type": "object",
@@ -120,7 +123,7 @@
                 "items": {
                   "anyOf": [
                     {
-                      "$ref": "scope_factors.json#/definitions/country_factor"
+                      "$ref": "scope_factors.json#/definitions/province_factor"
                     },
                     {
                       "$ref": "identifiers.json#/definitions/opinion_modifiers_factor"
@@ -133,9 +136,9 @@
         },
         "option":{
           "$mergeProps": [
-            {"$ref": "country_events.json#/definitions/option_extras"},
-            {"$ref": "country_commands.json#/definitions/country_commands"},
-            {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+            {"$ref": "province_events.json#/definitions/option_extras"},
+            {"$ref": "province_commands.json#/definitions/province_commands"},
+            {"$ref": "province_modifiers.json#/definitions/province_modifiers"}
           ]
         }
       },
@@ -159,10 +162,10 @@
           "$ref": "special_values.json#/definitions/boolean"
         },
         "trigger": {
-          "$ref": "country_conditions.json#/definitions/country_conditions"
+          "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "ai_chance": {
-          "$ref": "scope_factors.json#/definitions/country_factor"
+          "$ref": "scope_factors.json#/definitions/province_factor"
         }
       }
     }

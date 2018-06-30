@@ -14,6 +14,7 @@ import bookmarkSchema from './schemas/bookmarks';
 import cbTypesSchema from './schemas/cb_types';
 import churchAspectsSchema from './schemas/church_aspects';
 import countryEventsSchema from './schemas/country_events';
+import provinceEventsSchema from './schemas/province_events';
 
 import countryCommands from './schemas/country_commands';
 import anywhereCommands from './schemas/anywhere_commands';
@@ -22,7 +23,7 @@ import tradenodeCommands from './schemas/tradenode_commands';
 
 
 import countryConditions from './schemas/country_conditions';
-import countryFactor from './schemas/country_factor';
+import scopeFactors from './schemas/scope_factors';
 import countryModifiers from './schemas/country_modifiers';
 import ruleModifiers from './schemas/rule_modifiers';
 import identifiers from './schemas/identifiers';
@@ -56,6 +57,7 @@ export default {
     cbTypesSchema,
     churchAspectsSchema,
     countryEventsSchema,
+    provinceEventsSchema,
 
     specialValues,
     countryCommands,
@@ -63,7 +65,7 @@ export default {
     provinceCommands,
     tradenodeCommands,
     countryConditions,
-    countryFactor,
+    scopeFactors,
     countryModifiers,
     ruleModifiers,
     identifiers,

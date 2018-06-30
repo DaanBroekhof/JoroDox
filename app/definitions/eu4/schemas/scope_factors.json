@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/scope_factors.json",
+  "type": "object",
+  "definitions": {
+    "country_factor": {
+      "type": "object",
+      "properties": {
+        "factor": {
+          "type": "number"
+        },
+        "modifier": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "scope_factors.json#/definitions/country_factor"
+            }
+          }
+        }
+      }
+    },
+    "province_factor": {
+      "type": "object",
+      "properties": {
+        "factor": {
+          "type": "number"
+        },
+        "modifier": {
+          "$makeArray": {
+            "type": "array",
+            "items": {
+              "$ref": "scope_factors.json#/definitions/province_factor"
+            }
+          }
+        }
+      }
+    }
+  }
+}

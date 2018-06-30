@@ -64,6 +64,31 @@
             {"$ref": "province_conditions.json#/definitions/province_conditions"}
           ]
         },
+        "FROM": {
+          "anyOf": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+        "from": {
+          "anyOf": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+        "PREV": {
+          "anyOf": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+        "prev": {
+          "anyOf": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+
         "variable_arithmetic_trigger": {
           "description": "Can use variable effects and triggers to compare or change and compare modifier and trigger values. \"variable_arithmetic_trigger\" sections can include more \"variable_arithmetic_trigger\" sections. This has to be done for effects such as \"change_variable\" or effects of \"if\" sections inside the \"variable_arithmetic_trigger\", since the game may crash otherwise.",
           "comment": "Only validates structure of the arithmetic trigger, not any of the values.",
@@ -278,7 +303,7 @@
           "description": "Returns true if the province culture is X.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/cultures"},
-            {"$ref": "special_values.json#/definitions/province_id_or_scope"},
+            {"$ref": "special_values.json#/definitions/province_id_or_scope_province"},
             {"$ref": "special_values.json#/definitions/new_or_existing_variable"}
           ]
         },
@@ -683,7 +708,7 @@
             "country": {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
             "share": {"type": "number"}
           },
-          "required": ["country", "share"]
+          "required": ["share"]
         },
         "province_distance": {
           "description": "Returns true, if the distance between specified provinces is at least X.",
@@ -754,7 +779,7 @@
         },
         "trade_goods": {
           "description": "Returns true if the province is producing the trade good X.",
-          "$ref": "identifiers.json#/definitions/tradegoods"
+          "$ref": "special_values.json#/definitions/tradegood_or_scope"
         },
         "trade_range": {
           "description": "Returns true if the trade node is within the trade range of the specified country.",

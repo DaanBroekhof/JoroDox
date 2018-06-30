@@ -120,12 +120,6 @@
         "every_coalition_member": {
           "$ref": "country_commands.json#/definitions/country_commands"
         },
-        "every_country": {
-          "$ref": "country_commands.json#/definitions/country_commands"
-        },
-        "every_elector": {
-          "$ref": "country_commands.json#/definitions/country_commands"
-        },
         "every_enemy_country": {
           "$ref": "country_commands.json#/definitions/country_commands"
         },
@@ -148,12 +142,6 @@
           "$ref": "country_commands.json#/definitions/country_commands"
         },
         "random_coalition_member": {
-          "$ref": "country_commands.json#/definitions/country_commands"
-        },
-        "random_country": {
-          "$ref": "country_commands.json#/definitions/country_commands"
-        },
-        "random_elector": {
           "$ref": "country_commands.json#/definitions/country_commands"
         },
         "random_enemy_country": {
@@ -183,9 +171,6 @@
         "every_owned_province": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
-        "every_province": {
-          "$ref": "province_commands.json#/definitions/province_commands"
-        },
         "random_core_province": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
@@ -198,14 +183,8 @@
         "random_owned_province": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
-        "every_trade_node": {
-          "$ref": "province_commands.json#/definitions/province_commands"
-        },
         "random_active_trade_node": {
           "$ref": "tradenode_commands.json#/definitions/tradenode_commands"
-        },
-        "random_trade_node": {
-          "$ref": "province_commands.json#/definitions/province_commands"
         }
       }
     },
@@ -247,6 +226,14 @@
         "end_incident": {
           "description": "End a specific incident.",
           "$ref": "identifiers.json#/definitions/incidents"
+        },
+        "set_capital": {
+          "description": "Set the capital of the current scope country.",
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+        "free_vassal": {
+          "description": "Free a vassal X of the current country scope.",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
 
 
@@ -1724,7 +1711,10 @@
           "properties": {
             "id": {
               "description": "The event id to fire.",
-              "$ref": "identifiers.json#/definitions/country_events"
+              "anyOf": [
+                {"$ref": "identifiers.json#/definitions/country_events"},
+                {"$ref": "identifiers.json#/definitions/province_events"}
+              ]
             },
             "days": {
               "description": "Optional. The number of days to wait after the effect is executed to fire the event.",

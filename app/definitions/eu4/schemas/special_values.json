@@ -66,7 +66,20 @@
           "$ref": "identifiers.json#/definitions/cultures"
         },
         {
-          "$ref": "special_values.json#/definitions/country_scope"
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
+        }
+      ]
+    },
+    "culture_or_scope_province": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/cultures"
+        },
+        {
+          "$ref": "special_values.json#/definitions/province_id_or_scope_province"
         },
         {
           "$ref": "special_values.json#/definitions/event_target"
@@ -80,6 +93,19 @@
         },
         {
           "$ref": "special_values.json#/definitions/country_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
+        }
+      ]
+    },
+    "tradegood_or_scope": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/tradegoods"
+        },
+        {
+          "$ref": "special_values.json#/definitions/province_scope"
         },
         {
           "$ref": "special_values.json#/definitions/event_target"
@@ -139,6 +165,19 @@
         },
         {
           "$ref": "special_values.json#/definitions/capital"
+        }
+      ]
+    },
+    "province_id_or_scope_province": {
+      "anyOf": [
+        {
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/owner"
+        },
+        {
+          "$ref": "special_values.json#/definitions/controller"
         }
       ]
     },

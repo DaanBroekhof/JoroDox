@@ -31,6 +31,30 @@
             },
             "crusade_target": {
               "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+
+            "all_country": {
+              "todo": "Update wiki?",
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "all_elector": {
+              "todo": "Update wiki?",
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "all_province": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            },
+            "any_country": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "any_elector": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "any_province": {
+              "$ref": "province_conditions.json#/definitions/province_conditions"
+            },
+            "any_trade_node": {
+              "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
             }
           }
         }
