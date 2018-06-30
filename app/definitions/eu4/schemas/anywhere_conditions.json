@@ -121,11 +121,17 @@
         },
         "exists": {
           "description": "Returns true if country X exists.",
-          "$ref": "identifiers.json#/definitions/country_tags"
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "had_global_flag": {
           "description": "Returns true if the global flag X was last set at least Y days ago.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flag": {"$ref": "identifiers.json#/definitions/global_flags"},
+            "days": {"type": "number"}
+          },
+          "required": ["flag", "days"]
         },
         "has_changed_nation": {
           "description": "Returns true if playing as a released vassal.",
@@ -233,10 +239,6 @@
           "description": "Returns true if the specified religion is enabled.",
           "$ref": "identifiers.json#/definitions/religions"
         },
-        "is_variable_equal": {
-          "description": "Returns true if the specified variable is equal to X.",
-          "type": "object"
-        },
         "is_year": {
           "description": "Returns true if the current year is at least X.",
           "type": "number"
@@ -303,6 +305,17 @@
         },
         "is_variable_equal": {
           "$ref": "special_values.json#/definitions/variable_assign_variable"
+        }
+      }
+    },
+    "anywhere_conditions_event_targets": {
+      "patternProperties": {
+        "^event_target:.*$": {
+          "todo": "Somehow determine which type of scope this is...",
+          "$mergeProps": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
         }
       }
     }

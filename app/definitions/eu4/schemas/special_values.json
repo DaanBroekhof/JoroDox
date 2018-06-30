@@ -43,6 +43,49 @@
       "type": "string",
       "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this"]
     },
+    "dynasty_or_scope": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string",
+          "enum": ["original_dynasty"]
+        },
+        {
+          "$ref": "special_values.json#/definitions/country_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
+        }
+      ]
+    },
+    "culture_or_scope": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/cultures"
+        },
+        {
+          "$ref": "special_values.json#/definitions/country_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
+        }
+      ]
+    },
+    "religion_or_scope": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        {
+          "$ref": "special_values.json#/definitions/country_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
+        }
+      ]
+    },
     "country_tag_or_scope": {
       "anyOf": [
         {
@@ -53,6 +96,9 @@
         },
         {
           "$ref": "special_values.json#/definitions/emperor"
+        },
+        {
+          "$ref": "special_values.json#/definitions/event_target"
         }
       ]
     },
@@ -83,6 +129,16 @@
         },
         {
           "$ref": "special_values.json#/definitions/event_target"
+        }
+      ]
+    },
+    "province_id_or_scope_country": {
+      "anyOf": [
+        {
+          "$ref": "special_values.json#/definitions/province_id_or_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/capital"
         }
       ]
     },
@@ -246,11 +302,34 @@
     },
     "construction": {
       "type": "string",
-      "enum": ["core", "culture", "building", "merchant", "diplomat", "missionary", "army", "navy", "canal", "great_project"]
+      "enum": ["core", "culture", "building", "merchant", "diplomat", "missionary", "army", "navy", "canal", "great_project", "siberian"]
     },
     "ai_attitudes": {
       "type": "string",
       "enum": ["attitude_neutral", "atittude_rivalry", "attitude_hostile", "attitude_friendly", "attitude_defensive", "attitude_threatened", "attitude_outraged", "attitude_protective", "attitude_domineering", "attitude_overlord", "attitude_loyal", "attitude_disloyal", "attitude_rebellious", "attitude_allied"]
+    },
+    "school_opinion": {
+      "type": "number",
+      "enum": [-1, 0, 1]
+    },
+    "advisor_or_simple": {
+      "type": "string",
+      "enum": ["advisor", "simple"]
+    },
+    "unit_type": {
+      "type": "string",
+      "enum": ["infantry", "cavalry", "artillery", "heavy_ship", "light_ship", "galley", "transport"]
+    },
+    "unit_type_or_unit": {
+      "$mergeProps": [
+        {
+          "$ref": "special_values.json#/definitions/unit_type"
+
+        },
+        {
+          "$ref": "identifiers.json#/definitions/units"
+        }
+      ]
     }
   }
 }

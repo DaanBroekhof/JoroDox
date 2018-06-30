@@ -63,7 +63,11 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
             if (subSchema.$mergeProps) {
               const refUri = resolvedUri.split('#')[0] + '#';
-              subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {...it, baseId: refUri, baseIdOverwritten: false});
+              subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {
+                ...it,
+                baseId: refUri,
+                baseIdOverwritten: false
+              });
             }
           }
         }
@@ -130,16 +134,30 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       type: 'object',
       compile: (schema, parentSchema, it) => {
         const subSchema = it.util.copy(schema);
-        const magicId = SchemaValidatorTask.hashCode(JSON.stringify(subSchema));
+        let magicId = null;
+        if (_.get(schema, 'items.$identifierProperties')) {
+          // This is a shortcut for the most often occuring comparison...
+          magicId = SchemaValidatorTask.hashCode(JSON.stringify(
+            _.keys(schema.items.$identifierProperties)
+              .concat(_.keys(schema.items.patternProperties))
+              .concat(_.keys(schema.items.properties))
+          ));
+        } else {
+          magicId = SchemaValidatorTask.hashCode(JSON.stringify(subSchema));
+        }
         subSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json';
         if (!ajv.makeArraySchemaCache) {
           ajv.makeArraySchemaCache = {};
         }
+        if (ajv.makeArraySchemaCache[magicId] === undefined) {
+          ajv.makeArraySchemaCache[magicId] = false;
+        }
+
 
         const validatorPrep = () => {
           if (!ajv.makeArraySchemaCache[magicId]) {
             ajv.makeArraySchemaCache[magicId] = ajv.compile(subSchema);
-            // console.log('Generating '+ magicId);
+            // console.log('Generating ' + magicId, it.baseId, subSchema);
           } else {
             // console.log('Using '+ magicId);
           }
@@ -208,9 +226,9 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           validatorPrep[identifierType] = () => {
             if (!ajv.identifierPropertiesCache[magicId]) {
               ajv.identifierPropertiesCache[magicId] = ajv.compile(identifierSchema);
-              console.log('Generating ' + identifierType);
+              //console.log('Generating ' + identifierType, identifierSchema);
             } else {
-              console.log('Using ' + identifierType);
+              //console.log('Using ' + identifierType);
             }
 
             return ajv.identifierPropertiesCache[magicId];
@@ -387,12 +405,19 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     console.log('Validating ' + definition.id);
 
-    const items = await db[definition.id].limit(5000).toArray();
+    const items = await db[definition.id].limit(50000).toArray();
     let nr = 0;
+    const allTime = Date.now();
+
+    const errorPromises = [];
+
+    let invalidCount = 0;
     for (const item of items) {
       this.progress(nr, items.length, `Validating ${items.length} items...`);
       const valid = validator(item);
+
       if (!valid) {
+        invalidCount += 1;
         // Fix stupid message
         if (validator.errors[0] && validator.errors[0].message === 'should NOT have additional properties') {
           validator.errors[0].message = 'Unexpected additional property found: ' + validator.errors[0].params.additionalProperty;
@@ -400,23 +425,30 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
         console.log(item[definition.primaryKey], item.comments, validator.errors[0]);
 
-        /*
-        await JdxDatabase.addError(args.project, {
+        errorPromises.push(JdxDatabase.addError(args.project, {
           message: validator.errors[0].message,
           path: null,
           type: definition.id,
           typeId: item[definition.primaryKey],
           severity: 'error',
           data: validator.errors[0],
-        });
-        this.sendResponse({errorsUpdate: true});
-        */
+        }));
       }
-      nr++;
+      nr += 1;
     }
 
     console.log('Done validating ' + definition.id);
     this.progress(items.length, items.length, `Validated ${items.length} items...`);
+    console.log('Validate cos ALL: ' + (Date.now() - allTime) + ' - avg ' + ((Date.now() - allTime) / items.length));
+    console.log('Invalid ' + invalidCount);
+
+    await Promise.all(errorPromises);
+    if (errorPromises.length > 0) {
+      this.sendResponse({errorsUpdate: true});
+    }
+
+    console.log('All errors added ');
+
 
     return true;
   }

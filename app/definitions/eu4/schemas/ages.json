@@ -102,6 +102,7 @@
                   ]
                 },
                 "rule": {
+                  "todo": "define this",
                   "type": "object"
                 },
                 "ai_will_do": {

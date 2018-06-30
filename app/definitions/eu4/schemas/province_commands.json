@@ -59,16 +59,28 @@
         },
 
         "ROOT": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
         "root": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
         "FROM": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
         "from": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
 
         "if" : {
@@ -134,6 +146,19 @@
       }
     },
     "province_commands_properties": {
+      "patternProperties": {
+        "^event_target:.*$": {
+          "todo": "Somehow determine which type of scope this is...",
+          "anyOf": [
+            {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            {
+              "$ref": "province_commands.json#/definitions/province_commands"
+            }
+          ]
+        }
+      },
       "properties": {
         "add_base_manpower": {
           "description": "Adds base manpower to the current province scope.",
@@ -155,11 +180,6 @@
           "$ref": "identifiers.json#/definitions/buildings",
           "version_added": "1.1"
         },
-        "add_building_construction": {
-          "description": "Starts building construction in the current province scope.\nNotes: cost and speed are a percentage of the base value, i.e. 0.5 is 50% of the base value.",
-          "version_added": "1.11",
-          "type": "object"
-        },
         "add_cardinal": {
           "description": "Adds a Cardinal to the current province scope, for the current owner.",
           "$ref": "special_values.json#/definitions/boolean",
@@ -167,7 +187,7 @@
         },
         "add_claim": {
           "description": "The defined scope gains a claim on the current province scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "add_colonysize": {
@@ -182,7 +202,7 @@
         },
         "add_core": {
           "description": "The defined scope gains a core on the current province scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "add_core_construction": {
@@ -205,11 +225,6 @@
           "$ref": "identifiers.json#/definitions/great_projects",
           "version_added": "1.6"
         },
-        "add_institution_embracement": {
-          "description": "Adds institution embracement progress for the defined institution in the current province scope.\nNotes: The defined institution must be enabled for the owner of the province first.",
-          "version_added": "1.18",
-          "type": "object"
-        },
         "add_local_autonomy": {
           "description": "Adds local autonomy to the current province scope.",
           "version_added": "1.8",
@@ -222,23 +237,13 @@
         },
         "add_permanent_claim": {
           "description": "The defined scope gains a permanent claim on the current province scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.14"
-        },
-        "add_permanent_province_modifier": {
-          "description": "Adds an event modifier to the current province scope as a province modifier.\nNotes: Modifiers added with this effect persist through ownership changes.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "add_prosperity": {
           "description": "Adds prosperity to the current province scope.",
           "version_added": "1.2",
           "type": "number"
-        },
-        "add_province_modifier": {
-          "description": "Adds an event modifier to the current province scope as a province modifier.\nNotes: Modifiers added with this effect are cleared automatically when the province changes ownership.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "add_province_triggered_modifier": {
           "description": "Adds a province triggered modifier to the current province scope.",
@@ -272,23 +277,13 @@
         },
         "add_territorial_core": {
           "description": "The defined scope gains a territorial core on the current province scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.18"
-        },
-        "add_trade_modifier": {
-          "description": "Adds a trade modifier for the defined country scope in the current tradenode province scope.\nNotes: Can be added to any province within a tradenode.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "add_trade_node_income": {
           "description": "Adds income to the current tradenode province scope.\nNotes: Only works when the current province scope is the location of a tradenode center.",
           "version_added": "1.1",
           "type": "number"
-        },
-        "add_unit_construction": {
-          "description": "Constructs the defined units in the current province scope.\nNotes: Possible types:infantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",
-          "version_added": "1.1",
-          "type": "object"
         },
         "add_unrest": {
           "description": "Adds Local Unrest to the current province scope.\nNotes: Appears under Base Unrest.",
@@ -297,7 +292,7 @@
         },
         "artillery": {
           "description": "Spawns an artillery unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected artillery unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "back_current_issue": {
@@ -350,17 +345,17 @@
         },
         "cavalry": {
           "description": "Spawns an cavalry unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected cavalry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "cede_province": {
           "description": "The defined scope gains ownership of the current province scope.\nNotes: previous_owner can be used to cede ownership to the last previous owner of a province.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "change_controller": {
           "description": "The defined scope gains control over the current province scope.\nNotes: Control here means occupation, not ownership.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "change_culture": {
@@ -396,7 +391,7 @@
           "version_added": "1.1",
           "anyOf": [
             {
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_province"
             },
             {
               "$ref": "special_values.json#/definitions/religion_or_contrast"
@@ -428,7 +423,7 @@
         },
         "cossack_cavalry": {
           "description": "Spawns an cossack cavalry unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected cavalry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.22"
         },
         "create_advisor": {
@@ -458,27 +453,22 @@
         },
         "discover_country": {
           "description": "The defined scope gains vision over the current province scope.\nNotes: Best used within areas, regions, etc to add vision.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
-        },
-        "extend_province_modifier": {
-          "description": "Extends the duration of an existing province modifier held by the current province scope.\nNotes: Modifiers added with this effect persist through ownership changes.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "galley": {
           "description": "Spawns an galley ship unit in the current province scope for the defined country scope.\nNotes: Uses the defined scope's current galley ship unit.\nRequires the current province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "heavy_ship": {
           "description": "Spawns an heavy ship unit in the current province scope for the defined country scope.\nNotes: Uses the defined scope's current heavy ship unit.\nRequires the current province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "infantry": {
           "description": "Spawns an infantry unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected infantry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "kill_leader": {
@@ -496,24 +486,19 @@
             }
           ]
         },
-        "kill_units": {
-          "description": "Kills units following the defined parameters in the current province scope.\nNotes: In the who parameter, you can use enemy, owner and controller.\nWhen used with no parameters, will kill all units within the current province scope.\nPossible types:\ninfantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",
-          "version_added": "1.12",
-          "type": "object"
-        },
         "light_ship": {
           "description": "Spawns an light ship unit in the current province scope for the defined country scope.\nNotes: Uses the defined scope's current light ship unit.\nRequires the current province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "mercenary_cavalry": {
           "description": "Spawns an mercenary cavalry unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected cavalry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.11"
         },
         "mercenary_infantry": {
           "description": "Spawns an mercenary infantry unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected infantry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.11"
         },
         "multiply_colonysize": {
@@ -521,14 +506,9 @@
           "version_added": "1.1",
           "type": "number"
         },
-        "province_event": {
-          "description": "Fire a province event for the current province scope. Appears for the owner of the province scope.\nNotes: You cannot fire the same event within itself.",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "recall_merchant": {
           "description": "Recalls a placed merchant in the current tradenode province scope.\nNotes: Only works when the current province scope is the location of a tradenode center.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "remove_building": {
@@ -543,23 +523,18 @@
         },
         "remove_claim": {
           "description": "The defined scope loses their claim on the current province scope.\nNotes: Works for both types of claims.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "remove_core": {
           "description": "The defined scope loses their core on the current province scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "remove_estate": {
           "description": "Removes an estate in the current province scope.\nNotes: Does not produce a tooltip.",
           "$ref": "identifiers.json#/definitions/estates",
           "version_added": "1.1"
-        },
-        "remove_loot": {
-          "description": "Removes loot from the current province scope and grants it to the defined country scope.\nNotes: The who parameter accepts enemy, which distributes the loot to all current enemies of the province owner.",
-          "version_added": "1.15",
-          "type": "object"
         },
         "remove_province_modifier": {
           "description": "Removes an already assigned province modifier from the current province scope.",
@@ -573,13 +548,8 @@
         },
         "remove_territorial_core": {
           "description": "The defined scope loses their territorial core on the current province scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.18"
-        },
-        "remove_trade_modifier": {
-          "description": "Removes a trade modifier for the defined country scope in the current tradenode province scope.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "rename_capital": {
           "description": "Changes the capital name of the current province scope to the defined name.\nNotes: The capital name is the second name that appears under the province name within the province window.",
@@ -616,26 +586,345 @@
           "$ref": "special_values.json#/definitions/boolean",
           "version_added": "1.12"
         },
-        "spawn_rebels": {
-          "description": "Spawns the defined rebels in the current province scope.\nNotes: Rebel types found in /Europa Universalis IV/common/rebel_types/*.txt.",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "streltsy_infantry": {
           "description": "Spawns an streltsy infantry unit in the current province scope for the defined country scope.\nNotes: Uses the currently selected infantry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.22"
         },
         "transport": {
           "description": "Spawns an transport ship unit in the current province scope for the defined country scope.\nNotes: Uses the defined scope's current transport ship unit.\nRequires the current province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "undiscover_country": {
           "description": "The defined scope loses vision over the current province scope.\nNotes: Best used within areas, regions, etc to remove vision.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
+        },
+
+
+        "add_building_construction": {
+          "description": "Starts building construction in the current province scope.\nNotes: cost and speed are a percentage of the base value, i.e. 0.5 is 50% of the base value.",
+          "version_added": "1.11",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "building": {
+              "description": "The building to construct.",
+              "$ref": "identifiers.json#/definitions/buildings"
+            },
+            "speed": {
+              "description": "The speed percentage of the base building speed to use.",
+              "type": "number"
+            },
+            "cost": {
+              "description": "The cost percentage of the base building cost to use.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "building",
+            "speed",
+            "cost"
+          ]
+        },
+        "add_institution_embracement": {
+          "description": "Adds institution embracement progress for the defined institution in the current province scope.\nNotes: The defined institution must be enabled for the owner of the province first.",
+          "version_added": "1.18",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "which": {
+              "description": "The institution to add to.",
+              "$ref": "identifiers.json#/definitions/institutions"
+            },
+            "value": {
+              "description": "The amount of embracement to add or subtract.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "which",
+            "value"
+          ]
+        },
+        "add_permanent_province_modifier": {
+          "description": "Adds an event modifier to the current province scope as a province modifier.\nNotes: Modifiers added with this effect persist through ownership changes.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "The event modifier to add.",
+              "$ref": "identifiers.json#/definitions/event_modifiers"
+            },
+            "duration": {
+              "description": "Optional. The number of days to add the province modifier for.",
+              "type": "number"
+            },
+            "hidden": {
+              "description": "Optional. Whether the province modifier is hidden in the province view.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "desc": {
+              "description": "Optional. The string used to override the automatic duration string.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "add_province_modifier": {
+          "description": "Adds an event modifier to the current province scope as a province modifier.\nNotes: Modifiers added with this effect are cleared automatically when the province changes ownership.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "The event modifier to add.",
+              "$ref": "identifiers.json#/definitions/event_modifiers"
+            },
+            "duration": {
+              "description": "Optional. The number of days to add the province modifier for.",
+              "type": "number"
+            },
+            "hidden": {
+              "description": "Optional. Whether the province modifier is hidden in the province view.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "desc": {
+              "description": "Optional. The string used to override the automatic duration string.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "add_trade_modifier": {
+          "description": "Adds a trade modifier for the defined country scope in the current tradenode province scope.\nNotes: Can be added to any province within a tradenode.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country scope that receives the modifier.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "duration": {
+              "description": "The duration of the modifier.",
+              "type": "number"
+            },
+            "power": {
+              "description": "The amount of trade power to add or subtract.",
+              "type": "number"
+            },
+            "key": {
+              "description": "The key to display as the modifier in the tooltip.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "who",
+            "duration",
+            "power",
+            "key"
+          ]
+        },
+        "add_unit_construction": {
+          "description": "Constructs the defined units in the current province scope.\nNotes: Possible types:infantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "description": "Which type of unit to build.",
+              "$ref": "special_values.json#/definitions/unit_type_or_unit"
+            },
+            "amount": {
+              "description": "The amount to build.",
+              "type": "number"
+            },
+            "speed": {
+              "description": "The speed percentage of the base unit construction speed to use.",
+              "type": "number"
+            },
+            "cost": {
+              "description": "The cost percentage of the base unit construction cost to use.",
+              "type": "number"
+            },
+            "mercenary": {
+              "description": "Optional. Makes the constructed units mercenaries.",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": [
+            "type",
+            "amount",
+            "speed",
+            "cost"
+          ]
+        },
+        "extend_province_modifier": {
+          "description": "Extends the duration of an existing province modifier held by the current province scope.\nNotes: Modifiers added with this effect persist through ownership changes.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "The event modifier to extend.",
+              "$ref": "identifiers.json#/definitions/event_modifiers"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "kill_units": {
+          "description": "Kills units following the defined parameters in the current province scope.\nNotes: In the who parameter, you can use enemy, owner and controller.\nWhen used with no parameters, will kill all units within the current province scope.\nPossible types:\ninfantry cavalry artillery heavy_ship light_ship galley transport <unit_name>",
+          "version_added": "1.12",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "Optional. Which country scopes should be affected.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "type": {
+              "description": "Optional. Which type of units that should be affected.",
+              "$ref": "special_values.json#/definitions/unit_type_or_unit"
+            },
+            "amount": {
+              "description": "Optional. The specific amount to kill.",
+              "type": "number"
+            }
+          }
+        },
+        "province_event": {
+          "description": "Fire a province event for the current province scope. Appears for the owner of the province scope.\nNotes: You cannot fire the same event within itself.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "description": "The event id to fire.",
+              "$ref": "identifiers.json#/definitions/country_events"
+            },
+            "days": {
+              "description": "Optional. The number of days to wait after the effect is executed to fire the event.",
+              "type": "number"
+            },
+            "random": {
+              "description": "Optional. The max number of additional days that can be added to the daysparameter for randomness.",
+              "type": "number"
+            },
+            "tooltip": {
+              "description": "Optional. The tooltip to display in the effect tooltip country_event is used in.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "remove_loot": {
+          "description": "Removes loot from the current province scope and grants it to the defined country scope.\nNotes: The who parameter accepts enemy, which distributes the loot to all current enemies of the province owner.",
+          "version_added": "1.15",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country scope that receives the loot.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "amount": {
+              "description": "The amount of loot to take.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "who",
+            "amount"
+          ]
+        },
+        "remove_trade_modifier": {
+          "description": "Removes a trade modifier for the defined country scope in the current tradenode province scope.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country scope that has the trade modifier.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "name": {
+              "description": "The trade modifier to remove.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "who",
+            "name"
+          ]
+        },
+        "spawn_rebels": {
+          "description": "Spawns the defined rebels in the current province scope.\nNotes: Rebel types found in /Europa Universalis IV/common/rebel_types/*.txt.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "description": "The size type to use.",
+              "$ref": "identifiers.json#/definitions/rebel_types"
+            },
+            "size": {
+              "description": "The size to use.",
+              "type": "number"
+            },
+            "culture": {
+              "description": "Optional. The culture the rebels belong to.",
+              "$ref": "special_values.json#/definitions/culture_or_scope"
+            },
+            "religion": {
+              "description": "Optional. The religion the rebels belong to.",
+              "$ref": "special_values.json#/definitions/religion_or_scope"
+            },
+            "unrest": {
+              "description": "Optional. Adds this amount of unrest to the province the rebels spawn in.",
+              "type": "number"
+            },
+            "win": {
+              "description": "Optional. Changes control of the province the rebels spawn in to the rebels.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "friend": {
+              "description": "Optional. Associate a country with the rebels.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "leader": {
+              "description": "Optional. Assigns the rebel leader a specific name. Can use set_saved_name.",
+              "type": "string"
+            },
+            "female": {
+              "description": "Optional. Makes the rebel leader female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "use_heir_as_leader": {
+              "description": "Optional. Makes the owner's heir the rebel leader. Removes heir.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "use_consort_as_leader": {
+              "description": "Optional. Makes the owner's consort the rebel leader. Removes consort.",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": [
+            "type",
+            "size"
+          ]
         }
+
       }
     },
     "identifier_keys": {
@@ -647,7 +936,7 @@
         },
         "units": {
           "description": "Spawns a specific unit in the current province scope for the defined country scope.\nNotes: Units can be found in /Europa Universalis IV/common/units/*.txt.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province",
           "version_added": "1.1"
         },
         "scripted_effects": {

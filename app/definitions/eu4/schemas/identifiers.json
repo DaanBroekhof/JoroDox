@@ -97,7 +97,8 @@
       "type": "string"
     },
     "government_mechanics": {
-      "type": "string"
+      "type": "string",
+      "todo": "hook up"
     },
     "governments": {
       "$identifierValue": "governments",
@@ -275,6 +276,12 @@
     "country_events": {
       "$identifierValue": "country_events",
       "type": ["string", "number"]
+    },
+    "localization_id": {
+      "type": "string"
+    },
+    "event_modifiers": {
+      "type": "string"
     }
   }
 }

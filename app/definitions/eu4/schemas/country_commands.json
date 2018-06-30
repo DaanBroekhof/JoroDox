@@ -59,16 +59,28 @@
         },
 
         "ROOT": {
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
         "root": {
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
         "FROM": {
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
         "from": {
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "anyOf": [
+            {"$ref": "country_commands.json#/definitions/country_commands"},
+            {"$ref": "province_commands.json#/definitions/province_commands"}
+          ]
         },
 
 
@@ -198,6 +210,19 @@
       }
     },
     "country_commands_properties": {
+      "patternProperties": {
+        "^event_target:.*$": {
+          "todo": "Somehow determine which type of scope this is...",
+          "anyOf": [
+            {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            {
+              "$ref": "province_commands.json#/definitions/province_commands"
+            }
+          ]
+        }
+      },
       "properties": {
         "add_core": {
           "description": "Add core to specific province id",
@@ -272,11 +297,6 @@
           "version_added": "1.1",
           "type": "number"
         },
-        "add_casus_belli": {
-          "description": "Adds a casus belli for the current scope against the defined scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "add_church_aspect": {
           "description": "Adds the defined aspect to the current scope.\nNotes: Church Aspects are found in /Europa Universalis IV/common/church_aspects/00_church_aspects.txt.\nNo effect if the country does not hold a religion using uses_church_power and the aspect set in aspects.\nDoes not work with Blessings.",
           "$ref": "identifiers.json#/definitions/church_aspects",
@@ -291,11 +311,6 @@
           "description": "Adds corruption to the current scope.",
           "version_added": "1.16",
           "type": "number"
-        },
-        "add_country_modifier": {
-          "description": "Adds an event modifier to the current scope as a country modifier.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "add_devotion": {
           "description": "Adds devotion to the current scope.\nNotes: No effect if not a government using has_devotion.",
@@ -312,55 +327,20 @@
           "version_added": "1.21",
           "type": "number"
         },
-        "add_disaster_modifier": {
-          "description": "Applies an event modifier to the current scope that is removed when the disaster is over, or the duration runs out.\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "add_disaster_progress": {
-          "description": "Adds progress towards an already declared (conditions for disaster are met since at least a month) disaster\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
-          "version_added": "1.16",
-          "type": "object"
-        },
         "add_doom": {
           "description": "Adds doom to the current scope. Used in Religious Reforms that use doom.\nNotes: No effect if the country does not hold a religion using doom.",
           "version_added": "1.1",
           "type": "number"
-        },
-        "add_estate_influence_modifier": {
-          "description": "Adds an influence modifier for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
-          "version_added": "1.14",
-          "type": "object"
-        },
-        "add_estate_loyalty": {
-          "description": "Adds loyalty for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
-          "version_added": "1.14",
-          "type": "object"
-        },
-        "add_estate_loyalty_modifier": {
-          "description": "Adds an loyalty modifier for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
-          "version_added": "1.14",
-          "type": "object"
         },
         "add_faction": {
           "description": "Adds a faction to the current scope.\nNotes: Factions are found in /Europa Universalis IV/common/factions/.",
           "$ref": "identifiers.json#/definitions/factions",
           "version_added": "1.1"
         },
-        "add_faction_influence": {
-          "description": "Adds influence for the defined faction.\nNotes: Mimics the influence boost from pressing the button in the faction window.",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "add_fervor": {
           "description": "Adds Fervor to the current scope.\nNotes: No effect if the country does not hold a religion using fervor.",
           "version_added": "1.6",
           "type": "number"
-        },
-        "add_government_power": {
-          "description": "Changes the pool size of one of the power pools within a government mechanic.\nNotes: List of government mechanics:\nrussian_mechanic feudal_theocracy_mechanic tribal_federation_mechanic mamluk_mechanic iqta_mechanic",
-          "version_added": "1.23",
-          "type": "object"
         },
         "add_harmonization_progress": {
           "description": "Adds Harmonization Progress for the current harmonization target to the current scope.\nNotes: No effect if the country does not hold a religion using uses_harmony.",
@@ -421,11 +401,6 @@
           "description": "Adds Imperial Influence for the current scope.\nNotes: No effect if not emperor.",
           "version_added": "1.1",
           "type": "number"
-        },
-        "add_incident_variable_value": {
-          "description": "Changes the value of an Incident for the current scope.\nNotes: Incidents are found in /Europa Universalis IV/common/isolationism/*.txt\nNo effect if the country does not hold a religion using uses_isolationism.",
-          "version_added": "1.2",
-          "type": "object"
         },
         "add_inflation": {
           "description": "Adds inflation to the current scope.",
@@ -497,11 +472,6 @@
           "version_added": "1.21",
           "type": "number"
         },
-        "add_opinion": {
-          "description": "Adds an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "add_papal_influence": {
           "description": "Adds Papal Influence to the current scope.\nNotes: No effect if the country does not hold a religion using papacy.",
           "version_added": "1.1",
@@ -537,11 +507,6 @@
           "version_added": "1.1",
           "type": "number"
         },
-        "add_ruler_modifier": {
-          "description": "Adds an event modifier to the current scope as a ruler modifier.\nNotes: Ruler modifiers are cleared when the ruler dies.",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "add_ruler_personality": {
           "description": "Adds the defined personality to the current ruler.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
           "$ref": "identifiers.json#/definitions/ruler_personalities",
@@ -567,16 +532,6 @@
           "version_added": "1.2",
           "type": "number"
         },
-        "add_spy_network_from": {
-          "description": "Adds spy network in the current scope for the defined scope.",
-          "version_added": "1.16",
-          "type": "object"
-        },
-        "add_spy_network_in": {
-          "description": "Adds spy network for the current scope in the defined scope.",
-          "version_added": "1.16",
-          "type": "object"
-        },
         "add_stability": {
           "description": "Adds stability to the current scope.",
           "version_added": "1.1",
@@ -601,11 +556,6 @@
           "description": "Creates a truce between the defined scope and the current scope.\nNotes: The truce length is the default white peace truce length.",
           "$ref": "special_values.json#/definitions/country_tag_or_scope",
           "version_added": "1.1"
-        },
-        "add_trust": {
-          "description": "Adds trust with the defined scope for the current scope.\nNotes: Used in conjuction with the Diplomatic Feedback mechanic from The Cossacks DLC.",
-          "version_added": "1.2",
-          "type": "object"
         },
         "add_war_exhaustion": {
           "description": "Adds war exhaustion to the current scope.",
@@ -696,11 +646,6 @@
           "description": "Changes the current personal deity for the current scope.\nNotes: Personal Deities are found in /Europa Universalis IV/common/personal_deities/*.txt.\nNo effect if the country does not hold a religion using personal_deity.",
           "$ref": "identifiers.json#/definitions/personal_deities",
           "version_added": "1.6"
-        },
-        "change_price": {
-          "description": "Changes the price of a trade good globally.\nNotes: Tradegood prices are found in /Europa Universalis IV/common/prices/*.txt\nThe new price is the base price + (base price * value)\nduration accepts -1 for unlimited duration.",
-          "version_added": "1.8",
-          "type": "object"
         },
         "change_primary_culture": {
           "description": "Changes the primary culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
@@ -815,19 +760,6 @@
           "$ref": "special_values.json#/definitions/boolean",
           "version_added": "1.8"
         },
-        "country_event": {
-          "description": "Fire a country event for the current country scope.\nNotes: You cannot fire the same event within itself.",
-          "version_added": "1.1",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "id": {"$ref": "identifiers.json#/definitions/country_events"},
-            "tooltip": {"type": "string"},
-            "random": {"type": "number"},
-            "days": {"type": "number"}
-          },
-          "required": ["id"]
-        },
         "create_admiral": {
           "description": "Generates an new admiral for the current scope.",
           "version_added": "1.1",
@@ -836,8 +768,7 @@
         "create_advisor": {
           "description": "Adds the defined advisor to the current scope.\nNotes: Defaults the advisor's location to the capital, and religion and culture to the current scope's.",
           "version_added": "1.1",
-          "$ref": "identifiers.json#/definitions/advisortypes",
-          "type": "object"
+          "$ref": "identifiers.json#/definitions/advisortypes"
         },
         "create_alliance": {
           "description": "Creates an alliance between the current scope and the defined scope.",
@@ -884,11 +815,6 @@
           "$ref": "special_values.json#/definitions/country_tag_or_scope",
           "version_added": "1.1"
         },
-        "create_subject": {
-          "description": "Makes the defined scope into the defined subject type under the current scope.\nNotes: Subject types are found in /Europa Universalis IV/common/subject_types/*.txt.",
-          "version_added": "1.2",
-          "type": "object"
-        },
         "create_union": {
           "description": "Makes the defined scope a junior partner in a personal union with the current scope.",
           "$ref": "special_values.json#/definitions/country_tag_or_scope",
@@ -908,71 +834,6 @@
           "description": "Creates a no casus belli war against the defined scope for the current scope.",
           "$ref": "special_values.json#/definitions/country_tag_or_scope",
           "version_added": "1.1"
-        },
-        "declare_war_with_cb": {
-          "description": "Declares war for the current scope against the defined scope, using the defined casus belli.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_admiral": {
-          "description": "Creates an admiral with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for admirals.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_advisor": {
-          "description": "Adds the defined advisor to the current scope.\nNotes: Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt\nCan utilise Event Scope Values for the culture and religionparameters.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_conquistador": {
-          "description": "Creates a conquistador with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_consort": {
-          "description": "Creates the defined consort for the current scope.\nNotes: The skill values are not rolled for consorts, meaning the values set are the exact values a consort gets.\nThe culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.18",
-          "type": "object"
-        },
-        "define_explorer": {
-          "description": "Creates an explorer with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for explorers.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_general": {
-          "description": "Creates a general with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_heir": {
-          "description": "Creates the defined heir for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "define_heir_to_general": {
-          "description": "Creates a general from the heir of the current scope.",
-          "version_added": "1.8",
-          "type": "object"
-        },
-        "define_leader_to_ruler": {
-          "description": "Creates a ruler from a leader for the current scope.",
-          "version_added": "1.12",
-          "type": "object"
-        },
-        "define_ruler": {
-          "description": "Creates the defined ruler for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
-          "version_added": "1.1",
-          "todo": "Empty array here means 'remove' ruler?",
-          "anyOf": [
-            {"type": "object"},
-            {"type": "array"}
-          ]
-
-        },
-        "define_ruler_to_general": {
-          "description": "Creates a general from the ruler for the current scope.",
-          "version_added": "1.8",
-          "type": "object"
         },
         "disband_rebels": {
           "description": "Disbands all active rebels of the specified type in the provinces of the current scope.\nNotes: Rebel types are found in /Europa Universalis IV/common/rebel_types/*.txt",
@@ -1106,11 +967,6 @@
           "$ref": "special_values.json#/definitions/boolean",
           "version_added": "1.1"
         },
-        "kill_leader": {
-          "description": "Kills a leader held by the current scope matching the type used.\nNotes: Possible types:general admiral conquistador explorer random <leader name>",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "kill_ruler": {
           "description": "Kills the ruler of the current scope.",
           "$ref": "special_values.json#/definitions/boolean",
@@ -1184,11 +1040,6 @@
             {"$ref": "special_values.json#/definitions/monarch_power_type"}
           ]
         },
-        "remove_casus_belli": {
-          "description": "Removes a casus belli held against the defined scope for the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "remove_church_aspect": {
           "description": "Removes the defined aspect from the current scope.\nNotes: Church Aspects are found in /Europa Universalis IV/common/church_aspects/00_church_aspects.txt.\nNo effect if the country does not have the aspect.\nDoes not work with Blessings.",
           "$ref": "identifiers.json#/definitions/church_aspects",
@@ -1244,11 +1095,6 @@
           "$ref": "identifiers.json#/definitions/idea_groups",
           "version_added": "1.6"
         },
-        "remove_opinion": {
-          "description": "Removes an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "remove_queen_personality": {
           "description": "Removes the defined personality from the current consort.\nNotes: Ruler personalities are found in /Europa Universalis IV/common/ruler_personalities/00_core.txt",
           "$ref": "identifiers.json#/definitions/ruler_personalities",
@@ -1264,26 +1110,6 @@
           "$ref": "identifiers.json#/definitions/ruler_personalities",
           "version_added": "1.18"
         },
-        "reverse_add_casus_belli": {
-          "description": "Adds a casus belli against the current scope for the defined scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "reverse_add_opinion": {
-          "description": "Adds an opinion modifier for the defined scope held against the current scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "reverse_remove_casus_belli": {
-          "description": "Removes a casus belli held by the defined scope against the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "reverse_remove_opinion": {
-          "description": "Removes an opinion modifier for the defined scope held against the current scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
-          "version_added": "1.1",
-          "type": "object"
-        },
         "revoke_reform": {
           "description": "Removes an Imperial Reform.\nNotes: Imperial Reforms are found in /Europa Universalis IV/common/imperial_reforms/00_hre.txt.",
           "$ref": "identifiers.json#/definitions/religious_reforms",
@@ -1298,16 +1124,6 @@
           "description": "Saves the current scope as a key. Persists after execution until cleared via effect.\nNotes: Use event_target:<key> to access the scope.",
           "version_added": "1.8",
           "type": "string"
-        },
-        "set_ai_attitude": {
-          "description": "Makes the current scope (if AI) have the defined attitude against the defined scope.\nNotes: AI attitudes are found in /Europa Universalis IV/common/ai_attitudes/00_ai_attitudes.txt.",
-          "version_added": "1.1",
-          "type": "object"
-        },
-        "set_ai_personality": {
-          "description": "Makes the current scope (if AI) the defined personality.\nNotes: AI personalities are found in /Europa Universalis IV/common/ai_personalities/00_ai_personalities.txt.",
-          "version_added": "1.1",
-          "type": "object"
         },
         "set_allow_female_emperor": {
           "description": "Enables female rulers to become emperor.",
@@ -1354,11 +1170,6 @@
           "description": "Defines a global flag.\nNotes: Flags can be appended with scopes or event targets",
           "$ref": "special_values.json#/definitions/flag_name",
           "version_added": "1.1"
-        },
-        "set_government_and_rank": {
-          "description": "Changes the current scope's government and rank at the same time.\nNotes: Governments are found in /Europa Universalis IV/common/governments/*.txt.\nWill respect that governments have fixed ranks and the maximum ranks for subject types.",
-          "version_added": "1.22",
-          "type": "object"
         },
         "set_government_rank": {
           "description": "Changes the government rank of the current scope.\nNotes: Default range is 1 to 3.",
@@ -1415,11 +1226,6 @@
           "description": "Places the current scope and all owned provinces (if valid) in the empire.",
           "$ref": "special_values.json#/definitions/boolean",
           "version_added": "1.12"
-        },
-        "set_incident_variable_value": {
-          "description": "Sets the value of an Incident for the current scope.\nNotes: Incidents are found in /Europa Universalis IV/common/isolationism/*.txt\nNo effect if the country does not hold a religion using uses_isolationism.",
-          "version_added": "1.2",
-          "type": "object"
         },
         "set_isolationism": {
           "description": "Sets Isolationism for the current scope.\nNotes: No effect if the country does not hold a religion using uses_isolationism.",
@@ -1485,16 +1291,6 @@
           ],
           "version_added": "1.23"
         },
-        "set_saved_name": {
-          "description": "Saves a name to an unique key for usage in other effects.\nNotes: Usable with define_admiral, define_explorer, define_conquistador, define_general, define_ruler, define_consort, define_heir, define_advisor and spawn_rebels.",
-          "version_added": "1.23",
-          "type": "object"
-        },
-        "set_school_opinion": {
-          "description": "Changes the current scope's school opinion towards the defined scope's school.\nNotes: -1 for negative, 0 for netural and 1 for positive.",
-          "version_added": "1.23",
-          "type": "object"
-        },
         "show_ambient_object": {
           "description": "Displays a hidden ambient object from the map/ambient_objects.txt file.",
           "version_added": "1.19",
@@ -1529,7 +1325,1284 @@
           "description": "Forces the defined scope into a white peace truce with the current scope.",
           "$ref": "special_values.json#/definitions/country_tag_or_scope",
           "version_added": "1.1"
+        },
+
+
+
+        "add_casus_belli": {
+          "description": "Adds a casus belli for the current scope against the defined scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "target": {
+              "description": "The country to add the casus belli against.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "type": {
+              "description": "The casus belli to add.",
+              "$ref": "identifiers.json#/definitions/cb_types"
+            },
+            "months": {
+              "description": "The number of months the casus belli lasts for.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "target",
+            "type",
+            "months"
+          ]
+        },
+        "add_country_modifier": {
+          "description": "Adds an event modifier to the current scope as a country modifier.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "The event modifier to add.",
+              "$ref": "identifiers.json#/definitions/event_modifiers"
+            },
+            "duration": {
+              "description": "Optional. The number of days to add the country modifier for.",
+              "type": "number"
+            },
+            "hidden": {
+              "description": "Optional. Whether the country modifier is hidden in the government view.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "desc": {
+              "description": "Optional. The string used to override the automatic duration string.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "add_disaster_modifier": {
+          "description": "Applies an event modifier to the current scope that is removed when the disaster is over, or the duration runs out.\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "The event modifier to add.",
+              "$ref": "identifiers.json#/definitions/modifiers"
+            },
+            "disaster": {
+              "description": "The disaster to apply the modifier to.",
+              "$ref": "identifiers.json#/definitions/disasters"
+            },
+            "duration": {
+              "description": "The duration for the modifier to be active for.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "name",
+            "disaster",
+            "duration"
+          ]
+        },
+        "add_disaster_progress": {
+          "description": "Adds progress towards an already declared (conditions for disaster are met since at least a month) disaster\nNotes: Disasters are found in /Europa Universalis IV/common/disasters/*.txt",
+          "version_added": "1.16",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "disaster": {
+              "description": "The disaster to alter.",
+              "$ref": "identifiers.json#/definitions/disasters"
+            },
+            "value": {
+              "description": "The amount of progress to add or subtract.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "disaster",
+            "value"
+          ]
+        },
+        "add_estate_influence_modifier": {
+          "description": "Adds an influence modifier for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
+          "version_added": "1.14",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {
+              "description": "The estate to apply the modifier to.",
+              "$ref": "identifiers.json#/definitions/estates"
+            },
+            "desc": {
+              "description": "The text to display in the Influence tooltip for this modifier.",
+              "type": "string"
+            },
+            "influence": {
+              "description": "The amount of influence to add or subtract.",
+              "type": "number"
+            },
+            "duration": {
+              "description": "The duration for which this modifier is active.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "estate",
+            "desc",
+            "influence",
+            "duration"
+          ]
+        },
+        "add_estate_loyalty": {
+          "description": "Adds loyalty for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
+          "version_added": "1.14",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {
+              "description": "The estate to apply the loyalty to.",
+              "$ref": "identifiers.json#/definitions/estates"
+            },
+            "loyalty": {
+              "description": "The amount of loyalty to add or subtract.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "estate",
+            "loyalty"
+          ]
+        },
+        "add_estate_loyalty_modifier": {
+          "description": "Adds an loyalty modifier for the defined estate used by the current scope.\nNotes: Estates are found in /Europa Universalis IV/common/estates/*.txt",
+          "version_added": "1.14",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "estate": {
+              "description": "The estate to apply the modifier to.",
+              "$ref": "identifiers.json#/definitions/estates"
+            },
+            "desc": {
+              "description": "The text to display in the Influence tooltip for this modifier.",
+              "type": "string"
+            },
+            "loyalty": {
+              "description": "The amount of loyalty to add or subtract.",
+              "type": "number"
+            },
+            "duration": {
+              "description": "The duration for which this modifier is active.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "estate",
+            "desc",
+            "loyalty",
+            "duration"
+          ]
+        },
+        "add_faction_influence": {
+          "description": "Adds influence for the defined faction.\nNotes: Mimics the influence boost from pressing the button in the faction window.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "faction": {
+              "description": "The faction to add influence to.",
+              "$ref": "identifiers.json#/definitions/factions"
+            },
+            "influence": {
+              "description": "The amount of influence to add.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "faction",
+            "influence"
+          ]
+        },
+        "add_government_power": {
+          "description": "Changes the pool size of one of the power pools within a government mechanic.\nNotes: List of government mechanics:\nrussian_mechanic feudal_theocracy_mechanic tribal_federation_mechanic mamluk_mechanic iqta_mechanic",
+          "version_added": "1.23",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "government_mechanic": {
+              "description": "Which government mechanic to add power to.",
+              "$ref": "identifiers.json#/definitions/government_mechanics"
+            },
+            "which": {
+              "description": "Which pool type to add the power to. ADM, DIP or MIL",
+              "$ref": "special_values.json#/definitions/monarch_power_type"
+            },
+            "amount": {
+              "description": "The amount of power to add.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "government_mechanic",
+            "which",
+            "amount"
+          ]
+        },
+        "add_incident_variable_value": {
+          "description": "Changes the value of an Incident for the current scope.\nNotes: Incidents are found in /Europa Universalis IV/common/isolationism/*.txt\nNo effect if the country does not hold a religion using uses_isolationism.",
+          "version_added": "1.2",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "incident": {
+              "description": "The incident to change.",
+              "$ref": "identifiers.json#/definitions/incidents"
+            },
+            "value": {
+              "description": "The amount to add to the incident variable.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "incident",
+            "value"
+          ]
+        },
+        "add_opinion": {
+          "description": "Adds an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country the opinion modifier is for.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "modifier": {
+              "description": "The opinion modifier to use.",
+              "$ref": "identifiers.json#/definitions/modifiers"
+            },
+            "years": {
+              "description": "Optional. Whether the modifier expires after a set amount of years.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "who",
+            "modifier"
+          ]
+        },
+        "add_ruler_modifier": {
+          "description": "Adds an event modifier to the current scope as a ruler modifier.\nNotes: Ruler modifiers are cleared when the ruler dies.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "The event modifier to add.",
+              "$ref": "identifiers.json#/definitions/event_modifiers"
+            },
+            "duration": {
+              "description": "Optional. The number of days to add the ruler modifier for.",
+              "type": "number"
+            },
+            "hidden": {
+              "description": "Optional. Whether the ruler modifier is hidden in the government view.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "desc": {
+              "description": "Optional. The string used to override the automatic duration string.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "add_spy_network_from": {
+          "description": "Adds spy network in the current scope for the defined scope.",
+          "version_added": "1.16",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country to add spy network for.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "value": {
+              "description": "The amount of spy network to add or subtract.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "who",
+            "value"
+          ]
+        },
+        "add_spy_network_in": {
+          "description": "Adds spy network for the current scope in the defined scope.",
+          "version_added": "1.16",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country to add spy network in.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "value": {
+              "description": "The amount of spy network to add or subtract.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "who",
+            "value"
+          ]
+        },
+        "add_trust": {
+          "description": "Adds trust with the defined scope for the current scope.\nNotes: Used in conjuction with the Diplomatic Feedback mechanic from The Cossacks DLC.",
+          "version_added": "1.2",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country trust will be added with.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "value": {
+              "description": "The amount of trust to add or subtract.",
+              "type": "number"
+            },
+            "mutual": {
+              "description": "Optional. Whether to apply the trust change to both countries.",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": [
+            "who",
+            "value"
+          ]
+        },
+        "change_price": {
+          "description": "Changes the price of a trade good globally.\nNotes: Tradegood prices are found in /Europa Universalis IV/common/prices/*.txt\nThe new price is the base price + (base price * value)\nduration accepts -1 for unlimited duration.",
+          "version_added": "1.8",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "trade_goods": {
+              "description": "The trade good to change.",
+              "$ref": "identifiers.json#/definitions/tradegoods"
+            },
+            "key": {
+              "description": "The localisation key to display in the Trade Good's price tooltip.",
+              "type": "string"
+            },
+            "value": {
+              "description": "The percentage to change the value by.",
+              "type": "number"
+            },
+            "duration": {
+              "description": "The duration for the value to stay changed for.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "trade_goods",
+            "key",
+            "value",
+            "duration"
+          ]
+        },
+        "country_event": {
+          "description": "Fire a country event for the current country scope.\nNotes: You cannot fire the same event within itself.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "description": "The event id to fire.",
+              "$ref": "identifiers.json#/definitions/country_events"
+            },
+            "days": {
+              "description": "Optional. The number of days to wait after the effect is executed to fire the event.",
+              "type": "number"
+            },
+            "random": {
+              "description": "Optional. The max number of additional days that can be added to the daysparameter for randomness.",
+              "type": "number"
+            },
+            "tooltip": {
+              "description": "Optional. The tooltip to display in the effect tooltip country_event is used in.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "create_subject": {
+          "description": "Makes the defined scope into the defined subject type under the current scope.\nNotes: Subject types are found in /Europa Universalis IV/common/subject_types/*.txt.",
+          "version_added": "1.2",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "subject_type": {
+              "description": "The subject type to use.",
+              "$ref": "identifiers.json#/definitions/subject_types"
+            },
+            "subject": {
+              "description": "The scope to make the subject.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            }
+          },
+          "required": [
+            "subject_type",
+            "subject"
+          ]
+        },
+        "declare_war_with_cb": {
+          "description": "Declares war for the current scope against the defined scope, using the defined casus belli.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country declared against.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "casus_belli": {
+              "description": "The casus belli to use.",
+              "$ref": "identifiers.json#/definitions/cb_types"
+            },
+            "war_goal_province": {
+              "description": "Optional. Defines the province the war was declared for, if required by the casus belli.",
+              "$ref": "special_values.json#/definitions/province_id_or_scope"
+            }
+          },
+          "required": [
+            "who",
+            "casus_belli"
+          ]
+        },
+        "define_admiral": {
+          "description": "Creates an admiral with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for admirals.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shock": {
+              "description": "The shock pips of the leader.",
+              "type": "number"
+            },
+            "fire": {
+              "description": "The fire pips of the leader.",
+              "type": "number"
+            },
+            "manuever": {
+              "description": "The manuever pips of the leader.",
+              "type": "number"
+            },
+            "siege": {
+              "description": "The siege pips of the leader.",
+              "type": "number"
+            },
+            "name": {
+              "description": "Optional. The name of the leader.",
+              "type": "string"
+            },
+            "female": {
+              "description": "Optional. Makes the leader female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "trait": {
+              "description": "Optional. A trait automatically assigned to the leader.",
+              "$ref": "identifiers.json#/definitions/leader_personalities"
+            }
+          },
+          "required": [
+            "shock",
+            "fire",
+            "manuever"
+          ]
+        },
+        "define_advisor": {
+          "description": "Adds the defined advisor to the current scope.\nNotes: Advisor types are found in /Europa Universalis IV/common/advisortypes/*.txt\nCan utilise Event Scope Values for the culture and religionparameters.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "description": "The advisor type to create.",
+              "$ref": "identifiers.json#/definitions/advisortypes"
+            },
+            "skill": {
+              "description": "The amount of skill the advisor has. Limited to 3 maximum.",
+              "type": "number"
+            },
+            "name": {
+              "description": "Optional. The name to use.",
+              "type": "string"
+            },
+            "location": {
+              "description": "Optional. The province that the advisor comes from.",
+              "$ref": "special_values.json#/definitions/province_id_or_scope"
+            },
+            "discount": {
+              "description": "Optional. If the SCRIPTED_ADVISOR_DISCOUNT cost reduction applies to this advisor.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "female": {
+              "description": "Optional. Makes this advisor female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "culture": {
+              "description": "Optional. The culture of this advisor.",
+              "$ref": "special_values.json#/definitions/culture_or_scope"
+            },
+            "religion": {
+              "description": "Optional. The religion of this advisor.",
+              "$ref": "special_values.json#/definitions/religion_or_scope"
+            }
+          },
+          "required": [
+            "type",
+            "skill"
+          ]
+        },
+        "define_conquistador": {
+          "description": "Creates a conquistador with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shock": {
+              "description": "The shock pips of the leader.",
+              "type": "number"
+            },
+            "fire": {
+              "description": "The fire pips of the leader.",
+              "type": "number"
+            },
+            "manuever": {
+              "description": "The manuever pips of the leader.",
+              "type": "number"
+            },
+            "siege": {
+              "description": "The siege pips of the leader.",
+              "type": "number"
+            },
+            "name": {
+              "description": "Optional. The name of the leader.",
+              "type": "string"
+            },
+            "female": {
+              "description": "Optional. Makes the leader female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "trait": {
+              "description": "Optional. A trait automatically assigned to the leader.",
+              "$ref": "identifiers.json#/definitions/leader_personalities"
+            }
+          },
+          "required": [
+            "shock",
+            "fire",
+            "manuever",
+            "siege"
+          ]
+        },
+        "define_consort": {
+          "description": "Creates the defined consort for the current scope.\nNotes: The skill values are not rolled for consorts, meaning the values set are the exact values a consort gets.\nThe culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.18",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "Optional. The name of the consort.",
+              "type": "string"
+            },
+            "country_of_origin": {
+              "description": "Optional. The origin country of the consort.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "dynasty": {
+              "description": "Optional. The dynasty of the consort.",
+              "$ref": "special_values.json#/definitions/dynasty_or_scope"
+            },
+            "age": {
+              "description": "Optional. The age of the consort.",
+              "type": "number"
+            },
+            "adm": {
+              "description": "Optional. The ADM skill for the consort.",
+              "type": "number"
+            },
+            "dip": {
+              "description": "Optional. The DIP skill for the consort.",
+              "type": "number"
+            },
+            "mil": {
+              "description": "Optional. The MIL skill for the consort.",
+              "type": "number"
+            },
+            "female": {
+              "description": "Optional. Forces the consort to be female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "male": {
+              "description": "Optional. Forces the consort to be male.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "culture": {
+              "description": "Optional. The culture of the consort.",
+              "$ref": "special_values.json#/definitions/culture_or_scope"
+            },
+            "religion": {
+              "description": "Optional. The religion of the consort.",
+              "$ref": "special_values.json#/definitions/religion_or_scope"
+            }
+          }
+        },
+        "define_explorer": {
+          "description": "Creates an explorer with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for explorers.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shock": {
+              "description": "The shock pips of the leader.",
+              "type": "number"
+            },
+            "fire": {
+              "description": "The fire pips of the leader.",
+              "type": "number"
+            },
+            "manuever": {
+              "description": "The manuever pips of the leader.",
+              "type": "number"
+            },
+            "siege": {
+              "description": "The siege pips of the leader.",
+              "type": "number"
+            },
+            "name": {
+              "description": "Optional. The name of the leader.",
+              "type": "string"
+            },
+            "female": {
+              "description": "Optional. Makes the leader female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "trait": {
+              "description": "Optional. A trait automatically assigned to the leader.",
+              "$ref": "identifiers.json#/definitions/leader_personalities"
+            }
+          },
+          "required": [
+            "shock",
+            "fire",
+            "manuever",
+            "siege"
+          ]
+        },
+        "define_general": {
+          "description": "Creates a general with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shock": {
+              "description": "The shock pips of the leader.",
+              "type": "number"
+            },
+            "fire": {
+              "description": "The fire pips of the leader.",
+              "type": "number"
+            },
+            "manuever": {
+              "description": "The manuever pips of the leader.",
+              "type": "number"
+            },
+            "siege": {
+              "description": "The siege pips of the leader.",
+              "type": "number"
+            },
+            "name": {
+              "description": "Optional. The name of the leader.",
+              "type": "string"
+            },
+            "female": {
+              "description": "Optional. Makes the leader female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "trait": {
+              "description": "Optional. A trait automatically assigned to the leader.",
+              "$ref": "identifiers.json#/definitions/leader_personalities"
+            }
+          },
+          "required": [
+            "shock",
+            "fire",
+            "manuever",
+            "siege"
+          ]
+        },
+        "define_heir": {
+          "description": "Creates the defined heir for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "Optional. The name of the heir.",
+              "type": "string"
+            },
+            "dynasty": {
+              "description": "Optional. The dynasty of the heir.",
+              "$ref": "special_values.json#/definitions/dynasty_or_scope"
+            },
+            "age": {
+              "description": "Optional. The age of the heir.",
+              "type": "number"
+            },
+            "birth_date": {
+              "description": "Optional. The birth date of the heir. Can be used instead of the ageparameter.",
+              "$ref": "special_values.json#/definitions/date"
+            },
+            "claim": {
+              "description": "Optional. The starting legitimacy of the heir.",
+              "type": "number"
+            },
+            "adm": {
+              "description": "Optional. The minimum ADM skill roll for the heir.",
+              "type": "number"
+            },
+            "dip": {
+              "description": "Optional. The minimum DIP skill roll for the heir.",
+              "type": "number"
+            },
+            "mil": {
+              "description": "Optional. The minimum MIL skill roll for the heir.",
+              "type": "number"
+            },
+            "fixed": {
+              "description": "Optional. Makes the heir skill roll fixed to the defined minimums.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "max_random_adm": {
+              "description": "Optional. The maximum ADM skill roll for the heir.",
+              "type": "number"
+            },
+            "max_random_dip": {
+              "description": "Optional. The maximum DIP skill roll for the heir.",
+              "type": "number"
+            },
+            "max_random_mil": {
+              "description": "Optional. The maximum MIL skill roll for the heir.",
+              "type": "number"
+            },
+            "bastardfemale": {
+              "description": "Optional. Forces the heir to be female.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "male": {
+              "description": "Optional. Forces the heir to be male.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "culture": {
+              "description": "Optional. The culture of the heir.",
+              "$ref": "special_values.json#/definitions/culture_or_scope"
+            },
+            "religion": {
+              "description": "Optional. The religion of the heir.",
+              "$ref": "special_values.json#/definitions/religion_or_scope"
+            }
+          }
+        },
+        "define_heir_to_general": {
+          "description": "Creates a general from the heir of the current scope.",
+          "version_added": "1.8",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shock": {
+              "description": "The shock pips of the leader.",
+              "type": "number"
+            },
+            "fire": {
+              "description": "The fire pips of the leader.",
+              "type": "number"
+            },
+            "manuever": {
+              "description": "The manuever pips of the leader.",
+              "type": "number"
+            },
+            "siege": {
+              "description": "The siege pips of the leader.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "shock",
+            "fire",
+            "manuever",
+            "siege"
+          ]
+        },
+        "define_leader_to_ruler": {
+          "description": "Creates a ruler from a leader for the current scope.",
+          "version_added": "1.12",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "description": "The leader type to pick a leader from.",
+              "$ref": "special_values.json#/definitions/leader_types"
+            },
+            "name": {
+              "description": "The specific leader to use. Used instead of the type parameter.",
+              "type": "string"
+            },
+            "claim": {
+              "description": "Optional. The starting legitimacy of the ruler.",
+              "type": "number"
+            },
+            "adm": {
+              "description": "Optional. The minimum ADM skill roll for the ruler.",
+              "type": "number"
+            },
+            "dip": {
+              "description": "Optional. The minimum DIP skill roll for the ruler.",
+              "type": "number"
+            },
+            "mil": {
+              "description": "Optional. The minimum MIL skill roll for the ruler.",
+              "type": "number"
+            },
+            "fixed": {
+              "description": "Optional. Makes the ruler skill roll fixed to the defined minimums.",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": [
+            "type",
+            "name"
+          ]
+        },
+        "define_ruler": {
+          "description": "Creates the defined ruler for the current scope.\nNotes: The culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
+          "version_added": "1.1",
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "description": "Optional. The name of the ruler.",
+                  "type": "string"
+                },
+                "dynasty": {
+                  "description": "Optional. The dynasty of the ruler.",
+                  "$ref": "special_values.json#/definitions/dynasty_or_scope"
+                },
+                "age": {
+                  "description": "Optional. The age of the ruler.",
+                  "type": "number"
+                },
+                "claim": {
+                  "description": "Optional. The starting legitimacy of the ruler.",
+                  "type": "number"
+                },
+                "adm": {
+                  "description": "Optional. The minimum ADM skill roll for the ruler.",
+                  "type": "number"
+                },
+                "dip": {
+                  "description": "Optional. The minimum DIP skill roll for the ruler.",
+                  "type": "number"
+                },
+                "mil": {
+                  "description": "Optional. The minimum MIL skill roll for the ruler.",
+                  "type": "number"
+                },
+                "ADM": {
+                  "description": "Optional. The minimum ADM skill roll for the ruler.",
+                  "type": "number"
+                },
+                "DIP": {
+                  "description": "Optional. The minimum DIP skill roll for the ruler.",
+                  "type": "number"
+                },
+                "MIL": {
+                  "description": "Optional. The minimum MIL skill roll for the ruler.",
+                  "type": "number"
+                },
+                "fixed": {
+                  "description": "Optional. Makes the ruler skill roll fixed to the defined minimums.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "max_random_adm": {
+                  "description": "Optional. The maximum ADM skill roll for the ruler.",
+                  "type": "number"
+                },
+                "max_random_dip": {
+                  "description": "Optional. The maximum DIP skill roll for the ruler.",
+                  "type": "number"
+                },
+                "max_random_mil": {
+                  "description": "Optional. The maximum MIL skill roll for the ruler.",
+                  "type": "number"
+                },
+                "hide_skills": {
+                  "description": "Optional. Hides the skill values for this ruler.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "regency": {
+                  "description": "Optional. Makes this ruler as a regent.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "attach_leader": {
+                  "description": "Optional. The name of the leader to generate with the ruler.",
+                  "type": "string"
+                },
+                "female": {
+                  "description": "Optional. Forces the ruler to be female.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "male": {
+                  "description": "Optional. Forces the ruler to be male.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "culture": {
+                  "description": "Optional. The culture of the ruler.",
+                  "$ref": "special_values.json#/definitions/culture_or_scope"
+                },
+                "religion": {
+                  "description": "Optional. The religion of the ruler.",
+                  "$ref": "special_values.json#/definitions/religion_or_scope"
+                }
+              }
+            },
+            {
+              "description": "Clear our ruler.",
+              "type": "array"
+            }
+          ]
+        },
+        "define_ruler_to_general": {
+          "description": "Creates a general from the ruler for the current scope.",
+          "version_added": "1.8",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shock": {
+              "description": "The shock pips of the leader.",
+              "type": "number"
+            },
+            "fire": {
+              "description": "The fire pips of the leader.",
+              "type": "number"
+            },
+            "manuever": {
+              "description": "The manuever pips of the leader.",
+              "type": "number"
+            },
+            "siege": {
+              "description": "The siege pips of the leader.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "shock",
+            "fire",
+            "manuever",
+            "siege"
+          ]
+        },
+        "kill_leader": {
+          "description": "Kills a leader held by the current scope matching the type used.\nNotes: Possible types:general admiral conquistador explorer random <leader name>",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "description": "The leader type to kill. name is the specific leader name to target.",
+              "anyOf": [
+                {"$ref": "special_values.json#/definitions/leader_types"},
+                {"$ref": "special_values.json#/definitions/leader_name"}
+              ]
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "remove_casus_belli": {
+          "description": "Removes a casus belli held against the defined scope for the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "target": {
+              "description": "The country the casus belli is against.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "type": {
+              "description": "The casus belli to remove.",
+              "$ref": "identifiers.json#/definitions/cb_types"
+            }
+          },
+          "required": [
+            "target",
+            "type"
+          ]
+        },
+        "remove_opinion": {
+          "description": "Removes an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country the opinion modifier is held against.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "modifier": {
+              "description": "The opinion modifier to use.",
+              "$ref": "identifiers.json#/definitions/modifiers"
+            }
+          },
+          "required": [
+            "who",
+            "modifier"
+          ]
+        },
+        "reverse_add_casus_belli": {
+          "description": "Adds a casus belli against the current scope for the defined scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "target": {
+              "description": "The country to that gains the casus belli.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "type": {
+              "description": "The casus belli to add.",
+              "$ref": "identifiers.json#/definitions/cb_types"
+            },
+            "months": {
+              "description": "The number of months the casus belli lasts for.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "target",
+            "type",
+            "months"
+          ]
+        },
+        "reverse_add_opinion": {
+          "description": "Adds an opinion modifier for the defined scope held against the current scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country the opinion modifier is added to.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "modifier": {
+              "description": "The opinion modifier to use.",
+              "$ref": "identifiers.json#/definitions/modifiers"
+            },
+            "years": {
+              "description": "Optional. Whether the modifier expires after a set amount of years.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "who",
+            "modifier"
+          ]
+        },
+        "reverse_remove_casus_belli": {
+          "description": "Removes a casus belli held by the defined scope against the current scope.\nNotes: Casus belli are found in /Europa Universalis IV/common/cb_types/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "target": {
+              "description": "The country that holds the casus belli.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "type": {
+              "description": "The casus belli to remove.",
+              "$ref": "identifiers.json#/definitions/cb_types"
+            }
+          },
+          "required": [
+            "target",
+            "type"
+          ]
+        },
+        "reverse_remove_opinion": {
+          "description": "Removes an opinion modifier for the defined scope held against the current scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "The country the opinion modifier holds.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "modifier": {
+              "description": "The opinion modifier to use.",
+              "$ref": "identifiers.json#/definitions/modifiers"
+            }
+          },
+          "required": [
+            "who",
+            "modifier"
+          ]
+        },
+        "set_ai_attitude": {
+          "description": "Makes the current scope (if AI) have the defined attitude against the defined scope.\nNotes: AI attitudes are found in /Europa Universalis IV/common/ai_attitudes/00_ai_attitudes.txt.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "attitude": {
+              "description": "The attitude to use.",
+              "$ref": "special_values.json#/definitions/ai_attitudes"
+            },
+            "who": {
+              "description": "Who the attitude is directed against.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "locked": {
+              "description": "Whether the attitude can be re-evaluated and changed.",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": [
+            "attitude",
+            "who",
+            "locked"
+          ]
+        },
+        "set_ai_personality": {
+          "description": "Makes the current scope (if AI) the defined personality.\nNotes: AI personalities are found in /Europa Universalis IV/common/ai_personalities/00_ai_personalities.txt.",
+          "version_added": "1.1",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "personality": {
+              "description": "The personality to use.",
+              "$ref": "special_values.json#/definitions/ai_attitudes"
+            },
+            "locked": {
+              "description": "Whether the personality can be re-evaluated and changed.",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          },
+          "required": [
+            "personality",
+            "locked"
+          ]
+        },
+        "set_government_and_rank": {
+          "description": "Changes the current scope's government and rank at the same time.\nNotes: Governments are found in /Europa Universalis IV/common/governments/*.txt.\nWill respect that governments have fixed ranks and the maximum ranks for subject types.",
+          "version_added": "1.22",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "government": {
+              "description": "The government to change to.",
+              "$ref": "identifiers.json#/definitions/governments"
+            },
+            "rank": {
+              "description": "The rank to change to.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "government",
+            "rank"
+          ]
+        },
+        "set_incident_variable_value": {
+          "description": "Sets the value of an Incident for the current scope.\nNotes: Incidents are found in /Europa Universalis IV/common/isolationism/*.txt\nNo effect if the country does not hold a religion using uses_isolationism.",
+          "version_added": "1.2",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "incident": {
+              "description": "The incident to change.",
+              "$ref": "identifiers.json#/definitions/incidents"
+            },
+            "value": {
+              "description": "The amount to set the incident variable to.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "incident",
+            "value"
+          ]
+        },
+        "set_saved_name": {
+          "description": "Saves a name to an unique key for usage in other effects.\nNotes: Usable with define_admiral, define_explorer, define_conquistador, define_general, define_ruler, define_consort, define_heir, define_advisor and spawn_rebels.",
+          "version_added": "1.23",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "description": "The key that holds the name.",
+              "type": "string"
+            },
+            "type": {
+              "description": "The name generation type. Advisor draws from namelist, simple utilises name parameter.",
+              "$ref": "special_values.json#/definitions/advisor_or_simple"
+            },
+            "name": {
+              "description": "The name to hold in the key. Only used with the simple type.",
+              "type": "string"
+            },
+            "scope": {
+              "description": "The country scope to draw the namelist from. Only used with the advisor type.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            }
+          },
+          "required": [
+            "key",
+            "type"
+          ]
+        },
+        "set_school_opinion": {
+          "description": "Changes the current scope's school opinion towards the defined scope's school.\nNotes: -1 for negative, 0 for netural and 1 for positive.",
+          "version_added": "1.23",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "who": {
+              "description": "Which country to alter opinion with.",
+              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+            },
+            "opinion": {
+              "description": "Which opinion state to change to.",
+              "$ref": "special_values.json#/definitions/school_opinion"
+            }
+          },
+          "required": [
+            "who",
+            "opinion"
+          ]
         }
+
       }
     },
     "identifier_keys": {
@@ -1565,12 +2638,6 @@
             {"type": "object"},
             {"$ref": "special_values.json#/definitions/boolean"}
           ]
-        },
-        "<event_target_province>": {
-          "$ref": "province_commands.json#/definitions/province_commands"
-        },
-        "<event_target_country>": {
-          "$ref": "country_commands.json#/definitions/country_commands"
         }
       }
     },

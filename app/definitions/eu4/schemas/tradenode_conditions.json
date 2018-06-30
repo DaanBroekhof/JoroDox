@@ -40,7 +40,7 @@
         },
 
         "most_province_trade_power": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "strongest_trade_power": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
@@ -64,12 +64,16 @@
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "random_trade_node_member_province": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "$ref": "province_conditions.json#/definitions/province_conditions"
         },
 
         "any_country": {
           "todo": "figure out what this exactly mean here?",
-          "$ref": "country_commands.json#/definitions/country_commands"
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "random_country": {
+          "todo": "figure out what this exactly mean here?",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         }
       }
     },
@@ -79,25 +83,11 @@
       "properties": {
         "has_merchant": {
           "description": "Returns true if the scoped country has an active merchant in the trade node.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "has_most_province_trade_power": {
           "description": "Returns true if the country X has most amount of trade power in trade node.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "has_trade_modifier": {
           "description": "Returns true the specified country has the trade modifier X in the trade node.",
@@ -113,14 +103,7 @@
         },
         "has_trader": {
           "description": "Returns true if the specified country has a merchant in the trade node.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "highest_value_trade_node": {
           "description": "Returns true if the trade node is the highest valued trade node in the world.\r\nThe value is calculated as total trade value minus outgoing trade value.",
@@ -128,14 +111,7 @@
         },
         "is_strongest_trade_power": {
           "description": "Returns true if the specified country has the most trade power in the area.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "privateer_power": {
           "description": "Returns true if the country has at least X trade power from privateering in the trade node.",
@@ -149,14 +125,7 @@
         },
         "trade_range": {
           "description": "Returns true if the trade node is within the trade range of the specified country.",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/country_tags"
-            },
-            {
-              "$ref": "special_values.json#/definitions/country_scope"
-            }
-          ]
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "trade_share": {
           "description": "Returns true if the country controls at least X% of the trade in the specified trade node.",

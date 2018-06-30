@@ -95,7 +95,6 @@
       }
     },
     "anywhere_commands_properties": {
-      "type": "object",
       "properties": {
         "clear_global_event_target": {
           "description": "Clears a specific global event target.",
@@ -150,7 +149,6 @@
       }
     },
     "anywhere_commands_variables": {
-      "type": "object",
       "properties": {
         "set_variable": {
           "$ref": "special_values.json#/definitions/variable_operation"

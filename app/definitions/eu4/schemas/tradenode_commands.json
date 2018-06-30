@@ -20,7 +20,7 @@
         },
 
         "most_province_trade_power": {
-          "$ref": "province_commands.json#/definitions/province_commands"
+          "$ref": "country_commands.json#/definitions/country_commands"
         },
         "strongest_trade_power": {
           "$ref": "country_commands.json#/definitions/country_commands"
@@ -62,7 +62,12 @@
           "$ref": "province_commands.json#/definitions/province_commands"
         },
 
+
         "any_country": {
+          "todo": "figure out what this exactly mean here?",
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "random_country": {
           "todo": "figure out what this exactly mean here?",
           "$ref": "country_commands.json#/definitions/country_commands"
         }

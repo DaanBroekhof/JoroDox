@@ -365,7 +365,7 @@ export default class CsvReaderHelper {
 
   static async exportCountryCommands() {
 
-    const scopeType = 'anywhere';
+    const scopeType = 'province'; // or 'country'
 
     const csvData = await new Promise((resolve, reject) => {
       csvparser(iconv.decode(jetpack.read('F:\\Projects\\Jorodox\\app\\definitions\\eu4\\'+ scopeType +'-commands-wiki.csv', 'buffer'), 'win1252'), {
@@ -381,6 +381,61 @@ export default class CsvReaderHelper {
         }
       });
     });
+
+    const typeNameToType = {
+      string: {type: 'string'},
+      int: {type: 'number'},
+      float: {type: 'number'},
+      scope: {$ref: 'special_values.json#/definitions/country_tag_or_scope'},
+      culture: {$ref: 'identifiers.json#/definitions/cultures'},
+      policy: {$ref: 'identifiers.json#/definitions/policies'},
+      cb: {$ref: 'identifiers.json#/definitions/cb_types'},
+      religion: {$ref: 'identifiers.json#/definitions/religions'},
+      personality: {$ref: 'identifiers.json#/definitions/ruler_personalities'},
+      idea: {$ref: 'identifiers.json#/definitions/ideas'},
+      ideagroup: {$ref: 'identifiers.json#/definitions/idea_groups'},
+      gfxculture: {$ref: 'identifiers.json#/definitions/graphicalculturetypes'},
+      government: {$ref: 'identifiers.json#/definitions/governments'},
+      deity: {$ref: 'identifiers.json#/definitions/personal_deities'},
+      technology: {$ref: 'identifiers.json#/definitions/technology_groups'},
+      type: {$ref: 'identifiers.json#/definitions/units'},
+      key: {$ref: 'special_values.json#/definitions/save_game_key'},
+      yes: {$ref: 'special_values.json#/definitions/boolean'},
+      flag: {$ref: 'special_values.json#/definitions/flag_name'},
+      advisor: {$ref: 'identifiers.json#/definitions/advisortypes'},
+      estate: {$ref: 'identifiers.json#/definitions/estates'},
+      disaster: {$ref: 'identifiers.json#/definitions/disasters'},
+      'advisor id': {$ref: 'identifiers.json#/definitions/advisor_ids'},
+      aspect: {$ref: 'identifiers.json#/definitions/church_aspects'},
+      faction: {$ref: 'identifiers.json#/definitions/factions'},
+      months: {type: 'number'},
+      days: {type: 'number'},
+      years: {type: 'number'},
+      date: {$ref: 'special_values.json#/definitions/date'},
+      'province id': {$ref: 'special_values.json#/definitions/province_id_or_scope'},
+      'culture> / <scope': {$ref: 'special_values.json#/definitions/culture_or_scope'},
+      reform: {$ref: 'identifiers.json#/definitions/religious_reforms'},
+      cult: {$ref: 'identifiers.json#/definitions/fetishist_cults'},
+      project: {$ref: 'identifiers.json#/definitions/projects'},
+      modifier: {$ref: 'identifiers.json#/definitions/modifiers'},
+      good: {$ref: 'identifiers.json#/definitions/tradegoods'},
+      tradegood: {$ref: 'identifiers.json#/definitions/tradegoods'},
+      incident: {$ref: 'identifiers.json#/definitions/incidents'},
+      building: {$ref: 'identifiers.json#/definitions/buildings'},
+      who: {$ref: 'special_values.json#/definitions/country_tag_or_scope'},
+      name: {$ref: 'identifiers.json#/definitions/event_modifiers'},
+      id: {$ref: 'identifiers.json#/definitions/country_events'},
+
+      trait: {$ref: 'identifiers.json#/definitions/leader_personalities'},
+      'religion> / <scope': {$ref: 'special_values.json#/definitions/religion_or_scope'},
+      'yes> / <no': {$ref: 'special_values.json#/definitions/boolean'},
+      opinion: {$ref: 'special_values.json#/definitions/school_opinion'},
+      '<string': {type: 'string'},
+      '<string> / <scope> / original_dynasty': {$ref: 'special_values.json#/definitions/dynasty_or_scope'},
+      'general / conquistador / admiral / explorer': {$ref: 'special_values.json#/definitions/leader_types'},
+      'advisor / simple': {$ref: 'special_values.json#/definitions/advisor_or_simple'},
+      institution: {$ref: 'identifiers.json#/definitions/institutions'},
+    };
 
     let outData = {};
     csvData.forEach(command => {
@@ -499,6 +554,48 @@ export default class CsvReaderHelper {
         def.$ref.push('identifiers.json#/definitions/buildings');
       }
 
+      if (command.parameters.match(/^[a-z_A-Z]+ = .*/m)) {
+        console.log('parammmm')
+        def.type = 'object';
+        def.additionalProperties = false;
+        def.properties = {};
+
+
+        let match = null;
+        const requireds = [];
+        const regex = /([a-z_A-Z]+) = (<([^\n]+)>|([^\n]+))\n([^\n=]+)(\n|$)/gi;
+        while ((match = regex.exec(command.parameters)) !== null) {
+          //console.log(match);
+          def.properties[match[1]] = {
+            description: match[5]
+          };
+          if (typeNameToType[match[3]]) {
+            if (typeNameToType[match[3]].$ref) {
+              def.properties[match[1]].$ref = typeNameToType[match[3]].$ref;
+            } else if (typeNameToType[match[3]].type) {
+              def.properties[match[1]].type = typeNameToType[match[3]].type;
+            }
+          } else if (typeNameToType[match[4]]) {
+            if (typeNameToType[match[4]].$ref) {
+              def.properties[match[1]].$ref = typeNameToType[match[4]].$ref;
+            } else if (typeNameToType[match[4]].type) {
+              def.properties[match[1]].type = typeNameToType[match[4]].type;
+            }
+          } else {
+            console.log('Unknown ID type', match);
+            def.properties[match[1]].type = "string";
+            def.properties[match[1]].todo = "fix";
+          }
+
+          if (!_.includes(match[5], 'Optional')) {
+            requireds.push(match[1]);
+          }
+        }
+        if (requireds.length > 0) {
+          def.required = requireds;
+        }
+      }
+
       if (def.$ref.length > 1) {
         def.anyOf = [];
         def.$ref.forEach(ref => {
@@ -518,11 +615,16 @@ export default class CsvReaderHelper {
         def.type = 'object';
       }
 
+      if (!def.properties) {
+        return;
+      }
+
       outData[command.name] = def;
     });
 
     let sortedData = _(outData).toPairs().sortBy(0).fromPairs().value();
 
+    //console.log(sortedData);
     console.log(JSON.stringify(sortedData));
   }
 }
