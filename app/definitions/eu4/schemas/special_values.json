@@ -339,6 +339,10 @@
       "type": "string",
       "pattern": "^event_target:.+$"
     },
+    "event_target_name": {
+      "description": "Event name without the `event_target:` prefix.",
+      "type": "string"
+    },
     "construction": {
       "type": "string",
       "enum": ["core", "culture", "building", "merchant", "diplomat", "missionary", "army", "navy", "canal", "great_project", "siberian"]

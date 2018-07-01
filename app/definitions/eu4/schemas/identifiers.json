@@ -152,9 +152,6 @@
       "$identifierValue": "leader_personalities",
       "type": "string"
     },
-    "leagues_unknown": {
-      "type": "string"
-    },
     "loyalty_modifiers": {
       "type": "string"
     },
@@ -179,7 +176,8 @@
       "type": "number"
     },
     "map_region": {
-      "$identifierValue": "map_region"
+      "$identifierValue": "map_region",
+      "type": "string"
     },
     "map_superregion": {
       "$identifierValue": "map_superregion",
@@ -197,15 +195,25 @@
       "$identifierValue": "missions",
       "type": "string"
     },
-    "modifiers": {
+    "province_modifiers": {
+      "anyOf": [
+        {"$identifierValue": "<scope_key:province_modifiers.json#/definitions/province_modifiers>"},
+        {"$identifierValue": "event_modifiers"},
+        {"$identifierValue": "triggered_modifiers"}
+      ],
       "type": "string"
     },
     "opinion_modifiers": {
+      "$identifierValue": "opinion_modifiers",
       "type": "string"
     },
-    "opinion_modifiers_factor": {
-      "$identifierValue": "opinion_modifiers",
-      "type": "number"
+    "country_modifiers": {
+      "anyOf": [
+        {"$identifierValue": "<scope_key:country_modifiers.json#/definitions/country_modifiers>"},
+        {"$identifierValue": "event_modifiers"},
+        {"$identifierValue": "triggered_modifiers"}
+      ],
+      "type": "string"
     },
     "personal_deities": {
       "$identifierValue": "personal_deities",
@@ -216,9 +224,6 @@
       "type": "string"
     },
     "province_flags": {
-      "type": "string"
-    },
-    "province_modifiers": {
       "type": "string"
     },
     "rebel_types": {
@@ -291,6 +296,7 @@
       "type": "string"
     },
     "event_modifiers": {
+      "$identifierValue": "event_modifiers",
       "type": "string"
     }
   }

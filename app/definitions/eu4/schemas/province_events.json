@@ -39,12 +39,9 @@
           "type": "string"
         },
         "desc": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$allowMultiple": {
+          "$allowMultiple": {
+            "anyOf": [
+              {
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
@@ -55,17 +52,17 @@
                     "type": "string"
                   }
                 }
+              },
+              {
+                "type": "string"
               }
-            }
-          ]
+            ]
+          }
         },
         "picture": {
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/event_pictures"
-            },
-            {
-              "$allowMultiple": {
+          "$allowMultiple": {
+            "anyOf": [
+              {
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
@@ -76,9 +73,12 @@
                     "$ref": "identifiers.json#/definitions/event_pictures"
                   }
                 }
+              },
+              {
+                "$ref": "identifiers.json#/definitions/event_pictures"
               }
-            }
-          ]
+            ]
+          }
         },
         "is_triggered_only": {
           "$ref": "special_values.json#/definitions/boolean"

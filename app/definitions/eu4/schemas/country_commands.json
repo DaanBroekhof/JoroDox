@@ -1036,7 +1036,7 @@
         "remove_country_modifier": {
           "description": "Removes an already assigned country modifier from the current scope.",
           "version_added": "1.1",
-          "$ref": "identifiers.json#/definitions/modifiers"
+          "$ref": "identifiers.json#/definitions/country_modifiers"
         },
         "remove_faction": {
           "description": "Removes a faction from the current scope.\nNotes: Factions are found in /Europa Universalis IV/common/factions/.",
@@ -1372,7 +1372,7 @@
           "properties": {
             "name": {
               "description": "The event modifier to add.",
-              "$ref": "identifiers.json#/definitions/modifiers"
+              "$ref": "identifiers.json#/definitions/event_modifiers"
             },
             "disaster": {
               "description": "The disaster to apply the modifier to.",
@@ -1566,7 +1566,7 @@
             },
             "modifier": {
               "description": "The opinion modifier to use.",
-              "$ref": "identifiers.json#/definitions/modifiers"
+              "$ref": "identifiers.json#/definitions/opinion_modifiers"
             },
             "years": {
               "description": "Optional. Whether the modifier expires after a set amount of years.",
@@ -2358,7 +2358,7 @@
             },
             "modifier": {
               "description": "The opinion modifier to use.",
-              "$ref": "identifiers.json#/definitions/modifiers"
+              "$ref": "identifiers.json#/definitions/opinion_modifiers"
             }
           },
           "required": [
@@ -2403,7 +2403,7 @@
             },
             "modifier": {
               "description": "The opinion modifier to use.",
-              "$ref": "identifiers.json#/definitions/modifiers"
+              "$ref": "identifiers.json#/definitions/opinion_modifiers"
             },
             "years": {
               "description": "Optional. Whether the modifier expires after a set amount of years.",
@@ -2447,7 +2447,7 @@
             },
             "modifier": {
               "description": "The opinion modifier to use.",
-              "$ref": "identifiers.json#/definitions/modifiers"
+              "$ref": "identifiers.json#/definitions/opinion_modifiers"
             }
           },
           "required": [

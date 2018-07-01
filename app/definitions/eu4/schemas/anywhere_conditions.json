@@ -179,7 +179,7 @@
         },
         "has_saved_event_target": {
           "description": "Returns true if the specified event target has been saved.",
-          "$ref": "special_values.json#/definitions/event_target"
+          "$ref": "special_values.json#/definitions/event_target_name"
         },
         "has_switched_nation": {
           "description": "Returns true if the player has changed nation by playing as a released vassal.",

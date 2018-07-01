@@ -998,7 +998,7 @@
         },
         "has_country_modifier": {
           "description": "Returns true if the country has the modifier X.",
-          "$ref": "identifiers.json#/definitions/modifiers"
+          "$ref": "identifiers.json#/definitions/country_modifiers"
         },
         "has_custom_ideas": {
           "description": "Returns true if the country has custom ideas.",
@@ -1101,7 +1101,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "which": {"$ref": "identifiers.json#/definitions/modifiers"},
+            "which": {"$ref": "identifiers.json#/definitions/country_modifiers"},
             "value": {"type": "number"},
             "extra_shortcut": {"$ref": "special_values.json#/definitions/boolean"}
           },
@@ -1206,7 +1206,7 @@
           "additionalProperties": false,
           "properties": {
             "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "modifier": {"$ref": "identifiers.json#/definitions/modifiers"}
+            "modifier": {"$ref": "identifiers.json#/definitions/opinion_modifiers"}
           },
           "required": ["who", "modifier"]
         },
@@ -1244,7 +1244,7 @@
         },
         "has_ruler_modifier": {
           "description": "Returns true the country has the modifier X until the ruler changes.",
-          "$ref": "identifiers.json#/definitions/modifiers"
+          "$ref": "identifiers.json#/definitions/event_modifiers"
         },
         "has_scutage": {
           "description": "Returns true if the vassal pays scutage.",
@@ -1403,7 +1403,7 @@
         },
         "in_league": {
           "description": "Returns true if the countries is in the X league.",
-          "$ref": "identifiers.json#/definitions/leagues_unknown"
+          "$ref": "special_values.json#/definitions/league"
         },
         "incident_variable_value": {
           "description": "Returns true, if the value of the specified incident is at least X.",
@@ -2087,6 +2087,7 @@
           "additionalProperties": false,
           "properties": {
             "religion": {"$ref": "identifiers.json#/definitions/religions"},
+            "secondary": {"$ref": "special_values.json#/definitions/yes"},
             "value": {"type": "number"}
           },
           "required": ["religion", "value"]
@@ -2193,7 +2194,7 @@
         },
         "papal_influence": {
           "description": "Returns true if the country has at least as much papal influence as the specified country.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "patriarch_authority": {
           "description": "Returns true if the country's patriarch authority is at least X.",

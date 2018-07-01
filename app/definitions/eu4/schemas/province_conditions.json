@@ -440,7 +440,7 @@
         },
         "has_province_modifier": {
           "description": "Returns true if province has the province modifier X.",
-          "$ref": "identifiers.json#/definitions/modifiers"
+          "$ref": "identifiers.json#/definitions/province_modifiers"
         },
         "has_rebel_faction": {
           "description": "Returns true if the province is controlled by (the specified) rebel faction.",
