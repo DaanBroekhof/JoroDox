@@ -236,7 +236,7 @@
       "type": "string"
     },
     "religious_schools": {
-      "todo": "hook up!",
+      "$identifierValue": "religious_schools",
       "type": "string"
     },
     "religions": {

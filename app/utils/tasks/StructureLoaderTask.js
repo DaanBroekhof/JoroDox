@@ -193,6 +193,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
     sourceItems.forEach(sourceItem => {
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
+        if (definition.sourceTransform.parentSubPath) {
+          value = _.get(value, definition.sourceTransform.parentSubPath);
+        }
         _.forOwn(value, (value2, key2) => {
           if (definition.sourceTransform.requiredProperty && value2[definition.sourceTransform.requiredProperty] === undefined) {
             return;

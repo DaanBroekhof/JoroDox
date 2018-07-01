@@ -615,6 +615,46 @@ export default {
       },
     },
     {
+      id: 'religious_schools',
+      title: 'Religious schools',
+      reader: 'StructureLoader',
+      primaryKey: 'name',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'common/religions/',
+        pathPattern: 'common/religions/*.txt',
+      },
+      sourceTransform: {
+        type: 'keyKeyValues',
+        path: ['data', 'data'],
+        parentSubPath: ['religious_schools'],
+        keyName: 'name',
+        valueName: 'data',
+        parentKeyName: 'religion_group',
+        parentRelationType: 'religionGroups',
+        parentRelationKey: 'parentReligionGroup',
+      },
+      relations: [
+        {
+          type: 'valueByPath',
+          path: ['religion_group'],
+          fromName: 'religion_group',
+          toType: 'religion_groups',
+          toName: 'religion',
+        },
+      ],
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'name',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
       id: 'custom_country_colors',
       title: 'Custom country colors',
       reader: 'StructureLoader',
