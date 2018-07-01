@@ -1,0 +1,96 @@
+{
+  "$id": "http://jorodox.org/schemas/countries.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "graphical_culture": {
+          "$ref": "identifiers.json#/definitions/graphicalculturetypes"
+        },
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "historical_score": {
+          "type": "number"
+        },
+        "revolutionary_colors": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "colonial_parent": {
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        "random_nation_chance": {
+          "description": "Default 100",
+          "type": "number"
+        },
+        "random_nation_extra_size": {
+          "description": "Default 0",
+          "type": "number"
+        },
+        "right_to_bear_arms": {
+          "description": "???",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "preferred_religion": {
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "historical_idea_groups": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/idea_groups"
+          }
+        },
+        "historical_units": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/units"
+          }
+        },
+        "monarch_names": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.* #[0-9]+.*$": {
+              "description": "The weight for chosing this name.",
+              "type": "number"
+            }
+          }
+        },
+        "leader_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ship_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "army_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fleet_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

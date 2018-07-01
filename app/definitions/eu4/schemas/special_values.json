@@ -381,6 +381,14 @@
     "league": {
       "type": "string",
       "enum": ["catholic", "protestant"]
+    },
+    "rgb_color": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "string"
+      }
     }
   }
 }
