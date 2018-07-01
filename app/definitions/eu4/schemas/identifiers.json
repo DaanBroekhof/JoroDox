@@ -86,9 +86,6 @@
       "$identifierValue": "event_pictures",
       "type": "string"
     },
-    "event_target_unknown": {
-      "type": "string"
-    },
     "factions": {
       "$identifierValue": "factions",
       "type": "string"
@@ -101,8 +98,8 @@
       "type": "string"
     },
     "government_mechanics": {
-      "type": "string",
-      "todo": "hook up"
+      "$identifierValue": "government_mechanics",
+      "type": "string"
     },
     "governments": {
       "$identifierValue": "governments",
@@ -127,6 +124,7 @@
       "type": "string"
     },
     "ideas": {
+      "$identifierValue": "ideas",
       "type": "string"
     },
     "incidents": {

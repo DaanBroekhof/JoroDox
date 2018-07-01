@@ -1072,6 +1072,33 @@ export default {
       },
     },
     {
+      id: 'government_mechanics',
+      title: 'Government mechanics',
+      reader: 'StructureLoader',
+      primaryKey: 'name',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'common/governments/',
+        pathPattern: 'common/governments/*.txt',
+      },
+      sourceTransform: {
+        type: 'keyKeyValues',
+        path: ['data', 'data'],
+        parentSubPath: ['government_abilities'],
+        valueName: 'name',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'name',
+            linkTo: '[self]',
+          },
+        ],
+      },
+    },
+    {
       id: 'great_projects',
       title: 'Great projects',
       reader: 'StructureLoader',
@@ -1150,6 +1177,41 @@ export default {
           toName: 'country_tags',
         },
       ],
+    },
+    {
+      id: 'ideas',
+      title: 'Ideas',
+      reader: 'StructureLoader',
+      primaryKey: 'name',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'common/ideas/',
+        pathPattern: 'common/ideas/*.txt',
+      },
+      sourceTransform: {
+        type: 'keyKeyValues',
+        path: ['data', 'data'],
+        ignoreKeys: ['category', 'bonus', 'trigger', 'ai_will_do', 'free', 'start'],
+        keyName: 'name',
+        parentKeyName: 'idea_group',
+        valueName: 'data',
+        parentRelationType: 'idea_group',
+        parentRelationKey: 'parent_idea_group',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'name',
+            linkTo: '[self]',
+          },
+          {
+            name: 'Group',
+            dataIndex: ['idea_group'],
+          },
+        ],
+      }
     },
     {
       id: 'imperial_reforms',
