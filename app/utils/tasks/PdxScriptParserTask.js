@@ -63,5 +63,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
 
     await this.saveChunked(scripts, db.pdx_scripts, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'pdx_data');
   }
 }

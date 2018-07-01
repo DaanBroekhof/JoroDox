@@ -18,6 +18,7 @@ import StellarisDefinition from '../definitions/stellaris';
 export default class JdxDatabase {
   static db = {};
   static globalDb = null;
+  static allIdentifiersCache = {};
 
   static parserToTask = {
     StructureLoader: StructureLoaderTask,
@@ -267,11 +268,13 @@ export default class JdxDatabase {
       for (const type in updateByType) {
         if (!updateByType[type].source) {
           await this.reloadTypePaths(project, type, updateByType[type].paths);
+          this.updateTypeIdentifiers(project, type);
         }
       }
       for (const type in updateByType) {
         if (updateByType[type].source) {
           await this.reloadTypePaths(project, type, updateByType[type].paths);
+          this.updateTypeIdentifiers(project, type);
         }
       }
     }
@@ -461,6 +464,10 @@ export default class JdxDatabase {
   }
 
   static async getAllIdentifiers(project) {
+    if (this.allIdentifiersCache[project.id]) {
+      return this.allIdentifiersCache[project.id];
+    }
+
     const db = await JdxDatabase.get(project);
 
     const identifierCache = {};
@@ -472,7 +479,35 @@ export default class JdxDatabase {
       identifierCache[typeDefinition.id] = new Set(await db[typeDefinition.id].toCollection().primaryKeys());
     }
 
+    this.allIdentifiersCache[project.id] = identifierCache;
+
     return identifierCache;
+  }
+
+  static async updateTypeIdentifiers(project, type) {
+    if (!this.allIdentifiersCache[project.id]) {
+      console.log('No CAHCE', type);
+      return;
+    }
+
+    this.allIdentifiersCache[project.id][type] = await this.getTypeIdentifiers(project, type);
+    console.log('cache reread', type);
+  }
+
+  static async getTypeIdentifiers(project, type) {
+    const db = await JdxDatabase.get(project);
+
+    for (const typeDefinition of JdxDatabase.getDefinition(project.gameType).types) {
+      if (!db[typeDefinition.id]) {
+        continue;
+      }
+
+      if (typeDefinition.id === type) {
+        return new Set(await db[typeDefinition.id].toCollection().primaryKeys());
+      }
+    }
+
+    return new Set();
   }
 
   static async addError(project, error) {

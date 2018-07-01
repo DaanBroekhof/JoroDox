@@ -55,6 +55,8 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
     await this.saveChunked(datafiles, db.pdx_data, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'pdx_data');
   }
 
   static parseFile(root, path) {

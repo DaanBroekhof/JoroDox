@@ -42,6 +42,8 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
     await this.saveChunked(results, db.pdxyml_files, 0, 5000);
     await this.saveChunked(relations, db.relations, 0, 5000);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'pdx_data');
   }
 
   // The .yml files are not quite YAML

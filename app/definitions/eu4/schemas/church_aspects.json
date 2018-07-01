@@ -33,7 +33,7 @@
         },
         "ai_will_do": {
           "description": "The importance the AI will have on using this aspect.",
-          "$ref": "country_factor.json#/definitions/country_factor"
+          "$ref": "scope_factors.json#/definitions/country_factor"
         }
       },
       "required": [

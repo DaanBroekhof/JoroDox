@@ -48,11 +48,8 @@
         "random_list": {
           "patternProperties": {
             "^[0-9\\.]$": {
-              "$makeArray": {
-                "type": "array",
-                "items": {
-                  "$ref": "country_commands.json#/definitions/country_commands"
-                }
+              "$allowMultiple": {
+                "$ref": "country_commands.json#/definitions/country_commands"
               }
             }
           }

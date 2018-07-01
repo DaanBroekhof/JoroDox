@@ -274,7 +274,7 @@ export default {
     },
     {
       id: 'ai_personalities',
-      title: 'IA personalities',
+      title: 'AI personalities',
       reader: 'StructureLoader',
       primaryKey: 'name',
       sourceType: {

@@ -33,6 +33,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
   addMergePropsKeyword(ajv) {
     const resolveMergeProps = (schema, parentSchema, it) => {
       const mergedSchema = {
+        //$async: true,
         $makeArray: {
           type: 'array',
           items: {
@@ -60,11 +61,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
               throw new ajv.constructor.MissingRefError(it.baseId, subSchema.$ref);
             }
             subSchema = resolvedRef.schema;
+            //subSchema.$async = true;
 
             if (subSchema.$mergeProps) {
               const refUri = resolvedUri.split('#')[0] + '#';
               subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {
                 ...it,
+               // async: true,
                 baseId: refUri,
                 baseIdOverwritten: false
               });
@@ -129,6 +132,79 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     return ajv;
   }
 
+  addAllowMultipleKeyword(ajv) {
+    ajv.addKeyword('$allowMultiple', {
+      type: ['object', 'array'],
+      compile: (schema, parentSchema, it) => {
+        const subSchema = it.util.copy(schema);
+        let magicId = null;
+        if (_.get(schema, 'items.$identifierProperties')) {
+          // This is a shortcut for the most often occuring comparison...
+          magicId = SchemaValidatorTask.hashCode(JSON.stringify(
+            _.keys(schema.items.$identifierProperties)
+              .concat(_.keys(schema.items.patternProperties))
+              .concat(_.keys(schema.items.properties))
+          ));
+        } else {
+          magicId = SchemaValidatorTask.hashCode(JSON.stringify(subSchema));
+        }
+        subSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json';
+        //subSchema.$async = true;
+        if (!ajv.allowMultipleSchemaCache) {
+          ajv.allowMultipleSchemaCache = {};
+        }
+        if (ajv.allowMultipleSchemaCache[magicId] === undefined) {
+          ajv.allowMultipleSchemaCache[magicId] = false;
+        }
+
+
+        const validatorPrep = () => {
+          if (!ajv.allowMultipleSchemaCache[magicId]) {
+            ajv.allowMultipleSchemaCache[magicId] = ajv.compile(subSchema);
+            // console.log('Generating ' + magicId, it.baseId, subSchema);
+          } else {
+            // console.log('Using '+ magicId);
+          }
+
+          return ajv.allowMultipleSchemaCache[magicId];
+        };
+
+        return function v(data, dataPath, object, key) {
+          if (_.isArray(data) && data.multipleKeys) {
+            for (let i = 0; i < data.length; i += 1) {
+              const result = validatorPrep()(data[i]);
+              v.errors = validatorPrep().errors;
+              if (v.errors) {
+                v.errors = v.errors.map(err => {
+                  err.dataPath = dataPath + '.' + i + err.dataPath;
+
+                  return err;
+                });
+              }
+              if (!result) {
+                return false;
+              }
+            }
+            return true;
+          } else {
+            const result = validatorPrep()(data);
+            v.errors = validatorPrep().errors;
+            if (v.errors) {
+              v.errors = v.errors.map(err => {
+                err.dataPath = dataPath + '.' + err.dataPath;
+
+                return err;
+              });
+            }
+            return result;
+          }
+        };
+      }
+    });
+
+    return ajv;
+  }
+
   addMakeArrayKeyword(ajv) {
     ajv.addKeyword('$makeArray', {
       type: 'object',
@@ -146,6 +222,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           magicId = SchemaValidatorTask.hashCode(JSON.stringify(subSchema));
         }
         subSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json';
+        //subSchema.$async = true;
         if (!ajv.makeArraySchemaCache) {
           ajv.makeArraySchemaCache = {};
         }
@@ -207,6 +284,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const task = this;
     ajv.addKeyword('$identifierProperties', {
       type: 'object',
+      //async: true,
 
       compile: (schema, parentSchema, it) => {
         const propertyNames = new Set(_.keys(parentSchema.properties));
@@ -217,6 +295,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
         _.forOwn(schema, (identifierSchema, identifierType) => {
           const magicId = SchemaValidatorTask.hashCode(JSON.stringify(identifierSchema));
+          //identifierSchema.$async = true;
           identifierSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + identifierType + '-' + Math.floor(Math.random() * 10000000) + '.json';
 
           if (!ajv.identifierPropertiesCache) {
@@ -324,6 +403,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             const scopeKeyRef = scopeKeyMatch[1];
             if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
               ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
+                //$async: true,
                 $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
                 $ref: scopeKeyRef,
               });
@@ -373,7 +453,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
   hasIdentifier(identifierType, id) {
     if (!this.identifierCache[identifierType]) {
-      this.identifierCache[identifierType] = new Set();
+      this.identifierCache[identifierType] = (
+        async () => {
+          return await JdxDatabase.getTypeIdentifiers(identifierType);
+        }
+      )();
+
+        //await JdxDatabase.getTypeIdentifiers(identifierType);
       console.error(`Uncached identifier type '${identifierType}'`);
     }
 
@@ -388,6 +474,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     ajv = this.addMergePropsKeyword(ajv);
     ajv = this.addMakeArrayKeyword(ajv);
+    ajv = this.addAllowMultipleKeyword(ajv);
     ajv = this.addIdentifierPropertiesKeyword(ajv);
     ajv = this.addIdentifierValueKeyword(ajv);
 

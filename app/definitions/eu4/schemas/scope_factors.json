@@ -5,32 +5,50 @@
   "definitions": {
     "country_factor": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "factor": {
           "type": "number"
         },
         "modifier": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "scope_factors.json#/definitions/country_factor"
-            }
+          "$allowMultiple": {
+            "$mergeProps": [
+              {
+                "properties": {
+                  "factor": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              }
+            ]
           }
         }
       }
     },
     "province_factor": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "factor": {
           "type": "number"
         },
         "modifier": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "scope_factors.json#/definitions/province_factor"
-            }
+          "$allowMultiple": {
+            "$mergeProps": [
+              {
+                "properties": {
+                  "factor": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "$ref": "province_conditions.json#/definitions/province_conditions"
+              }
+            ]
           }
         }
       }

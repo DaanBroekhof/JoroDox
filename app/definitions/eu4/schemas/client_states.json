@@ -1,0 +1,72 @@
+{
+  "$id": "http://jorodox.org/schemas/client_states.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "datax": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "region": {
+              "$ref": "identifiers.json#/definitions/map_region"
+            }
+          }
+        },
+        {
+          "properties": {
+            "name": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "trigger": {
+                  "$ref": "province_conditions.json#/definitions/province_conditions"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "data": {
+      "properties": {
+        "region": {
+          "$ref": "identifiers.json#/definitions/map_region"
+        },
+        "name": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "trigger": {
+                "$ref": "province_conditions.json#/definitions/province_conditions"
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        }
+      },
+      "required": [
+        "region",
+        "name"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

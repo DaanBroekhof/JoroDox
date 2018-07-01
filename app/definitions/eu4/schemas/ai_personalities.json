@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/ai_personalities.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chance": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        },
+        "icon": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "chance",
+        "icon"
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

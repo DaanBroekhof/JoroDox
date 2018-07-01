@@ -94,6 +94,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     if (relationStorage) {
       await this.saveChunked(result.relations, db[relationStorage], 0, chunkSize);
     }
+
+    JdxDatabase.updateTypeIdentifiers(this.project, definition.id);
   }
 
   sourceTransformByKeyValues(sourceItems, definition, skipRelations) {

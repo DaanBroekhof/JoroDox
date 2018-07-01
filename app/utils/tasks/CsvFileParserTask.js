@@ -72,5 +72,7 @@ export default class CsvFileParserTask extends DbBackgroundTask {
 
     await this.saveChunked(csvResults, db.csv_files, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'csv_files');
   }
 }

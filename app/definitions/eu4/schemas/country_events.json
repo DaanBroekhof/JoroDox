@@ -39,12 +39,12 @@
           "type": "string"
         },
         "desc": {
-          "$makeArray": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$allowMultiple": {
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
@@ -56,16 +56,16 @@
                   }
                 }
               }
-            ]
-          }
+            }
+          ]
         },
         "picture": {
-          "$makeArray": {
-            "anyOf": [
-              {
-                "$ref": "identifiers.json#/definitions/event_pictures"
-              },
-              {
+          "anyOf": [
+            {
+              "$ref": "identifiers.json#/definitions/event_pictures"
+            },
+            {
+              "$allowMultiple": {
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
@@ -77,8 +77,8 @@
                   }
                 }
               }
-            ]
-          }
+            }
+          ]
         },
         "is_triggered_only": {
           "$ref": "special_values.json#/definitions/boolean"
@@ -115,18 +115,19 @@
               "type": "number"
             },
             "modifier": {
-              "$makeArray": {
-                "type": "array",
-                "items": {
-                  "anyOf": [
-                    {
-                      "$ref": "scope_factors.json#/definitions/country_factor"
-                    },
-                    {
-                      "$ref": "identifiers.json#/definitions/opinion_modifiers_factor"
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "factor": {
+                        "type": "number"
+                      }
                     }
-                  ]
-                }
+                  },
+                  {
+                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                  }
+                ]
               }
             }
           }

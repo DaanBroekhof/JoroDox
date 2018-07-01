@@ -36,5 +36,7 @@ export default class DdsImageParserTask extends DbBackgroundTask {
 
     await this.saveChunked(datafiles, db.dds_images, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'dds_images');
   }
 }

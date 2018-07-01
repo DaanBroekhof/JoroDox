@@ -105,6 +105,8 @@ export default class FileLoaderTask extends DbBackgroundTask {
     await this.saveChunked(filesDiff.added, db.files, 0, 500);
     await this.saveChunked(filesDiff.changed, db.files, 0, 500);
 
+    JdxDatabase.updateTypeIdentifiers(args.project, 'files');
+
     return filesDiff;
   }
 }

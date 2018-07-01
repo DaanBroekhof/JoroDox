@@ -76,7 +76,7 @@
         },
         "ai_will_do": {
           "description": "The importance the AI places on constructing this building.",
-          "$ref": "country_factor.json#/definitions/country_factor"
+          "$ref": "scope_factors.json#/definitions/province_factor"
         },
         "on_built": {
           "description": "Optional. On action that fires when built. THIS = Province, FROM = Builder (not necessarily owner, can be overlord)",

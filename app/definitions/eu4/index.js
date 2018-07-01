@@ -15,6 +15,9 @@ import cbTypesSchema from './schemas/cb_types';
 import churchAspectsSchema from './schemas/church_aspects';
 import countryEventsSchema from './schemas/country_events';
 import provinceEventsSchema from './schemas/province_events';
+import aiPersonalitiesSchema from './schemas/ai_personalities';
+import clientStatesSchema from './schemas/client_states';
+
 
 import countryCommands from './schemas/country_commands';
 import anywhereCommands from './schemas/anywhere_commands';
@@ -58,6 +61,8 @@ export default {
     churchAspectsSchema,
     countryEventsSchema,
     provinceEventsSchema,
+    aiPersonalitiesSchema,
+    clientStatesSchema,
 
     specialValues,
     countryCommands,

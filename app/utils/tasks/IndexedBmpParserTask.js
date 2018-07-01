@@ -38,5 +38,7 @@ export default class IndexedBmpParserTask extends DbBackgroundTask {
 
     await this.saveChunked(datafiles, db.indexed_bmps, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'indexed_bmps');
   }
 }

@@ -172,12 +172,7 @@
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "any_owned_province": {
-          "$makeArray": {
-            "type": "array",
-            "items": {
-              "$ref": "province_conditions.json#/definitions/province_conditions"
-            }
-          }
+          "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "any_state": {
           "$ref": "province_conditions.json#/definitions/province_conditions"

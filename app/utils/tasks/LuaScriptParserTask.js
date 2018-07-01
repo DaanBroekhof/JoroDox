@@ -43,6 +43,8 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
 
     await this.saveChunked(scripts, db.lua_scripts, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
+
+    JdxDatabase.updateTypeIdentifiers(args.project, 'lua_scripts');
   }
 
   convertAstTree(node, prefix, comments) {
