@@ -33,7 +33,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
   addMergePropsKeyword(ajv) {
     const resolveMergeProps = (schema, parentSchema, it) => {
       const mergedSchema = {
-        //$async: true,
         $makeArray: {
           type: 'array',
           items: {
@@ -61,7 +60,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
               throw new ajv.constructor.MissingRefError(it.baseId, subSchema.$ref);
             }
             subSchema = resolvedRef.schema;
-            //subSchema.$async = true;
 
             if (subSchema.$mergeProps) {
               const refUri = resolvedUri.split('#')[0] + '#';
@@ -149,7 +147,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           magicId = SchemaValidatorTask.hashCode(JSON.stringify(subSchema));
         }
         subSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json';
-        //subSchema.$async = true;
         if (!ajv.allowMultipleSchemaCache) {
           ajv.allowMultipleSchemaCache = {};
         }
@@ -345,6 +342,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                 const validSwitchValue = switchValueValidator({[data.on_trigger]: identifierValue});
                 if (!validSwitchValue) {
                   v.errors = switchValueValidator.errors;
+                  v.errors[0].dataPath = dataKey + v.errors[0].dataPath;
                   v.errors[0].identifierType = identifierType;
                   v.errors[0].identifier = dataKey;
                   v.errors[0].parentDataPath = dataPath;
@@ -360,6 +358,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                 const result = validators[identifierType](data[dataKey]);
                 if (!result) {
                   v.errors = validators[identifierType].errors;
+                  v.errors[0].dataPath = dataKey + v.errors[0].dataPath;
+
                   v.errors[0].identifierType = identifierType;
                   v.errors[0].identifier = dataKey;
                   v.errors[0].parentDataPath = dataPath;
@@ -403,7 +403,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             const scopeKeyRef = scopeKeyMatch[1];
             if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
               ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
-                //$async: true,
                 $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
                 $ref: scopeKeyRef,
               });

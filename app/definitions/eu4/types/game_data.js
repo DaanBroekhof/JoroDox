@@ -163,6 +163,7 @@ export default {
       sourceTransform: {
         type: 'keyValues',
         path: ['data', 'data'],
+        onlyKeys: ['graphical_culture', 'male_names', 'female_names', 'dynasty_names'],
         keyName: 'name',
         valueName: 'data',
       },
@@ -681,18 +682,19 @@ export default {
       },
     },
     {
-      id: 'custom_ideas',
-      title: 'Custom ideas',
+      id: 'custom_idea_groups',
+      title: 'Custom idea groups',
       reader: 'StructureLoader',
       primaryKey: 'name',
       sourceType: {
         id: 'pdx_scripts',
-        pathPrefix: 'common/{type.id}/',
-        pathPattern: 'common/{type.id}/*.txt',
+        pathPrefix: 'common/custom_ideas/',
+        pathPattern: 'common/custom_ideas/*.txt',
       },
       sourceTransform: {
         type: 'keyValues',
         path: ['data', 'data'],
+        onlyKeys: ['category'],
         keyName: 'name',
         valueName: 'data',
       },
@@ -708,6 +710,37 @@ export default {
             name: 'Category',
             dataIndex: ['data', 'category'],
           },
+        ],
+      },
+    },
+    {
+      id: 'custom_ideas',
+      title: 'Custom ideas',
+      reader: 'StructureLoader',
+      primaryKey: 'name',
+      sourceType: {
+        id: 'pdx_scripts',
+        pathPrefix: 'common/{type.id}/',
+        pathPattern: 'common/{type.id}/*.txt',
+      },
+      sourceTransform: {
+        type: 'keyKeyValues',
+        ignoreKeys: ['category'],
+        path: ['data', 'data'],
+        keyName: 'name',
+        parentKeyName: 'custom_idea_group',
+        valueName: 'data',
+        parentRelationType: 'customIdeaGroup',
+        parentRelationKey: 'custom_idea_groups',
+      },
+      listView: {
+        pageSize: 100,
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'name',
+            linkTo: '[self]',
+          }
         ],
       },
     },

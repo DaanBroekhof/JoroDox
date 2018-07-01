@@ -125,6 +125,10 @@
           "description": "If the current date is X or later.",
           "$ref": "special_values.json#/definitions/date"
         },
+        "is_tutorial_active": {
+          "description": "If the tutorial is active.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
 
 
         "allows_female_emperor": {

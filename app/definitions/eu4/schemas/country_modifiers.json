@@ -5,6 +5,20 @@
   "definitions": {
     "country_modifiers": {
       "properties": {
+        "adm_tech_cost_modifier": {
+          "description": "Modifies the monarch power cost of <tech> technologies.",
+          "type": "number"
+        },
+        "dip_tech_cost_modifier": {
+          "description": "Modifies the monarch power cost of <tech> technologies.",
+          "type": "number"
+        },
+        "mil_tech_cost_modifier": {
+          "description": "Modifies the monarch power cost of <tech> technologies.",
+          "type": "number"
+        },
+
+
         "administrative_efficiency": {
           "description": "Modifies the base core creation cost, diplo-annexation costs and the impact of province development on overextension and warscore cost. (Multiplicative)",
           "type": "number"

@@ -1,0 +1,18 @@
+{
+  "$id": "http://jorodox.org/schemas/country_tags.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tag": {
+      "$ref": "identifiers.json#/definitions/country_tags"
+    },
+    "filePath": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "tag",
+    "filePath"
+  ]
+}

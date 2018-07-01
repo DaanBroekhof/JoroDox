@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/decisions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "potential": {"$ref": "country_conditions.json#/definitions/country_conditions"},
+        "allow": {"$ref": "country_conditions.json#/definitions/country_conditions"},
+        "effect": {"$ref": "country_commands.json#/definitions/country_commands"},
+        "ai_will_do": {"$ref": "scope_factors.json#/definitions/country_factor"},
+        "provinces_to_highlight": {"$ref": "province_conditions.json#/definitions/province_conditions"},
+        "ai_importance": {"type": "number"},
+        "major": {"$ref": "special_values.json#/definitions/yes"},
+        "do_not_core": {"$allowMultiple": {"$ref": "identifiers.json#/definitions/map_provinces"}},
+        "do_not_integrate": {"$allowMultiple": {"$ref": "identifiers.json#/definitions/country_tags"}}
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

@@ -298,6 +298,14 @@
     "event_modifiers": {
       "$identifierValue": "event_modifiers",
       "type": "string"
+    },
+    "custom_ideas": {
+      "$identifierValue": "custom_ideas",
+      "type": "string"
+    },
+    "custom_idea_groups": {
+      "$identifierValue": "custom_idea_groups",
+      "type": "string"
     }
   }
 }

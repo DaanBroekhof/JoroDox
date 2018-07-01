@@ -1,0 +1,53 @@
+{
+  "$id": "http://jorodox.org/schemas/custom_ideas.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "custom_idea_group": {
+      "$ref": "identifiers.json#/definitions/custom_idea_groups"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "max_level": {"type": "number"},
+            "level_cost_1": {"type": "number"},
+            "level_cost_2": {"type": "number"},
+            "level_cost_3": {"type": "number"},
+            "level_cost_4": {"type": "number"},
+            "level_cost_5": {"type": "number"},
+            "level_cost_6": {"type": "number"},
+            "level_cost_7": {"type": "number"},
+            "level_cost_8": {"type": "number"},
+            "level_cost_9": {"type": "number"},
+            "level_cost_10": {"type": "number"},
+            "default": {"type": "number"},
+            "chance": {
+              "$ref": "scope_factors.json#/definitions/country_factor"
+            },
+            "enabled": {
+              "$ref": "anywhere_conditions.json#/definitions/anywhere_conditions"
+            }
+          }
+        },
+        {
+          "description": "Used for random generation",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        {
+          "description": "Specifically for ideas.",
+          "$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "custom_idea_group",
+    "data"
+  ]
+}

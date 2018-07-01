@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/country_colors.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tag": {
+      "$ref": "identifiers.json#/definitions/country_tags"
+    },
+    "color": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color1": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "color2": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "color3": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        }
+      }
+    }
+  },
+  "required": [
+    "tag",
+    "color"
+  ]
+}

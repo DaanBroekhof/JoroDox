@@ -1,0 +1,71 @@
+{
+  "$id": "http://jorodox.org/schemas/cultures.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "culture_group": {
+      "$ref": "identifiers.json#/definitions/culture_groups"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primary": {
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            "graphical_culture": {
+              "$ref": "identifiers.json#/definitions/graphicalculturetypes"
+            },
+            "dynasty_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "female_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "male_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "country": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "has_banners": {"type": "number"}
+              }
+            },
+            "province": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "local_has_banners": {"type": "number"}
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "maxItems": 0
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "culture_group",
+    "data"
+  ]
+}

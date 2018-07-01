@@ -1,0 +1,42 @@
+{
+  "$id": "http://jorodox.org/schemas/culture_groups.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "graphical_culture": {
+          "$ref": "identifiers.json#/definitions/graphicalculturetypes"
+        },
+        "dynasty_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "female_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "male_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

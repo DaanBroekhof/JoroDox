@@ -141,6 +141,16 @@
         }
       ]
     },
+    "country_tag_or_scope_country": {
+      "anyOf": [
+        {
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
+        {
+          "$ref": "special_values.json#/definitions/capital"
+        }
+      ]
+    },
     "country_tag_empty": {
       "type": "string",
       "enum": ["---"]

@@ -19,6 +19,14 @@ import aiPersonalitiesSchema from './schemas/ai_personalities';
 import clientStatesSchema from './schemas/client_states';
 import historyCountriesSchema from './schemas/history_countries';
 import countriesSchema from './schemas/countries';
+import countryColorsSchema from './schemas/country_colors';
+import countryTagsSchema from './schemas/country_tags';
+import cultureGroupsSchema from './schemas/culture_groups';
+import culturesSchema from './schemas/cultures';
+import customIdeaGroupsSchema from './schemas/custom_idea_groups';
+import customIdeasSchema from './schemas/custom_ideas';
+import decisionsSchema from './schemas/decisions';
+
 
 
 import countryCommands from './schemas/country_commands';
@@ -67,6 +75,14 @@ export default {
     clientStatesSchema,
     historyCountriesSchema,
     countriesSchema,
+    countryColorsSchema,
+    countryTagsSchema,
+    cultureGroupsSchema,
+    culturesSchema,
+    customIdeaGroupsSchema,
+    customIdeasSchema,
+    decisionsSchema,
+
 
     specialValues,
     countryCommands,

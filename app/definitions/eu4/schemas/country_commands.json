@@ -230,8 +230,36 @@
         },
         "free_vassal": {
           "description": "Free a vassal X of the current country scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
         },
+        "set_religious_school": {
+          "description": "Set religious school for the current country scope",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "group": {
+              "description": "The religion group the school belongs to.",
+              "$ref": "identifiers.json#/definitions/religion_groups"
+            },
+            "school": {
+              "description": "The religious school to set.",
+              "$ref": "identifiers.json#/definitions/religious_schools"
+            }
+          },
+          "required": [
+            "group",
+            "school"
+          ]
+        },
+        "swap_non_generic_missions": {
+          "description": "The mission series potential triggers can be re-checked by using swap_non_generic_missions = yes, which will re-evaluate the triggers and swap series to match the country's current state.",
+          "$ref": "special_values.json#/definitions/yes"
+        },
+        "complete_mission": {
+          "description": "Complete a mission",
+          "$ref": "identifiers.json#/definitions/missions"
+        },
+
 
 
         "add_absolutism": {
@@ -244,7 +272,7 @@
           "version_added": "1.1",
           "anyOf": [
             {
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             {
               "$ref": "identifiers.json#/definitions/cultures"
@@ -358,12 +386,12 @@
         },
         "add_historical_friend": {
           "description": "Makes the defined scope a historical friend of the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.12"
         },
         "add_historical_rival": {
           "description": "Makes the defined scope a historical rival of the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.12"
         },
         "add_horde_unity": {
@@ -538,7 +566,7 @@
         },
         "add_truce_with": {
           "description": "Creates a truce between the defined scope and the current scope.\nNotes: The truce length is the default white peace truce length.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "add_war_exhaustion": {
@@ -563,22 +591,22 @@
         },
         "artillery": {
           "description": "Spawns an artillery unit for the current scope in the defined province scope.\nNotes: Uses the currently selected artillery unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "break_marriage": {
           "description": "Breaks the current scope's royal marriage with the defined scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.11"
         },
         "break_union": {
           "description": "Breaks the current scope's union with the defined scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "cavalry": {
           "description": "Spawns a cavalry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected cavalry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "change_adm": {
@@ -635,7 +663,8 @@
           "description": "Changes the primary culture of the current scope.\nNotes: Cultures are found in /Europa Universalis IV/common/cultures/*.txt.\nCan utilise Event Scope Values.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/cultures"},
-            {"$ref": "special_values.json#/definitions/variable"}
+            {"$ref": "special_values.json#/definitions/variable"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_country"}
           ],
           "version_added": "1.1"
         },
@@ -644,7 +673,7 @@
           "version_added": "1.1",
           "anyOf": [
             {
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             {
               "$ref": "identifiers.json#/definitions/religions"
@@ -659,7 +688,7 @@
         },
         "change_tag": {
           "description": "Changes current scope to <scope> tag.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "change_technology_group": {
@@ -749,7 +778,7 @@
         },
         "create_alliance": {
           "description": "Creates an alliance between the current scope and the defined scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "create_conquistador": {
@@ -769,7 +798,7 @@
         },
         "create_guarantee": {
           "description": "Creates an guarantee over the defined scope for the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.8"
         },
         "create_independent_estate": {
@@ -784,22 +813,22 @@
         },
         "create_march": {
           "description": "Makes the defined scope a march subject of the current scope.\nNotes: Uses the march subject type.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.12"
         },
         "create_marriage": {
           "description": "Creates a royal marriage between the current scope and the defined scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "create_union": {
           "description": "Makes the defined scope a junior partner in a personal union with the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "create_vassal": {
           "description": "Makes the defined scope a vassal subject of the current scope.\nNotes: Uses the vassal subject type.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.22"
         },
         "custom_tooltip": {
@@ -809,7 +838,7 @@
         },
         "declare_war": {
           "description": "Creates a no casus belli war against the defined scope for the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "disband_rebels": {
@@ -834,7 +863,7 @@
         },
         "elector": {
           "description": "Makes the defined scope an elector of the Holy Roman Empire.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "enable_hre_leagues": {
@@ -854,7 +883,7 @@
         },
         "excommunicate": {
           "description": "Excommunicates the defined scope. If already excommunicated, removes excommunication.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.12"
         },
         "exile_heir_as": {
@@ -874,12 +903,12 @@
         },
         "form_coalition_against": {
           "description": "The current scope creates or joins a coalition against the defined scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "galley": {
           "description": "Spawns a galley unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current galley unit.\nRequires the province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "grant_independence": {
@@ -889,7 +918,7 @@
         },
         "heavy_ship": {
           "description": "Spawns a heavy ship unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current heavy ship unit.\nRequires the province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "hide_ambient_object": {
@@ -909,12 +938,12 @@
         },
         "infantry": {
           "description": "Spawns a infantry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected infantry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "inherit": {
           "description": "The current scope inherits all of the defined scope's provinces.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "internal_hre_cb": {
@@ -925,7 +954,7 @@
         "join_league": {
           "description": "Makes the current scope join the League that the defined scope belongs to.",
           "anyOf": [
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_country"},
             {"$ref": "special_values.json#/definitions/league"}
           ],
           "version_added": "1.8"
@@ -955,14 +984,14 @@
         "leave_league": {
           "description": "Makes the current scope leave the League that the defined scope belongs to.",
           "anyOf": [
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_country"},
             {"$ref": "special_values.json#/definitions/league"}
           ],
           "version_added": "1.8"
         },
         "light_ship": {
           "description": "Spawns a light ship unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current light ship unit.\nRequires the province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "loan_size": {
@@ -977,12 +1006,12 @@
         },
         "mercenary_cavalry": {
           "description": "Spawns a mercenary cavalry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected cavalry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "mercenary_infantry": {
           "description": "Spawns a mercenary infantry unit for the current scope in the defined province scope.\nNotes: Uses the currently selected mercenary infantry unit.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "reinstate_parliament": {
@@ -992,7 +1021,7 @@
         },
         "release": {
           "description": "The current scope releases all provinces with the defined scope's cores.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "release_all_subjects": {
@@ -1060,12 +1089,12 @@
         },
         "remove_historical_friend": {
           "description": "Removes the historical friendship between the defined scope and the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.12"
         },
         "remove_historical_rival": {
           "description": "Removes the historical rivalry between the defined scope and the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.12"
         },
         "remove_idea": {
@@ -1146,7 +1175,7 @@
         },
         "set_emperor_of_china": {
           "description": "Sets the current Emperor of China.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.2"
         },
         "set_global_flag": {
@@ -1181,6 +1210,7 @@
           "description": "Changes the heir religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/country_scope"},
             {"$ref": "special_values.json#/definitions/variable"}
           ],
           "version_added": "1.23"
@@ -1243,7 +1273,7 @@
         "set_revolution_target": {
           "description": "Makes the defined scope the new revolutionary target.\nNotes: Use --- to remove the target and not re-assign.",
           "anyOf": [
-            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_country"},
             {"$ref": "special_values.json#/definitions/country_tag_empty"}
           ],
           "version_added": "1.1"
@@ -1270,7 +1300,8 @@
           "description": "Changes the ruler religion of the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/religions"},
-            {"$ref": "special_values.json#/definitions/variable"}
+            {"$ref": "special_values.json#/definitions/variable"},
+            {"$ref": "special_values.json#/definitions/country_scope"}
           ],
           "version_added": "1.23"
         },
@@ -1286,12 +1317,12 @@
         },
         "switch_tag": {
           "description": "Switches the player view to <scope> tag. Original country becomes controlled by AI.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.8"
         },
         "transport": {
           "description": "Spawns a transport unit for the current scope in the defined province scope.\nNotes: Uses the current scope's current transport unit.\nRequires the province scope to have a port.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "unlock_cult": {
@@ -1301,12 +1332,12 @@
         },
         "vassalize": {
           "description": "Makes the defined scope a vassal subject of the current scope.\nNotes: Uses the vassal subject type.\nExact same effect as create_vassal.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
         "white_peace": {
           "description": "Forces the defined scope into a white peace truce with the current scope.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_country",
           "version_added": "1.1"
         },
 
@@ -1320,7 +1351,7 @@
           "properties": {
             "target": {
               "description": "The country to add the casus belli against.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "type": {
               "description": "The casus belli to add.",
@@ -1562,7 +1593,7 @@
           "properties": {
             "who": {
               "description": "The country the opinion modifier is for.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "modifier": {
               "description": "The opinion modifier to use.",
@@ -1613,7 +1644,7 @@
           "properties": {
             "who": {
               "description": "The country to add spy network for.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "value": {
               "description": "The amount of spy network to add or subtract.",
@@ -1633,7 +1664,7 @@
           "properties": {
             "who": {
               "description": "The country to add spy network in.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "value": {
               "description": "The amount of spy network to add or subtract.",
@@ -1653,7 +1684,7 @@
           "properties": {
             "who": {
               "description": "The country trust will be added with.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "value": {
               "description": "The amount of trust to add or subtract.",
@@ -1741,7 +1772,7 @@
             },
             "subject": {
               "description": "The scope to make the subject.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             }
           },
           "required": [
@@ -1757,7 +1788,7 @@
           "properties": {
             "who": {
               "description": "The country declared against.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "casus_belli": {
               "description": "The casus belli to use.",
@@ -1912,7 +1943,7 @@
             },
             "country_of_origin": {
               "description": "Optional. The origin country of the consort.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "dynasty": {
               "description": "Optional. The dynasty of the consort.",
@@ -2334,7 +2365,7 @@
           "properties": {
             "target": {
               "description": "The country the casus belli is against.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "type": {
               "description": "The casus belli to remove.",
@@ -2354,7 +2385,7 @@
           "properties": {
             "who": {
               "description": "The country the opinion modifier is held against.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "modifier": {
               "description": "The opinion modifier to use.",
@@ -2374,7 +2405,7 @@
           "properties": {
             "target": {
               "description": "The country to that gains the casus belli.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "type": {
               "description": "The casus belli to add.",
@@ -2399,7 +2430,7 @@
           "properties": {
             "who": {
               "description": "The country the opinion modifier is added to.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "modifier": {
               "description": "The opinion modifier to use.",
@@ -2423,7 +2454,7 @@
           "properties": {
             "target": {
               "description": "The country that holds the casus belli.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "type": {
               "description": "The casus belli to remove.",
@@ -2443,7 +2474,7 @@
           "properties": {
             "who": {
               "description": "The country the opinion modifier holds.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "modifier": {
               "description": "The opinion modifier to use.",
@@ -2467,7 +2498,7 @@
             },
             "who": {
               "description": "Who the attitude is directed against.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "locked": {
               "description": "Whether the attitude can be re-evaluated and changed.",
@@ -2560,7 +2591,7 @@
             },
             "scope": {
               "description": "The country scope to draw the namelist from. Only used with the advisor type.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             }
           },
           "required": [
@@ -2576,7 +2607,7 @@
           "properties": {
             "who": {
               "description": "Which country to alter opinion with.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope"
+              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
             },
             "opinion": {
               "description": "Which opinion state to change to.",
@@ -2595,7 +2626,7 @@
       "$identifierProperties": {
         "units": {
           "description": "Spawns a specific unit for the current scope in the defined province scope.\nNotes: Units can be found in /Europa Universalis IV/common/units/*.txt.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "$ref": "special_values.json#/definitions/province_id_or_scope_country",
           "version_added": "1.1"
         },
         "institutions": {
