@@ -58,6 +58,10 @@
     "custom_nation_points_unknown": {
       "type": "number"
     },
+    "decisions": {
+      "$identifierValue": "decisions",
+      "type": "string"
+    },
     "parliament_issues": {
       "$identifierValue": "parliament_issues",
       "type": "string"
@@ -229,6 +233,10 @@
     },
     "religious_reforms": {
       "$identifierValue": "religious_reforms",
+      "type": "string"
+    },
+    "religious_schools": {
+      "todo": "hook up!",
       "type": "string"
     },
     "religions": {

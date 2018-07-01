@@ -17,6 +17,7 @@ import countryEventsSchema from './schemas/country_events';
 import provinceEventsSchema from './schemas/province_events';
 import aiPersonalitiesSchema from './schemas/ai_personalities';
 import clientStatesSchema from './schemas/client_states';
+import historyCountriesSchema from './schemas/history_countries';
 
 
 import countryCommands from './schemas/country_commands';
@@ -63,6 +64,7 @@ export default {
     provinceEventsSchema,
     aiPersonalitiesSchema,
     clientStatesSchema,
+    historyCountriesSchema,
 
     specialValues,
     countryCommands,

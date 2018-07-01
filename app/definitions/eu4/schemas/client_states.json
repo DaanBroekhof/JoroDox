@@ -6,36 +6,6 @@
     "name": {
       "type": "string"
     },
-    "datax": {
-      "$mergeProps": [
-        {
-          "properties": {
-            "region": {
-              "$ref": "identifiers.json#/definitions/map_region"
-            }
-          }
-        },
-        {
-          "properties": {
-            "name": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "trigger": {
-                  "$ref": "province_conditions.json#/definitions/province_conditions"
-                }
-              },
-              "required": [
-                "name"
-              ]
-            }
-          }
-        }
-      ]
-    },
     "data": {
       "properties": {
         "region": {

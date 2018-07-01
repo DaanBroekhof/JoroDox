@@ -670,14 +670,7 @@
         "change_unit_type": {
           "description": "Change the unit type for the current scope.\nNotes: The unit types correspond the the technology groups found in /Europa Universalis IV/common/technology.txt.",
           "version_added": "1.1",
-          "anyOf": [
-            {
-              "$ref": "identifiers.json#/definitions/units"
-            },
-            {
-              "$ref": "identifiers.json#/definitions/rebel_types"
-            }
-          ]
+          "$ref": "identifiers.json#/definitions/technology_groups"
         },
         "clear_global_event_target": {
           "description": "Clears a specific global event target.",
@@ -931,7 +924,10 @@
         },
         "join_league": {
           "description": "Makes the current scope join the League that the defined scope belongs to.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/league"}
+          ],
           "version_added": "1.8"
         },
         "kill_advisor": {
@@ -958,7 +954,10 @@
         },
         "leave_league": {
           "description": "Makes the current scope leave the League that the defined scope belongs to.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope",
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
+            {"$ref": "special_values.json#/definitions/league"}
+          ],
           "version_added": "1.8"
         },
         "light_ship": {

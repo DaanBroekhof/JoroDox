@@ -1,0 +1,289 @@
+{
+  "$id": "http://jorodox.org/schemas/history_countries.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "tag": {
+      "$ref": "identifiers.json#/definitions/country_tags"
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {"$ref": "history_countries.json#/definitions/history_properties"},
+        {"$ref": "country_commands.json#/definitions/country_commands"},
+        {
+          "patternProperties": {
+            "^[0-9]{4}\\.[0-9]{1,2}\\.[0-9]{1,2}$": {
+              "$mergeProps": [
+                {"$ref": "history_countries.json#/definitions/history_properties"},
+                {"$ref": "country_commands.json#/definitions/country_commands"},
+                {
+                  "properties": {
+                    "clear_scripted_personalities": {
+                      "todo": "Find out what this does?",
+                      "$ref": "special_values.json#/definitions/yes"
+                    },
+                    "changed_tag_from": {
+                      "todo": "Find out what this does?",
+                      "$ref": "identifiers.json#/definitions/country_tags"
+                    },
+                    "decision": {
+                      "todo": "Find out what this does?",
+                      "$ref": "identifiers.json#/definitions/decisions"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "tag",
+    "path",
+    "data"
+  ],
+  "definitions": {
+    "history_properties": {
+      "properties": {
+        "technology_group": {
+          "description": "The technology group of the country. Will set the unit type to this technology group as well.",
+          "$ref": "identifiers.json#/definitions/technology_groups"
+        },
+        "unit_type": {
+          "description": "Used if you want a different unit group from the defined technology group",
+          "$ref": "identifiers.json#/definitions/technology_groups"
+        },
+        "government": {
+          "description": "The government form of the country",
+          "$ref": "identifiers.json#/definitions/governments"
+        },
+        "government_rank": {
+          "description": "Current government rank: 1, 2 or 3",
+          "$ref": "special_values.json#/definitions/government_rank"
+        },
+        "primary_culture": {
+          "description": "The primary culture of the country",
+          "$ref": "identifiers.json#/definitions/cultures"
+        },
+        "religion": {
+          "description": "The religion of the country",
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "secondary_religion": {
+          "description": "The secondary religion of the country",
+          "todo": "add to wiki",
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "historical_friend": {
+          "description": "Historical friend country.",
+          "todo": "Add to wiki",
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        "historical_rival": {
+          "description": "Historical rival country.",
+          "todo": "Add to wiki",
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        "elector": {
+          "description": "If this country is an elector.",
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "mercantilism": {
+          "description": "Starting mercantilism value",
+          "type": "number"
+        },
+        "religious_school": {
+          "description": "For countries that have a religion that use Religious Schools, assigns initial school",
+          "$ref": "identifiers.json#/definitions/religious_schools"
+        },
+        "national_focus": {
+          "description": "Which national focus the country starts with.",
+          "todo": "add to wiki",
+          "$ref": "special_values.json#/definitions/monarch_power_type"
+        },
+        "capital": {
+          "description": "The province that is the default capital",
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "fixed_capital": {
+          "description": "Forces the AI to never move their capital from the specified id, they will seek to move it back there as well if moved.",
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "monarch": {
+          "description": "Defines a ruler for the country. Normally used within a history entry",
+          "$mergeProperties": [
+            {"$ref": "history_countries.json#/definitions/person_basic_properties"},
+            {"$ref": "history_countries.json#/definitions/person_royal_properties"},
+            {
+              "properties": {
+                "regent": {
+                  "description": "Whether the ruler is considered a regency",
+                  "$ref": "special_values.json#/definitions/yes"
+                },
+                "leader": {
+                  "description": "Makes the defined ruler a leader",
+                  "$mergeProperties": [
+                    {
+                      "properties": {
+                        "name": {
+                          "description": "Name of the ruler",
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "$ref": "history_countries.json#/definitions/person_military_properties"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "heir": {
+          "description": "Defines a heir for the country. Normally used within a history entry",
+          "$mergeProperties": [
+            {"$ref": "history_countries.json#/definitions/person_basic_properties"},
+            {"$ref": "history_countries.json#/definitions/person_royal_properties"},
+            {
+              "properties": {
+                "monarch_name": {
+                  "description": "Name of heir if they become a ruler",
+                  "type": "string"
+                },
+                "claim": {
+                  "description": "Strength of claim for heir",
+                  "type": "number"
+                }
+              }
+            }
+          ]
+        },
+        "queen": {
+          "description": "Defines a consort for the country. Normally used within a history entry",
+          "$mergeProperties": [
+            {"$ref": "history_countries.json#/definitions/person_basic_properties"},
+            {"$ref": "history_countries.json#/definitions/person_royal_properties"},
+            {
+              "properties": {
+                "country_of_origin": {
+                  "description": "Strength of claim for the consort",
+                  "$ref": "identifiers.json#/definitions/country_tags"
+                }
+              }
+            }
+          ]
+        },
+        "leader": {
+          "description": "Defines a leader for the country. Normally used within a history entry",
+          "$mergeProperties": [
+            {"$ref": "history_countries.json#/definitions/person_basic_properties"},
+            {"$ref": "history_countries.json#/definitions/person_military_properties"}
+          ]
+        }
+      },
+      "required": [
+        "region",
+        "name"
+      ]
+    },
+    "person_basic_properties": {
+      "properties": {
+        "name": {
+          "description": "Name of the person",
+          "type": "string"
+        },
+        "birth_date": {
+          "description": "Used to set the age of the person. Derived from the date of the history entry the monarch scope is found in.",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "death_date": {
+          "description": "Used to set the age of the person. Derived from the date of the history entry the monarch scope is found in.",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "birth_Date": {
+          "description": "Used to set the age of the person. Derived from the date of the history entry the monarch scope is found in.",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "death_Date": {
+          "description": "Used to set the age of the person. Derived from the date of the history entry the monarch scope is found in.",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "female": {
+          "description": "Whether the person is female",
+          "$ref": "special_values.json#/definitions/yes"
+        }
+      }
+    },
+    "person_royal_properties": {
+      "properties": {
+        "dynasty": {
+          "description": "Dynasty of the person",
+          "type": "string"
+        },
+        "adm": {
+          "description": "ADM skill of the person",
+          "type": "number"
+        },
+        "dip": {
+          "description": "DIP skill of the person",
+          "type": "number"
+        },
+        "mil": {
+          "description": "MIL skill of the person",
+          "type": "number"
+        },
+        "ADM": {
+          "description": "ADM skill of the person",
+          "type": "number"
+        },
+        "DIP": {
+          "description": "DIP skill of the person",
+          "type": "number"
+        },
+        "MIL": {
+          "description": "MIL skill of the person",
+          "type": "number"
+        },
+        "religion": {
+          "description": "The religion of the person",
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "culture": {
+          "description": "The culture of the person",
+          "$ref": "identifiers.json#/definitions/cultures"
+        }
+      }
+    },
+    "person_military_properties": {
+      "properties": {
+        "type": {
+          "description": "Type of leader: general, admiral, explorer, conquistidor",
+          "$ref": "special_values.json#/definitions/leader_types"
+        },
+        "fire": {
+          "description": "Fire value of the leader",
+          "type": "number"
+        },
+        "shock": {
+          "description": "Shock value of the leader",
+          "type": "number"
+        },
+        "manuever": {
+          "description": "Manuever value of the leader",
+          "type": "number"
+        },
+        "siege": {
+          "description": "Siege value of the leader",
+          "type": "number"
+        }
+      }
+    }
+  }
+}

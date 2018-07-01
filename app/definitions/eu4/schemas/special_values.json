@@ -369,6 +369,14 @@
           "$ref": "identifiers.json#/definitions/units"
         }
       ]
+    },
+    "government_rank": {
+      "type": "number",
+      "enum": [1, 2, 3]
+    },
+    "league": {
+      "type": "string",
+      "enum": ["catholic", "protestant"]
     }
   }
 }
