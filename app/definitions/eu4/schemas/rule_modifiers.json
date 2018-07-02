@@ -97,8 +97,10 @@
           "description": "Grants the abiliy to automatically discover undiscovered provinces adjacent to colonies. (Constant)",
           "$ref": "special_values.json#/definitions/boolean"
         }
-      },
-      "banner_rule_modifiers": {
+      }
+    },
+    "banner_rule_modifiers": {
+      "properties": {
         "has_banners": {
           "description": "Allows the usage of Manchu banner units. Country scope. (Constant)",
           "type": "number"
@@ -107,8 +109,10 @@
           "description": "Allows Manchu banner units to be raised in owned provinces. Province scope. (Constant)",
           "type": "number"
         }
-      },
-      "event_modifiers": {
+      }
+    },
+    "event_modifiers": {
+      "properties": {
         "religion": {
           "description": "Will cause the event modifier to disappear if the country changes religion (or syncretic religion).",
           "$ref": "special_values.json#/definitions/boolean"

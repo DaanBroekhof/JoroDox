@@ -306,6 +306,14 @@
     "custom_idea_groups": {
       "$identifierValue": "custom_idea_groups",
       "type": "string"
+    },
+    "interface_images_ideas_eu4": {
+      "$identifierValue": {
+        "type": "gfx_interface_images",
+        "prefix": "gfx/interface/ideas_EU4/",
+        "postfix": ".dds"
+      },
+      "type": "string"
     }
   }
 }

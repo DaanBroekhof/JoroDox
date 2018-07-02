@@ -26,6 +26,7 @@ import culturesSchema from './schemas/cultures';
 import customIdeaGroupsSchema from './schemas/custom_idea_groups';
 import customIdeasSchema from './schemas/custom_ideas';
 import decisionsSchema from './schemas/decisions';
+import eventModifiersSchema from './schemas/event_modifiers';
 
 
 
@@ -82,6 +83,7 @@ export default {
     customIdeaGroupsSchema,
     customIdeasSchema,
     decisionsSchema,
+    eventModifiersSchema,
 
 
     specialValues,

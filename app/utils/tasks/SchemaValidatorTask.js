@@ -311,11 +311,11 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           for (const dataKey of _.keys(data)) {
             for (const identifierType of _.keys(validatorPrep)) {
               let identifierValue = dataKey;
-              if (schema.postFix) {
-                if (!_.endsWith(identifierValue, schema.postFix)) {
+              if (schema[identifierType].postfix) {
+                if (!_.endsWith(identifierValue, schema[identifierType].postfix)) {
                   continue;
                 }
-                identifierValue = identifierValue.substring(-schema.postFix.length);
+                identifierValue = identifierValue.substring(0, identifierValue.length -(schema[identifierType].postfix.length));
               }
 
               if (identifierType === '<switch_value>') {
@@ -383,10 +383,26 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     ajv.addKeyword('$identifierValue', {
       compile: (schema, parentSchema, it) => {
-        const identifierType = schema;
+        let identifierType = schema;
+        let identifierPrefix = null;
+        let identifierPostfix = null;
+
+        if (schema.type) {
+          identifierType = schema.type;
+          identifierPrefix = schema.prefix;
+          identifierPostfix = schema.postfix;
+        }
 
         return function v(data, dataPath, object, key) {
           const scopeKeyMatch = identifierType.match(/^<scope_key:(.+)>$/);
+
+          if (identifierPrefix !== null) {
+            data = identifierPrefix + data;
+          }
+          if (identifierPostfix !== null) {
+            data = data + identifierPostfix;
+          }
+
           if (scopeKeyMatch) {
             const scopeKeyRef = scopeKeyMatch[1];
             if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {

@@ -883,12 +883,12 @@
         "factions": {
           "description": "Adds to the monthly rate of faction influence. \nGenerated automatically for all factions in /Europa Universalis IV/common/factions. (Additive)",
           "type": "number",
-          "postFix": "_influence"
+          "postfix": "_influence"
         },
         "technology_groups": {
           "description": "Modifies the monarch power cost of <tech> technologies. \nGenerated automatically for all technology tables in /Europa Universalis IV/common/technology.txt. (Multiplicative)",
           "type": "number",
-          "postFix": "_cost_modifier"
+          "postfix": "_cost_modifier"
         }
       }
     }

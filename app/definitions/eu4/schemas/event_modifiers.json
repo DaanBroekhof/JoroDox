@@ -1,0 +1,35 @@
+{
+  "$id": "http://jorodox.org/schemas/event_modifiers.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$mergeProps": [
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+            {"$ref": "province_modifiers.json#/definitions/province_modifiers"},
+            {"$ref": "rule_modifiers.json#/definitions/event_modifiers"},
+            {
+              "properties": {
+                "picture": {"$ref": "identifiers.json#/definitions/interface_images_ideas_eu4"}
+              }
+            }
+          ]
+        },
+        {
+          "type": "array",
+          "maxItems": 0
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import {withRouter} from 'react-router';
 import React, {Component} from 'react';
+import Table from '@material-ui/core/Table';
 import Typography from '@material-ui/core/Typography';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
