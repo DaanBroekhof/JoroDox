@@ -33,19 +33,18 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
   addMergePropsKeyword(ajv) {
     const resolveMergeProps = (schema, parentSchema, it) => {
       const mergedSchema = {
-        $makeArray: {
-          type: 'array',
-          items: {
-            properties: {},
-            patternProperties: {},
-            $identifierProperties: {},
-          }
+        $matchProps: {
+          propertySets: {},
+          $identifierProperties: {},
         }
       };
 
       schema.forEach(subSchema => {
+        let setId = 'random_' + Math.floor(Math.random() * 10000000);
         if (subSchema.$ref) {
           const resolvedUri = URI.resolve(it.baseId, subSchema.$ref);
+
+          setId = resolvedUri;
 
           // Local reference
           if (_.startsWith(resolvedUri, it.root.schema.$id) && !it.baseIdOverwritten) {
@@ -65,7 +64,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
               const refUri = resolvedUri.split('#')[0] + '#';
               subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, {
                 ...it,
-               // async: true,
                 baseId: refUri,
                 baseIdOverwritten: false
               });
@@ -77,47 +75,20 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           subSchema = resolveMergeProps(subSchema.$mergeProps, subSchema, it);
         }
 
+        mergedSchema.$matchProps.propertySets[setId] = {};
         if (subSchema.properties) {
-          _.forOwn(subSchema.properties, (val, prop) => {
-            if (!mergedSchema.$makeArray.items.properties[prop]) {
-              mergedSchema.$makeArray.items.properties[prop] = val;
-            }
-          });
-        }
-        if (subSchema.$makeArray && subSchema.$makeArray.items.properties) {
-          _.forOwn(subSchema.$makeArray.items.properties, (val, prop) => {
-            if (!mergedSchema.$makeArray.items.properties[prop]) {
-              mergedSchema.$makeArray.items.properties[prop] = val;
-            }
-          });
+          mergedSchema.$matchProps.propertySets[setId].properties = subSchema.properties;
         }
         if (subSchema.patternProperties) {
-          _.forOwn(subSchema.patternProperties, (val, prop) => {
-            if (!mergedSchema.$makeArray.items.patternProperties[prop]) {
-              mergedSchema.$makeArray.items.patternProperties[prop] = val;
-            }
-          });
-        }
-        if (subSchema.$makeArray && subSchema.$makeArray.items.patternProperties) {
-          _.forOwn(subSchema.$makeArray.items.patternProperties, (val, prop) => {
-            if (!mergedSchema.$makeArray.items.patternProperties[prop]) {
-              mergedSchema.$makeArray.items.patternProperties[prop] = val;
-            }
-          });
+          mergedSchema.$matchProps.propertySets[setId].patternProperties = subSchema.patternProperties;
         }
         if (subSchema.$identifierProperties) {
-          _.forOwn(subSchema.$identifierProperties, (val, prop) => {
-            if (!mergedSchema.$makeArray.items.$identifierProperties[prop]) {
-              mergedSchema.$makeArray.items.$identifierProperties[prop] = val;
-            }
-          });
+          mergedSchema.$matchProps.$identifierProperties[setId] = subSchema.$identifierProperties;
         }
-        if (subSchema.$makeArray && subSchema.$makeArray.items.$identifierProperties) {
-          _.forOwn(subSchema.$makeArray.items.$identifierProperties, (val, prop) => {
-            if (!mergedSchema.$makeArray.items.$identifierProperties[prop]) {
-              mergedSchema.$makeArray.items.$identifierProperties[prop] = val;
-            }
-          });
+
+        if (subSchema.$matchProps) {
+          _.assign(mergedSchema.$matchProps.propertySets, subSchema.$matchProps.propertySets);
+          _.assign(mergedSchema.$matchProps.$identifierProperties, subSchema.$matchProps.$identifierProperties);
         }
       });
 
@@ -158,7 +129,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
         const validatorPrep = () => {
           if (!ajv.allowMultipleSchemaCache[magicId]) {
             ajv.allowMultipleSchemaCache[magicId] = ajv.compile(subSchema);
-            // console.log('Generating ' + magicId, it.baseId, subSchema);
+            //console.log('Generating $allowMultiple ' + magicId, it.baseId, subSchema);
           } else {
             // console.log('Using '+ magicId);
           }
@@ -202,74 +173,104 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     return ajv;
   }
 
-  addMakeArrayKeyword(ajv) {
-    ajv.addKeyword('$makeArray', {
+  addMatchPropsKeyword(ajv) {
+    ajv.addKeyword('$matchProps', {
       type: 'object',
       compile: (schema, parentSchema, it) => {
-        const subSchema = it.util.copy(schema);
-        let magicId = null;
-        if (_.get(schema, 'items.$identifierProperties')) {
-          // This is a shortcut for the most often occuring comparison...
-          magicId = SchemaValidatorTask.hashCode(JSON.stringify(
-            _.keys(schema.items.$identifierProperties)
-              .concat(_.keys(schema.items.patternProperties))
-              .concat(_.keys(schema.items.properties))
-          ));
-        } else {
-          magicId = SchemaValidatorTask.hashCode(JSON.stringify(subSchema));
-        }
-        subSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json';
-        //subSchema.$async = true;
-        if (!ajv.makeArraySchemaCache) {
-          ajv.makeArraySchemaCache = {};
-        }
-        if (ajv.makeArraySchemaCache[magicId] === undefined) {
-          ajv.makeArraySchemaCache[magicId] = false;
+        if (!ajv.matchPropsSchemaCache) {
+          ajv.matchPropsSchemaCache = {};
+          ajv.matchPropsSchemaCacheDyn = {};
         }
 
+        const validatorRefs = _.keys(schema.propertySets);
+        let dynamicValidatorRefs = _.keys(schema.$identifierProperties);
 
-        const validatorPrep = () => {
-          if (!ajv.makeArraySchemaCache[magicId]) {
-            ajv.makeArraySchemaCache[magicId] = ajv.compile(subSchema);
-            // console.log('Generating ' + magicId, it.baseId, subSchema);
-          } else {
-            // console.log('Using '+ magicId);
+        const compileValidatorByRef = (ref) => {
+          if (!ajv.matchPropsSchemaCache[ref]) {
+            schema.propertySets[ref].$id = 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json';
+            schema.propertySets[ref].type = 'object';
+            schema.propertySets[ref].additionalProperties = false;
+            ajv.matchPropsSchemaCache[ref] = ajv.compile(schema.propertySets[ref]);
           }
 
-          return ajv.makeArraySchemaCache[magicId];
+          return ajv.matchPropsSchemaCache[ref];
+        };
+        const compileDynamicValidator = (ref) => {
+          if (!ajv.matchPropsSchemaCacheDyn[ref]) {
+            const dynSchema = {
+              $id: 'http://jorodox.org/schemas/not_a_real_schema_' + Math.floor(Math.random() * 10000000) + '.json',
+              $identifierProperties: schema.$identifierProperties[ref]
+            };
+            ajv.matchPropsSchemaCacheDyn[ref] = ajv.compile(dynSchema);
+          }
+
+          return ajv.matchPropsSchemaCacheDyn[ref];
         };
 
         return function v(data, dataPath, object, key) {
-          const outArray = [];
-          let firstObj = null;
+          let isAllValid = true;
           _.forOwn(data, (subItem, subItemKey) => {
+            let items = null;
             if (_.isArray(subItem) && subItem.multipleKeys) {
-              subItem.forEach(item => {
-                outArray.push({[subItemKey]: item});
-              });
+              items = subItem;
             } else {
-              if (!firstObj) {
-                firstObj = {};
-              }
-              firstObj[subItemKey] = subItem;
+              items = [subItem];
             }
-          });
-          if (firstObj) {
-            outArray.unshift(firstObj);
-          }
 
-          // TODO: make error-path tie up with subSchema validator path
-          const result = validatorPrep()(outArray);
-          v.errors = validatorPrep().errors;
-          if (v.errors) {
-            v.errors = v.errors.map(err => {
-              err.dataPath = dataPath + '.' + err.dataPath;
+            items.forEach((itemValue) => {
+              let isValid = validatorRefs.some(validatorRef => {
+                const val = compileValidatorByRef(validatorRef);
+                const subValid = val({[subItemKey]: itemValue});
 
-              return err;
+                if (!subValid && val.errors && val.errors[0].keyword !== 'additionalProperties') {
+                  val.errors[0].dataPath = dataPath + val.errors[0].dataPath;
+                  if (!v.errors) {
+                    v.errors = [];
+                  }
+                  v.errors.push(val.errors[0]);
+                  isAllValid = false;
+                }
+
+                return subValid;
+              });
+
+              if (!isValid && isAllValid) {
+                isValid = dynamicValidatorRefs.some(dynamicValidatorRef => {
+                  const dynVal = compileDynamicValidator(dynamicValidatorRef);
+                  const dynValid = dynVal({[subItemKey]: itemValue});
+
+                  if (!dynValid && dynVal.errors && dynVal.errors[0].keyword !== '$identifierProperties') {
+                    dynVal.errors[0].dataPath = dataPath + '.' + dynVal.errors[0].dataPath;
+                    if (!v.errors) {
+                      v.errors = [];
+                    }
+                    v.errors.push(dynVal.errors[0]);
+                    isAllValid = false;
+                  }
+
+                  return dynValid;
+                });
+
+                if (!isValid) {
+                  if (!v.errors) {
+                    v.errors = [];
+                  }
+                  v.errors.push({
+                    keyword: '$identifierProperties',
+                    dataPath,
+                    message: 'Unknown property key `' + subItemKey + '`.',
+                    data,
+                    params: {
+                      itemValue
+                    }
+                  });
+                  isAllValid = false;
+                }
+              }
             });
-          }
+          });
 
-          return result;
+          return isAllValid;
         };
       }
     });
@@ -281,18 +282,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const task = this;
     ajv.addKeyword('$identifierProperties', {
       type: 'object',
-      //async: true,
 
       compile: (schema, parentSchema, it) => {
-        const propertyNames = new Set(_.keys(parentSchema.properties));
-        const propertyPatterns = _.keys(parentSchema.patternProperties);
-        // const propertyNamesHash = propertyNames.
         const validators = {};
         const validatorPrep = {};
 
         _.forOwn(schema, (identifierSchema, identifierType) => {
           const magicId = SchemaValidatorTask.hashCode(JSON.stringify(identifierSchema));
-          //identifierSchema.$async = true;
           identifierSchema.$id = 'http://jorodox.org/schemas/not_a_real_schema_' + identifierType + '-' + Math.floor(Math.random() * 10000000) + '.json';
 
           if (!ajv.identifierPropertiesCache) {
@@ -301,8 +297,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
           validatorPrep[identifierType] = () => {
             if (!ajv.identifierPropertiesCache[magicId]) {
+              //console.log('Generating $identifierProperties ' + identifierType, identifierSchema);
               ajv.identifierPropertiesCache[magicId] = ajv.compile(identifierSchema);
-              //console.log('Generating ' + identifierType, identifierSchema);
             } else {
               //console.log('Using ' + identifierType);
             }
@@ -313,14 +309,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
         return function v(data, dataPath, object, key) {
           for (const dataKey of _.keys(data)) {
-            // We don't want to match identifiers if this is already matched (optimalization/order preference)
-            if (propertyNames.has(dataKey)) {
-              continue;
-            }
-            if (propertyPatterns.find(pattern => dataKey.match(pattern))) {
-              continue;
-            }
-
             for (const identifierType of _.keys(validatorPrep)) {
               let identifierValue = dataKey;
               if (schema.postFix) {
@@ -331,15 +319,15 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
               }
 
               if (identifierType === '<switch_value>') {
-                if (!data.on_trigger) {
+                if (!ajv.jdxLastScopeKeyValidator) {
                   return false;
                 }
-                if (!ajv.jdxScopeKeyValidators[schema['<switch_value>'].$switchScope + '/' + data.on_trigger]) {
+                if (!ajv.jdxScopeKeyValidators[schema['<switch_value>'].$switchScope + '/' + ajv.jdxLastScopeKeyValidator]) {
                   return false;
                 }
-                const switchValueValidator = ajv.jdxScopeKeyValidators[schema['<switch_value>'].$switchScope + '/' + data.on_trigger];
+                const switchValueValidator = ajv.jdxScopeKeyValidators[schema['<switch_value>'].$switchScope + '/' + ajv.jdxLastScopeKeyValidator];
 
-                const validSwitchValue = switchValueValidator({[data.on_trigger]: identifierValue});
+                const validSwitchValue = switchValueValidator({[ajv.jdxLastScopeKeyValidator]: identifierValue});
                 if (!validSwitchValue) {
                   v.errors = switchValueValidator.errors;
                   v.errors[0].dataPath = dataKey + v.errors[0].dataPath;
@@ -402,10 +390,14 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           if (scopeKeyMatch) {
             const scopeKeyRef = scopeKeyMatch[1];
             if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
+              //console.log('Generating $identifierValue scope key ref', scopeKeyRef)
               ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
                 $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
                 $ref: scopeKeyRef,
               });
+            }
+            if (key === 'on_trigger') {
+              ajv.jdxLastScopeKeyValidator = data;
             }
             const keyValidator = ajv.jdxScopeKeyValidators[scopeKeyRef];
 
@@ -472,7 +464,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     let ajv = new Ajv({extendRefs: true});
 
     ajv = this.addMergePropsKeyword(ajv);
-    ajv = this.addMakeArrayKeyword(ajv);
+    ajv = this.addMatchPropsKeyword(ajv);
     ajv = this.addAllowMultipleKeyword(ajv);
     ajv = this.addIdentifierPropertiesKeyword(ajv);
     ajv = this.addIdentifierValueKeyword(ajv);
@@ -509,7 +501,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           validator.errors[0].message = 'Unexpected additional property found: ' + validator.errors[0].params.additionalProperty;
         }
 
-        console.log(item[definition.primaryKey], item.comments, validator.errors[0]);
+        console.log(item[definition.primaryKey], item.comments, validator.errors[0], validator.errors);
 
         errorPromises.push(JdxDatabase.addError(args.project, {
           message: validator.errors[0].message,
