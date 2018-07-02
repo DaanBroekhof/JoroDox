@@ -24,10 +24,10 @@
               "$ref": "special_values.json#/definitions/boolean"
             },
             "chance": {
-              "$ref": "country_factor.json#/definitions/country_factor"
+              "$ref": "scope_factors.json#/definitions/country_factor"
             },
             "ai_will_do": {
-              "$ref": "country_factor.json#/definitions/country_factor"
+              "$ref": "scope_factors.json#/definitions/country_factor"
             }
           }
         },

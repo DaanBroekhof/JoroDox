@@ -106,7 +106,7 @@
                   "type": "object"
                 },
                 "ai_will_do": {
-                  "$ref": "country_factor.json#/definitions/country_factor"
+                  "$ref": "scope_factors.json#/definitions/country_factor"
                 }
               }
             }
