@@ -258,7 +258,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                   v.errors.push({
                     keyword: '$identifierProperties',
                     dataPath,
-                    message: 'Unknown property key `' + subItemKey + '`.',
+                    message: 'Unknown property `' + subItemKey + '`.',
                     data,
                     params: {
                       itemValue
@@ -360,7 +360,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             v.errors = [{
               keyword: '$identifierProperties',
               dataPath,
-              message: 'Unknown property key `' + dataKey + '`.',
+              message: 'Unknown property `' + dataKey + '`.',
               data,
               params: {
                 key
@@ -433,7 +433,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           v.errors = [{
             keyword: '$identifierValue',
             dataPath,
-            message: 'Property value `' + data + '` is not a known value of `' + identifierType + '`.',
+            message: 'Property value `' + data + '` is not a known identifier of `' + identifierType + '`.',
             data,
             identifierType,
             key,
@@ -491,13 +491,16 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     this.progress(0, 1, 'Loading validator...');
 
-    console.log('Loading ' + definition.id + ' validator');
+    // console.log('Loading ' + definition.id + ' validator');
     JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
     const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
-    console.log('Validator loaded');
-    this.progress(1, 1, 'Loading validator...');
 
-    console.log('Validating ' + definition.id);
+    if (!validator) {
+      console.log('No validator defined.');
+      return false;
+    }
+
+    //this.progress(0, 1, 'Loading validator...');
 
     const items = await db[definition.id].limit(50000).toArray();
     let nr = 0;
@@ -517,7 +520,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           validator.errors[0].message = 'Unexpected additional property found: ' + validator.errors[0].params.additionalProperty;
         }
 
-        console.log(item[definition.primaryKey], item.comments, validator.errors[0], validator.errors);
+        // console.log(item[definition.primaryKey], item.comments, validator.errors[0], validator.errors);
 
         errorPromises.push(JdxDatabase.addError(args.project, {
           message: validator.errors[0].message,
@@ -531,10 +534,10 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       nr += 1;
     }
 
-    console.log('Done validating ' + definition.id);
+    // console.log('Done validating ' + definition.id);
     this.progress(items.length, items.length, `Validated ${items.length} items...`);
-    console.log('Validate cos ALL: ' + (Date.now() - allTime) + ' - avg ' + ((Date.now() - allTime) / items.length));
-    console.log('Invalid ' + invalidCount);
+    // console.log('Validate cos ALL: ' + (Date.now() - allTime) + ' - avg ' + ((Date.now() - allTime) / items.length));
+    // console.log('Invalid ' + invalidCount);
 
     await Promise.all(errorPromises);
     if (errorPromises.length > 0) {

@@ -14,6 +14,11 @@ export default class ProgressInfo extends Component {
       message: null,
       progress: null,
       total: null,
+
+      // title: 'tesjhtjsjhtjkesh jkhhsdhfsjhdhj dajkshjk ahskjdh ajksdkjha skjdh',
+      // message: 'test',
+      // progress: 40,
+      // total: 100,
     };
 
 
@@ -46,18 +51,22 @@ export default class ProgressInfo extends Component {
       >
         {this.state.message && (
           <CircularProgress
-            variant={this.state.total === 0 || this.state.progress === 0 ? 'indeterminate' : 'determinate'}
-            max={this.state.total}
-            value={this.state.progress}
+            style={{marginTop: 5}}
+            variant="indeterminate"
             color="secondary"
           />
         )}
         {this.state.message && (
-          <div
-            style={{display: 'flex', marginLeft: 10, flexGrow: 1, alignItems: 'center', fontSize: '70%', overflowY: 'hidden'}}
-          >{this.state.title}<br />{this.state.message}
+          <div style={{display: 'flex', flexGrow: 0.5, marginLeft: 10, alignItems: 'stretch', flexDirection: 'column'}}>
+            <div
+              style={{display: 'flex', flexGrow: 1, alignItems: 'center', fontSize: '70%', overflow: 'hidden', paddingTop: 3}}
+            >
+              <span style={{overflow: 'hidden'}}>{this.state.title}<br />{this.state.message}</span>
+            </div>
+            <LinearProgress style={{backgroundColor: 'grey', height: 2, visibility: (this.state.total > 5 ? 'visible' : 'hidden')}} color="secondary" variant="determinate" value={(this.state.progress / this.state.total) * 100} />
           </div>
-        )}
+
+          )}
       </div>
     );
   }

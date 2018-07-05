@@ -26,6 +26,7 @@ class ErrorPage extends Component {
       definition: JdxDatabase.getDefinition(props.project.gameType),
       gameType: props.project.gameType,
       errors: [],
+      errorTotal: null,
     };
 
     this.eventListener = (sender, response) => {
@@ -60,8 +61,9 @@ class ErrorPage extends Component {
 
   async loadErrors(project) {
     const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(100).toArray();
+    const errorTotal = await (await JdxDatabase.getErrors(project)).count();
 
-    return this.setState({errors});
+    return this.setState({errors, errorTotal});
   }
 
   getItemPath(error) {
@@ -92,12 +94,12 @@ class ErrorPage extends Component {
           <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({})} title="Next"><Icon color="action">chevron_right</Icon></IconButton>
           {currentError &&
             <div style={{display: 'flex', paddingLeft: 10}}>
-              <IconButton style={{width: 30, height: 30, backgroundColor: '#eee', borderRadius: 3}} disabled><Icon color="action" style={{color: 'red'}}>warning</Icon></IconButton>
+              <IconButton style={{height: 30, width: 60, backgroundColor: '#eee', borderRadius: 3, fontSize: 16, verticalAlign: 'middle'}} disabled><Icon color="action" style={{color: 'red', marginLeft: 4}}>warning</Icon><span style={{width: 38, marginLeft: 4, marginTop: 2, marginRight: 4, textAlign: 'right'}}>{this.state.errorTotal !== null ? this.state.errorTotal : ''}</span></IconButton>
               <div style={{height: 30, fontSize: 14, paddingLeft: 10, verticalAlign: 'middle', display: 'flex', justifyContent: 'center', flexDirection: 'column', whiteSpace: 'nowrap'}}>
                 <Link to={currentError.typeId ? `/structure/t/${currentError.type}/${currentError.typeId}` : `/structure/t/${currentError.type}`}>{currentError.message}</Link>
               </div>
               <div style={{height: 30, fontSize: 14, paddingLeft: 10, verticalAlign: 'middle', display: 'flex', justifyContent: 'center', flexDirection: 'column', whiteSpace: 'nowrap', paddingRight: 10}}>
-                <span>(<Link to={`/structure/t/${currentError.type}`}>{currentError.type}</Link>: <Link to={currentError.typeId ? `/structure/t/${currentError.type}/${currentError.typeId}` : `/structure/t/${currentError.type}`}>{currentError.typeId})</Link></span>
+                <span>(<Link to={`/structure/t/${currentError.type}`}>{currentError.type}</Link>: <Link to={currentError.typeId ? `/structure/t/${currentError.type}/${currentError.typeId}` : `/structure/t/${currentError.type}`}>{currentError.typeId}</Link>)</span>
               </div>
               <Tooltip id="tooltip-icon" title="Open in default editor" placement="top">
                 <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({openItem: this.getItemPath(currentError)})}><Icon color="action">open_in_new</Icon></IconButton>
@@ -117,21 +119,22 @@ class ErrorPage extends Component {
           <ItemGrid list={this.state.errors}>
             <Column
               width={100}
+              dataKey="item"
+              label="Item"
+              cellRenderer={({rowData}) => <span><Link to={`/structure/t/${rowData.type}`}>{rowData.type}</Link>: <Link to={rowData.typeId ? `/structure/t/${rowData.type}/${rowData.typeId}` : `/structure/t/${rowData.type}`}>{rowData.typeId}</Link></span>}
+            />
+            <Column
+              width={200}
               dataKey="message"
               label="Error message"
-              cellRenderer={({rowData}) => <Link to={rowData.typeId ? `/structure/t/${rowData.type}/${rowData.typeId}` : `/structure/t/${rowData.type}`}>{rowData.message}</Link>}
-            />
-            <Column
-              width={100}
-              dataKey="path"
-              label="Path"
-              cellRenderer={({rowData}) => <Link to={rowData ? `/structure/t/files/${rowData.path}` : ''}>{rowData.path}</Link>}
-            />
-            <Column
-              width={100}
-              dataKey="data"
-              label="Data"
-              cellRenderer={({rowData}) => <div>{JSON.stringify(rowData)}</div>}
+              cellRenderer={({rowData}) =>
+                <span>
+                  <Link
+                    to={rowData.typeId ? `/structure/t/${rowData.type}/${rowData.typeId}` : `/structure/t/${rowData.type}`}>{rowData.message}</Link>
+                  {rowData.data && rowData.data.dataPath ?
+                    <span style={{color: 'grey'}}> {rowData.data.dataPath.replace(/^\.data\./, '')}</span> : ''}
+                </span>
+              }
             />
           </ItemGrid>
         </div>

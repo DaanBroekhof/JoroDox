@@ -106,6 +106,7 @@ class StructureTypeView extends Component {
     return new Promise((resolve, reject) => {
       SchemaValidatorTask.start(
         {
+          taskTitle: 'Validating `' + type.id + '`',
           project: this.props.project,
           typeDefinition: type,
         },

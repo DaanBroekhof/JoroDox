@@ -14,6 +14,7 @@ import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import {incrementVersion} from '../actions/database';
 import ItemGrid from './ItemGrid';
+import SchemaValidatorTask from "../utils/tasks/SchemaValidatorTask";
 
 class StructureView extends Component {
   constructor(props) {
@@ -107,6 +108,35 @@ class StructureView extends Component {
     this.props.incrementDatabaseVersion();
   }
 
+  async validateAll() {
+    const types = this.state.definition.types
+      .filter(x => x.reader === 'StructureLoader')
+      .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
+
+    await JdxDatabase.deleteAllErrors(this.props.project);
+
+    types.forEach(type => {
+      new Promise((resolve, reject) => {
+        SchemaValidatorTask.start(
+          {
+            project: this.props.project,
+            typeDefinition: type,
+            taskTitle: 'Validating `' + type.id + '`',
+          },
+          (progress, total, message) => null,
+          (result) => {
+            resolve(result);
+            console.log('results');
+            console.log(result);
+          },
+          (error) => {
+            reject(error);
+            console.error(error);
+          },
+        );
+      });
+    });
+  }
 
   reloadDiff() {
     JdxDatabase.loadByPaths(this.props.project, null, null, 'Synchronizing changes...').then(() => {
@@ -166,6 +196,7 @@ class StructureView extends Component {
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
           */}
           <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadAll()}>Reload all</Button>
+          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.validateAll()}>Validate all</Button>
           {!this.props.match.params.category &&
             <span>
               <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadDiff()}>Reload diff</Button>
