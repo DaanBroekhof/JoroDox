@@ -236,7 +236,8 @@
     "typeface-roboto": "^0.0.41",
     "uri-js": "^4.2.2",
     "webworker-promise": "^0.4.0",
-    "worker-loader": "^1.1.0"
+    "worker-loader": "^1.1.0",
+    "xxhashjs": "^0.2.2"
   },
   "devEngines": {
     "node": ">=7.x",

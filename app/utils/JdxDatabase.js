@@ -476,6 +476,11 @@ export default class JdxDatabase {
         continue;
       }
 
+      if (typeDefinition.id === 'localisation') {
+        identifierCache[typeDefinition.id] = new Set();
+        continue;
+      }
+
       identifierCache[typeDefinition.id] = new Set(await db[typeDefinition.id].toCollection().primaryKeys());
     }
 

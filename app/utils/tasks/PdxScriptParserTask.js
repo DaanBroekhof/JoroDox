@@ -46,7 +46,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
         console.error(`"Error(s) parsing '${path}'`, parser.errors);
       }
 
-      if (scripts.length % 500 === 0) {
+      if (scripts.length % 50 === 0) {
         this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} PDX scripts...`);
       }
 

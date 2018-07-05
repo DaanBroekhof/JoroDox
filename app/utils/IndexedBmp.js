@@ -1,6 +1,5 @@
 const bmp = require('bmp-js');
 const jetpack = require('fs-jetpack');
-const _ = require('lodash');
 
 function parse(path) {
   const data = bmp.decode(jetpack.read(path, 'buffer'));
@@ -60,7 +59,7 @@ function parse(path) {
   }
 
   colorNrs.forEach(map => {
-    map.adjacencies = _.keys(map.adjacencies);
+    map.adjacencies = Object.keys(map.adjacencies);
   });
 
   return JSON.stringify(indexMap);

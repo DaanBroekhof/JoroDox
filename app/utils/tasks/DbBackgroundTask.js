@@ -1,5 +1,6 @@
 import Dexie from 'dexie';
 import BackgroundTask from './BackgroundTask';
+import XXHash from 'xxhashjs';
 
 const hash = require('object-hash');
 const minimatch = require('minimatch');
@@ -11,7 +12,7 @@ export default class DbBackgroundTask extends BackgroundTask {
     const task = this;
     return new Promise((resolve, reject) => {
       store.bulkPut(slice).then(lastkey => {
-        this.progress(Math.min(data.length, chunkNr * chunkSize), data.length, `Saving ${data.length} ${store.name} data to DB...`);
+        this.progress(Math.min(data.length, chunkNr * chunkSize), data.length, `Saving ${data.length} '${store.name}' items to DB...`);
         if (chunkNr * chunkSize >= data.length) {
           return resolve(lastkey);
         }
@@ -26,7 +27,11 @@ export default class DbBackgroundTask extends BackgroundTask {
   }
 
   addRelationId(relationData) {
-    relationData.id = hash(relationData);
+    relationData.id = XXHash.h64(
+      [relationData.fromKey, relationData.fromType, relationData.fromId, relationData.toKey, relationData.toType, relationData.toId].join(','),
+      42
+    ).toString(16);
+
     return relationData;
   }
 
@@ -82,13 +87,13 @@ export default class DbBackgroundTask extends BackgroundTask {
     let nrDeleted = 0;
 
     do {
-      this.progress(0, 1, 'Removing DB entries...' + (stepNr > 0 ? ' ' + stepNr : ''));
+      this.progress(0, 1, 'Removing DB items...' + (stepNr > 0 ? ' ' + stepNr : ''));
       nrDeleted = await collection.limit(deleteChunkSize).delete();
       total += nrDeleted;
       stepNr += 1;
     } while (nrDeleted === chunkSize)
 
-    this.progress(1, 1, 'Removing DB entries...' + (stepNr > 0 ? ' ' + stepNr : ''));
+    this.progress(1, 1, 'Removing DB items...' + (stepNr > 0 ? ' ' + stepNr : ''));
 
     return total;
   }

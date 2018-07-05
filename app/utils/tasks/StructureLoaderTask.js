@@ -57,24 +57,24 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
     // Iterate over all found data items
     const rawSourceItems = await sourceData.toArray();
-    this.progress(0, 3, 'Parsing data...');
+    this.progress(0, 3, 'Processing data...');
 
     const sourceItems = _(rawSourceItems);
 
     let result = {items: [], relations: []};
 
     if (definition.sourceTransform.type === 'keyValues') {
-      result = await this.sourceTransformByKeyValues(sourceItems, definition);
+      result = await this.sourceTransformByKeyValues(sourceItems, definition, !relationStorage);
     } else if (definition.sourceTransform.type === 'keyKeyValues') {
-      result = await this.sourceTransformByKeyKeyValues(sourceItems, definition);
+      result = await this.sourceTransformByKeyKeyValues(sourceItems, definition, !relationStorage);
     } else if (definition.sourceTransform.type === 'fileData') {
-      result = await this.sourceTransformByFileData(sourceItems, definition);
+      result = await this.sourceTransformByFileData(sourceItems, definition, !relationStorage);
     } else if (definition.sourceTransform.type === 'typesList') {
-      result = await this.sourceTransformByTypesList(sourceItems, definition);
+      result = await this.sourceTransformByTypesList(sourceItems, definition, !relationStorage);
     } else if (definition.sourceTransform.type === 'typesListData') {
-      result = await this.sourceTransformByTypesListData(sourceItems, definition);
+      result = await this.sourceTransformByTypesListData(sourceItems, definition, !relationStorage);
     } else if (definition.sourceTransform.type === 'stringValues') {
-      result = await this.sourceTransformByStringValues(sourceItems, definition);
+      result = await this.sourceTransformByStringValues(sourceItems, definition, !relationStorage);
     } else {
       console.warn(`Unknown sourceTransform type \`${definition.sourceTransform.type}\`.`);
     }

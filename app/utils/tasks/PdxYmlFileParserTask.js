@@ -20,12 +20,12 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
     const results = [];
     const relations = [];
-    filesList.each(path => {
+    filesList.each(async (path) => {
       const filePath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const fileData = jetpack.read(filePath);
-      const pdxYmlData = this.parsePdxYml(args.project, fileData, filePath);
+      const pdxYmlData = await this.parsePdxYml(args.project, fileData, path);
 
-      if (results.length % 500 === 0) {
+      if (results.length % 50 === 0) {
         this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`);
       }
 
@@ -51,8 +51,8 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
   // - Double quotes need not be escaped
   // - Backslashes need to be escaped (\\)
   // - Missing " at end allowed
-  async parsePdxYml(project, data, filePath) {
-    let type = null;
+  async parsePdxYml(project, data, path) {
+    let currentCollection = null;
     const result = {};
 
     const entryRegex = /^\s(.+):([0-9]+)?\s*"(.*)"(\s*#\s*(.*))?\s*$/;
@@ -62,77 +62,90 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     if (data.charCodeAt(0) === 0xFEFF) {
       data = data.slice(1);
 
+      /*
+      // Not actually a warning or error?
       await JdxDatabase.addError(project, {
-        message: `UTF8 BOM detected in \`${filePath}\`.`,
-        path: filePath,
+        message: `Unnecessary UTF8 BOM detected in \`${path}\`.`,
+        path,
+        errorType: 'YML_UNNECESSARY_UTF8_BOM',
         type: 'pdxyml_files',
-        typeId: filePath,
+        typeId: path,
         severity: 'warning',
       });
       this.sendResponse({errorsUpdate: true});
+      */
     }
 
-    data.split('\n').forEach(async (line, lineNr) => {
+    const lines = data.split('\n');
+    for (let lineNr = 0; lineNr < lines.length; lineNr += 1) {
+      const line = lines[lineNr];
+      let noEndQuote = false;
       // empty line (with a comment perhaps)
       if (line.match(/^\s*(#\s*(.*))?\s*$/u)) {
-        return;
+        continue;
       }
 
       // Entry line (with optional comment)
       let entryMatch = line.match(entryRegex);
       // No match? try detecting regex without ending quote
       if (!entryMatch) {
-        await JdxDatabase.addError(project, {
-          message: `Warning: Missing end quote in file \`${filePath}\`, line ${lineNr + 1}`,
-          path: filePath,
-          type: 'pdxyml_files',
-          typeId: filePath,
-          severity: 'warning',
-        });
-        this.sendResponse({errorsUpdate: true});
+        noEndQuote = true;
         entryMatch = line.match(entryRegexNoEndQuote);
       }
 
       if (entryMatch) {
-        if (!type) {
+        if (!currentCollection) {
           await JdxDatabase.addError(project, {
-            message: `Error parsing file \`${filePath}\`, line ${lineNr + 1}: No type found before this line`,
-            path: filePath,
+            message: `Error parsing file \`${path}\`, line ${lineNr + 1}: No collection found before this line`,
+            path,
+            errorType: 'YML_NO_TYPE_BEFORE_LINE',
             type: 'pdxyml_files',
-            typeId: filePath,
+            typeId: path,
             severity: 'warning',
           });
           this.sendResponse({errorsUpdate: true});
-          return;
+          continue;
+        }
+        if (noEndQuote) {
+          await JdxDatabase.addError(project, {
+            message: `Warning: Missing end quote in file \`${path}\`, line ${lineNr + 1}`,
+            path,
+            errorType: 'YML_MISSING_END_QUOTE',
+            type: 'pdxyml_files',
+            typeId: path,
+            severity: 'warning',
+          });
+          this.sendResponse({errorsUpdate: true});
         }
 
-        result[type][entryMatch[1]] = {
+        result[currentCollection][entryMatch[1]] = {
           version: +entryMatch[2],
           value: entryMatch[3].replace('\\n', '\n').replace('\\\\', '\\'),
           comment: entryMatch[6],
         };
+        continue;
       }
 
       // Collection start line
-      const typeMatch = line.match(/^(.+):\s*(#\s*(.*))?$/u);
-      if (typeMatch) {
-        type = typeMatch[1];
-        result[type] = {};
-        return;
+      const collectionMatch = line.match(/^(.+):\s*(#\s*(.*))?$/u);
+      if (collectionMatch) {
+        currentCollection = collectionMatch[1];
+        result[currentCollection] = {};
+        continue;
       }
 
       if (!entryMatch) {
-        console.error(`Error parsing file \`${filePath}\`, line ${lineNr + 1}: could not parse line`);
         await JdxDatabase.addError(project, {
-          message: `Error parsing file \`${filePath}\`, line ${lineNr + 1}: could not parse line`,
-          path: filePath,
+          message: `Error parsing file \`${path}\`, line ${lineNr + 1}: could not parse line`,
+          path,
+          errorType: 'YML_PARSE_ERROR',
           type: 'pdxyml_files',
-          typeId: filePath,
+          typeId: path,
           severity: 'error',
         });
         this.sendResponse({errorsUpdate: true});
       }
-    });
+    }
 
     return result;
   }

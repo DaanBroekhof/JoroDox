@@ -59,7 +59,7 @@ class ErrorPage extends Component {
 
 
   async loadErrors(project) {
-    const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().toArray();
+    const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(100).toArray();
 
     return this.setState({errors});
   }
@@ -84,20 +84,12 @@ class ErrorPage extends Component {
     const currentError = this.state.errors[0];
     
     return (
-      <Paper style={{flex: 1, margin: 0, padding: 0, display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'hidden'}}>
+      <Paper style={{flex: 1, margin: 0, padding: 0, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden'}}>
         <div style={{padding: 2, display: 'flex', minHeight: 30}}>
-          <Tooltip id="tooltip-icon" title="Refresh" placement="top">
-            <IconButton style={{width: 30, height: 30}} onClick={() => this.loadErrors(this.props.project)}><Icon color="action">refresh</Icon></IconButton>
-          </Tooltip>
-          <Tooltip id="tooltip-icon" title="Remove all errors" placement="top">
-            <IconButton style={{width: 30, height: 30}} onClick={() => JdxDatabase.deleteAllErrors(this.props.project).then(() => this.loadErrors(this.props.project))}><Icon color="action">delete</Icon></IconButton>
-          </Tooltip>
-          <Tooltip id="tooltip-icon" title="Previous" placement="top">
-            <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({})}><Icon color="action">chevron_left</Icon></IconButton>
-          </Tooltip>
-          <Tooltip id="tooltip-icon" title="Next" placement="top">
-            <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({})}><Icon color="action">chevron_right</Icon></IconButton>
-          </Tooltip>
+          <IconButton style={{width: 30, height: 30}} onClick={() => this.loadErrors(this.props.project)} title="Refresh"><Icon color="action">refresh</Icon></IconButton>
+          <IconButton style={{width: 30, height: 30}} onClick={() => JdxDatabase.deleteAllErrors(this.props.project).then(() => this.loadErrors(this.props.project))} title="Remove all errors"><Icon color="action">delete</Icon></IconButton>
+          <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({})} title="Previous"><Icon color="action">chevron_left</Icon></IconButton>
+          <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({})} title="Next"><Icon color="action">chevron_right</Icon></IconButton>
           {currentError &&
             <div style={{display: 'flex', paddingLeft: 10}}>
               <IconButton style={{width: 30, height: 30, backgroundColor: '#eee', borderRadius: 3}} disabled><Icon color="action" style={{color: 'red'}}>warning</Icon></IconButton>
