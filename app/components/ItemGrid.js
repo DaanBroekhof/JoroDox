@@ -3,9 +3,9 @@ import {Column, Table, AutoSizer} from 'react-virtualized';
 import Draggable from 'react-draggable';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
-import JdxDatabase from "../utils/JdxDatabase";
+import PropTypes from 'prop-types';
 
-export default class ItemGrid extends React.Component {
+class ItemGrid extends React.Component {
   state = {
     widths: []
   };
@@ -87,12 +87,17 @@ export default class ItemGrid extends React.Component {
 
 
   render() {
-    const {list} = this.props;
+    let {rowCount, rowGetter} = this.props;
     const {widths} = this.state;
+
+    if (this.props.list) {
+      rowCount = this.props.list.length;
+      rowGetter = ({index}) => this.props.list[index];
+    }
 
     const rowHeight = 26;
     const headerHeight = 28;
-    const fullHeight = (rowHeight * list.length) + headerHeight;
+    const fullHeight = (rowHeight * rowCount) + headerHeight;
 
     return (
       <AutoSizer disableHeight={this.props.disableHeight}>
@@ -109,12 +114,14 @@ export default class ItemGrid extends React.Component {
 
           return (
             <Table
+              ref={this.props.registerChild}
               headerHeight={headerHeight}
               rowHeight={rowHeight}
               height={height}
               width={width}
-              rowCount={list.length}
-              rowGetter={({index}) => list[index]}
+              rowCount={rowCount}
+              rowGetter={rowGetter}
+              onRowsRendered={this.props.onRowsRendered}
               headerRowRenderer={({className, columns, style}) => {
                 // Bugfix for when paddingRight is passed (we don't want it)
                 style.paddingRight = 0;
@@ -122,12 +129,10 @@ export default class ItemGrid extends React.Component {
               }}
             >
               {React.Children.map(this.props.children, (child, i) => {
-                const clone = React.cloneElement(child, {
+                return React.cloneElement(child, {
                   width: widths[i] * width,
                   headerRenderer: this.headerRenderer(width, i),
                 });
-
-                return clone;
               })}
             </Table>
           );
@@ -136,3 +141,24 @@ export default class ItemGrid extends React.Component {
     );
   }
 }
+
+ItemGrid.propTypes = {
+  list: PropTypes.arrayOf(PropTypes.object),
+  rowCount: PropTypes.number,
+  rowGetter: PropTypes.func,
+  children: PropTypes.node,
+  disableHeight: PropTypes.bool,
+  onRowsRendered: PropTypes.func,
+};
+
+ItemGrid.defaultProps = {
+  list: null,
+  rowCount: null,
+  rowGetter: null,
+  children: [],
+  disableHeight: false,
+  onRowsRendered: undefined,
+};
+
+
+export default ItemGrid;

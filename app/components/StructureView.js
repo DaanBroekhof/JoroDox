@@ -21,9 +21,13 @@ class StructureView extends Component {
     super(props);
 
     this.state = {
-      typeCounts: {},
+      ids: {},
       definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
     };
+  }
+
+  componentDidMount() {
+    this.reloadCounts();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,6 +37,21 @@ class StructureView extends Component {
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
       // reload grid?
     }
+    if (nextProps.databaseVersion !== this.props.databaseVersion) {
+      this.reloadCounts();
+    }
+  }
+
+  reloadCounts() {
+    if (!this.props.project) {
+      return;
+    }
+
+    JdxDatabase.getAllIdentifiers(this.props.project).then(ids => {
+      return this.setState({ids});
+    }).catch((e) => {
+      console.error(e);
+    });
   }
 
   reloadType(typeId) {
@@ -151,31 +170,10 @@ class StructureView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>No data.</p></Paper>);
     }
 
-    if (!this.loadingCounts) {
-      JdxDatabase.get(this.props.project).then(db => {
-        const typeIds = this.state.definition.types
-          .filter(type => db[type.id] && this.state.typeCounts[type.id] === undefined)
-          .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'))
-          .map(x => x.id);
-        const promises = typeIds.map(typeId => db[typeId].count());
-        return Promise.all(promises).then((counts) => {
-          const typeCounts = {};
-          counts.forEach((value, key) => {
-            typeCounts[typeIds[key]] = value;
-          });
-          this.setState({typeCounts});
-          this.loadingCounts = false;
-        });
-      }).catch((e) => {
-        console.error(e);
-      });
-      this.loadingCounts = true;
-    }
-
     let extendedTypes = this.state.definition.types.map(type => {
-      if (type.totalCount !== this.state.typeCounts[type.id]) {
+      if (this.state.ids && this.state.ids[type.id] && this.state.ids[type.id].size !== type.totalCount) {
         const typeCopy = Object.assign({}, type);
-        typeCopy.totalCount = this.state.typeCounts[type.id];
+        typeCopy.totalCount = this.state.ids[type.id].size;
         return typeCopy;
       }
       return type;

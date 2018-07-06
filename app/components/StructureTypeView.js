@@ -7,6 +7,7 @@ import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
+import {Column} from 'react-virtualized';
 
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
@@ -18,6 +19,7 @@ import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 import StructureScannerTask from '../utils/tasks/StructureScannerTask';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 import {incrementVersion} from '../actions/database';
+import InfiniteItemGrid from './InfiniteItemGrid';
 
 class StructureTypeView extends Component {
   constructor(props) {
@@ -26,11 +28,34 @@ class StructureTypeView extends Component {
     this.state = {
       search: '',
       definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
+      items: [],
+      rowCount: 0,
     };
   }
 
   componentDidMount() {
-    // this.props.reloadGrid(this.gridSettings);
+    this.loadRowCount();
+  }
+
+  loadRowCount() {
+    if (!this.props.project) {
+      return;
+    }
+
+    const type = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
+
+    return JdxDatabase.getTypeIdentifiers(this.props.project, this.props.match.params.type).then((ids) => {
+
+      if (this.state.search) {
+        const count = Array.from(ids.entries()).filter(x => x.toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).length;
+        console.log(count, ids.size);
+        return this.setState({rowCount: count});
+      } else {
+        return this.setState({rowCount: ids.size});
+      }
+    }).then(() => {
+      this.itemGrid.reloadLastRows();
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,7 +63,7 @@ class StructureTypeView extends Component {
       this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath || nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project, nextProps.match.params.type, this.state.search));
+      this.loadRowCount();
     }
   }
 
@@ -54,8 +79,12 @@ class StructureTypeView extends Component {
           searchPath: type.sourceType.pathPrefix.replace('{type.id}', type.id),
         },
         (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
-        (result) => { resolve(result); },
-        (error) => { reject(error); },
+        (result) => {
+          resolve(result);
+        },
+        (error) => {
+          reject(error);
+        },
       );
     });
   }
@@ -71,8 +100,12 @@ class StructureTypeView extends Component {
           filterTypes: [type.id],
         },
         (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
-        (result) => { resolve(result); },
-        (error) => { reject(error); },
+        (result) => {
+          resolve(result);
+        },
+        (error) => {
+          reject(error);
+        },
       );
     });
   }
@@ -126,73 +159,20 @@ class StructureTypeView extends Component {
 
   reloadTypeById(typeId) {
     return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
-      console.log('done');
       this.props.incrementDatabaseVersion();
-      return this.props.reloadGrid(this.gridSettings);
     });
   }
 
-  getDataSource(project, type, search) {
-    const typeDefinition = _(this.state.definition.types).find(x => x.id === type);
+  async loadMoreRows({startIndex, stopIndex}) {
+    const db = await JdxDatabase.get(this.props.project);
+    const type = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
 
-    return function getData({pageIndex, pageSize}) {
-      if (!pageIndex) {
-        pageIndex = 0;
-      }
-      if (!pageSize) {
-        pageSize = typeDefinition.listView.pageSize;
-      }
+    const rows = db[type.id].offset(startIndex).limit((stopIndex - startIndex) + 1);
 
-      return new Promise((resolve) => {
-        return JdxDatabase.get(project).then(db => {
-          if (search) {
-            // Just getting everything and filtering in javascript is faster than using Dexie filter()
-            let base = db[typeDefinition.id];
-            base = base.filter(x => x[typeDefinition.primaryKey].toString().match(new RegExp(_.escapeRegExp(search), 'i')));
-            base.toArray((result) => {
-              // result = result.filter(x => x[typeDefinition.primaryKey].toString().match(new RegExp(_.escapeRegExp(search), 'i')));
-
-              const count = result.length;
-              result = result.slice(pageIndex * pageSize, (pageIndex * pageSize) + pageSize);
-              if (typeDefinition.listView.unsetKeys) {
-                result = result.map(x => {
-                  typeDefinition.listView.unsetKeys.forEach(keys => {
-                    _.unset(x, keys);
-                  });
-                  return x;
-                });
-              }
-
-              resolve({
-                data: result,
-                total: count,
-              });
-            });
-          } else {
-            // var time = new Date().getTime();
-            // console.log(time);
-            db[typeDefinition.id].count((total) => {
-              db[typeDefinition.id].offset(pageIndex * pageSize).limit(pageSize).toArray((result) => {
-                if (typeDefinition.listView.unsetKeys) {
-                  result = result.map(x => {
-                    typeDefinition.listView.unsetKeys.forEach(keys => {
-                      _.unset(x, keys);
-                    });
-                    return x;
-                  });
-                }
-
-                // console.log(new Date().getTime() - time);
-                resolve({
-                  data: result,
-                  total,
-                });
-              });
-            });
-          }
-        });
-      });
-    };
+    if (this.state.search) {
+      return rows.filter(x => x[type.primaryKey].toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).toArray();
+    }
+    return rows.toArray();
   }
 
   render() {
@@ -205,65 +185,6 @@ class StructureTypeView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
 
-    const columns = typeDefinition.listView.columns.map(c => {
-      if (c.linkTo) {
-        c.renderer = ({value, column, row}) => {
-          const linkToId = column.linkKey ? _.get(row, column.linkKey) : value;
-
-          return <span><Link to={`/structure/t/${column.linkTo.replace('[self]', this.props.match.params.type)}/${linkToId}`}>{value}</Link></span>;
-        };
-      } else {
-        _.filter(typeDefinition.relations, (x) => _.isEqual(x.path, c.dataIndex)).forEach(relation => {
-          c.renderer = ({value, column, row}) => {
-            const linkToId = column.linkKey ? _.get(row, column.linkKey) : value;
-            return <span><Link to={`/structure/t/${relation.toType}/${linkToId}`}>{value}</Link></span>;
-          };
-        });
-      }
-
-      return c;
-    });
-
-
-    const gridSettings = {
-      height: false,
-      columns,
-      emptyDataMessage: 'Loading...',
-      plugins: {
-        PAGER: {
-          enabled: true,
-          pagingType: 'remote',
-          toolbarRenderer: (pageIndex, pageSize, total, currentRecords) => `${pageIndex * pageSize} - ${(pageIndex * pageSize) + currentRecords} of ${total}`,
-          pagerComponent: false
-        },
-        COLUMN_MANAGER: {
-          resizable: true,
-          minColumnWidth: 10,
-          moveable: true,
-          sortable: {
-            enabled: true,
-            method: 'local',
-          }
-        },
-        LOADER: {
-          enabled: true
-        },
-      },
-      dataSource: this.getDataSource(this.props.project, this.props.match.params.type, this.state.search),
-      stateKey: `typeList-${this.props.project.rootPath}-${this.props.match.params.type}`,
-      pageSize: typeDefinition.listView.pageSize,
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-      },
-      events: {
-        HANDLE_ROW_CLICK: ({row}) => {
-          // this.props.history.push('/structure/'+ typeDefinition.id +'/'+ row[typeDefinition.primaryKey]);
-        },
-      }
-    };
-
-    this.gridSettings = gridSettings;
 
     let itemPath = `${this.props.project.rootPath}/`;
     if (typeDefinition.sourceType && typeDefinition.sourceType.pathPrefix) {
@@ -275,7 +196,7 @@ class StructureTypeView extends Component {
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
-          <Typography variant="display2" gutterBottom><Link to="/structure">Type</Link>: {typeDefinition.title}</Typography>
+          <Typography variant="display2" gutterBottom><Link to="/structure">Type</Link>: {typeDefinition.title} ({this.state.rowCount})</Typography>
           <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
               <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: itemPath})}><Icon color="action">pageview</Icon></IconButton>
@@ -303,12 +224,45 @@ class StructureTypeView extends Component {
           value={this.state.search}
           onChange={(event) => {
             this.setState({search: event.target.value}, () => {
-              this.props.reloadGrid(this.gridSettings);
+              this.itemGrid.reloadLastRows();
+
+              return this.loadRowCount();
             });
           }}
         />
 
-        <Grid {...gridSettings} />
+        <div className="ItemGrid">
+          <InfiniteItemGrid loadMoreRows={this.loadMoreRows.bind(this)} rowCount={this.state.rowCount} ref={(ref) => { this.itemGrid = ref; }}>
+            { typeDefinition.listView.columns.map((c, index) => {
+              if (c.linkTo) {
+                c.renderer = ({rowData, cellData}) => {
+                  const linkToId = c.linkKey ? _.get(rowData, c.linkKey) : cellData;
+
+                  return <span><Link to={`/structure/t/${c.linkTo.replace('[self]', this.props.match.params.type)}/${linkToId}`}>{cellData}</Link></span>;
+                };
+              } else {
+                _.filter(typeDefinition.relations, (x) => _.isEqual(x.path, c.dataIndex)).forEach(relation => {
+                  c.renderer = ({rowData, cellData}) => {
+                    const linkToId = c.linkKey ? _.get(rowData, c.linkKey) : cellData;
+                    return <span><Link to={`/structure/t/${relation.toType}/${linkToId}`}>{cellData}</Link></span>;
+                  };
+                });
+              }
+
+              return (
+                <Column
+                  key={'column-' + index}
+                  cellDataGetter={({dataKey, rowData}) => _.get(rowData, dataKey)}
+                  dataKey={c.dataIndex}
+                  label={c.name}
+                  width={100}
+                  cellRenderer={c.renderer}
+                />
+              );
+            })}
+
+          </InfiniteItemGrid>
+        </div>
       </Paper>
     );
   }
@@ -316,13 +270,6 @@ class StructureTypeView extends Component {
 
 
 const mapDispatchToProps = (dispatch) => ({
-  reloadGrid: (gridSettings, dataSource) => {
-    dispatch(Actions.GridActions.getAsyncData({
-      stateKey: gridSettings.stateKey,
-      dataSource: dataSource || gridSettings.dataSource,
-      type: gridSettings.type,
-    }));
-  },
   incrementDatabaseVersion: () => {
     dispatch(incrementVersion());
   },

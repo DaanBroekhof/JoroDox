@@ -12,6 +12,8 @@ export default class DdsImageView extends Component {
     this.state = {
       width: 0,
       height: 0,
+      viewHeight: 0,
+      viewWidth: 0,
     };
 
     this.rotation = 0;
@@ -60,8 +62,6 @@ export default class DdsImageView extends Component {
 
     const canvasWidth = this.canvas.clientWidth;
     const canvasHeight = this.state.viewHeight + 20;
-
-    console.log('mooo')
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.OrthographicCamera(canvasWidth / -2, canvasWidth / 2, canvasHeight / 2, canvasHeight / -2, 0.1, 100);

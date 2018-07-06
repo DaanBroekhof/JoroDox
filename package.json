@@ -215,6 +215,7 @@
     "mime": "^2.2.0",
     "object-hash": "^1.2.0",
     "project-version": "^1.0.0",
+    "prop-types": "^15.6.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-draggable": "^3.0.5",

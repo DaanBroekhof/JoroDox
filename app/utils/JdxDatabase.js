@@ -491,28 +491,38 @@ export default class JdxDatabase {
 
   static async updateTypeIdentifiers(project, type) {
     if (!this.allIdentifiersCache[project.id]) {
-      console.log('No CAHCE', type);
+      console.log('No CACHE', type);
       return;
     }
 
-    this.allIdentifiersCache[project.id][type] = await this.getTypeIdentifiers(project, type);
+    this.allIdentifiersCache[project.id][type] = await this.getTypeIdentifiers(project, type, true);
     console.log('cache reread', type);
   }
 
-  static async getTypeIdentifiers(project, type) {
-    const db = await JdxDatabase.get(project);
+  static async getTypeIdentifiers(project, type, refresh) {
+    if (!this.allIdentifiersCache[project.id]) {
+      this.allIdentifiersCache[project.id] = {};
+    }
 
-    for (const typeDefinition of JdxDatabase.getDefinition(project.gameType).types) {
-      if (!db[typeDefinition.id]) {
-        continue;
+    if (!this.allIdentifiersCache[project.id][type] || refresh) {
+      const db = await JdxDatabase.get(project);
+
+      for (const typeDefinition of JdxDatabase.getDefinition(project.gameType).types) {
+        if (!db[typeDefinition.id]) {
+          continue;
+        }
+
+        if (typeDefinition.id === type) {
+          this.allIdentifiersCache[project.id][type] = new Set(await db[typeDefinition.id].toCollection().primaryKeys());
+          break;
+        }
       }
-
-      if (typeDefinition.id === type) {
-        return new Set(await db[typeDefinition.id].toCollection().primaryKeys());
+      if (!this.allIdentifiersCache[project.id][type]) {
+        this.allIdentifiersCache[project.id][type] = new Set();
       }
     }
 
-    return new Set();
+    return this.allIdentifiersCache[project.id][type];
   }
 
   static async addError(project, error) {
