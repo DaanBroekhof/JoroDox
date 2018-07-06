@@ -70,55 +70,55 @@
         "map_provinces": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "country_tags": {
           "$mergeProps": [
             {"$ref": "country_commands.json#/definitions/country_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_area": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_region": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_superregion": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_provincegroups": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_continent": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "trade_companies": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "colonial_regions": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         }
 

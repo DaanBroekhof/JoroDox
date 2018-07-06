@@ -381,6 +381,10 @@
           },
           "required": ["who", "value"]
         },
+        "is_in_large_debt": {
+          "todo": "Double check",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
 
 
 

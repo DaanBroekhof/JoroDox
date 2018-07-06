@@ -17,7 +17,9 @@
           "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
         },
         "modifier": {
-          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+          "$mergeProps": [
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+          ]
         },
         "potential": {
           "$ref": "country_conditions.json#/definitions/country_conditions"

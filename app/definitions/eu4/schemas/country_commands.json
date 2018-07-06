@@ -1965,6 +1965,11 @@
               "description": "Optional. The MIL skill for the consort.",
               "type": "number"
             },
+            "hide_skills": {
+              "description": "Optional. Hides the skill values for the consort.",
+              "todo": "add to wiki",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
             "female": {
               "description": "Optional. Forces the consort to be female.",
               "$ref": "special_values.json#/definitions/boolean"
