@@ -3,6 +3,12 @@
   <head>
     <meta charset="utf-8">
     <title>Jorodox</title>
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self' http://localhost:1212 ws://localhost:1212;
+      script-src 'unsafe-inline' 'unsafe-eval' 'self' http://localhost:1212 file://*/dll/renderer.dev.dll.js file://*;
+      style-src 'unsafe-inline' blob: http://localhost:1212 https://fonts.googleapis.com file://*;
+      font-src http://localhost:1212  https://fonts.gstatic.com file://*
+    ">
     <script>
       (function() {
         if (!process.env.HOT) {

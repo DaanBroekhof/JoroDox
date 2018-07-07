@@ -476,7 +476,7 @@ export default class JdxDatabase {
         continue;
       }
 
-      if (typeDefinition.id === 'localisation') {
+      if (false && typeDefinition.id === 'localisation') {
         identifierCache[typeDefinition.id] = new Set();
         continue;
       }

@@ -1,6 +1,12 @@
 /*@import '~antd/dist/antd.css';*/
 @import url('../node_modules/font-awesome/css/font-awesome.min.css');
 
+/*@import '~material-design-icons-iconfont';*/
+
+@import '~material-design-icons-iconfont/dist/material-design-icons.scss';
+
+
+
 /* General styling */
 
 body {

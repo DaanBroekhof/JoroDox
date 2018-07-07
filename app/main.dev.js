@@ -16,6 +16,8 @@ import IndexedBmpParserForkTask from './utils/tasks/IndexedBmpParserForkTask';
 
 const app = require('electron').app;
 const ipc = require('electron').ipcMain;
+const session = require('electron').session;
+
 const BrowserWindow = require('electron').BrowserWindow;
 const MenuBuilder = require('./menu');
 const windowStateKeeper = require('electron-window-state');
@@ -69,6 +71,19 @@ app.on('window-all-closed', () => {
 
 
 app.on('ready', async () => {
+
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+
+  // Fix for Electron 2.0 including a chrome build that is not referenced anymore
+  // See: https://github.com/electron/electron/issues/13008#issuecomment-400261941
+  session.defaultSession.webRequest.onBeforeRequest({}, (details, callback) => {
+    if (details.url.indexOf('7accc8730b0f99b5e7c0702ea89d1fa7c17bfe33') !== -1) {
+      callback({redirectURL: details.url.replace('7accc8730b0f99b5e7c0702ea89d1fa7c17bfe33', '57c9d07b416b5a2ea23d28247300e4af36329bdc')});
+    } else {
+      callback({cancel: false});
+    }
+  });
+
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
@@ -95,7 +110,6 @@ app.on('ready', async () => {
     height: backgroundWindowState.height,
     webPreferences: {
       nodeIntegrationInWorker: true,
-      webSecurity: false,
     },
   });
 
@@ -108,7 +122,6 @@ app.on('ready', async () => {
     icon: path.join(__dirname, 'assets/icons/png/icon-128.png'),
     webPreferences: {
       nodeIntegrationInWorker: true,
-      webSecurity: false,
     },
   });
 
