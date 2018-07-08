@@ -48,7 +48,6 @@ class StructureTypeView extends Component {
 
       if (this.state.search) {
         const count = Array.from(ids.entries()).filter(x => x.toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).length;
-        console.log(count, ids.size);
         return this.setState({rowCount: count});
       } else {
         return this.setState({rowCount: ids.size});
@@ -177,7 +176,7 @@ class StructureTypeView extends Component {
 
   render() {
     if (!this.props.match.params.type || !this.state.definition) {
-      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
+      return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Definitions not loaded yet.</p></Paper>);
     }
 
     const typeDefinition = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);

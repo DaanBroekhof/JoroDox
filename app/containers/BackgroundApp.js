@@ -12,12 +12,14 @@ import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import IndexedBmpParserTask from '../utils/tasks/IndexedBmpParserTask';
 import DdsImageParserTask from '../utils/tasks/DdsImageParserTask';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
+import JdxDatabase from '../utils/JdxDatabase';
 
 const ipc = require('electron').ipcRenderer;
 
 export default class BackgroundApp extends Component {
   constructor(props) {
     super(props);
+    JdxDatabase.loadDefinitions();
 
     ipc.removeAllListeners('background-request');
     ipc.on('background-request', (event, request) => {

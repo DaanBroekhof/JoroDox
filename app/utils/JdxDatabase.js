@@ -551,11 +551,14 @@ export default class JdxDatabase {
   }
 
   static async getAllIdentifiers(project) {
-    if (this.allIdentifiersCache[project.id]) {
+    if (this.allIdentifiersCache[project.id] && JdxDatabase.getDefinition(project.gameType).types.length === _.size(this.allIdentifiersCache[project.id])) {
       return this.allIdentifiersCache[project.id];
     }
 
     const db = await JdxDatabase.get(project);
+
+    const task = ForegroundTask.start({taskTitle: 'Building cache:'});
+    task.progress(0, 1, 'Fetching item counts...');
 
     const identifierCache = {};
     for (const typeDefinition of JdxDatabase.getDefinition(project.gameType).types) {
@@ -572,6 +575,8 @@ export default class JdxDatabase {
     }
 
     this.allIdentifiersCache[project.id] = identifierCache;
+
+    task.finish();
 
     return identifierCache;
   }
