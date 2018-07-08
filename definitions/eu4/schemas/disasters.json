@@ -1,0 +1,129 @@
+{
+  "$id": "http://jorodox.org/schemas/disasters.json",
+  "$schema": "http://json-schema.org/schema#",
+  "description": "Disasters is a new system introduced in patch 1.9 that replaced the previous MTTH event based system EU4 had to simulate national disasters.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "potential": {
+          "description": "what causes the disaster to be possible. When the potential triggers are true, the disaster will be visible to the player on the stability screen. This is different to what actually makes the disaster tick forward. The kind of arguments you can use are exactly the same as in decisions, events, and missions.",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "can_start": {
+          "description": "Determine what activates the disaster. This enables the \"imminent disaster\" alert in the UI.",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "can_stop": {
+          "description": "As of 1.10, you can set conditions that will make disaster progress stop in its tracks.",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "progress": {
+          "description": "Make the disaster tick forward. This is done using modifiers. You can determine what ticks the disaster and by how much.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "factor": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "down_progress": {
+          "description": "Unknown?",
+          "todo": "Figure out what this is.",
+          "$mergeProps": [
+            {
+              "properties": {
+                "factor": {
+                  "type": "number"
+                }
+              }
+            },
+            {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          ]
+        },
+        "can_end": {
+          "description": "The conditions that will make the disaster end.",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "modifier": {
+          "description": "The modifiers active during the disaster.",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "on_start": {
+          "description": "Event triggered when the disaster starts.",
+          "$ref": "identifiers.json#/definitions/country_events"
+        },
+        "on_end": {
+          "description": "Event triggered when the disaster ends.",
+          "$ref": "identifiers.json#/definitions/country_events"
+        },
+        "on_monthly": {
+          "anyOf": [
+            {
+              "description": "Set some events which fire while the disaster is going on, on a monthly pulse.",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "identifiers.json#/definitions/country_events"
+                  }
+                },
+                "random_events": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "patternProperties": {
+                        "^[0-9]+$": {
+                          "$allowMultiple": {
+                            "$ref": "identifiers.json#/definitions/country_events"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "array",
+                      "maxItems": 0
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "array",
+              "maxItems": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

@@ -367,10 +367,6 @@
           },
           "required": ["who", "opinion"]
         },
-        "remove_province_modifier": {
-          "description": "Removes an already assigned province modifier from the current country scope's provinces.",
-          "$ref": "identifiers.json#/definitions/province_modifiers"
-        },
         "trust": {
           "description": "Returns true if the country has at least value trust of the country specified by who.",
           "type": "object",
@@ -389,7 +385,16 @@
           "todo": "Double check",
           "$ref": "special_values.json#/definitions/boolean"
         },
-
+        "unrest": {
+          "description": "Returns true if the country has an average unrest in its provinces of at least X.",
+          "todo": "Add to wiki, figure out if description is correct.",
+          "type": "number"
+        },
+        "ai_wants_raise_cossack": {
+          "description": "If the AI want to raise cossacks.",
+          "todo": "Add to wiki, figure out if description is correct.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
 
 
         "absolutism": {
@@ -1214,7 +1219,8 @@
           "additionalProperties": false,
           "properties": {
             "who": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
-            "modifier": {"$ref": "identifiers.json#/definitions/opinion_modifiers"}
+            "modifier": {"$ref": "identifiers.json#/definitions/opinion_modifiers"},
+            "value": {"type": "number", "todo": "add description, tweak wiki"}
           },
           "required": ["who", "modifier"]
         },

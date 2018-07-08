@@ -1,0 +1,248 @@
+{
+  "$id": "http://jorodox.org/schemas/estates.json",
+  "$schema": "http://json-schema.org/schema#",
+  "description": "Disasters is a new system introduced in patch 1.9 that replaced the previous MTTH event based system EU4 had to simulate national disasters.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "icon": {
+          "description": "Refers to the frame index of an icon in GFX_estates_icons",
+          "type": "number"
+        },
+        "color": {
+          "description": "What color the estate appears as in the estate mapmode",
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "trigger": {
+          "description": "Whether the country gets the estate",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "province_trigger": {
+          "description": "Whether the province can be granted the estate",
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+
+        "custom_name": {
+          "$allowMultiple": {
+            "description": "When to apply a custom name to this estate",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "desc": {
+                "type": "string"
+              },
+              "trigger": {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              }
+            }
+          }
+        },
+        "independence_trigger": {
+          "description": "When an estate is declared independent, only provinces belong to the estate that pass this check will be part of the independent nation",
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+
+        "independence_government": {
+          "description": "The government a nation that breaks free through this estate gets",
+          "$ref": "identifiers.json#/definitions/governments"
+        },
+
+        "independence_tech_group": {
+          "description": "The technology group a nation that breaks free through this estate gets",
+          "$ref": "identifiers.json#/definitions/technology_groups"
+        },
+
+        "country_modifier_happy": {
+          "description": "The modifiers to apply when the estate is 'happy'",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "country_modifier_neutral": {
+          "description": "The modifiers to apply when the estate is 'neutral'",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "country_modifier_angry": {
+          "description": "The modifiers to apply when the estate is 'angry'",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+
+        "province_modifier_happy": {
+          "description": "The modifiers to apply to provinces belong to this estate when 'happy'",
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+        "province_modifier_neutral": {
+          "description": "The modifiers to apply to provinces belong to this estate when 'neutral'",
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+        "province_modifier_angry": {
+          "description": "The modifiers to apply to provinces belong to this estate when 'angry'",
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+
+        "min_autonomy": {
+          "description": "The minimum autonomy floor for provinces belonging to this estate'",
+          "type": "number"
+        },
+
+        "autonomy_does_not_affect": {
+          "description": "Which province modifiers that autonomy does not effect when a province belongs to this estate. Can be any province modifier.",
+          "$ref": "special_values.json#/definitions/province_modifiers"
+        },
+
+        "keep_on_conquest": {
+          "description": "Whether the estate is removed from a province when ownership changes.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "always_remove_on_religious_conquest": {
+          "description": "Whether the estate is removed from a province when ownership changes, to an owner of a different religion",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "min_territory": {
+          "description": "The minimum percentage of territory the estate expects",
+          "type": "number"
+        },
+        "min_provinces_to_want_territory": {
+          "description": "The maximum amount of provinces that territory demands will be ignored to",
+          "type": "number"
+        },
+        "territory_power_modifier": {
+          "description": "Modifies the amount of power granting provinces to this estate gives as a percentage of the base.",
+          "type": "number"
+        },
+
+        "wanted_territory_modifier": {
+          "$allowMultiple": {
+            "description": "Modifies the base territory wanted",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "desc": {
+                "type": "string"
+              },
+              "trigger": {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "base_influence": {
+          "description": "The base amount of influence this estate has",
+          "type": "number"
+        },
+
+        "influence_modifier": {
+          "$allowMultiple": {
+            "description": "Modifies the base estate influence",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "desc": {
+                "type": "string"
+              },
+              "trigger": {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+              "influence": {
+                "type": "number"
+              }
+            }
+          }
+        },
+
+        "loyalty_modifier": {
+          "$allowMultiple": {
+            "description": "Modifiers the base estate loyalty",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "desc": {
+                "type": "string"
+              },
+              "trigger": {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+              "loyalty": {
+                "type": "number"
+              }
+            }
+          }
+        },
+
+        "ai_territory_modifier": {
+          "$allowMultiple": {
+            "description": "Used by the AI to determine when to assign provinces to estates beyond the minimum",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "trigger": {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        },
+
+        "ai_grant_province": {
+          "description": "The AI weighting for which provinces are granted this estate",
+          "$ref": "scope_factors.json#/definitions/province_factor"
+        },
+
+        "interaction": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "description": "Localisation used for the interaction name",
+                "type": "string"
+              },
+              "icon": {
+                "description": "Refers to the frame index of an icon in GFX_estate_interactions",
+                "type": "number"
+              },
+              "years_between_use": {
+                "description": "The length of the cooldown for this action.",
+                "type": "number"
+              },
+
+              "potential": {
+                "description": "Determines when this interaction can appear",
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+
+              "trigger": {
+                "description": "Determines when this interaction can be taken",
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+
+              "effect": {
+                "description": "The effects to execute",
+                "$ref": "country_commands.json#/definitions/country_commands"
+              },
+
+              "ai_will_do": {
+                "description": "The AI weighting for using this interaction",
+                "$ref": "scope_factors.json#/definitions/country_factor"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

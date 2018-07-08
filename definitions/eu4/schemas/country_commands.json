@@ -2382,6 +2382,10 @@
             "type"
           ]
         },
+        "remove_province_modifier": {
+          "description": "Removes an already assigned province modifier from the current country scope's provinces.",
+          "$ref": "identifiers.json#/definitions/province_modifiers"
+        },
         "remove_opinion": {
           "description": "Removes an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
           "version_added": "1.1",

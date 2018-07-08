@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/diplomatic_actions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tooltip": {"type": "string"},
+            "potential": {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            "allow": {"$ref": "country_conditions.json#/definitions/country_conditions"}
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

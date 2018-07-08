@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/decrees.json",
+  "$id": "http://jorodox.org/schemas/defines.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -7,21 +7,21 @@
     "name": {
       "type": "string"
     },
+    "category": {
+      "type": "string"
+    },
     "data": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "cost": {"type": "number"},
-        "duration": {"type": "number"},
-        "modifier": {
-          "$ref": "country_modifiers.json#/definitions/country_modifiers"
-        },
-        "ai_will_do": {"$ref": "scope_factors.json#/definitions/country_factor"}
+        "value": {"type": ["number", "string"]},
+        "comment": {"type": ["string", "null"]}
       }
     }
   },
   "required": [
     "name",
+    "category",
     "data"
   ]
 }
