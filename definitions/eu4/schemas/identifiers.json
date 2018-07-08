@@ -173,7 +173,7 @@
     },
     "map_provinces": {
       "$identifierValue": "map_provinces",
-      "type": "number"
+      "type": ["number", "string"]
     },
     "map_region": {
       "$identifierValue": "map_region",

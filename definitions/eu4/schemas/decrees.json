@@ -1,0 +1,29 @@
+{
+  "$id": "http://jorodox.org/schemas/decrees.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cost": {"type": "number"},
+        "duration": {"type": "number"},
+        "modifier": {
+          "$mergeProps": [
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+          ]
+        },
+        "ai_will_do": {"$ref": "scope_factors.json#/definitions/country_factor"}
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

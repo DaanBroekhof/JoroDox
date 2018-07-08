@@ -1,0 +1,59 @@
+{
+  "$id": "http://jorodox.org/schemas/custom_country_colors.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "num_symbols": {
+          "type": "number"
+        },
+        "color": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "flag_color": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "textures": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "texture":  {
+              "$allowMultiple": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "file": {"type": "string"},
+                  "size": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "x": {"type": "number"},
+                      "y": {"type": "number"}
+                    }
+                  },
+                  "noOfFrames": {"type": "number"},
+                  "color": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

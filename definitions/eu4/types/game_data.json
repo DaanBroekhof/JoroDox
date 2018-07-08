@@ -819,6 +819,7 @@
     "sourceTransform": {
       "type": "fileData",
       "path": [
+        "data",
         "data"
       ]
     },
@@ -3661,11 +3662,12 @@
       "path": "common/defines.lua"
     },
     "sourceTransform": {
-      "type": "keyValues",
+      "type": "keyKeyValues",
       "path": [
-        "data"
+        "data", "NDefines"
       ],
       "keyName": "name",
+      "parentKeyName": "category",
       "valueName": "data"
     },
     "listView": {
@@ -3677,10 +3679,16 @@
           "linkTo": "[self]"
         },
         {
-          "name": "Name",
+          "name": "Value",
           "dataIndex": [
             "data",
             "value"
+          ]
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "category"
           ]
         },
         {

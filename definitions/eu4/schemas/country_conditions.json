@@ -385,6 +385,10 @@
           "todo": "Double check",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "is_in_important_war": {
+          "todo": "Double check",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
 
 
 

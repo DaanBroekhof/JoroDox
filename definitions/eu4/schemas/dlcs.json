@@ -1,0 +1,50 @@
+{
+  "$id": "http://jorodox.org/schemas/dlcs.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "archive": {
+          "type": "string"
+        },
+        "steam_id": {
+          "type": "number"
+        },
+        "affects_checksum": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "affects_compatability": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "checksum": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["unit_pack", "music", "expansion", "content_pack"]
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "path",
+    "data"
+  ]
+}

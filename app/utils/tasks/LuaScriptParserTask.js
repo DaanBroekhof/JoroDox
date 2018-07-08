@@ -25,9 +25,11 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
     filesList.each(path => {
       const luaAST = luaparser.parse(jetpack.read(args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep)), {locations: true});
 
-      const data = this.convertAstTree(luaAST.body[0], '', luaAST.comments);
+      const data = this.convertAstTree(luaAST.body[0], luaAST.comments);
 
-      if (scripts.length % 500 === 0) { this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`); }
+      if (scripts.length % 500 === 0) {
+        this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`);
+      }
 
       scripts.push({path, data});
       relations.push(this.addRelationId({
@@ -47,42 +49,62 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
     JdxDatabase.updateTypeIdentifiers(args.project, 'lua_scripts');
   }
 
-  convertAstTree(node, prefix, comments) {
+  convertAstTree(node, comments) {
     if (node.type === 'AssignmentStatement') {
       const name = node.variables[0].name;
 
-      return this.convertAstTree(node.init[0], `${name}.`, comments);
-    } else if (node.type === 'TableConstructorExpression') {
-      const values = {};
+      return {[name]: this.convertAstTree(node.init[0], comments)};
+    }
+    if (node.type === 'TableConstructorExpression') {
+      let values = {};
       const arrayValues = [];
       node.fields.forEach(field => {
         if (field.type === 'TableValue') {
           arrayValues.push(field.value.value);
         } else {
-          _.assign(values, this.convertAstTree(field.value, `${prefix + field.key.name}.`, comments));
+          values[field.key.name] = this.convertAstTree(field.value, comments);
         }
       });
-      if (arrayValues) {
-        values[_.trim(prefix, '.')] = arrayValues;
+      if (arrayValues.length) {
+        values = arrayValues;
       }
       return values;
-    } else if (node.type === 'TableKeyString') {
+    }
+    if (node.type === 'TableKeyString') {
       return {
-        [prefix + node.key.name]: node.value.value,
-      };
-    } else if (node.type === 'StringKeyLiteral') {
-      return {
-        [prefix]: node.value,
-      };
-    } else if (node.value) {
-      const comment = comments.find(x => x.loc.start.line === node.loc.start.line);
-      return {
-        [prefix.substring(0, prefix.length - 1)]: {
-          value: node.value,
-          comment: comment ? comment.value : null,
-        },
+        [node.key.name]: node.value.value,
       };
     }
+    if (node.type === 'StringKeyLiteral') {
+      return node.value;
+    }
+    if (node.type === 'UnaryExpression') {
+      const argument = this.convertAstTree(node.argument, comments);
+
+      if (node.operator === '-') {
+        argument.value = -argument.value;
+        return argument;
+      } else if (node.operator === '+') {
+        return argument;
+      }
+    }
+    if (node.type === 'NumericLiteral') {
+      const comment = comments.find(x => x.loc.start.line === node.loc.start.line);
+
+      return {
+        value: node.value,
+        comment: comment ? comment.value.trim() : null,
+      };
+    }
+    if (node.type === 'StringLiteral') {
+      const comment = comments.find(x => x.loc.start.line === node.loc.start.line);
+      return {
+        value: node.value,
+        comment: comment ? comment.value.trim() : null,
+      };
+    }
+
+    console.error(node);
 
     return {};
   }
