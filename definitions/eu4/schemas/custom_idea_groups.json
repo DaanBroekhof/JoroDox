@@ -12,7 +12,7 @@
       "additionalProperties": false,
       "properties": {
         "category": {
-          "$ref": "special_values.json#/definitions/monarchy_power_type"
+          "$ref": "special_values.json#/definitions/monarch_power_type"
         }
       }
     }

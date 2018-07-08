@@ -1,0 +1,89 @@
+{
+  "$id": "http://jorodox.org/schemas/colonial_regions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "The color line determines both how the region displays in the colonial regions map mode, as well as the right half of flags for colonial nations spawned in this region.",
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "tax_incoxme": {
+          "description": "Random new world generation: Base tax",
+          "type": "number"
+        },
+        "native_size": {
+          "description": "Random new world generation: Number of natives (each point representing 100 natives)",
+          "type": "number"
+        },
+        "native_ferocity": {
+          "description": "Random new world generation: native ferocity",
+          "type": "number"
+        },
+        "native_hostileness": {
+          "description": "Random new world generation: native hostileness",
+          "type": "number"
+        },
+        "trade_goods": {
+          "description": "Random new world generation: Proportional chance of each trade good appearing.",
+          "$identifierProperties": {
+            "tradegoods": {
+              "type": "number"
+            }
+          }
+        },
+        "religion": {
+          "description": "Random new world generation: Proportional chance of having religion X during generation.",
+          "$identifierProperties": {
+            "religions": {
+              "type": "number"
+            }
+          }
+        },
+        "culture": {
+          "description": "Random new world generation: Proportional chance of having culture X during generation.",
+          "$identifierProperties": {
+            "cultures": {
+              "type": "number"
+            }
+          }
+        },
+        "provinces": {
+          "description": "Provinces belonging to a region. A province may only belong to one region.",
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_provinces"
+          }
+        },
+        "names": {
+          "description": "What name a colonial nation in this region will have. The first name matched will be taken.",
+
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "trigger": {
+                "description": "Optional. Scope is the colonial nation overlord.",
+                "$ref": "country_conditions.json#/definitions/country_conditions"
+              },
+              "name": {
+                "description": "Localization string for nation. May be a province name if specified as PROV[1234].",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}
