@@ -217,17 +217,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           if (definition.sourceTransform.valueName) {
             item[definition.sourceTransform.valueName] = value2;
           }
-          if (definition.sourceTransform.filenamePattern) {
-            const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
-            if (found) {
-              item[definition.sourceTransform.filenamePatternKey] = found[1];
-            }
-          }
 
-          if (definition.sourceTransform.customFields) {
-            this.getCustomFields(item, definition.sourceTransform.customFields);
-          }
-          item[definition.primaryKey] = item[definition.primaryKey].toString();
+          this.doCommonItemOperations(item, definition, sourceItem.path);
 
           items.push(item);
 
@@ -290,19 +281,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             return;
           }
 
-          if (definition.sourceTransform.filenamePattern) {
-            const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
-            if (found) {
-              item[definition.sourceTransform.filenamePatternKey] = found[1];
-            }
-          }
+          this.doCommonItemOperations(item, definition, sourceItem.path);
 
-          if (definition.sourceTransform.customFields) {
-            this.getCustomFields(item, definition.sourceTransform.customFields);
-          }
-
-          if (item[definition.primaryKey] !== undefined)
-            item[definition.primaryKey] = item[definition.primaryKey].toString();
           items.push(item);
 
           nr += 1;
@@ -365,19 +345,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 return;
               }
 
-              if (definition.sourceTransform.filenamePattern) {
-                const found = sourceItem.path.match(new RegExp(definition.sourceTransform.filenamePattern));
-                if (found) {
-                  item[definition.sourceTransform.filenamePatternKey] = found[1];
-                }
-              }
+              this.doCommonItemOperations(item, definition, sourceItem.path);
 
-              if (definition.sourceTransform.customFields) {
-                this.getCustomFields(item, definition.sourceTransform.customFields);
-              }
-
-              if (item[definition.primaryKey] !== undefined)
-                item[definition.primaryKey] = item[definition.primaryKey].toString();
               items.push(item);
 
               nr += 1;
@@ -416,9 +385,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       item.path = sourceItem.path;
       item.data = definition.sourceTransform.path !== undefined ? _.get(sourceItem, definition.sourceTransform.path) : sourceItem.data;
 
-      if (definition.sourceTransform.customFields) {
-        this.getCustomFields(item, definition.sourceTransform.customFields);
-      }
+      this.doCommonItemOperations(item, definition, sourceItem.path);
+
       if (item[definition.primaryKey] === undefined) {
         console.error('Primary key `' + definition.primaryKey + '` not found.', item);
         await JdxDatabase.addError(this.project, {
@@ -432,7 +400,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         this.sendResponse({errorsUpdate: true});
         return;
       }
-      item[definition.primaryKey] = item[definition.primaryKey].toString();
+
       items.push(item);
 
 
@@ -452,7 +420,31 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   }
 
   matchTypes(types, type) {
-    return (_.includes(types, type) || _.includes(types, '*')) && !_.includes(types, '!' + type);
+    return types === undefined || (_.includes(types, type) || _.includes(types, '*')) && !_.includes(types, '!' + type);
+  }
+
+  doCommonItemOperations(item, definition, filePath) {
+    if (definition.sourceTransform.filenamePattern) {
+      const found = filePath.match(new RegExp(definition.sourceTransform.filenamePattern));
+      if (found) {
+        item[definition.sourceTransform.filenamePatternKey] = found[1];
+      }
+    }
+    if (definition.sourceTransform.customFields) {
+      this.getCustomFields(item, definition.sourceTransform.customFields);
+    }
+
+    if (item[definition.primaryKey] !== undefined) {
+      item[definition.primaryKey] = item[definition.primaryKey].toString();
+    }
+
+    if (definition.sourceTransform.removeFields) {
+      definition.sourceTransform.removeFields.forEach(field => {
+        _.unset(item, field);
+      });
+    }
+
+    return item;
   }
 
   async processAdditionalRelations(result, definition) {
@@ -525,6 +517,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator ? fieldDef.separator : '.');
       } else if (fieldDef.type === 'get') {
         item[fieldName] = _.get(item, fieldDef.fields);
+      } else if (fieldDef.type === 'splitUnderscore') {
+        item[fieldName] = _.get(item, fieldDef.fields).split('_');
       } else {
         console.warn(`Unknown custom config field \`${fieldDef.type}\`.`, fieldDef);
       }

@@ -497,8 +497,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
 
     if (!validator) {
-      console.log('No validator defined.');
-      return false;
+      throw new Error('No validator defined.');
     }
 
     //this.progress(0, 1, 'Loading validator...');
@@ -507,9 +506,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     if (args.typeId) {
       items = await db[definition.id].where({[definition.primaryKey]: args.typeId}).toArray();
+      await db.jdx_errors.where({type: definition.id, typeId: args.typeId}).delete();
     } else {
       items = await db[definition.id].limit(50000).toArray();
+      await db.jdx_errors.where({type: definition.id}).delete();
     }
+    this.sendResponse({errorsUpdate: true});
+
 
     let nr = 0;
     const allTime = Date.now();
@@ -523,9 +526,16 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
       if (!valid) {
         invalidCount += 1;
-        // Fix stupid message
+        // Fix stupid messages
         if (validator.errors[0] && validator.errors[0].message === 'should NOT have additional properties') {
           validator.errors[0].message = 'Unexpected additional property found: ' + validator.errors[0].params.additionalProperty;
+        }
+        if (validator.errors[0] && validator.errors[0].message === 'should be equal to one of the allowed values') {
+          validator.errors[0].message = 'Should be equal to one of: \'' + validator.errors[0].params.allowedValues.join("', '") + "'";
+        }
+
+        if (validator.errors.length > 0) {
+          console.log(validator.errors);
         }
 
         // console.log(item[definition.primaryKey], item.comments, validator.errors[0], validator.errors);
