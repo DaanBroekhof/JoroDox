@@ -15,6 +15,10 @@
       "type": "string",
       "enum": ["yes"]
     },
+    "no": {
+      "type": "string",
+      "enum": ["no"]
+    },
     "capital": {
       "type": "string",
       "enum": ["CAPITAL", "capital"]
@@ -155,6 +159,16 @@
       "type": "string",
       "enum": ["---"]
     },
+    "country_tag_or_empty": {
+      "anyOf": [
+        {
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        {
+          "$ref": "special_values.json#/definitions/country_tag_empty"
+        }
+      ]
+    },
     "province_id_or_scope": {
       "anyOf": [
         {
@@ -212,6 +226,10 @@
     "government_group_or_tribal": {
       "type": "string",
       "enum": ["monarchy", "republic", "theocracy", "tribal"]
+    },
+    "government_types": {
+      "type": "string",
+      "enum": ["monarchy", "republic", "theocracy", "tribal", "dictatorship", "religion", "papacy", "monastic", "nomad"]
     },
     "government_dictatorship": {
       "type": "string",

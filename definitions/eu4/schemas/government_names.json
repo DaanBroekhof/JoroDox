@@ -1,0 +1,54 @@
+{
+  "$id": "http://jorodox.org/schemas/government_names.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rank": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "ruler_male": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "ruler_female": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "consort_male": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "consort_female": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "heir_male": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "heir_female": {
+          "$ref": "#/definitions/rank_names"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "rank_names": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^1|2|3$": {"type": "string"}
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

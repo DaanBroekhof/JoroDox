@@ -1,0 +1,285 @@
+{
+  "$id": "http://jorodox.org/schemas/governments.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rank": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "1": {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+            "2": {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+            "3": {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+          }
+        },
+
+        "monarchy": {
+          "description": "Makes the government a monarchy, meaning rulers are hereditary and not elected",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "republic": {
+          "description": "Makes the government a republic, meaning rulers are elected",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "dictatorship": {
+          "description": "Makes the government a dictatorship republic, meaning rulers were elected and then became dictators. The republican tradition mechanic is still used, since it is technically a republic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "religion": {
+          "description": "Makes the government a theocracy, meaning rulers are not hereditary and are picked from an event similar to a republics election",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "papacy": {
+          "description": "Makes the government a papal theocracy, the rulers are technically Popes. Similar to the Papal States",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "monastic": {
+          "description": "Makes the government a monastic order, similar to a normal theocracy",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "tribal": {
+          "description": "Makes the government a tribe",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "nomad": {
+          "description": "Makes the government a Steppe Horde",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+
+        "valid_for_new_country": {
+          "description": "Can new countries use the government type",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "valid_for_nation_designer": {
+          "description": "Can custom nations uses the government type",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "nation_designer_cost": {
+          "description": "How many points does this government type cost in the nation designer",
+          "type": "number"
+        },
+        "fixed_rank": {
+          "description": "This government type rank can never change",
+          "type": "number",
+          "enum": [1, 2, 3]
+        },
+        "duration": {
+          "description": "How many years should each election be",
+          "type": "number"
+        },
+        "republican_name": {
+          "description": "Uses the default republican names, such as Doge",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "royal_marriage": {
+          "description": "Can this government type have royal marriages",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "boost_income": {
+          "description": "Does it get the republic benefit of boost in income",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_use_trade_post": {
+          "description": "Can this government type build trade posts",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "faction": {
+          "description": "Does this government type have factions",
+          "$allowMultiple": {
+            "$ref": "identifiers.json#/definitions/factions"
+          }
+        },
+        "has_parliament": {
+          "description": "Does this government type have the Parliament mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_devotion": {
+          "description": "Does this government type use the Devotion mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "unique_government": {
+          "description": "Is this a unique government. Nations won't have the option to convert to this government type",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_convert": {
+          "description": "Is any nation able to convert to this government type",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "nation_designer_trigger": {
+          "description": "What are the requirements for this government to be available in the nation designer",
+          "$ref": "#/definitions/nation_designer_conditions"
+        },
+        "min_autonomy": {
+          "description": "Does the government type make all provinces have a minimum amount of autonomy",
+          "type": "number"
+        },
+        "native_mechanic": {
+          "description": "Does it uses the Native Reform and Native Federation mechanics introduced in Conquest of Paradise DLC",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_migration": {
+          "description": "Does it uses the Native Migration mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_westernize": {
+          "description": "Does this government type allow the normal method of Westernisation",
+          "$ref": "special_values.json#/definitions/no"
+        },
+        "is_elective": {
+          "description": "Does this government type elected their monarch",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "free_city": {
+          "description": "Does this government, use the free city mechanic introduced in the Common Sense DLC",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "dutch_mechanics": {
+          "description": "Does this government, use the Dutch Republic mechanics",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_vassal_war": {
+          "description": "Does this government, allow Vassals to declare war",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_vassal_alliance": {
+          "description": "Does this government, allow Vassals to create alliances",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "different_religion_acceptance": {
+          "description": "Bonus or penalty to acceptance of religions different from that of the nation",
+          "type": "number"
+        },
+        "different_religion_group_acceptance": {
+          "description": "Bonus or penalty to acceptance of religion groups different from that of the nation",
+          "type": "number"
+        },
+        "rulers_can_be_generals": {
+          "description": "Prevents nation from making the ruler a general",
+          "$ref": "special_values.json#/definitions/no"
+        },
+        "heir": {
+          "description": "Prevents nation from getting a heir",
+          "$ref": "special_values.json#/definitions/no"
+        },
+        "queen": {
+          "description": "Prevents nation from getting a consort",
+          "$ref": "special_values.json#/definitions/no"
+        },
+        "foreign_slave_rulers": {
+          "description": "Allows nation to get foreign slaves as rulers",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "is_trading_city": {
+          "description": "Sets the nation as a trading city",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_harem": {
+          "description": "Allows the use of the harem mechanics",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_pashas": {
+          "description": "Allows the use of the pashas mechanics",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "militarised_society": {
+          "description": "Allows the nation to be a militarised society",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "maintain_dynasty": {
+          "description": "Allows the nation to never change dynasty",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_form_trade_league": {
+          "description": "Allows the nation to form a trade league",
+          "todo": "What is dis?, add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allow_force_tributary": {
+          "description": "Allows the nation to force the creation of tributaries",
+          "todo": "What is dis?, add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "claim_states": {
+          "todo": "What is dis?, add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_meritocracy": {
+          "todo": "What is dis?, add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "government_abilities": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/government_mechanics"
+          }
+        },
+
+        "color": {
+          "description": "Color of the government type on the map",
+          "todo": "What is dis?, add to wiki",
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "max_states": {
+          "description": "Maximum number of states this government may have",
+          "todo": "What is dis?, add to wiki",
+          "type": "number"
+        },
+        "ai_importance": {
+          "todo": "What is dis?, add to wiki",
+          "type": "number"
+        },
+
+        "ai_will_do": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "nation_designer_conditions": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "num_custom_nation_provinces": {
+              "type": "number"
+            },
+            "AND": {
+              "$ref": "governments.json#/definitions/nation_designer_conditions"
+            },
+            "and": {
+              "$ref": "governments.json#/definitions/nation_designer_conditions"
+            },
+            "OR": {
+              "$ref": "governments.json#/definitions/nation_designer_conditions"
+            },
+            "or": {
+              "$ref": "governments.json#/definitions/nation_designer_conditions"
+            },
+            "NOT": {
+              "$ref": "governments.json#/definitions/nation_designer_conditions"
+            },
+            "not": {
+              "$ref": "governments.json#/definitions/nation_designer_conditions"
+            }
+          }
+        },
+        {"$ref": "country_conditions.json#/definitions/country_conditions"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

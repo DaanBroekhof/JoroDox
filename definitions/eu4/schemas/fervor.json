@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/fervor.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cost": {
+          "type": "number"
+        },
+        "effect": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "ai_will_do": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "$id": "http://jorodox.org/schemas/great_projects.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ambient_object": {
+          "type": "string"
+        },
+        "province": {
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "is_canal": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "time": {
+          "type": "number",
+          "description": "Number of months of construction."
+        },
+        "modifier": {
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

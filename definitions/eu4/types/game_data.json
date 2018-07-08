@@ -3334,11 +3334,11 @@
     "id": "history_diplomacy",
     "title": "History diplomacy",
     "reader": "StructureLoader",
-    "primaryKey": "nr",
+    "primaryKey": "id",
     "sourceType": {
       "id": "pdx_scripts",
       "pathPrefix": "history/diplomacy/",
-      "pathPattern": "history/diplomacy/*.txt"
+      "pathPattern": "history/diplomacy/!(hre|celestial_empire).txt"
     },
     "sourceTransform": {
       "type": "typesList",
@@ -3346,22 +3346,24 @@
         "data",
         "children"
       ],
-      "types": [
-        "vassal",
-        "march",
-        "alliance",
-        "union",
-        "royal_marriage",
-        "dependency",
-        "guarantee"
-      ]
+      "removeFields": [
+        "namespace"
+      ],
+      "filenamePattern": "/([^/.]+).txt$",
+      "filenamePatternKey": "file_name",
+      "customFields": {
+        "id": {
+          "type": "concat",
+          "fields": ["file_name", "nr"]
+        }
+      }
     },
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "NR",
-          "dataIndex": "nr",
+          "name": "id",
+          "dataIndex": "id",
           "linkTo": "[self]"
         },
         {
@@ -3411,25 +3413,27 @@
     "id": "history_diplomacy_empires",
     "title": "History diplomacy empires",
     "reader": "StructureLoader",
-    "primaryKey": "path",
+    "primaryKey": "id",
     "sourceType": {
       "id": "pdx_scripts",
       "pathPrefix": "history/diplomacy/",
-      "pathPattern": "history/diplomacy/+(celestial_empire|hre).txt"
+      "pathPattern": "history/diplomacy/+(hre|celestial_empire).txt"
     },
     "sourceTransform": {
       "type": "fileData",
       "path": [
         "data",
         "data"
-      ]
+      ],
+      "filenamePattern": "/([^/.]+).txt$",
+      "filenamePatternKey": "id"
     },
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "Path",
-          "dataIndex": "path",
+          "name": "Empire",
+          "dataIndex": "id",
           "linkTo": "[self]"
         }
       ]

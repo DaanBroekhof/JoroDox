@@ -2219,8 +2219,8 @@
           "type": "number"
         },
         "personality": {
-          "description": "Returns true if the country has a ruler which personality is X.",
-          "$ref": "identifiers.json#/definitions/leader_personalities"
+          "description": "Returns true if the country has a ruler which has AI personality X.",
+          "$ref": "identifiers.json#/definitions/ai_personalities"
         },
         "piety": {
           "description": "Returns true if the country has at least as much piety as the specified country.",

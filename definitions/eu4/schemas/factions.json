@@ -1,0 +1,52 @@
+{
+  "$id": "http://jorodox.org/schemas/factions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "monarch_power": {
+              "description": "Monarch power consumed when manually raising influence",
+              "$ref": "special_values.json#/definitions/monarch_power_type"
+            },
+            "triggered_faction_name": {
+              "description": "Optional, changes the faction's title and description strings when the trigger is met",
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "trigger": {
+                  "$ref": "country_conditions.json#/definitions/country_conditions"
+                }
+              }
+            },
+            "modifier": {
+              "description": "Modifiers to apply when in power",
+              "$ref": "country_modifiers.json#/definitions/country_modifiers"
+            },
+            "allow": {
+              "description": "If this faction is allowed.",
+              "todo": "add to wiki",
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            }
+          }
+        },
+        {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

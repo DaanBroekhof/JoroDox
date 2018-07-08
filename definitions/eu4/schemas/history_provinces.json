@@ -1,0 +1,183 @@
+{
+  "$id": "http://jorodox.org/schemas/history_provinces.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "allowAdditional": false,
+  "properties": {
+    "province_id": {
+      "$ref": "identifiers.json#/definitions/map_provinces"
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {"$ref": "history_provinces.json#/definitions/history_properties"},
+        {"$ref": "province_commands.json#/definitions/province_commands"},
+        {
+          "patternProperties": {
+            "^[0-9]{4}\\.[0-9]{1,2}\\.[0-9]{1,2}$": {
+              "$mergeProps": [
+                {"$ref": "history_provinces.json#/definitions/history_properties"},
+                {"$ref": "province_commands.json#/definitions/province_commands"},
+                {
+                  "properties": {
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "province_id",
+    "path",
+    "data"
+  ],
+  "definitions": {
+    "history_properties": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "owner": {
+              "description": "Who is the current owner of the province",
+              "$ref": "special_values.json#/definitions/country_tag_or_empty"
+            },
+            "controller": {
+              "description": "Who is the current controller of the province",
+              "$ref": "special_values.json#/definitions/country_tag_or_empty"
+            },
+            "add_core": {
+              "description": "Adds a core for the specified tag",
+              "$ref": "identifiers.json#/definitions/country_tags"
+            },
+            "is_city": {
+              "description": "Whether this province is a proper city, i.e. not a colony.",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "culture": {
+              "description": "The culture of the province",
+              "$ref": "identifiers.json#/definitions/cultures"
+            },
+            "religion": {
+              "description": "The religion of the province",
+              "$ref": "identifiers.json#/definitions/religions"
+            },
+            "base_tax": {
+              "description": "The base tax of the province",
+              "type": "number"
+            },
+            "base_production": {
+              "description": "The base production of the province",
+              "type": "number"
+            },
+            "base_manpower": {
+              "description": "The base manpower of the province",
+              "type": "number"
+            },
+            "trade_goods": {
+              "description": "The tradegood assigned to this province.",
+              "$ref": "identifiers.json#/definitions/tradegoods"
+            },
+            "latent_trade_goods": {
+              "description": "The latent tradegood assigned to this province.",
+              "todo": "add to wiki, check",
+              "type": "array",
+              "items": {"$ref": "identifiers.json#/definitions/tradegoods"}
+            },
+            "estate": {
+              "description": "Adds this estate to the province",
+              "$ref": "identifiers.json#/definitions/estates"
+            },
+            "hre": {
+              "description": "Whether this province is in the HRE or not",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "capital": {
+              "description": "The capital name to use for the province, otherwise the province name is used as the capital name.",
+              "type": "string"
+            },
+            "discovered_by": {
+              "description": "Grants the specified technology group vision of this province",
+              "anyOf": [
+                {"$ref": "identifiers.json#/definitions/technology_groups"},
+                {"$ref": "identifiers.json#/definitions/country_tags"}
+              ]
+            },
+            "reformation_center": {
+              "description": "Sets this province as a reformation center for the specified religion",
+              "$ref": "identifiers.json#/definitions/religions"
+            },
+            "unrest": {
+              "description": "Adds base unrest",
+              "type": "number"
+            },
+
+            "native_size": {
+              "description": "Number of natives (each point representing 100 natives)",
+              "todo": "add to wiki",
+              "type": "number"
+            },
+            "native_ferocity": {
+              "description": "Native ferocity",
+              "todo": "add to wiki",
+              "type": "number"
+            },
+            "native_hostileness": {
+              "description": "Native hostileness",
+              "todo": "add to wiki",
+              "type": "number"
+            },
+
+            "extra_cost": {
+              "description": "Extra cost of this province when selecting in the nation builder",
+              "todo": "add to wiki, check",
+              "type": "number"
+            },
+            "revolt_risk": {
+              "todo": "add to wiki, check",
+              "type": "number"
+            },
+            "seat_in_parliament": {
+              "todo": "add to wiki, check",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+
+            "revolt": {
+              "anyOf": [
+                {
+                  "description": "Adds a revolt",
+                  "type": "object",
+                  "allowAdditional": false,
+                  "properties": {
+                    "type": {
+                      "$ref": "identifiers.json#/definitions/rebel_types"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "leader": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              ]
+            }
+          },
+          "$identifierProperties": {
+            "buildings": {
+              "description": "Adds or removes the specified building",
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "$id": "http://jorodox.org/schemas/history_advisors.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "allowAdditional": false,
+  "properties": {
+    "namespace": {
+      "type": "object"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "allowAdditional": false,
+      "properties": {
+        "advisor_id": {
+          "description": "The advisor's unique id",
+          "type": "number"
+        },
+        "name": {
+          "description": "The advisor's full name",
+          "type": "string"
+        },
+        "location": {
+          "description": "The province that the advisor is linked to.",
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "skill": {
+          "description": "The skill of the advisor",
+          "type": "number"
+        },
+        "type": {
+          "description": "The type of advisor",
+          "$ref": "identifiers.json#/definitions/advisortypes"
+        },
+        "discount": {
+          "description": "Whether to apply SCRIPTED_ADVISOR_DISCOUNT defined value to the advisor's monthly cost",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "date": {
+          "description": "When this advisor starts appearing",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "death_date": {
+          "description": "When this advisor stops appearing",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "culture": {
+          "description": "The advisor's culture",
+          "$ref": "identifiers.json#/definitions/cultures"
+        },
+        "religion": {
+          "description": "The advisor's religion",
+          "$ref": "identifiers.json#/definitions/religions"
+        }
+      }
+    }
+  },
+  "required": [
+    "nr",
+    "id",
+    "type"
+  ]
+}

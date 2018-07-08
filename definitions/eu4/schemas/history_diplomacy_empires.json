@@ -1,0 +1,43 @@
+{
+  "$id": "http://jorodox.org/schemas/history_diplomacy_empires.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "allowAdditional": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "allowAdditional": false,
+      "patternProperties": {
+        "^[0-9]{4}\\.[0-9]{1,2}\\.[0-9]{1,2}$": {
+          "type": "object",
+          "allowAdditional": false,
+          "properties": {
+            "celestial_emperor": {
+              "anyOf": [
+                {"$ref": "special_values.json#/definitions/country_tag_empty"},
+                {"$ref": "identifiers.json#/definitions/country_tags"}
+              ]
+            },
+            "emperor": {
+              "anyOf": [
+                {"$ref": "special_values.json#/definitions/country_tag_empty"},
+                {"$ref": "identifiers.json#/definitions/country_tags"}
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "path",
+    "data"
+  ]
+}

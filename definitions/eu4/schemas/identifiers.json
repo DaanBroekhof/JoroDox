@@ -307,6 +307,10 @@
       "$identifierValue": "custom_idea_groups",
       "type": "string"
     },
+    "ai_personalities": {
+      "$identifierValue": "ai_personalities",
+      "type": "string"
+    },
     "interface_images_ideas_eu4": {
       "$identifierValue": {
         "type": "gfx_interface_images",

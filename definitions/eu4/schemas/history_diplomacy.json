@@ -1,0 +1,47 @@
+{
+  "$id": "http://jorodox.org/schemas/history_diplomacy.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "allowAdditional": false,
+  "properties": {
+    "namespace": {
+      "type": "object"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "null"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["vassal", "royal_marriage", "guarantee", "march", "alliance", "union", "dependency"]
+    },
+    "data": {
+      "type": "object",
+      "allowAdditional": false,
+      "properties": {
+        "first": {
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        "second": {
+          "$ref": "identifiers.json#/definitions/country_tags"
+        },
+        "start_date": {
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "end_date": {
+          "$ref": "special_values.json#/definitions/date"
+        }
+      }
+    }
+  },
+  "required": [
+    "nr",
+    "type",
+    "data"
+  ]
+}
