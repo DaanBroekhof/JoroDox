@@ -32,6 +32,9 @@
         "affects_compatability": {
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "third_party_content": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
         "checksum": {
           "type": "string"
         },

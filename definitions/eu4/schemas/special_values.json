@@ -415,7 +415,17 @@
       "minItems": 3,
       "maxItems": 3,
       "items": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[0-9]{1,3}$"
+      }
+    },
+    "rgb_color_float": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "pattern": "^(0(\\.[0-9]+)?|1(\\.0+))$"
       }
     }
   }

@@ -1,0 +1,37 @@
+{
+  "$id": "http://jorodox.org/schemas/leader_personalities.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "allow": {
+              "$mergeProps": [
+                {
+                  "properties": {
+                    "is_admiral": {
+                      "$ref": "special_values.json#/definitions/boolean"
+                    }
+                  }
+                },
+                {"$ref": "country_conditions.json#/definitions/country_conditions"}
+              ]
+            }
+          }
+        },
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+        {"$ref": "province_modifiers.json#/definitions/province_modifiers"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

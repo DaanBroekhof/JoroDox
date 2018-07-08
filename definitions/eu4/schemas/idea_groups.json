@@ -1,0 +1,48 @@
+{
+  "$id": "http://jorodox.org/schemas/idea_groups.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "description": "Unlike basic idea groups, national idea groups have traditions. These are modifiers that are present regardless of the number of ideas in the group that have been unlocked.",
+          "$mergeProps": [
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+            {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}
+          ]
+        },
+        "bonus": {
+          "description": "A bonus is the reward for completing an idea group. They use modifiers like individual ideas, but do not need to be localised.",
+          "$mergeProps": [
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+            {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}
+          ]
+        },
+        "free": {
+          "description": "All national idea groups should have 'free=yes'. This marks them as national rather than basic idea groups.",
+          "$ref": "special_values.json#/definitions/yes"
+        },
+        "category": {
+          "$ref": "special_values.json#/definitions/monarch_power_type"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "ai_will_do": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

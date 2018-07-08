@@ -1432,7 +1432,15 @@
         "data"
       ],
       "keyName": "name",
-      "valueName": "data"
+      "valueName": "data",
+      "onlyKeys": [
+        "category",
+        "bonus",
+        "trigger",
+        "ai_will_do",
+        "free",
+        "start"
+      ]
     },
     "listView": {
       "pageSize": 100,
@@ -3035,10 +3043,12 @@
         {
           "name": "Province",
           "dataIndex": "province_id",
-          "linkTo": "[self]"
+          "linkTo": "[self]",
+          "width": "50"
         },
         {
           "name": "Path",
+          "width": "200",
           "dataIndex": "path"
         },
         {
@@ -3057,6 +3067,7 @@
         },
         {
           "name": "Owner",
+          "width": "50",
           "dataIndex": [
             "data",
             "owner"
@@ -3064,6 +3075,7 @@
         },
         {
           "name": "Controller",
+          "width": "50",
           "dataIndex": [
             "data",
             "controller"

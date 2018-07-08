@@ -1,0 +1,81 @@
+{
+  "$id": "http://jorodox.org/schemas/institutions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "penalty": {
+          "type": "number"
+        },
+        "bonus": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "historical_start_date": {
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "historical_start_province": {
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "history": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "can_start": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "start_chance": {
+          "type": "number"
+        },
+        "on_start": {
+          "$ref": "identifiers.json#/definitions/country_events"
+        },
+        "can_embrace": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "embracement_speed": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "modifier": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "factor": {
+                        "type": "number"
+                      },
+                      "scale": {
+                        "$ref": "special_values.json#/definitions/boolean"
+                      },
+                      "force_potential": {
+                        "$ref": "special_values.json#/definitions/boolean"
+                      },
+                      "potential": {
+                        "$ref": "province_conditions.json#/definitions/province_conditions"
+                      }
+                    }
+                  },
+                  {"$ref": "province_conditions.json#/definitions/province_conditions"}
+                ]
+              }
+            }
+          }
+        },
+        "ai_will_do": {
+          "description": "The importance the AI will have on using this aspect.",
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

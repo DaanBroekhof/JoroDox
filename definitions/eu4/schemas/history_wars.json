@@ -1,0 +1,140 @@
+{
+  "$id": "http://jorodox.org/schemas/history_wars.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "allowAdditional": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "type": "object",
+          "allowAdditional": false,
+          "properties": {
+            "name": {
+              "description": "Name of the war in the war screen",
+              "type": "string"
+            },
+            "war_goal": {
+              "type": "object",
+              "allowAdditional": false,
+              "properties": {
+                "type": {
+                  "description": "The wargoal type",
+                  "$ref": "identifiers.json#/definitions/wargoal_types"
+                },
+                "casus_belli": {
+                  "description": "The casus belli type",
+                  "$ref": "identifiers.json#/definitions/cb_types"
+                }
+              }
+            }
+          },
+          "patternProperties": {
+            "^[0-9]{4}\\.[0-9]{1,2}\\.[0-9]{1,2}$": {
+              "$allowMultiple": {
+                "type": "object",
+                "allowAdditional": false,
+                "properties": {
+                  "add_attacker": {
+                    "$allowMultiple": {
+                      "description": "Adds a country to the attackers side",
+                      "$ref": "identifiers.json#/definitions/country_tags"
+                    }
+                  },
+                  "add_defender": {
+                    "$allowMultiple": {
+                      "description": "Adds a country to the defenders side",
+                      "$ref": "identifiers.json#/definitions/country_tags"
+                    }
+                  },
+                  "rem_attacker": {
+                    "$allowMultiple": {
+                      "description": "Remove a country from the attackers side",
+                      "$ref": "identifiers.json#/definitions/country_tags"
+                    }
+                  },
+                  "rem_defender": {
+                    "$allowMultiple": {
+                      "description": "Remove a country from the defenders side",
+                      "$ref": "identifiers.json#/definitions/country_tags"
+                    }
+                  },
+                  "battle": {
+                    "description": "Used to add ongoing battles",
+                    "type": "object",
+                    "allowAdditional": false,
+                    "properties": {
+                      "name": {
+                        "description": "Name of the war in the war screen",
+                        "type": "string"
+                      },
+                      "location": {
+                        "description": "Province the battle is in",
+                        "$ref": "identifiers.json#/definitions/map_provinces"
+                      },
+                      "attacker": {
+                        "description": "Attacking army",
+                        "$ref": "history_wars.json#/definitions/army"
+                      },
+                      "defender": {
+                        "description": "Defending army",
+                        "$ref": "history_wars.json#/definitions/army"
+                      },
+                      "result": {
+                        "description": "Show result",
+                        "$ref": "special_values.json#/definitions/boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "maxItems": 0
+        }
+      ]
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ],
+  "definitions": {
+    "army": {
+      "type": "object",
+      "allowAdditional": false,
+      "properties": {
+        "commander": {
+          "description": "Leader of the army",
+          "type": "string"
+        },
+        "infantry": {
+          "description": "Number of infantry.",
+          "type": "number"
+        },
+        "cavalry": {
+          "description": "Number of cavalry.",
+          "type": "number"
+        },
+        "artillery": {
+          "description": "Number of artillery.",
+          "type": "number"
+        },
+        "losses": {
+          "description": "How many of the forces are already dead",
+          "type": "number"
+        },
+        "country": {
+          "description": "The country the army belongs to",
+          "$ref": "identifiers.json#/definitions/country_tags"
+        }
+      }
+    }
+  }
+}

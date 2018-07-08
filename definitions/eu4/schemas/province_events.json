@@ -118,20 +118,7 @@
               "type": "number"
             },
             "modifier": {
-              "$allowMultiple": {
-                "$mergeProps": [
-                  {
-                    "properties": {
-                      "factor": {
-                        "type": "number"
-                      }
-                    }
-                  },
-                  {
-                    "$ref": "province_conditions.json#/definitions/province_conditions"
-                  }
-                ]
-              }
+              "$ref": "scope_factors.json#/definitions/province_factor_modifiers"
             }
           }
         },

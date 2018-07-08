@@ -30,38 +30,14 @@
           "additionalProperties": false,
           "properties": {
             "modifier": {
-              "$allowMultiple": {
-                "$mergeProps": [
-                  {
-                    "properties": {
-                      "factor": {
-                        "type": "number"
-                      }
-                    }
-                  },
-                  {
-                    "$ref": "country_conditions.json#/definitions/country_conditions"
-                  }
-                ]
-              }
+              "$ref": "scope_factors.json#/definitions/country_factor_modifiers"
             }
           }
         },
         "down_progress": {
           "description": "Unknown?",
           "todo": "Figure out what this is.",
-          "$mergeProps": [
-            {
-              "properties": {
-                "factor": {
-                  "type": "number"
-                }
-              }
-            },
-            {
-              "$ref": "country_conditions.json#/definitions/country_conditions"
-            }
-          ]
+          "$ref": "scope_factors.json#/definitions/country_factor_modifiers"
         },
         "can_end": {
           "description": "The conditions that will make the disaster end.",

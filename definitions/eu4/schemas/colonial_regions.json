@@ -14,7 +14,7 @@
           "description": "The color line determines both how the region displays in the colonial regions map mode, as well as the right half of flags for colonial nations spawned in this region.",
           "$ref": "special_values.json#/definitions/rgb_color"
         },
-        "tax_incoxme": {
+        "tax_income": {
           "description": "Random new world generation: Base tax",
           "type": "number"
         },

@@ -115,20 +115,7 @@
               "type": "number"
             },
             "modifier": {
-              "$allowMultiple": {
-                "$mergeProps": [
-                  {
-                    "properties": {
-                      "factor": {
-                        "type": "number"
-                      }
-                    }
-                  },
-                  {
-                    "$ref": "country_conditions.json#/definitions/country_conditions"
-                  }
-                ]
-              }
+              "$ref": "scope_factors.json#/definitions/country_factor_modifiers"
             }
           }
         },

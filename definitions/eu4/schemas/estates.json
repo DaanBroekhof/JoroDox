@@ -92,7 +92,7 @@
 
         "autonomy_does_not_affect": {
           "description": "Which province modifiers that autonomy does not effect when a province belongs to this estate. Can be any province modifier.",
-          "$ref": "special_values.json#/definitions/province_modifiers"
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
         },
 
         "keep_on_conquest": {

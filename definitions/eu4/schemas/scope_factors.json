@@ -11,21 +11,24 @@
           "type": "number"
         },
         "modifier": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "factor": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "$ref": "country_conditions.json#/definitions/country_conditions"
-              }
-            ]
-          }
+          "$ref": "scope_factors.json#/definitions/country_factor_modifiers"
         }
+      }
+    },
+    "country_factor_modifiers": {
+      "$allowMultiple": {
+        "$mergeProps": [
+          {
+            "properties": {
+              "factor": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "$ref": "country_conditions.json#/definitions/country_conditions"
+          }
+        ]
       }
     },
     "province_factor": {
@@ -36,21 +39,24 @@
           "type": "number"
         },
         "modifier": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "factor": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "$ref": "province_conditions.json#/definitions/province_conditions"
-              }
-            ]
-          }
+          "$ref": "scope_factors.json#/definitions/province_factor_modifiers"
         }
+      }
+    },
+    "province_factor_modifiers": {
+      "$allowMultiple": {
+        "$mergeProps": [
+          {
+            "properties": {
+              "factor": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "$ref": "province_conditions.json#/definitions/province_conditions"
+          }
+        ]
       }
     }
   }

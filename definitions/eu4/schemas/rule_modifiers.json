@@ -96,6 +96,11 @@
         "auto_explore_adjacent_to_colony": {
           "description": "Grants the abiliy to automatically discover undiscovered provinces adjacent to colonies. (Constant)",
           "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "justify_trade_conflict_cost": {
+          "todo": "figure out if this is an idea modifiers, or general country modifier",
+          "type": "number"
         }
       }
     },

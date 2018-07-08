@@ -1,0 +1,41 @@
+{
+  "$id": "http://jorodox.org/schemas/imperial_reforms.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "empire": {
+          "description": "Which empire this reform is for.",
+          "type": "string",
+          "enum": ["hre", "celestial_empire"]
+        },
+        "emperor": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "member": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "war": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "on_effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "off_effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

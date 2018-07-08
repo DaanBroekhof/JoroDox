@@ -1,0 +1,25 @@
+{
+  "$id": "http://jorodox.org/schemas/ideas.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "idea_group": {
+      "$ref": "identifiers.json#/definitions/idea_groups"
+    },
+    "data": {
+      "$mergeProps": [
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+        {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "idea_group",
+    "data"
+  ]
+}

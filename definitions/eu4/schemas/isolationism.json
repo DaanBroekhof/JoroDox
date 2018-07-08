@@ -1,0 +1,27 @@
+{
+  "$id": "http://jorodox.org/schemas/isolationism.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isolation_value": {
+          "type": "number"
+        },
+        "modifier": {
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

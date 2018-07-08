@@ -1,0 +1,36 @@
+{
+  "$id": "http://jorodox.org/schemas/tradegoods.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color_float"
+        },
+        "is_latent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "modifier": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "province": {
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+        "chance": {
+          "$ref": "scope_factors.json#/definitions/province_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

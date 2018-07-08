@@ -395,6 +395,10 @@
           "todo": "Add to wiki, figure out if description is correct.",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "neighbors_tech_discount": {
+          "todo": "Add to wiki, figure what it does",
+          "type": "number"
+        },
 
 
         "absolutism": {
@@ -1604,8 +1608,11 @@
           "required": []
         },
         "is_incident_active": {
-          "description": "Returns true, if the specified incident is active.",
-          "$ref": "identifiers.json#/definitions/incidents"
+          "description": "Returns true, if the specified incident is active. Returns true, if any/none incident is active.",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/incidents"},
+            {"$ref": "special_values.json#/definitions/boolean"}
+          ]
         },
         "is_incident_happened": {
           "description": "Returns true, if the specified incident already happened.",

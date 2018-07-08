@@ -1,0 +1,74 @@
+{
+  "$id": "http://jorodox.org/schemas/incidents.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "frame": {
+          "type": "number"
+        },
+        "variable_initial": {
+          "type": "number"
+        },
+        "potential": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "immediate_effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "mean_time_to_happen": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "days": {
+              "type": "number"
+            },
+            "months": {
+              "type": "number"
+            },
+            "years": {
+              "type": "number"
+            },
+            "modifier": {
+              "$ref": "scope_factors.json#/definitions/country_factor_modifiers"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "option_extras": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "highlight": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "ai_chance": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  }
+}
