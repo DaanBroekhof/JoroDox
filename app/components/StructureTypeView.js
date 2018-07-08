@@ -146,8 +146,6 @@ class StructureTypeView extends Component {
         (progress, total, message) => null,
         (result) => {
           resolve(result);
-          console.log('results');
-          console.log(result);
         },
         (error) => {
           reject(error);
@@ -256,7 +254,7 @@ class StructureTypeView extends Component {
                   cellDataGetter={({dataKey, rowData}) => _.get(rowData, dataKey)}
                   dataKey={c.dataIndex}
                   label={c.name}
-                  width={100}
+                  width={c.width ? _.toNumber(c.width) : 100}
                   cellRenderer={c.renderer}
                 />
               );

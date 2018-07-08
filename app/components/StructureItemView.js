@@ -202,8 +202,6 @@ class StructureItemView extends Component {
         (progress, total, message) => null,
         (result) => {
           resolve(result);
-          console.log('results');
-          console.log(result);
         },
         (error) => {
           reject(error);
