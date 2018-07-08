@@ -422,7 +422,14 @@ export default class JdxDatabase {
         return;
       }
       const indexDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'index.json'));
-      const data = JSON.parse(indexDataRaw);
+
+      let data = {};
+      try {
+        data = JSON.parse(indexDataRaw);
+      } catch (exception) {
+        console.error('File `' + syspath.join(baseDir, definitionDir, 'index.json') + '`: ' + exception.message);
+        return;
+      }
 
       if (!data || !data.id || !data.name) {
         console.error('Definition dir `' + definitionDir + '` missing `id` or `name` in index.json.');
@@ -437,7 +444,14 @@ export default class JdxDatabase {
         {matching: '*.json'}
       ).forEach(typeFile => {
         const typeDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'types', typeFile));
-        const typeData = JSON.parse(typeDataRaw);
+
+        let typeData = {};
+        try {
+          typeData = JSON.parse(typeDataRaw);
+        } catch (exception) {
+          console.error('File `' + syspath.join(baseDir, definitionDir, 'types', typeFile) + '`: ' + exception.message);
+          return;
+        }
 
         if (!typeData || !_.isArray(typeData)) {
           console.error('Definition `' + definitionDir + '` type `' + typeFile + '` data missing or incorrect');
@@ -454,7 +468,14 @@ export default class JdxDatabase {
         {matching: '*.json'}
       ).forEach(schemaFile => {
         const schemaDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'schemas', schemaFile));
-        const schemaData = JSON.parse(schemaDataRaw);
+
+        let schemaData = {};
+        try {
+          schemaData = JSON.parse(schemaDataRaw);
+        } catch (exception) {
+          console.error('File `' + syspath.join(baseDir, definitionDir, 'schemas', schemaFile) + '`: ' + exception.message);
+          return;
+        }
 
         if (!schemaData || !_.isObject(schemaData)) {
           console.error('Definition `' + definitionDir + '` schema `' + schemaFile + '` data missing or incorrect');

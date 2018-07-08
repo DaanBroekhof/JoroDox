@@ -418,7 +418,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             const keyValidator = ajv.jdxScopeKeyValidators[scopeKeyRef];
 
 
-            keyValidator({[data]: null});
+            const valid = keyValidator({[data]: null});
 
             // We only look for invalid property key errors, any other error is ok for us.
             const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property key');
@@ -503,7 +503,14 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     //this.progress(0, 1, 'Loading validator...');
 
-    const items = await db[definition.id].limit(50000).toArray();
+    let items = [];
+
+    if (args.typeId) {
+      items = await db[definition.id].where({[definition.primaryKey]: args.typeId}).toArray();
+    } else {
+      items = await db[definition.id].limit(50000).toArray();
+    }
+
     let nr = 0;
     const allTime = Date.now();
 

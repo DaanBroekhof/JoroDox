@@ -19,6 +19,7 @@ import {incrementVersion} from "../actions/database";
 import PdxMeshView from './PdxMeshView';
 import ImageView from './ImageView';
 import DdsImageView from './DdsImageView';
+import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 
 const minimatch = require('minimatch');
 
@@ -186,6 +187,32 @@ class StructureItemView extends Component {
     }.bind(this);
   }
 
+  validateTypeItem () {
+    const type = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
+    JdxDatabase.loadDefinitions();
+
+    return new Promise((resolve, reject) => {
+      SchemaValidatorTask.start(
+        {
+          taskTitle: 'Validating `' + type.id + '`, item `'+ this.props.match.params.id +'`',
+          project: this.props.project,
+          typeDefinition: type,
+          typeId: this.props.match.params.id
+        },
+        (progress, total, message) => null,
+        (result) => {
+          resolve(result);
+          console.log('results');
+          console.log(result);
+        },
+        (error) => {
+          reject(error);
+          console.error(error);
+        },
+      );
+    });
+  }
+
   render() {
     if (!this.props.match.params.type) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
@@ -278,6 +305,9 @@ class StructureItemView extends Component {
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Open in operating system" placement="bottom">
               <IconButton onClick={() => OperatingSystemTask.start({openItem: this.getItemPath()})}><Icon color="action">open_in_new</Icon></IconButton>
+            </Tooltip>
+            <Tooltip id="tooltip-icon" title="Validate item" placement="bottom">
+              <IconButton onClick={() => this.validateTypeItem()}><Icon color="action">assignment_turned_in</Icon></IconButton>
             </Tooltip>
           </span>
         </div>
