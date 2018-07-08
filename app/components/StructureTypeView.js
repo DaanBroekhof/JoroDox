@@ -134,6 +134,7 @@ class StructureTypeView extends Component {
 
   validateType(typeId) {
     const type = _(this.state.definition.types).find(x => x.id === typeId);
+    JdxDatabase.loadDefinitions();
 
     return new Promise((resolve, reject) => {
       SchemaValidatorTask.start(
@@ -157,6 +158,7 @@ class StructureTypeView extends Component {
   }
 
   reloadTypeById(typeId) {
+    JdxDatabase.loadDefinitions();
     return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
       this.props.incrementDatabaseVersion();
     });

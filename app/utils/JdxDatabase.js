@@ -430,15 +430,12 @@ export default class JdxDatabase {
       }
 
       this.definitions[data.id] = data;
-
       this.definitions[data.id].types = [];
 
       jetpack.cwd(syspath.join(baseDir, definitionDir, 'types')).find(
         '.',
         {matching: '*.json'}
       ).forEach(typeFile => {
-        console.log(typeFile);
-
         const typeDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'types', typeFile));
         const typeData = JSON.parse(typeDataRaw);
 

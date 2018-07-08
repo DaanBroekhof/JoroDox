@@ -10,6 +10,7 @@ export default class BackgroundTask {
   constructor(taskId, role) {
     this.taskId = taskId || null;
     this.role = role;
+
   }
 
 
@@ -19,6 +20,10 @@ export default class BackgroundTask {
 
   static start(args, progressCallback, requestCallback) {
     const taskId = Math.random() * 10000000;
+
+    // Infinite listeners~
+    // Todo: centralize Task listeners to one global listener...
+    ipc.setMaxListeners(0);
 
     this.resultPromise = new Promise((resolve, reject) => {
       ipc.on('background-response', function listener(event, response) {

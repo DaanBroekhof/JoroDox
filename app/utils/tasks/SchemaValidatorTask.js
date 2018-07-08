@@ -452,9 +452,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
   async buildIdentifierCache(project) {
     if (!this.identifierCache) {
-      console.log('Get keys', new Date());
       this.identifierCache = await JdxDatabase.getAllIdentifiers(project);
-      console.log('All keys got', new Date());
     }
   }
 
@@ -477,6 +475,9 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.project);
     const definition = args.typeDefinition;
 
+    this.progress(0, 1, 'Reloading definitions...');
+    JdxDatabase.loadDefinitions();
+
     let ajv = new Ajv({extendRefs: true});
 
     ajv = this.addMergePropsKeyword(ajv);
@@ -485,13 +486,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     ajv = this.addIdentifierPropertiesKeyword(ajv);
     ajv = this.addIdentifierValueKeyword(ajv);
 
+
     this.progress(0, 1, 'Loading identifier cache...');
     await this.buildIdentifierCache(args.project);
     this.progress(1, 1, 'Loading identifier cache...');
 
     this.progress(0, 1, 'Loading validator...');
 
-    // console.log('Loading ' + definition.id + ' validator');
     JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
     const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
 
