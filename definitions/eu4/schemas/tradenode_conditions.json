@@ -136,6 +136,15 @@
             "share": {"type": "number"}
           },
           "required": ["country", "share"]
+        },
+
+        "calc_true_if": {
+          "description": "Returns true if at least amount number of targets within the specified scope match the specified conditions",
+          "type": "object",
+          "$mergeProps": [
+            {"properties": {"amount": {"type": "number"}}},
+            {"$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"}
+          ]
         }
       }
     }

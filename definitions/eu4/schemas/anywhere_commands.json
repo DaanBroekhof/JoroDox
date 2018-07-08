@@ -60,6 +60,11 @@
             "every_trade_node": {
               "todo": "Update wiki?",
               "$ref": "province_commands.json#/definitions/province_commands"
+            },
+
+            "capital_scope": {
+              "todo": "check if actually dual scope?",
+              "$ref": "province_commands.json#/definitions/province_commands"
             }
           }
         }
@@ -68,16 +73,10 @@
     "anywhere_commands_identifier_dual_scopes": {
       "$identifierProperties": {
         "map_provinces": {
-          "$mergeProps": [
-            {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
-          ]
+          "$ref": "province_commands.json#/definitions/province_commands"
         },
         "country_tags": {
-          "$mergeProps": [
-            {"$ref": "country_commands.json#/definitions/country_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
-          ]
+          "$ref": "country_commands.json#/definitions/country_commands"
         },
         "map_area": {
           "$mergeProps": [

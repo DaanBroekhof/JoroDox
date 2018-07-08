@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/missions.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "mission_series": {
+      "$ref": "identifiers.json#/definitions/mission_series"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "icon": {
+          "description": "The icon to use for the mission",
+          "type": "string"
+        },
+        "generic": {
+          "description": "Whether this mission is considered generic.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "ai": {
+          "description": "Whether the AI will claim this mission.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "position": {
+          "description": "Which row the mission appears in. 1 is top.",
+          "type": "number"
+        },
+        "completed_by": {
+          "description": "Automatically completes mission in history.",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "required_missions": {
+          "type": "array",
+          "item": {
+            "description": "Which missions must be completed before this mission is active.",
+            "$ref": "identifiers.json#/definitions/missions"
+          }
+        },
+
+        "provinces_in_highlight": {
+          "description": "Determines which provinces to highlight. Acts like all_province scope. Optional.",
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+
+        "trigger": {
+          "description": "Determines when the mission is completed.",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "effect": {
+          "description": "The effect executed when the mission is claimed. Country scope.",
+          "$ref": "country_commands.json#/definitions/country_commands"
+        }
+      }
+    }
+  }
+}

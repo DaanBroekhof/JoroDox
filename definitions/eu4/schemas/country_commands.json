@@ -104,9 +104,6 @@
         "overlord": {
           "$ref": "country_commands.json#/definitions/country_commands"
         },
-        "capital_scope": {
-          "$ref": "province_commands.json#/definitions/province_commands"
-        },
         "random_province": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
@@ -258,6 +255,10 @@
         "complete_mission": {
           "description": "Complete a mission",
           "$ref": "identifiers.json#/definitions/missions"
+        },
+        "change_innovativeness": {
+          "todo": "determine what does, add to wiki",
+          "type": "number"
         },
 
 
@@ -1364,8 +1365,7 @@
           },
           "required": [
             "target",
-            "type",
-            "months"
+            "type"
           ]
         },
         "add_country_modifier": {
@@ -2107,6 +2107,18 @@
               "type": "number"
             },
             "mil": {
+              "description": "Optional. The minimum MIL skill roll for the heir.",
+              "type": "number"
+            },
+            "ADM": {
+              "description": "Optional. The minimum ADM skill roll for the heir.",
+              "type": "number"
+            },
+            "DIP": {
+              "description": "Optional. The minimum DIP skill roll for the heir.",
+              "type": "number"
+            },
+            "MIL": {
               "description": "Optional. The minimum MIL skill roll for the heir.",
               "type": "number"
             },

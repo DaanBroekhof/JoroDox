@@ -90,9 +90,6 @@
         "overlord": {
           "$ref": "country_conditions.json#/definitions/country_conditions"
         },
-        "capital_scope": {
-          "$ref": "province_conditions.json#/definitions/province_conditions"
-        },
         "any_army": {
           "$ref": "unit_conditions.json#/definitions/unit_conditions"
         },
@@ -397,6 +394,37 @@
         },
         "neighbors_tech_discount": {
           "todo": "Add to wiki, figure what it does",
+          "type": "number"
+        },
+        "num_of_provinces_owned_or_owned_by_non_sovereign_subjects_with": {
+          "$mergeProps": [
+            {
+              "properties": {
+                "value": {"type": "number"}
+              }
+            },
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ],
+          "required": ["value"]
+        },
+        "num_of_non_tributary_subjects": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "num_of_foreign_hre_provinces": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "grown_by_development": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "grown_by_states": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "share_of_starting_income": {
+          "todo": "Add to wiki",
           "type": "number"
         },
 
@@ -2466,8 +2494,8 @@
           "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
         "total_development": {
-          "description": "Returns true if the country has a total development of at least X.",
-          "type": "number"
+          "description": "Returns true if the country has a total development of at least X, or higher than country Y.",
+          "$ref": "special_values.json#/definitions/country_or_number"
         },
         "trade_efficiency": {
           "description": "Returns true if the country has a trade efficiency over X.",

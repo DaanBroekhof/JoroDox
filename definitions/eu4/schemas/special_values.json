@@ -5,7 +5,7 @@
   "definitions": {
     "boolean": {
       "type": "string",
-      "enum": ["yes", "no"]
+      "enum": ["yes", "no", "YES", "NO"]
     },
     "any": {
       "type": "string",
@@ -13,11 +13,11 @@
     },
     "yes": {
       "type": "string",
-      "enum": ["yes"]
+      "enum": ["yes", "YES"]
     },
     "no": {
       "type": "string",
-      "enum": ["no"]
+      "enum": ["no", "NO"]
     },
     "capital": {
       "type": "string",
@@ -245,6 +245,19 @@
         },
         {
           "$ref": "special_values.json#/definitions/country_scope"
+        }
+      ]
+    },
+    "province_or_number": {
+      "$mergeProps": [
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        {
+          "$ref": "special_values.json#/definitions/province_scope"
         }
       ]
     },

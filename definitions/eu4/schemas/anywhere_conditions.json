@@ -55,6 +55,11 @@
             },
             "any_trade_node": {
               "$ref": "tradenode_conditions.json#/definitions/tradenode_conditions"
+            },
+
+            "capital_scope": {
+              "todo": "check if actually dual scope?",
+              "$ref": "province_conditions.json#/definitions/province_conditions"
             }
           }
         }
@@ -63,57 +68,51 @@
     "anywhere_conditions_identifier_dual_scopes": {
       "$identifierProperties": {
         "map_provinces": {
-          "$mergeProps": [
-            {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
-          ]
+          "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "country_tags": {
-          "$mergeProps": [
-            {"$ref": "country_conditions.json#/definitions/country_conditions"},
-            {"properties": {"type": {"type": "string"}}}
-          ]
+          "$ref": "country_conditions.json#/definitions/country_conditions"
         },
         "map_area": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_region": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_superregion": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_provincegroups": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "map_continent": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "trade_companies": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
         "colonial_regions": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string"}}}
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         }
       }

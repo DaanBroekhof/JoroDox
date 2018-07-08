@@ -88,6 +88,13 @@
             {"$ref": "province_conditions.json#/definitions/province_conditions"}
           ]
         },
+        "region_for_scope_province": {
+          "todo": "figure out what this does? add to wiki",
+          "$mergeProps": [
+            {"$ref": "province_conditions.json#/definitions/province_conditions"},
+            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+          ]
+        },
 
         "variable_arithmetic_trigger": {
           "description": "Can use variable effects and triggers to compare or change and compare modifier and trigger values. \"variable_arithmetic_trigger\" sections can include more \"variable_arithmetic_trigger\" sections. This has to be done for effects such as \"change_variable\" or effects of \"if\" sections inside the \"variable_arithmetic_trigger\", since the game may crash otherwise.",
@@ -325,7 +332,7 @@
         },
         "development": {
           "description": "Returns true if the development of the province is at least X.",
-          "type": "number"
+          "$ref": "special_values.json#/definitions/province_or_number"
         },
         "fort_level": {
           "description": "Returns true if the fort in the province has at least level X.",
