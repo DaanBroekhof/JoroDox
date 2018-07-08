@@ -209,6 +209,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
         return function v(data, dataPath, object, key) {
           let isAllValid = true;
+          const myErrors = [];
           _.forOwn(data, (subItem, subItemKey) => {
             let items = null;
             if (_.isArray(subItem) && subItem.multipleKeys) {
@@ -224,10 +225,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
                 if (!subValid && val.errors && val.errors[0].keyword !== 'additionalProperties') {
                   val.errors[0].dataPath = dataPath + val.errors[0].dataPath;
-                  if (!v.errors) {
-                    v.errors = [];
-                  }
-                  v.errors.push(val.errors[0]);
+                  myErrors.push(val.errors[0]);
                   isAllValid = false;
                 }
 
@@ -241,10 +239,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
                   if (!dynValid && dynVal.errors && dynVal.errors[0].keyword !== '$identifierProperties') {
                     dynVal.errors[0].dataPath = dataPath + '.' + dynVal.errors[0].dataPath;
-                    if (!v.errors) {
-                      v.errors = [];
-                    }
-                    v.errors.push(dynVal.errors[0]);
+                    myErrors.push(dynVal.errors[0]);
                     isAllValid = false;
                   }
 
@@ -252,10 +247,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                 });
 
                 if (!isValid) {
-                  if (!v.errors) {
-                    v.errors = [];
-                  }
-                  v.errors.push({
+                  myErrors.push({
                     keyword: '$identifierProperties',
                     dataPath,
                     message: 'Unknown property `' + subItemKey + '`.',
@@ -269,6 +261,10 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
               }
             });
           });
+
+          if (!isAllValid) {
+            v.errors = myErrors;
+          }
 
           return isAllValid;
         };
@@ -524,30 +520,38 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       this.progress(nr, items.length, `Validating ${items.length} items...`);
       const valid = validator(item);
 
+      const validErrors = [];
+
       if (!valid) {
-        invalidCount += 1;
-        // Fix stupid messages
-        if (validator.errors[0] && validator.errors[0].message === 'should NOT have additional properties') {
-          validator.errors[0].message = 'Unexpected additional property found: ' + validator.errors[0].params.additionalProperty;
-        }
-        if (validator.errors[0] && validator.errors[0].message === 'should be equal to one of the allowed values') {
-          validator.errors[0].message = 'Should be equal to one of: \'' + validator.errors[0].params.allowedValues.join("', '") + "'";
-        }
+        validator.errors.forEach((error) => {
+          if (error.keyword && error.keyword.includes('$mergeProps')) {
+            return;
+          }
 
-        if (validator.errors.length > 0) {
-          console.log(validator.errors);
+          validErrors.push(error);
+
+          invalidCount += 1;
+          // Fix stupid messages
+          if (error && error.message === 'should NOT have additional properties') {
+            error.message = 'Unexpected additional property found: ' + error.params.additionalProperty;
+          }
+          if (error && error.message === 'should be equal to one of the allowed values') {
+            error.message = 'Should be equal to one of: \'' + error.params.allowedValues.join("', '") + "'";
+          }
+
+          errorPromises.push(JdxDatabase.addError(args.project, {
+            message: validator.errors[0].message,
+            path: null,
+            type: definition.id,
+            typeId: item[definition.primaryKey],
+            severity: 'error',
+            data: validator.errors[0],
+          }));
+        });
+
+        if (validErrors.length === 0) {
+          console.error('Zero valid errors while invalid:', validator.errors);
         }
-
-        // console.log(item[definition.primaryKey], item.comments, validator.errors[0], validator.errors);
-
-        errorPromises.push(JdxDatabase.addError(args.project, {
-          message: validator.errors[0].message,
-          path: null,
-          type: definition.id,
-          typeId: item[definition.primaryKey],
-          severity: 'error',
-          data: validator.errors[0],
-        }));
       }
       nr += 1;
     }
