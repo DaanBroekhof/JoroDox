@@ -12,8 +12,11 @@ import IndexedBmpParserTask from './tasks/IndexedBmpParserTask';
 import DdsImageParserTask from './tasks/DdsImageParserTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
-import Eu4Definition from '../definitions/eu4/index';
-import StellarisDefinition from '../definitions/stellaris';
+import ForegroundTask from './tasks/ForegroundTask';
+
+const syspath = require('electron').remote.require('path');
+const jetpack = require('electron').remote.require('fs-jetpack');
+const {app, process} = require('electron').remote;
 
 export default class JdxDatabase {
   static db = {};
@@ -81,6 +84,11 @@ export default class JdxDatabase {
   }
 
   static async loadDbWithStores(dbName, stores) {
+
+    const task = ForegroundTask.start({taskTitle: 'Initializing...'});
+
+    task.progress(0, 1, 'Opening databases...');
+
     const db = new Dexie(dbName, {allowEmptyDB: true});
     console.log('Loading DB `' + dbName + '`');
     // Hacky way to allow empty DB editing
@@ -131,7 +139,11 @@ export default class JdxDatabase {
     }
     console.log('Loaded DB `' + dbName + '`');
 
-    return db.open();
+    return db.open().then((result) => {
+      task.finish();
+
+      return result;
+    });
   }
 
   static async get(project) {
@@ -375,12 +387,87 @@ export default class JdxDatabase {
     return Promise.all(promises);
   }
 
-  static definitions = {
-    eu4: Eu4Definition,
-    stellaris: StellarisDefinition,
-  };
+  static definitions = {};
 
   static getDefinitions() {
+    return this.definitions;
+  }
+
+  static getAppRootDir() {
+    return process.env.NODE_ENV === 'development'
+      ? process.cwd()
+      : syspath.resolve(app.getAppPath(), '../../');
+  }
+
+  static getAppScriptDir() {
+    return process.env.NODE_ENV === 'development'
+      ? syspath.resolve(process.cwd(), 'app')
+      : syspath.resolve(app.getAppPath(), '../../');
+  }
+
+  static loadDefinitions() {
+    const baseDir = syspath.join(this.getAppRootDir(), 'definitions');
+
+    jetpack.cwd(baseDir).find(
+      '.',
+      {
+        matching: '*',
+        directories: true,
+        files: false,
+        recursive: false,
+      }
+    ).forEach(definitionDir => {
+      if (!jetpack.exists(syspath.join(baseDir, definitionDir, 'index.json'))) {
+        console.error('Definition dir `' + definitionDir + '` has no index.json.');
+        return;
+      }
+      const indexDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'index.json'));
+      const data = JSON.parse(indexDataRaw);
+
+      if (!data || !data.id || !data.name) {
+        console.error('Definition dir `' + definitionDir + '` missing `id` or `name` in index.json.');
+        return;
+      }
+
+      this.definitions[data.id] = data;
+
+      this.definitions[data.id].types = [];
+
+      jetpack.cwd(syspath.join(baseDir, definitionDir, 'types')).find(
+        '.',
+        {matching: '*.json'}
+      ).forEach(typeFile => {
+        console.log(typeFile);
+
+        const typeDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'types', typeFile));
+        const typeData = JSON.parse(typeDataRaw);
+
+        if (!typeData || !_.isArray(typeData)) {
+          console.error('Definition `' + definitionDir + '` type `' + typeFile + '` data missing or incorrect');
+          return;
+        }
+
+        this.definitions[data.id].types = this.definitions[data.id].types.concat(typeData);
+      });
+
+      this.definitions[data.id].schemas = [];
+
+      jetpack.cwd(syspath.join(baseDir, definitionDir, 'schemas')).find(
+        '.',
+        {matching: '*.json'}
+      ).forEach(schemaFile => {
+        const schemaDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'schemas', schemaFile));
+        const schemaData = JSON.parse(schemaDataRaw);
+
+        if (!schemaData || !_.isObject(schemaData)) {
+          console.error('Definition `' + definitionDir + '` schema `' + schemaFile + '` data missing or incorrect');
+          return;
+        }
+
+        this.definitions[data.id].schemas.push(schemaData);
+      });
+    });
+
     return this.definitions;
   }
 

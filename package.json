@@ -47,6 +47,13 @@
       "main.prod.js.map",
       "package.json"
     ],
+    "extraFiles": [
+      {
+        "from": "definitions",
+        "to": "definitions",
+        "filter": ["**/*.json"]
+      }
+    ],
     "dmg": {
       "contents": [
         {

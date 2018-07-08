@@ -58,6 +58,8 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    JdxDatabase.loadDefinitions();
+
     this.loadProjects();
     //JdxDatabase.clearProjectDatabases();
 
