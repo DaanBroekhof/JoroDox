@@ -169,8 +169,8 @@ export default class PdxScript {
 
       this.currentOffset += 1;
 
-      // '=', '{' can only be a solo operator
-      if (token === '=' || token === '{') {
+      // '=', '{' and '}' can only be a solo operator
+      if (token === '=' || token === '{' || token === '}') {
         break;
       }
 
