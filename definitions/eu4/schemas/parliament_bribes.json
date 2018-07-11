@@ -1,0 +1,32 @@
+{
+  "$id": "http://jorodox.org/schemas/parliament_bribes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+
+        "ai_will_do": {
+          "description": "The AI weighting",
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

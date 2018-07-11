@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/new_diplomatic_static_actions.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+         "alert_index": {
+          "type": "number"
+        },
+        "alert_tooltip": {
+          "todo": "make localiz",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

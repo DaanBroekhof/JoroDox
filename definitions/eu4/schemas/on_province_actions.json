@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/on_province_actions.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "events": {
+              "type": "array",
+              "items": {
+                "$ref": "identifiers.json#/definitions/province_events"
+              }
+            },
+            "random_events": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "patternProperties": {
+                    "^[0-9]+$": {
+                      "$allowMultiple": {
+                        "$ref": "identifiers.json#/definitions/province_events"
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              ]
+            }
+          }
+        },
+        {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/native_advancement_groups.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "description": "Monarch power category",
+          "$ref": "special_values.json#/definitions/monarch_power_type"
+        },
+        "ai_will_do": {
+          "description": "Does not actually determine weighting, but AI will not pick an idea with ai_will_do = 0",
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  }
+}

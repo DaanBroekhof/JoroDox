@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/unit_commands.json",
+  "type": "object",
+  "definitions": {
+    "tradenode_commands": {
+      "$mergeProps": [
+        {
+          "$ref": "#/definitions/unit_commands_scopes"
+        },
+        {
+          "$ref": "unit_commands.json#/definitions/province_commands"
+        }
+      ]
+    },
+    "unit_commands_scopes": {
+      "properties": {
+        "unit_owner": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        }
+      }
+    }
+  }
+}

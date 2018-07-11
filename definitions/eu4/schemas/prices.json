@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/prices.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "$ref": "identifiers.json#/definitions/tradegoods"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base_price": {
+          "type": "number"
+        },
+        "goldtype": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      },
+      "required": [
+        "base_price"
+      ]
+    }
+  }
+}

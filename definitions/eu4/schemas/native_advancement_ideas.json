@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/native_advancement_ideas.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "native_advancement_group": {
+      "$ref": "identifiers.json#/definitions/native_advancement_groups"
+    },
+    "data": {
+      "$mergeProps": [
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+        {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}
+      ]
+    }
+  }
+}

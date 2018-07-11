@@ -1,0 +1,45 @@
+{
+  "$id": "http://jorodox.org/schemas/parliament_issues.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "number"
+        },
+        "allow": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "modifier": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "on_issue_taken": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "chance": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        },
+        "ai_will_do": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

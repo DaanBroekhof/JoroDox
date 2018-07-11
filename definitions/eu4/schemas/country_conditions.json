@@ -1043,7 +1043,7 @@
         },
         "has_country_modifier": {
           "description": "Returns true if the country has the modifier X.",
-          "$ref": "identifiers.json#/definitions/country_modifiers"
+          "$ref": "special_values.json#/definitions/country_modifiers"
         },
         "has_custom_ideas": {
           "description": "Returns true if the country has custom ideas.",
@@ -1146,7 +1146,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "which": {"$ref": "identifiers.json#/definitions/country_modifiers"},
+            "which": {"$ref": "special_values.json#/definitions/country_modifiers"},
             "value": {"type": "number"},
             "extra_shortcut": {"$ref": "special_values.json#/definitions/boolean"}
           },

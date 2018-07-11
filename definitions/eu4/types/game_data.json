@@ -193,7 +193,7 @@
         "data",
         "data"
       ],
-      "onlyKeys": [
+      "onlyValueKeys": [
         "graphical_culture",
         "male_names",
         "female_names",
@@ -850,7 +850,7 @@
         "data",
         "data"
       ],
-      "onlyKeys": [
+      "onlyValueKeys": [
         "category"
       ],
       "keyName": "name",
@@ -1433,7 +1433,7 @@
       ],
       "keyName": "name",
       "valueName": "data",
-      "onlyKeys": [
+      "onlyValueKeys": [
         "category",
         "bonus",
         "trigger",
@@ -1700,14 +1700,14 @@
     }
   },
   {
-    "id": "native_advancement",
-    "title": "Native advancement",
+    "id": "native_advancement_groups",
+    "title": "Native advancement groups",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
       "id": "pdx_scripts",
-      "pathPrefix": "common/{type.id}/",
-      "pathPattern": "common/{type.id}/*.txt"
+      "pathPrefix": "common/native_advancement/",
+      "pathPattern": "common/native_advancement/*.txt"
     },
     "sourceTransform": {
       "type": "keyValues",
@@ -1716,7 +1716,8 @@
         "data"
       ],
       "keyName": "name",
-      "valueName": "data"
+      "valueName": "data",
+      "onlyValueKeys": ["category", "ai_will_do"]
     },
     "listView": {
       "pageSize": 100,
@@ -1731,6 +1732,49 @@
           "dataIndex": [
             "data",
             "category"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "native_advancement_ideas",
+    "title": "Native advancement ideas",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/native_advancement/",
+      "pathPattern": "common/native_advancement/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "ignoreKeys": [
+        "category",
+        "ai_will_do"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "parentKeyName": "native_advancement_group",
+      "parentRelationType": "native_advancement_groups",
+      "parentRelationKey": "parent_group"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Group",
+          "dataIndex": [
+            "native_advancement_group"
           ]
         }
       ]
@@ -1790,6 +1834,38 @@
         "data"
       ],
       "keyName": "name",
+      "valueName": "data",
+      "ignoreKeys": ["static_actions"]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "new_diplomatic_static_actions",
+    "title": "New diplomatic static actions",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/new_diplomatic_actions/",
+      "pathPattern": "common/new_diplomatic_actions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data",
+        "static_actions"
+      ],
+      "keyName": "name",
       "valueName": "data"
     },
     "listView": {
@@ -1804,14 +1880,14 @@
     }
   },
   {
-    "id": "on_actions",
-    "title": "On Actions",
+    "id": "on_country_actions",
+    "title": "On Actions (Country)",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
       "id": "pdx_scripts",
-      "pathPrefix": "common/{type.id}/",
-      "pathPattern": "common/{type.id}/*.txt"
+      "pathPrefix": "common/on_actions/",
+      "pathPattern": "common/on_actions/*.txt"
     },
     "sourceTransform": {
       "type": "keyValues",
@@ -1820,7 +1896,129 @@
         "data"
       ],
       "keyName": "name",
-      "valueName": "data"
+      "valueName": "data",
+      "ignoreKeys": [
+        "on_battle_won_province",
+        "on_added_to_trade_company",
+        "on_removed_from_company",
+        "on_company_formed",
+        "on_company_disolved",
+        "on_battle_lost_province",
+        "on_siege_won_province",
+        "on_siege_lost_province",
+        "on_abandon_colony",
+        "on_adm_development",
+        "on_dip_development",
+        "on_mil_development",
+        "on_province_religion_converted",
+        "on_province_culture_converted",
+        "on_convert_by_trade_policy",
+        "on_province_owner_change",
+        "on_consecrate_patriarch",
+        "on_regiment_recruited",
+        "on_add_pasha",
+        "on_remove_pasha",
+        "on_janissaries_raised",
+        "on_revoke_estate_land",
+        "on_explore_coast",
+        "on_colonial_pulse",
+        "on_conquistador_native",
+        "on_conquistador_empty",
+        "on_battle_won_unit",
+        "on_battle_lost_unit"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "on_province_actions",
+    "title": "On Actions (Province)",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/on_actions/",
+      "pathPattern": "common/on_actions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyKeys": [
+        "on_battle_won_province",
+        "on_added_to_trade_company",
+        "on_removed_from_company",
+        "on_company_formed",
+        "on_company_disolved",
+        "on_battle_lost_province",
+        "on_siege_won_province",
+        "on_siege_lost_province",
+        "on_abandon_colony",
+        "on_adm_development",
+        "on_dip_development",
+        "on_mil_development",
+        "on_province_religion_converted",
+        "on_province_culture_converted",
+        "on_convert_by_trade_policy",
+        "on_province_owner_change",
+        "on_consecrate_patriarch",
+        "on_regiment_recruited",
+        "on_add_pasha",
+        "on_remove_pasha",
+        "on_janissaries_raised",
+        "on_revoke_estate_land",
+        "on_explore_coast",
+        "on_colonial_pulse",
+        "on_conquistador_native",
+        "on_conquistador_empty"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "on_unit_actions",
+    "title": "On Actions (Unit)",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/on_actions/",
+      "pathPattern": "common/on_actions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyKeys": [
+        "on_battle_won_unit",
+        "on_battle_lost_unit"
+      ]
     },
     "listView": {
       "pageSize": 100,
@@ -3779,7 +3977,8 @@
         "data"
       ],
       "keyName": "name",
-      "valueName": "data"
+      "valueName": "data",
+      "onlyValueKeys": ["slot", "generic", "potential", "potential_on_load", "has_country_shield", "ai"]
     },
     "listView": {
       "pageSize": 100,

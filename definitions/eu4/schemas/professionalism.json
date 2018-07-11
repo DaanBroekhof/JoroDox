@@ -1,0 +1,46 @@
+{
+  "$id": "http://jorodox.org/schemas/professionalism.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "army_professionalism": {
+              "type": "number"
+            },
+            "marker_sprite": {
+              "type": "string"
+            },
+            "unit_sprite_start": {
+              "type": "string"
+            },
+            "trigger": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "may_return_manpower_on_disband": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_build_supply_depot": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_refill_garrison": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "hidden": {
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          }
+        },
+        {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        }
+      ]
+    }
+  }
+}

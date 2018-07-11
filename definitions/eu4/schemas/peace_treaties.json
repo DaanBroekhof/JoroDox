@@ -1,0 +1,139 @@
+{
+  "$id": "http://jorodox.org/schemas/peace_treaties.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "description": "Any number between 0 and 6. Represents the tab under which it will be listed. 6 corresponds to 'treaties'. This value currently defaults to 6.",
+          "type": "number"
+        },
+        "power_projection": {
+          "description": "will only be applied if giver is your rival.",
+          "type": "string"
+        },
+        "power_cost_base": {
+          "description": "Base factor for diplomatic power cost when treaty is not allowed by casus belli. Scales with war score cost.",
+          "type": "number"
+        },
+        "prestige_base": {
+          "description": "Base factor for prestige gain and loss. Scales with war score cost.",
+          "type": "number"
+        },
+        "ae_base": {
+          "description": "Base factor for aggressive expansion. Scales with war score cost.",
+          "type": "number"
+        },
+        "warscore_cost": {
+          "description": "Which of the giver's provinces' war score costs are included and by how much. All entries default to 0. Any combination of entries can be used. Try negative values at your own risk.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "all_provinces": {
+              "description": "All the giver's provinces",
+              "type": "number"
+            },
+            "no_provinces": {
+              "description": "This is just a constant. Equivalent to a single province with with war score cost 1",
+              "type": "number"
+            },
+            "owner_keeps": {
+              "description": "The provinces that are not of any of the types below",
+              "type": "number"
+            },
+            "conquered": {
+              "description": "Provinces that are selected by a Demand Province treaty",
+              "type": "number"
+            },
+            "returned_core": {
+              "description": "Provinces that are selected by a Return Core treaty",
+              "type": "number"
+            },
+            "released_nation": {
+              "description": "Provinces that will become a part of a selected released-to-be nation",
+              "type": "number"
+            },
+            "cancelled_subject": {
+              "description": "This one should not be relevant here since Giver can't be a cancelled subject. Including anyway for completeness",
+              "type": "number"
+            },
+            "concede_colonial_region": {
+              "description": "Ditto",
+              "type": "number"
+            }
+          }
+        },
+        "warscore_cap": {
+          "description": "Warscore cost will never go above this value. Only enabled if non-negative. This value defaults to -1.",
+          "type": "number"
+        },
+        "requires_demand_independence": {
+          "description": "Whether this can be demanded by the former subject in an independence war without also demanding independence.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "is_make_subject": {
+          "description": "This will make the treaty mutually exclusive with other treaties that makes the giver a subject, or that explicitly frees the giver from their current overlord.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "requires_is_allowed": {
+          "description": "If set to 'yes', treaty will only be visible when explicitly allowed by casus belli. If not, it will be available but cost diplomatic power.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "is_visible": {
+          "description": "Defaults to equivalent of 'always = yes'",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "is_allowed": {
+          "description": "Defaults to equivalent of 'always = yes'",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "effect": {
+          "description": "Defaults to empty effect (which makes error log entry but is safe",
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+
+        "ai_weight": {
+          "description": "Defaults to always evaluate to 0",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "limit": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "export_to_variable": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "variable_name": {
+                  "description": "Mandatory to have entry called 'ai_value'. Its value at the end of the ai_weight scope is what will be used",
+                  "type": "string"
+                },
+                "value": {
+                  "type": ["string", "number"]
+                },
+                "who": {
+                  "$ref": "special_values.json#/definitions/country_scope"
+                },
+                "with": {
+                  "$ref": "special_values.json#/definitions/country_scope"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

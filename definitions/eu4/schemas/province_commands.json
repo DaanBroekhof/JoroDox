@@ -47,7 +47,7 @@
         },
         "random_list": {
           "patternProperties": {
-            "^[0-9\\.]$": {
+            "^[0-9\\.]+$": {
               "$allowMultiple": {
                 "$ref": "province_commands.json#/definitions/province_commands"
               }
@@ -241,7 +241,7 @@
         },
         "add_province_triggered_modifier": {
           "description": "Adds a province triggered modifier to the current province scope.",
-          "$ref": "identifiers.json#/definitions/province_modifiers",
+          "$ref": "special_values.json#/definitions/province_modifiers",
           "version_added": "1.24"
         },
         "add_reform_center": {
@@ -535,7 +535,7 @@
         },
         "remove_province_modifier": {
           "description": "Removes an already assigned province modifier from the current province scope.",
-          "$ref": "identifiers.json#/definitions/province_modifiers",
+          "$ref": "special_values.json#/definitions/province_modifiers",
           "version_added": "1.1"
         },
         "remove_reform_center": {
@@ -836,7 +836,7 @@
           "properties": {
             "id": {
               "description": "The event id to fire.",
-              "$ref": "identifiers.json#/definitions/country_events"
+              "$ref": "identifiers.json#/definitions/province_events"
             },
             "days": {
               "description": "Optional. The number of days to wait after the effect is executed to fire the event.",

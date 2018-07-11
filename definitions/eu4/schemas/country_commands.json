@@ -47,7 +47,7 @@
         },
         "random_list": {
           "patternProperties": {
-            "^[0-9\\.]$": {
+            "^[0-9\\.]+$": {
               "$allowMultiple": {
                 "$ref": "country_commands.json#/definitions/country_commands"
               }
@@ -82,7 +82,9 @@
 
 
         "if" : {
-          "$ref": "country_commands.json#/definitions/if"
+          "$allowMultiple": {
+            "$ref": "country_commands.json#/definitions/if"
+          }
         },
         "else_if" : {
           "$ref": "country_commands.json#/definitions/else_if"
@@ -1066,7 +1068,7 @@
         "remove_country_modifier": {
           "description": "Removes an already assigned country modifier from the current scope.",
           "version_added": "1.1",
-          "$ref": "identifiers.json#/definitions/country_modifiers"
+          "$ref": "special_values.json#/definitions/country_modifiers"
         },
         "remove_faction": {
           "description": "Removes a faction from the current scope.\nNotes: Factions are found in /Europa Universalis IV/common/factions/.",
@@ -1160,6 +1162,7 @@
           "description": "Changes the consort religion for the current scope.\nNotes: Religions are found in /Europa Universalis IV/common/religions/*.txt\nCan utilise Event Scope Values.",
           "anyOf": [
             {"$ref": "identifiers.json#/definitions/religions"},
+            {"$ref": "special_values.json#/definitions/country_scope"},
             {"$ref": "special_values.json#/definitions/variable"}
           ],
           "version_added": "1.23"
@@ -1376,7 +1379,7 @@
           "properties": {
             "name": {
               "description": "The event modifier to add.",
-              "$ref": "identifiers.json#/definitions/event_modifiers"
+              "$ref": "special_values.json#/definitions/country_modifiers"
             },
             "duration": {
               "description": "Optional. The number of days to add the country modifier for.",
@@ -2396,7 +2399,7 @@
         },
         "remove_province_modifier": {
           "description": "Removes an already assigned province modifier from the current country scope's provinces.",
-          "$ref": "identifiers.json#/definitions/province_modifiers"
+          "$ref": "special_values.json#/definitions/province_modifiers"
         },
         "remove_opinion": {
           "description": "Removes an opinion modifier for the current scope held against the defined scope.\nNotes: Opinion modifiers are found in /Europa Universalis IV/common/opinion_modifiers/*.txt",
@@ -2682,7 +2685,6 @@
     "if": {
       "$mergeProps": [
         {
-          "type": "object",
           "properties": {
             "limit": {
               "$ref": "country_conditions.json#/definitions/country_conditions"

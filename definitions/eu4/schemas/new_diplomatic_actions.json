@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/new_diplomatic_actions.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": ["influence"]
+        },
+        "alert_index": {
+          "type": "number"
+        },
+        "alert_tooltip": {
+          "todo": "make localiz",
+          "type": "string"
+        },
+        "require_acceptance": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "is_visible": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "is_allowed": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "on_accept": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "on_decline": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+        "ai_acceptance": {
+          "description": "This works similarly to variable_arithmetic_trigger, but does not support triggers generally. Instead, 'limit' will be evaluated first and the rest ignored if it isn't passed.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "add_entry": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "limit": {
+                        "$ref": "country_conditions.json#/definitions/country_conditions"
+                      },
+                      "export_to_variable": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "variable_name": {
+                            "description": "Each 'add_entry' must create one variable called 'ai_value', the value of which will be extracted after executing all effects",
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": ["string", "number"]
+                          },
+                          "who": {
+                            "$ref": "special_values.json#/definitions/country_scope"
+                          },
+                          "with": {
+                            "$ref": "special_values.json#/definitions/country_scope"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "anywhere_commands.json#/definitions/anywhere_commands_variables"
+                  }
+                ]
+              }
+            }
+          }
+        },
+
+
+        "ai_will_do": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      }
+    }
+  }
+}

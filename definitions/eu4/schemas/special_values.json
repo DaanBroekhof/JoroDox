@@ -37,7 +37,7 @@
     },
     "monarch_power_type": {
       "type": "string",
-      "enum": ["ADM", "DIP", "MIL"]
+      "enum": ["ADM", "DIP", "MIL", "adm", "dip", "mil"]
     },
     "date": {
       "type": "string",
@@ -440,6 +440,24 @@
         "type": "string",
         "pattern": "^(0(\\.[0-9]+)?|1(\\.0+))$"
       }
+    },
+    "country_modifiers": {
+      "anyOf": [
+        {"$identifierValue": "<scope_key:country_modifiers.json#/definitions/country_modifiers>"},
+        {"$identifierValue": "event_modifiers"},
+        {"$identifierValue": "triggered_modifiers"},
+        {"$identifierValue": "static_modifiers"}
+      ],
+      "type": "string"
+    },
+    "province_modifiers": {
+      "anyOf": [
+        {"$identifierValue": "<scope_key:province_modifiers.json#/definitions/province_modifiers>"},
+        {"$identifierValue": "event_modifiers"},
+        {"$identifierValue": "triggered_modifiers"},
+        {"$identifierValue": "static_modifiers"}
+      ],
+      "type": "string"
     }
   }
 }

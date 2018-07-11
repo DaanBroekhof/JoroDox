@@ -1,0 +1,34 @@
+{
+  "$id": "http://jorodox.org/schemas/personal_deities.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "sprite": {
+              "type": "number"
+            },
+            "allow": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "ai_will_do": {
+              "description": "The importance the AI places on this",
+              "$ref": "scope_factors.json#/definitions/country_factor"
+            }
+          }
+        },
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

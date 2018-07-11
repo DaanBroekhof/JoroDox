@@ -195,24 +195,8 @@
       "$identifierValue": "missions",
       "type": "string"
     },
-    "province_modifiers": {
-      "anyOf": [
-        {"$identifierValue": "<scope_key:province_modifiers.json#/definitions/province_modifiers>"},
-        {"$identifierValue": "event_modifiers"},
-        {"$identifierValue": "triggered_modifiers"}
-      ],
-      "type": "string"
-    },
     "opinion_modifiers": {
       "$identifierValue": "opinion_modifiers",
-      "type": "string"
-    },
-    "country_modifiers": {
-      "anyOf": [
-        {"$identifierValue": "<scope_key:country_modifiers.json#/definitions/country_modifiers>"},
-        {"$identifierValue": "event_modifiers"},
-        {"$identifierValue": "triggered_modifiers"}
-      ],
       "type": "string"
     },
     "personal_deities": {
@@ -268,6 +252,10 @@
       "$identifierValue": "tradegoods",
       "type": "string"
     },
+    "trade_companies": {
+      "$identifierValue": "trade_companies",
+      "type": "string"
+    },
     "trading_policies": {
       "$identifierValue": "trading_policies",
       "type": "string"
@@ -317,6 +305,10 @@
         "prefix": "gfx/interface/ideas_EU4/",
         "postfix": ".dds"
       },
+      "type": "string"
+    },
+    "native_advancement_groups": {
+      "$identifierValue": "native_advancement_groups",
       "type": "string"
     }
   }

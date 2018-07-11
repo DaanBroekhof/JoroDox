@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/opinion_modifiers.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "opinion": {
+          "description": "Opinion change. Can be negative.",
+          "type": "number"
+        },
+        "min": {
+          "description": "The maximum negative change this modifier can apply. ",
+          "type": "number"
+        },
+        "max": {
+          "description": "The maximum positive change this modifier can apply. ",
+          "type": "number"
+        },
+        "months": {
+          "description": "The number of months until this modifier automatically expires.",
+          "type": "number"
+        },
+        "years": {
+          "description": "The number of years until this modifier automatically expires.",
+          "type": "number"
+        },
+        "yearly_decay": {
+          "description": "The rate at which the opinion change is lost per year. Can be negative.",
+          "type": "number"
+        },
+        "max_vassal": {
+          "description": "The maximum positive change this modifier can apply to the receving vassal.",
+          "type": "number"
+        },
+        "max_in_other_direction": {
+          "description": "The maximum positive change this modifier can apply to the sending country.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "opinion"
+      ]
+    }
+  }
+}

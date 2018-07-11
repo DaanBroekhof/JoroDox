@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/natives.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "graphical_culture": {
+          "$ref": "identifiers.json#/definitions/graphicalculturetypes"
+        },
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "icon": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "identifiers.json#/definitions/units"
+        },
+        "provinces": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_provinces"
+          }
+        }
+      }
+    }
+  }
+}

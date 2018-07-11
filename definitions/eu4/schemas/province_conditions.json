@@ -243,6 +243,10 @@
           "description": "Returns true if the country has a tolerance of at least X towards the religion of the country or scoped province.",
           "type": "number"
         },
+        "trade_company_region": {
+          "todo": "add to wiki",
+          "$ref": "identifiers.json#/definitions/trade_companies"
+        },
 
 
 
@@ -408,7 +412,7 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "which": {"$ref": "identifiers.json#/definitions/province_modifiers"},
+            "which": {"$ref": "special_values.json#/definitions/province_modifiers"},
             "value": {"type": "number"}
           },
           "required": ["which", "value"]
@@ -447,7 +451,7 @@
         },
         "has_province_modifier": {
           "description": "Returns true if province has the province modifier X.",
-          "$ref": "identifiers.json#/definitions/province_modifiers"
+          "$ref": "special_values.json#/definitions/province_modifiers"
         },
         "has_rebel_faction": {
           "description": "Returns true if the province is controlled by (the specified) rebel faction.",

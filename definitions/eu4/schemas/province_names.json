@@ -1,0 +1,29 @@
+{
+  "$id": "http://jorodox.org/schemas/province_names.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "culture_or_culture_group_or_tag": {
+      "anyOf": [
+        {"$ref": "identifiers.json#/definitions/cultures"},
+        {"$ref": "identifiers.json#/definitions/culture_groups"},
+        {"$ref": "identifiers.json#/definitions/country_tags"}
+      ]
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "$identifierProperties": {
+        "map_provinces": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}
