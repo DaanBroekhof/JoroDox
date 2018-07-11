@@ -336,16 +336,25 @@ export default class JdxDatabase {
       if (type.sourceType.id !== 'files') {
         await this.reloadTypeById(project, type.sourceType.id, [typeId], taskTitle);
       }
-      return StructureLoaderTask.start({taskTitle, project, typeDefinition: type});
+
+      const result = await StructureLoaderTask.start({taskTitle, project, typeDefinition: type});
+
+      await this.updateTypeIdentifiers(project, type.id);
+
+      return result;
     } else if (this.parserToTask[type.reader]) {
       if (type.sourceType && type.sourceType.id !== 'files') {
         await this.reloadTypeById(project, type.sourceType.id, [typeId], taskTitle);
       }
-      return this.parserToTask[type.reader].start({
+      const result = await this.parserToTask[type.reader].start({
         taskTitle,
         project,
         filterTypes,
       });
+
+      await this.updateTypeIdentifiers(project, type.id);
+
+      return result;
     }
 
     return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
@@ -606,7 +615,7 @@ export default class JdxDatabase {
     }
 
     this.allIdentifiersCache[project.id][type] = await this.getTypeIdentifiers(project, type, true);
-    console.log('cache reread', type);
+    console.log('cache reread', type, this.allIdentifiersCache[project.id][type].size);
   }
 
   static async getTypeIdentifiers(project, type, refresh) {

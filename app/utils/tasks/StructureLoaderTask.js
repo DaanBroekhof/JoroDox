@@ -112,8 +112,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           item[definition.sourceTransform.valueName] = value;
         }
 
-        if (definition.sourceTransform.onlyKeys) {
-          item[definition.sourceTransform.valueName] = _.pick(item[definition.sourceTransform.valueName], definition.sourceTransform.onlyKeys);
+        if (definition.sourceTransform.ignoreKeys && definition.sourceTransform.ignoreKeys.includes(key)) {
+          return;
+        }
+        if (definition.sourceTransform.onlyKeys && !definition.sourceTransform.onlyKeys.includes(key)) {
+          return;
+        }
+
+        if (definition.sourceTransform.onlyValueKeys) {
+          item[definition.sourceTransform.valueName] = _.pick(item[definition.sourceTransform.valueName], definition.sourceTransform.onlyValueKeys);
         }
 
         if (definition.sourceTransform.customFields) {
