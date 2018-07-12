@@ -247,6 +247,10 @@
           "todo": "add to wiki",
           "$ref": "identifiers.json#/definitions/trade_companies"
         },
+        "is_capital_of": {
+          "todo": "add to wiki",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
 
 
 
@@ -381,8 +385,11 @@
           "$ref": "special_values.json#/definitions/construction"
         },
         "has_discovered": {
-          "description": "Returns true if the country X has discovered the province.",
-          "$ref": "special_values.json#/definitions/country_tag_or_scope_province"
+          "description": "Returns true if the country X has discovered the province, or if the province is discovered by the anyone",
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/country_tag_or_scope_province"},
+            {"$ref": "special_values.json#/definitions/boolean"}
+          ]
         },
         "has_empty_adjacent_province": {
           "description": "Returns true if an adjacent province is uncolonized.\r\nWarning: Works only with 'yes'.",
