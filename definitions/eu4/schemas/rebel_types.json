@@ -1,0 +1,133 @@
+{
+  "$id": "http://jorodox.org/schemas/rebel_types.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "area": {
+          "type": "string",
+          "enum": ["nation", "nation_religion", "nation_rebel_tag"]
+        },
+        "government": {
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/government_types"},
+            {"$ref": "special_values.json#/definitions/any"},
+            {"$ref": "identifiers.json#/definitions/governments"}
+          ]
+        },
+        "religion": {
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "defect_delay": {
+          "type": "number"
+        },
+        "defection": {
+          "type": "string",
+          "enum": ["none", "religion", "nation_rebel_tag"]
+        },
+        "independence": {
+          "type": "string",
+          "enum": ["none", "nation_rebel_tag"]
+        },
+        "unit_transfer": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "gfx_type": {
+          "type": "string",
+          "enum": ["culture_province", "culture_owner"]
+        },
+        "will_relocate": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "resilient": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "reinforcing": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "general": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "smart": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "disband_on_leader_death": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "dynasty": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "artillery": {
+          "type": "number"
+        },
+        "infantry": {
+          "type": "number"
+        },
+        "cavalry": {
+          "type": "number"
+        },
+        "morale": {
+          "type": "number"
+        },
+
+        "handle_action_negotiate": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "handle_action_stability": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "handle_action_build_core": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "handle_action_send_missionary": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "handle_action_change_culture": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+
+        "spawn_chance": {
+          "$ref": "scope_factors.json#/definitions/province_factor"
+        },
+        "movement_evaluation": {
+          "$ref": "scope_factors.json#/definitions/province_factor"
+        },
+        "siege_won_trigger": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "siege_won_effect": {
+          "$ref": "province_commands.json#/definitions/province_commands"
+        },
+
+        "can_negotiate_trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "can_enforce_trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+
+        "demands_description": {
+          "type": "string"
+        },
+        "demands_enforced_effect": {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

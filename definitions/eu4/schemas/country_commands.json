@@ -264,7 +264,6 @@
         },
 
 
-
         "add_absolutism": {
           "description": "Adds absolutism to the current scope.\nNotes: No effect if Absolutism isn't active.",
           "version_added": "1.2",
@@ -629,7 +628,10 @@
         },
         "change_government": {
           "description": "Changes the government of the current scope.\nNotes: Governments are found in /Europa Universalis IV/common/governments/*.txt.",
-          "$ref": "identifiers.json#/definitions/governments",
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/governments"},
+            {"$ref": "special_values.json#/definitions/country_scope"}
+          ],
           "version_added": "1.1"
         },
         "change_graphical_culture": {
@@ -2320,6 +2322,10 @@
                 "religion": {
                   "description": "Optional. The religion of the ruler.",
                   "$ref": "special_values.json#/definitions/religion_or_scope"
+                },
+                "rebel": {
+                  "todo": "add to wiki?",
+                  "$ref": "special_values.json#/definitions/boolean"
                 }
               }
             },

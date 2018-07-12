@@ -39,13 +39,17 @@
       "type": "string",
       "enum": ["ADM", "DIP", "MIL", "adm", "dip", "mil"]
     },
+    "rebel_tags": {
+      "type": "string",
+      "enum": ["REB"]
+    },
     "date": {
       "type": "string",
       "pattern": "^[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}$"
     },
     "country_scope": {
       "type": "string",
-      "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this"]
+      "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this", "REB"]
     },
     "dynasty_or_scope": {
       "anyOf": [
@@ -207,7 +211,7 @@
     },
     "province_scope": {
       "type": "string",
-      "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this"]
+      "enum": ["ROOT", "FROM", "PREV", "THIS", "root", "from", "prev", "this", "REB"]
     },
     "peace_offer_types": {
       "type": "string",

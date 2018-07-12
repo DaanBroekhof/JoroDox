@@ -462,6 +462,9 @@
             },
             {
               "$ref": "identifiers.json#/definitions/rebel_types"
+            },
+            {
+              "$ref": "special_values.json#/definitions/rebel_tags"
             }
           ]
         },
