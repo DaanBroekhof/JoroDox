@@ -17,6 +17,9 @@
       ],
       "types": [
         "type"
+      ],
+      "removeFields": [
+        "id"
       ]
     },
     "listView": {
