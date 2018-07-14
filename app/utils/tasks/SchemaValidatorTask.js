@@ -311,9 +311,10 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                 if (!_.endsWith(identifierValue, schema[identifierType].postfix)) {
                   continue;
                 }
-                identifierValue = identifierValue.substring(0, identifierValue.length -(schema[identifierType].postfix.length));
+                identifierValue = identifierValue.substring(0, identifierValue.length - (schema[identifierType].postfix.length));
               }
 
+              // Switch magic
               if (identifierType === '<switch_value>') {
                 if (!ajv.jdxLastScopeKeyValidator) {
                   return false;
@@ -334,7 +335,36 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                 return validSwitchValue;
               }
 
-              if (task.hasIdentifier(identifierType, identifierValue)) {
+              // Match scope keys dynamically
+              const scopeKeyMatch = identifierType.match(/^<scope_key:(.+)>$/);
+              let keyValid = false;
+              if (scopeKeyMatch) {
+                const scopeKeyRef = scopeKeyMatch[1];
+                if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
+                  ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
+                    $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
+                    $ref: scopeKeyRef,
+                  });
+                }
+                if (key === 'on_trigger') {
+                  ajv.jdxLastScopeKeyValidator = data;
+                }
+                const keyValidator = ajv.jdxScopeKeyValidators[scopeKeyRef];
+
+                keyValidator({[identifierValue]: null});
+
+                // We only look for invalid property key errors, any other error is ok for us.
+                const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property');
+
+                keyValid = !unknownScopeKey;
+              } else {
+                keyValid = task.hasIdentifier(identifierType, identifierValue);
+              }
+
+
+              if (keyValid) {
+                // Do schema validation if key is matched
+
                 if (!validators[identifierType]) {
                   validators[identifierType] = validatorPrep[identifierType]();
                 }
@@ -417,7 +447,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             const valid = keyValidator({[data]: null});
 
             // We only look for invalid property key errors, any other error is ok for us.
-            const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property key');
+            const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property');
             if (!unknownScopeKey) {
               ajv.jdxScopeKeyValidators[scopeKeyRef + '/' + data] = keyValidator;
               return true;
