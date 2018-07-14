@@ -1,0 +1,32 @@
+{
+  "$id": "http://jorodox.org/schemas/religion_orthodox_icons.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "allow": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "ai_will_do": {
+              "$ref": "scope_factors.json#/definitions/country_factor"
+            }
+          }
+        },
+        {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

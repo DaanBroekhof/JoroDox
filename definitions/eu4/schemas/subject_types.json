@@ -1,0 +1,445 @@
+{
+  "$id": "http://jorodox.org/schemas/subject_types.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": [
+            {
+              "$ref": "special_values.json#/definitions/empty_array"
+            },
+            {
+              "$ref": "subject_types.json#/definitions/subject_type"
+            }
+          ]
+        },
+        {"$ref": "subject_types.json#/definitions/subject_type"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "subject_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "copy_from": {
+          "$ref": "identifiers.json#/definitions/subject_types"
+        },
+        "count": {
+          "$ref": "identifiers.json#/definitions/subject_types"
+        },
+        "sprite": {
+          "type": "string"
+        },
+        "diplomacy_overlord_sprite": {
+          "type": "string"
+        },
+        "diplomacy_subject_sprite": {
+          "type": "string"
+        },
+
+
+
+        "is_potential_overlord": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "can_be_established": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+
+
+
+        "has_overlords_ruler": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_fight_independence_war": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "is_voluntary": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "transfer_trade_power": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "transfer_trade_if_merchant_republic": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "joins_overlords_wars": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "joins_colonial_wars": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_be_integrated": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_release_and_play": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "uses_tariffs": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "dynamically_created_during_history": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "eats_overlords_colonies": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_colonial_parent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "overlord_can_attack": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "overlord_can_be_subject": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_have_subjects_of_other_types": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_be_annexed": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "takes_diplo_slot": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_power_projection": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_release_in_peace": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "uses_military_focus": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "overlord_protects_external": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "overlord_enforce_peace_attacking": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "counts_for_borders": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_use_claims": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "gives_daimyo_bonuses": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "gets_help_with_rebels": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "share_rebel_popup": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "separatists_become_subjects": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allows_taking_land_without_independence": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_transfer_in_peace": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_set_mil_focus": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_send_missionary_to_subject": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_union_break": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "max_government_rank": {
+          "type": "number",
+          "enum": [0, 1, 2, 3]
+        },
+        "cities_required_for_bonuses": {
+          "type": "number"
+        },
+        "trust_on_start": {
+          "type": "number"
+        },
+
+        "base_liberty_desire": {
+          "type": "number"
+        },
+        "liberty_desire_negative_prestige": {
+          "type": "number"
+        },
+        "liberty_desire_development_ratio": {
+          "type": "number"
+        },
+        "liberty_desire_same_dynasty": {
+          "type": "number"
+        },
+        "pays_overlord": {
+          "type": "number"
+        },
+        "forcelimit_bonus": {
+          "type": "number"
+        },
+        "military_focus": {
+          "type": "number"
+        },
+        "relative_power_class": {
+          "type": "number"
+        },
+        "diplomacy_view_class": {
+          "type": "number"
+        },
+
+        "can_fight": {
+          "$ref": "subject_types.json#/definitions/subject_types_filter"
+        },
+        "can_rival": {
+          "$ref": "subject_types.json#/definitions/subject_types_filter"
+        },
+        "can_ally": {
+          "$ref": "subject_types.json#/definitions/subject_types_filter"
+        },
+        "can_marry": {
+          "$ref": "subject_types.json#/definitions/subject_types_filter"
+        },
+
+        "embargo_rivals": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "support_loyalists": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "subsidize_armies": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "scutage": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "send_officers": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "divert_trade": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "placate_rulers": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "place_relative_on_throne": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "enforce_religion": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "customize_subject": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "replace_governor": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "grant_province": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "enforce_culture": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "siphon_income": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "fortify_march": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "seize_territory": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "start_colonial_war": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "grant_core_claim": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "sacrifice_ruler": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "sacrifice_heir": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "increase_tariffs": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "decrease_tariffs": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "takeondebt": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "bestow_gifts": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "send_additional_troops": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "demand_artifacts": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "demand_additional_tribute": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "force_seppuku": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "press_sailors": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "contribute_to_capital": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "force_isolation": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "return_land": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "conscript_general": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "knowledge_sharing": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "sword_hunt": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "sankin_kotai": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "expel_ronin": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+
+        "modifier_subject": {
+          "$allowMultiple": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["clear"]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "modifier": {
+                    "$ref": "country_modifiers.json#/definitions/country_modifiers"
+                  },
+                  "trigger": {
+                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                  },
+                  "expiration_message_overlord": {
+                    "type": "string"
+                  },
+                  "expiration_message_subject": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "modifier_overlord": {
+          "$allowMultiple": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["clear"]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "modifier": {
+                    "$ref": "country_modifiers.json#/definitions/country_modifiers"
+                  },
+                  "trigger": {
+                    "$ref": "country_conditions.json#/definitions/country_conditions"
+                  }
+                }
+              }
+            ]
+          }
+        },
+
+        "overlord_opinion_modifier": {
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/opinion_modifiers"},
+            {"$ref": "special_values.json#/definitions/null"}
+          ]
+        },
+        "subject_opinion_modifier": {
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/opinion_modifiers"},
+            {"$ref": "special_values.json#/definitions/null"}
+          ]
+        },
+
+
+        "restoration_cb": {
+          "$ref": "identifiers.json#/definitions/cb_types"
+        },
+        "can_send_tribute": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "transfer_subjects_when_made": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "created_by_overlord": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      }
+    },
+    "subject_types_filter": {
+      "anyOf": [
+        {"$ref": "special_values.json#/definitions/empty_array"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "independent_nations": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "neighboring_primitives": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "colonial_region_nations": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "same_overlord": {
+              "$ref": "identifiers.json#/definitions/subject_types"
+            },
+            "other_overlord": {
+              "anyOf": [
+                {"$ref": "identifiers.json#/definitions/subject_types"},
+                {
+                  "type": "string",
+                  "enum": ["all"]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

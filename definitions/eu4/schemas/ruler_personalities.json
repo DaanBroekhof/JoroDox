@@ -1,0 +1,259 @@
+{
+  "$id": "http://jorodox.org/schemas/ruler_personalities.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "ruler_allow": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "allow": {
+                  "$ref": "country_conditions.json#/definitions/country_conditions"
+                },
+                "chance": {
+                  "$ref": "scope_factors.json#/definitions/country_factor"
+                }
+              }
+
+            },
+            "heir_allow": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "allow": {
+                  "$ref": "country_conditions.json#/definitions/country_conditions"
+                },
+                "chance": {
+                  "$ref": "scope_factors.json#/definitions/country_factor"
+                }
+              }
+
+            },
+            "consort_allow": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "allow": {
+                  "$ref": "country_conditions.json#/definitions/country_conditions"
+                },
+                "chance": {
+                  "$ref": "scope_factors.json#/definitions/country_factor"
+                }
+              }
+
+            },
+            "allow": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "chance": {
+              "anyOf": [
+                {"$ref": "scope_factors.json#/definitions/country_factor"},
+                {"$ref": "special_values.json#/definitions/empty_array"}
+              ]
+
+            },
+            "nation_designer_cost": {
+              "description": "How many points does this ruler personality costs in the nation designer",
+              "type": "number"
+            },
+            "custom_ai_explanation": {
+              "type": "string"
+            },
+            "static": {
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+
+          }
+        },
+        {
+          "$ref": "ruler_personalities.json#/definitions/ruler_modifiers"
+        },
+        {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "ruler_modifiers": {
+      "properties": {
+        "building_budget_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "different_religion_war_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "heretic_ally_acceptance": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "heathen_ally_acceptance": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "other_ai_help_us_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "other_ai_peace_term_bonus": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "other_ai_war_chance_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "easy_war_chance_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "war_chance_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "send_warning_desire": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "gift_chance": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "alliance_acceptance": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "royal_marriage_acceptance": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "trade_league_acceptance": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "peace_desire": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "enemy_strength_multiplier": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "immortal": {
+          "todo": "Add to wiki",
+          "type": "number"
+        },
+        "war_priority": {
+          "todo": "Add to wiki",
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        },
+        "wants_heathen_land": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_heretic_land": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_avoid_debase": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_avoid_loans": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_condottieri": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_excommunicate": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_avoid_ugly_borders": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_explorers": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_gold": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_betray_allies": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_threaten_war": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_disclose_attack": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_colonies": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_debase": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_loans": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_land": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "wants_sell_provinces": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "knowledge_sharing": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "underestimate_ae": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "lower_autonomy": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "fair_fights": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "random_insults": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "razing": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      }
+    }
+  }
+}

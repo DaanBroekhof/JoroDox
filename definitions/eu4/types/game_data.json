@@ -694,7 +694,17 @@
         "data"
       ],
       "keyName": "name",
-      "valueName": "data"
+      "valueName": "data",
+      "onlyValueKeys": [
+        "defender_of_faith",
+        "can_form_personal_unions",
+        "flags_with_emblem_percentage",
+        "flag_emblem_index_range",
+        "center_of_religion",
+        "harmonized_modifier",
+        "crusade_name",
+        "ai_will_propagate_through_trade"
+      ]
     },
     "listView": {
       "pageSize": 100,
@@ -726,7 +736,6 @@
     },
     "sourceTransform": {
       "type": "keyKeyValues",
-      "requiredProperty": "icon",
       "path": [
         "data",
         "data"
@@ -735,7 +744,18 @@
       "parentKeyName": "religion_group",
       "valueName": "data",
       "parentRelationType": "religionGroups",
-      "parentRelationKey": "parentReligionGroup"
+      "parentRelationKey": "parentReligionGroup",
+      "ignoreKeys": [
+        "defender_of_faith",
+        "can_form_personal_unions",
+        "flags_with_emblem_percentage",
+        "flag_emblem_index_range",
+        "center_of_religion",
+        "harmonized_modifier",
+        "crusade_name",
+        "ai_will_propagate_through_trade",
+        "religious_schools"
+      ]
     },
     "relations": [
       {
@@ -795,6 +815,37 @@
         "toName": "religion"
       }
     ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religion_orthodox_icons",
+    "title": "Religion orthodox icons",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "religions",
+      "pathPrefix": "common/religions/",
+      "pathPattern": "common/religions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "orthodox_icons"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "sourceIdKey": "name"
+    },
     "listView": {
       "pageSize": 100,
       "columns": [
@@ -2443,26 +2494,39 @@
     "id": "region_colors",
     "title": "Region colors",
     "reader": "StructureLoader",
-    "primaryKey": "path",
+    "primaryKey": "nr",
     "sourceType": {
       "id": "pdx_scripts",
       "pathPrefix": "common/{type.id}/",
       "pathPattern": "common/{type.id}/*.txt"
     },
     "sourceTransform": {
-      "type": "fileData",
+      "type": "typesList",
       "path": [
         "data",
-        "data"
+        "children"
+      ],
+      "types": [
+        "color"
+      ],
+      "removeFields": [
+        "namespace",
+        "id",
+        "type",
+        "comments"
       ]
     },
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "Path",
-          "dataIndex": "path",
+          "name": "Nr",
+          "dataIndex": "nr",
           "linkTo": "[self]"
+        },
+        {
+          "name": "Color",
+          "dataIndex": "data"
         }
       ]
     }
@@ -2793,6 +2857,9 @@
       ],
       "types": [
         "technology"
+      ],
+      "removeFields": [
+        "id"
       ]
     },
     "listView": {
@@ -2979,7 +3046,7 @@
   },
   {
     "id": "triggered_modifiers",
-    "title": "Trigger modifiers",
+    "title": "Triggered modifiers",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -3813,7 +3880,7 @@
         "tables"
       ],
       "keyName": "name",
-      "valueName": "filePath"
+      "valueName": "file_path"
     },
     "listView": {
       "pageSize": 100,
@@ -3825,7 +3892,7 @@
         },
         {
           "name": "File path",
-          "dataIndex": "filePath"
+          "dataIndex": "file_path"
         }
       ]
     }

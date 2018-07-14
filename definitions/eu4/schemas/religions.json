@@ -1,0 +1,168 @@
+{
+  "$id": "http://jorodox.org/schemas/religions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "religion_group": {
+      "$ref": "identifiers.json#/definitions/religion_groups"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "description": "A color (used for the religion map mode), using 8-bit RGB (0-255) format since Patch 1.21",
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "icon": {
+          "description": " An integer representing the icon for the religion in the interface files.",
+          "type": "number"
+        },
+        "heretic": {
+          "description": "The name/s of heretic rebel types for the religion. There should be at least one heretic type listed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "country": {
+          "description": "Country-scope modifiers are applied to a country that is a specific religion. ",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "province": {
+          "description": "Province-scope modifiers are applied to provinces that are a specific religion.",
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+        "country_as_secondary": {
+          "description": "For syncretic faiths, different country-scope modifiers are applied to a country that adopts a specific religion via syncretic faith.",
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "allowed_conversion": {
+          "description": "Some religions can choose, under certain circumstances, to convert to other religions.",
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/religions"
+          }
+        },
+        "on_convert": {
+          "description": "Country level commands that happen when converting to this religion.",
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
+
+
+        "papacy": {
+          "description": "Uses the Catholic Papacy system",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "hre_religion": {
+          "description": "Uses the HRE religious factions and thirty years war systems. A religion with this attribute will be the default official religion of the HRE, as Catholicism is in the vanilla game.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "hre_heretic_religion": {
+          "description": "As above, but determines the religion that will be considered the primary heresy, as Protestantism is in the vanilla game.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "date": {
+          "description": "Determines the date that this religion becomes active in the game's history (will have no effect on games started before this date).",
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "fervor": {
+          "description": "Uses the Reformed fervor mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "has_patriarchs": {
+          "description": "Uses the Orthodox patriarch authority mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "uses_piety": {
+          "description": "Uses the Muslim piety mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "personal_deity": {
+          "description": "Uses the personal deity system (used by Norse and Hinduism in vanilla)",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "authority": {
+          "description": "Uses the Inti authority mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "religious_reforms": {
+          "description": "Uses the Mesoamerican religious reform mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "doom": {
+          "description": "Uses the Nahuatl doom mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "uses_church_power": {
+          "description": "Uses church power/aspect mechanics",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "uses_karma": {
+          "description": "Uses the Buddhist Karma mechanic",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "misguided_heretic": {
+          "description": "Other religions in the group will have a higher default relation with these countries than they would with other heretic countries. In the vanilla game, Coptic and Orthodox have this bonus.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "declare_war_in_regency": {
+          "description": "Countries with this religion can declare war during regencies. In the vanilla game, only Nahuatl has this bonus.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_have_secondary_religion": {
+          "description": "Countries with this religion can have a syncretic faith, like the Tengri religion in the vanilla game.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+
+        "allowed_center_conversion": {
+          "todo": "Add to wiki",
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/religions"
+          }
+        },
+        "will_get_center": {
+          "todo": "Add to wiki",
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "uses_isolationism": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "fetishist_cult": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "harmonized_modifier": {
+          "todo": "Add to wiki",
+          "$ref": "identifiers.json#/definitions/event_modifiers"
+        },
+        "aspects": {
+          "todo": "Add to wiki",
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/church_aspects"
+          }
+        },
+        "aspects_name": {
+          "todo": "Add to wiki",
+          "type": "string"
+        },
+        "orthodox_icons": {
+          "todo": "Add to wiki",
+          "type": "object"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

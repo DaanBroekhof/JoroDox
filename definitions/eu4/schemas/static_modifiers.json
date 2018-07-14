@@ -1,0 +1,51 @@
+{
+  "$id": "http://jorodox.org/schemas/static_modifiers.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {
+          "$mergeProps": [
+            {"$ref": "static_modifiers.json#/definitions/modifier_info"},
+            {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+          ]
+        },
+        {
+          "$mergeProps": [
+            {"$ref": "static_modifiers.json#/definitions/modifier_info"},
+            {"$ref": "province_modifiers.json#/definitions/province_modifiers"}
+          ]
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "modifier_info": {
+      "properties": {
+        "religion_sub_modifier": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "religion": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "is_scholar_modifier": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "expire_message_type": {
+          "type": "string"
+        },
+        "picture": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -14,9 +14,6 @@
         "color": {
           "$ref": "special_values.json#/definitions/rgb_color_float"
         },
-        "is_latent": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
         "modifier": {
           "$ref": "country_modifiers.json#/definitions/country_modifiers"
         },
@@ -25,6 +22,19 @@
         },
         "chance": {
           "$ref": "scope_factors.json#/definitions/province_factor"
+        },
+
+        "is_latent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "rnw_latent_chance": {
+          "type": "number"
+        },
+        "is_valuable": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "trigger": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
         }
       }
     }

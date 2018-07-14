@@ -1,0 +1,54 @@
+{
+  "$id": "http://jorodox.org/schemas/religion_groups.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defender_of_faith": {
+          "description": "Whether countries with a religion in the group can use the defender of the faith mechanic.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_form_personal_unions": {
+          "description": "Whether countries with a religion in the group can use the personal unions mechanic.",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "flags_with_emblem_percentage": {
+          "description": "Custom & client nation flags: How likely a generated flag is to contain an emblem",
+          "type": "number"
+        },
+        "flag_emblem_index_range": {
+          "description": "Custom & client nation flags: Range of emblems that can be generated",
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "ai_will_propagate_through_trade": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "center_of_religion": {
+          "description": "The most important province for this religion group.",
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "harmonized_modifier": {
+          "$ref": "identifiers.json#/definitions/event_modifiers"
+        },
+        "crusade_name": {
+          "description": "The name of a holy war declared in the name of this religion group using certain CB's.",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

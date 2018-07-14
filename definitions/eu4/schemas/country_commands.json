@@ -89,10 +89,19 @@
         "else_if" : {
           "$ref": "country_commands.json#/definitions/else_if"
         },
+        "ELSE_IF" : {
+          "$ref": "country_commands.json#/definitions/else_if"
+        },
         "else" : {
           "$ref": "country_commands.json#/definitions/country_commands"
         },
+        "ELSE" : {
+          "$ref": "country_commands.json#/definitions/country_commands"
+        },
         "while" : {
+          "$ref": "country_commands.json#/definitions/while"
+        },
+        "WHILE" : {
           "$ref": "country_commands.json#/definitions/while"
         },
 
@@ -1939,59 +1948,66 @@
         "define_consort": {
           "description": "Creates the defined consort for the current scope.\nNotes: The skill values are not rolled for consorts, meaning the values set are the exact values a consort gets.\nThe culture and religion attributes can utilise Event Scope Values.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",
           "version_added": "1.18",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "name": {
-              "description": "Optional. The name of the consort.",
-              "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "description": "Optional. The name of the consort.",
+                  "type": "string"
+                },
+                "country_of_origin": {
+                  "description": "Optional. The origin country of the consort.",
+                  "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
+                },
+                "dynasty": {
+                  "description": "Optional. The dynasty of the consort.",
+                  "$ref": "special_values.json#/definitions/dynasty_or_scope"
+                },
+                "age": {
+                  "description": "Optional. The age of the consort.",
+                  "type": "number"
+                },
+                "adm": {
+                  "description": "Optional. The ADM skill for the consort.",
+                  "type": "number"
+                },
+                "dip": {
+                  "description": "Optional. The DIP skill for the consort.",
+                  "type": "number"
+                },
+                "mil": {
+                  "description": "Optional. The MIL skill for the consort.",
+                  "type": "number"
+                },
+                "hide_skills": {
+                  "description": "Optional. Hides the skill values for the consort.",
+                  "todo": "add to wiki",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "female": {
+                  "description": "Optional. Forces the consort to be female.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "male": {
+                  "description": "Optional. Forces the consort to be male.",
+                  "$ref": "special_values.json#/definitions/boolean"
+                },
+                "culture": {
+                  "description": "Optional. The culture of the consort.",
+                  "$ref": "special_values.json#/definitions/culture_or_scope"
+                },
+                "religion": {
+                  "description": "Optional. The religion of the consort.",
+                  "$ref": "special_values.json#/definitions/religion_or_scope"
+                }
+              }
             },
-            "country_of_origin": {
-              "description": "Optional. The origin country of the consort.",
-              "$ref": "special_values.json#/definitions/country_tag_or_scope_country"
-            },
-            "dynasty": {
-              "description": "Optional. The dynasty of the consort.",
-              "$ref": "special_values.json#/definitions/dynasty_or_scope"
-            },
-            "age": {
-              "description": "Optional. The age of the consort.",
-              "type": "number"
-            },
-            "adm": {
-              "description": "Optional. The ADM skill for the consort.",
-              "type": "number"
-            },
-            "dip": {
-              "description": "Optional. The DIP skill for the consort.",
-              "type": "number"
-            },
-            "mil": {
-              "description": "Optional. The MIL skill for the consort.",
-              "type": "number"
-            },
-            "hide_skills": {
-              "description": "Optional. Hides the skill values for the consort.",
-              "todo": "add to wiki",
-              "$ref": "special_values.json#/definitions/boolean"
-            },
-            "female": {
-              "description": "Optional. Forces the consort to be female.",
-              "$ref": "special_values.json#/definitions/boolean"
-            },
-            "male": {
-              "description": "Optional. Forces the consort to be male.",
-              "$ref": "special_values.json#/definitions/boolean"
-            },
-            "culture": {
-              "description": "Optional. The culture of the consort.",
-              "$ref": "special_values.json#/definitions/culture_or_scope"
-            },
-            "religion": {
-              "description": "Optional. The religion of the consort.",
-              "$ref": "special_values.json#/definitions/religion_or_scope"
+            {
+              "$ref": "special_values.json#/definitions/empty_array"
             }
-          }
+          ]
         },
         "define_explorer": {
           "description": "Creates an explorer with the defined attributes for the current scope.\nNotes: Leader traits can be found in /Europa Universalis IV/common/leader_personalities/*.txt.\nSiege improves Blockade Efficiency for explorers.\nThe name parameter can accept a saved name variable, see set_saved_name for more context.",

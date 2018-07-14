@@ -95,8 +95,7 @@
           }
         },
         {
-          "type": "array",
-          "maxItems": 0
+          "$ref": "special_values.json#/definitions/empty_array"
         }
       ]
     }

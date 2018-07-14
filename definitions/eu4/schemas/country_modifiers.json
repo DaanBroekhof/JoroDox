@@ -7,6 +7,12 @@
       "$mergeProps": [
         {
           "properties": {
+            "institution_growth": {
+              "todo": "check?",
+              "type": "number"
+            },
+
+
             "adm_tech_cost_modifier": {
               "description": "Modifies the monarch power cost of <tech> technologies.",
               "type": "number"

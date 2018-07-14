@@ -1,0 +1,66 @@
+{
+  "$id": "http://jorodox.org/schemas/tradenodes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "location": {
+          "$ref": "identifiers.json#/definitions/map_provinces"
+        },
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "inland": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "end": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "ai_will_propagate_through_trade": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "outgoing": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "$ref": "identifiers.json#/definitions/map_provinces"
+                }
+              },
+              "control": {
+                "todo": "What are these? Direction? Location? Arrow control?",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_provinces"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

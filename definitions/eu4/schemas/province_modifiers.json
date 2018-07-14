@@ -5,6 +5,28 @@
   "definitions": {
     "province_modifiers": {
       "properties": {
+        "land_forcelimit_modifier": {
+          "description": "Modifies a country's forcelimit. (Multiplicative)",
+          "todo": "actually on prov scope? see static modifiers?",
+          "type": "number"
+        },
+        "naval_forcelimit_modifier": {
+          "description": "Modifies a country's naval forcelimit. (Multiplicative)",
+          "todo": "actually on prov scope? see static modifiers?",
+          "type": "number"
+        },
+        "land_forcelimit": {
+          "description": "Adds to a country's land forcelimit. (Additive)",
+          "todo": "actually on prov scope? see static modifiers?",
+          "type": "number"
+        },
+        "naval_forcelimit": {
+          "description": "Adds to a country's naval forcelimit. (Additive)",
+          "todo": "actually on prov scope? see static modifiers?",
+          "type": "number"
+        },
+
+
         "allowed_num_of_buildings": {
           "description": "Adds to the maximum number of building slots in a province. (Additive)",
           "type": "number"

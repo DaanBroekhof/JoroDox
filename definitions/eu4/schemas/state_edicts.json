@@ -1,0 +1,37 @@
+{
+  "$id": "http://jorodox.org/schemas/state_edicts.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "modifier": {
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+        "potential": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "allow": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "ai_will_do": {
+          "$ref": "scope_factors.json#/definitions/province_factor"
+        }
+      },
+      "required": [
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

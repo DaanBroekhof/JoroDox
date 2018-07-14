@@ -1,0 +1,21 @@
+{
+  "$id": "http://jorodox.org/schemas/scripted_triggers.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "anyOf": [
+        {"$ref": "country_conditions.json#/definitions/country_conditions"},
+        {"$ref": "province_conditions.json#/definitions/province_conditions"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

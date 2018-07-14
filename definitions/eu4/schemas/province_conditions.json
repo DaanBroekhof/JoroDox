@@ -251,7 +251,31 @@
           "todo": "add to wiki",
           "$ref": "special_values.json#/definitions/country_tag_or_scope"
         },
-
+        "current_institution": {
+          "todo": "add to wiki - check if this is actually not supposed to be 'current_institution_growth'?",
+          "type": "number"
+        },
+        "has_state_edict": {
+          "todo": "add to wiki",
+          "$ref": "identifiers.json#/definitions/state_edicts"
+        },
+        "provincial_institution_progress": {
+          "todo": "add to wiki",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "which": {"$ref": "identifiers.json#/definitions/institutions"},
+            "value": {"type": "number"}
+          },
+          "required": [
+            "which", "value"
+          ]
+        },
+        "colony_claim": {
+          "description": "If country X has a claim on this colony province",
+          "todo": "find specs",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope_province"
+        },
 
 
         "area": {

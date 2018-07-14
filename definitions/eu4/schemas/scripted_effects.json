@@ -1,0 +1,22 @@
+{
+  "$id": "http://jorodox.org/schemas/scripted_effects.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "anyOfFixMe": [
+        {"$ref": "country_commands.json#/definitions/country_commands"},
+        {"$ref": "province_commands.json#/definitions/province_commands"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

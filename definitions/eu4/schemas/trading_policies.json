@@ -1,0 +1,60 @@
+{
+  "$id": "http://jorodox.org/schemas/trading_policies.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "unique": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "show_alert": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "center_of_reformation": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_select": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "can_maintain": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "trade_power": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "duration": {
+              "type": "number"
+            },
+            "power_modifier": {
+              "type": "number"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
+        },
+        "countries_with_merchant_modifier": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "node_province_modifier": {
+          "$ref": "province_modifiers.json#/definitions/province_modifiers"
+        },
+        "button_gfx": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

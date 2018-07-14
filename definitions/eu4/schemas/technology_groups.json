@@ -1,0 +1,48 @@
+{
+  "$id": "http://jorodox.org/schemas/technology_groups.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start_level": {
+          "type": "number"
+        },
+        "start_cost_modifier": {
+          "type": "number"
+        },
+        "nation_designer_unit_type": {
+          "$ref": "identifiers.json#/definitions/technology_groups"
+        },
+        "is_primitive": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "nation_designer_cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "trigger": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "value": {
+              "type": "number"
+            }
+          }
+        },
+        "nation_designer_trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

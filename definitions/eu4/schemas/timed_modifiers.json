@@ -1,0 +1,31 @@
+{
+  "$id": "http://jorodox.org/schemas/timed_modifiers.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$identifierProperties": {
+        "<scope_key:country_modifiers.json#/definitions/country_modifiers>": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "yearly_decay": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

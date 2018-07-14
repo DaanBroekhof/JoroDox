@@ -1,0 +1,44 @@
+{
+  "$id": "http://jorodox.org/schemas/trade_companies.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "modifier": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "provinces": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_provinces"
+          }
+        },
+        "names": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

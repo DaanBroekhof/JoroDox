@@ -1,0 +1,45 @@
+{
+  "$id": "http://jorodox.org/schemas/religious_schools.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "religion_group": {
+      "$ref": "identifiers.json#/definitions/religion_groups"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "properties": {
+            "potential_invite_scholar": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "can_invite_scholar": {
+              "$ref": "country_conditions.json#/definitions/country_conditions"
+            },
+            "on_invite_scholar": {
+              "$ref": "country_commands.json#/definitions/country_commands"
+            },
+            "invite_scholar_modifier_display": {
+              "$ref": "country_modifiers.json#/definitions/country_modifiers"
+            },
+            "picture": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "religion_group",
+    "data"
+  ]
+}

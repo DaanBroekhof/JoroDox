@@ -1,0 +1,158 @@
+{
+  "$id": "http://jorodox.org/schemas/technologies.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "namespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "monarch_power": {
+          "$ref": "special_values.json#/definitions/monarch_power_type"
+        },
+        "ahead_of_time": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        }
+      }
+    },
+    "nr": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "year": {
+              "type": "number"
+            },
+            "military_tactics": {
+              "type": "number"
+            },
+            "infantry_shock": {
+              "type": "number"
+            },
+            "infantry_fire": {
+              "type": "number"
+            },
+            "cavalry_shock": {
+              "type": "number"
+            },
+            "cavalry_fire": {
+              "type": "number"
+            },
+            "artillery_shock": {
+              "type": "number"
+            },
+            "artillery_fire": {
+              "type": "number"
+            },
+            "supply_limit": {
+              "type": "number"
+            },
+            "sprite_level": {
+              "type": "number"
+            },
+            "maneuver_value": {
+              "type": "number"
+            },
+            "combat_width": {
+              "type": "number"
+            },
+            "trade_range": {
+              "type": "number"
+            },
+            "naval_maintenance": {
+              "type": "number"
+            },
+            "allowed_idea_groups": {
+              "type": "number"
+            },
+            "administrative_efficiency": {
+              "type": "number"
+            },
+            "development_efficiency": {
+              "type": "number"
+            },
+            "may_infiltrate_administration": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_agitate_for_liberty": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_corrupt_officials": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_sabotage_reputation": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_slander_merchants": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_sow_discontent": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_study_technology": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_fabricate_claims": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_support_rebels": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_steal_maps": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_sabotage_recruitment": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "may_force_march": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "allow_client_states": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "reduced_naval_attrition": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "merchants": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "enable": {
+              "$allowMultiple": {
+                "$ref": "identifiers.json#/definitions/units"
+              }
+            }
+          }
+        },
+        {
+          "$identifierProperties": {
+            "buildings": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "governments": {
+              "$ref": "special_values.json#/definitions/boolean"
+            }
+          }
+        },
+        {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        }
+      ]
+    }
+  },
+  "required": [
+    "nr",
+    "namespace",
+    "data"
+  ]
+}

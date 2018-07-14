@@ -53,6 +53,18 @@
             {"$ref": "province_conditions.json#/definitions/province_conditions"}
           ]
         },
+        "PREV": {
+          "anyOf": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
+        "prev": {
+          "anyOf": [
+            {"$ref": "country_conditions.json#/definitions/country_conditions"},
+            {"$ref": "province_conditions.json#/definitions/province_conditions"}
+          ]
+        },
         "FROM": {
           "anyOf": [
             {"$ref": "country_conditions.json#/definitions/country_conditions"},
@@ -427,6 +439,10 @@
           "todo": "Add to wiki",
           "type": "number"
         },
+        "vassal": {
+          "todo": "Add to wiki, check if is supposed to be 'num_of_vassals'",
+          "type": "number"
+        },
 
 
         "absolutism": {
@@ -619,6 +635,10 @@
           "description": "Returns true if the country has a consort with an administrative skill of at least X.",
           "type": "number"
         },
+        "consort_ADM": {
+          "description": "Returns true if the country has a consort with an administrative skill of at least X.",
+          "type": "number"
+        },
         "consort_age": {
           "description": "Returns true if the countryâ€™s consort has an age of at least X.",
           "type": "number"
@@ -639,11 +659,19 @@
           "description": "Returns true if the country has a consort with an diplomatic skill of at least X.",
           "type": "number"
         },
+        "consort_DIP": {
+          "description": "Returns true if the country has a consort with an diplomatic skill of at least X.",
+          "type": "number"
+        },
         "consort_has_personality": {
           "description": "Returns true if the countryâ€™s consort has the specified personality.",
           "$ref": "identifiers.json#/definitions/ruler_personalities"
         },
         "consort_mil": {
+          "description": "Returns true if the country has a consort with an military skill of at least X.",
+          "type": "number"
+        },
+        "consort_MIL": {
           "description": "Returns true if the country has a consort with an military skill of at least X.",
           "type": "number"
         },
@@ -692,7 +720,7 @@
         },
         "current_icon": {
           "description": "Returns true, if the country has the specified (orthodox) icon.",
-          "$ref": "identifiers.json#/definitions/icons_unknown"
+          "$ref": "identifiers.json#/definitions/religion_orthodox_icons"
         },
         "current_institution_growth": {
           "description": "Returns true, if the country/province has an institution growth of at least X for the first not embraced institution.",
@@ -1375,6 +1403,10 @@
           "description": "Returns true if the country has an heir with an administrative skill of at least X.",
           "type": "number"
         },
+        "heir_ADM": {
+          "description": "Returns true if the country has an heir with an administrative skill of at least X.",
+          "type": "number"
+        },
         "heir_age": {
           "description": "Returns true if the country has an heir that is at least X years old.",
           "type": "number"
@@ -1399,6 +1431,10 @@
           "description": "Returns true if the country has an heir with a diplomatic skill of at least X.",
           "type": "number"
         },
+        "heir_DIP": {
+          "description": "Returns true if the country has an heir with a diplomatic skill of at least X.",
+          "type": "number"
+        },
         "heir_has_consort_dynasty": {
           "description": "Returns true if the countryâ€™s heir and consort have the same dynasty.",
           "type": "number"
@@ -1412,6 +1448,10 @@
           "type": "number"
         },
         "heir_mil": {
+          "description": "Returns true if the country has an heir with a military skill of at least X.",
+          "type": "number"
+        },
+        "heir_MIL": {
           "description": "Returns true if the country has an heir with a military skill of at least X.",
           "type": "number"
         },

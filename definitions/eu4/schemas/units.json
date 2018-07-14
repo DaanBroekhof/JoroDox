@@ -1,0 +1,83 @@
+{
+  "$id": "http://jorodox.org/schemas/units.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "unit_type": {
+              "$ref": "identifiers.json#/definitions/technology_groups"
+            },
+            "type": {
+              "$ref": "special_values.json#/definitions/unit_type_land"
+            },
+            "maneuver": {
+              "type": "number"
+            },
+            "offensive_morale": {
+              "type": "number"
+            },
+            "defensive_morale": {
+              "type": "number"
+            },
+            "offensive_fire": {
+              "type": "number"
+            },
+            "defensive_fire": {
+              "type": "number"
+            },
+            "offensive_shock": {
+              "type": "number"
+            },
+            "defensive_shock": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "unit_type": {
+              "$ref": "identifiers.json#/definitions/technology_groups"
+            },
+            "type": {
+              "$ref": "special_values.json#/definitions/unit_type_sea"
+            },
+            "hull_size": {
+              "type": "number"
+            },
+            "base_cannons": {
+              "type": "number"
+            },
+            "sail_speed": {
+              "type": "number"
+            },
+            "trade_power": {
+              "type": "number"
+            },
+            "sprite_level": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

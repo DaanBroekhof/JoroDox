@@ -116,7 +116,8 @@
     "heir_name": {
       "type": "string"
     },
-    "icons_unknown": {
+    "religion_orthodox_icons": {
+      "$identifierValue": "religion_orthodox_icons",
       "type": "string"
     },
     "idea_groups": {
@@ -309,6 +310,10 @@
     },
     "native_advancement_groups": {
       "$identifierValue": "native_advancement_groups",
+      "type": "string"
+    },
+    "state_edicts": {
+      "$identifierValue": "state_edicts",
       "type": "string"
     }
   }

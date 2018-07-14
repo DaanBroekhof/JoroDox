@@ -772,6 +772,10 @@
             "name": {
               "description": "The event modifier to extend.",
               "$ref": "identifiers.json#/definitions/event_modifiers"
+            },
+            "duration": {
+              "description": "How long to extend",
+              "type": "number"
             }
           },
           "required": [

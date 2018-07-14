@@ -1,0 +1,104 @@
+{
+  "$id": "http://jorodox.org/schemas/wargoal_types.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "take_capital",
+                "take_province",
+                "take_core",
+                "take_colony",
+                "blockade_ports",
+                "take_border",
+                "superiority",
+                "defend_country",
+                "defend_capital"
+              ]
+            },
+            "attacker": {
+              "$ref": "wargoal_types.json#/definitions/wargoal_repercussions"
+            },
+            "defender": {
+              "$ref": "wargoal_types.json#/definitions/wargoal_repercussions"
+            },
+            "war_name": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "$ref": "wargoal_types.json#/definitions/wargoal_repercussions"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "wargoal_repercussions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "badboy_factor": {
+          "type": "number"
+        },
+        "prestige_factor": {
+          "type": "number"
+        },
+        "peace_cost_factor": {
+          "type": "number"
+        },
+        "transfer_trade_cost_factor": {
+          "type": "number"
+        },
+        "elector_relation": {
+          "type": "string",
+          "enum": [
+            "revoke_elector"
+          ]
+        },
+        "allowed_countries": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "allowed_provinces": {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        },
+        "allowed_provinces_are_eligible": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "peace_options": {
+          "type": "array",
+          "items": {
+            "$ref": "special_values.json#/definitions/peace_offer_types"
+          }
+        },
+        "allow_annex": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "deny_annex": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "prov_desc": {
+          "type": "string"
+        },
+        "country_desc": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -11,6 +11,10 @@
       "type": "string",
       "enum": ["any"]
     },
+    "null": {
+      "type": "string",
+      "enum": ["null"]
+    },
     "yes": {
       "type": "string",
       "enum": ["yes", "YES"]
@@ -224,7 +228,23 @@
         "po_become_vassal",
         "po_become_tributary_state",
         "po_form_personal_union",
-        "po_transfer_vassals"
+        "po_transfer_vassals",
+        "po_change_government",
+        "po_gold",
+        "po_concede_defeat",
+        "po_take_mandate",
+        "po_enforce_rebel_demands",
+        "po_trade_power",
+        "po_steer_trade",
+        "po_annul_treaties",
+        "po_dismantle_revolution",
+        "po_change_religion",
+        "po_change_hre_religion",
+        "po_humiliate",
+        "po_humiliate_rival",
+        "po_revoke_elector",
+        "po_force_migration",
+        "po_independence"
       ]
     },
     "government_group_or_tribal": {
@@ -408,6 +428,14 @@
       "type": "string",
       "enum": ["infantry", "cavalry", "artillery", "heavy_ship", "light_ship", "galley", "transport"]
     },
+    "unit_type_land": {
+      "type": "string",
+      "enum": ["infantry", "cavalry", "artillery"]
+    },
+    "unit_type_sea": {
+      "type": "string",
+      "enum": ["heavy_ship", "light_ship", "galley", "transport"]
+    },
     "unit_type_or_unit": {
       "$mergeProps": [
         {
@@ -448,7 +476,7 @@
     "country_modifiers": {
       "anyOf": [
         {"$identifierValue": "<scope_key:country_modifiers.json#/definitions/country_modifiers>"},
-        {"$identifierValue": "event_modifiers"},
+        {"$identifierValue": "evnet_modifiers"},
         {"$identifierValue": "triggered_modifiers"},
         {"$identifierValue": "static_modifiers"}
       ],
@@ -462,6 +490,10 @@
         {"$identifierValue": "static_modifiers"}
       ],
       "type": "string"
+    },
+    "empty_array": {
+      "type": "array",
+      "maxItems": 0
     }
   }
 }

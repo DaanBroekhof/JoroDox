@@ -1,0 +1,18 @@
+{
+  "$id": "http://jorodox.org/schemas/revolt_triggers.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tag": {
+      "$ref": "identifiers.json#/definitions/country_tags"
+    },
+    "data": {
+      "$ref": "province_conditions.json#/definitions/province_conditions"
+    }
+  },
+  "required": [
+    "tag",
+    "data"
+  ]
+}
