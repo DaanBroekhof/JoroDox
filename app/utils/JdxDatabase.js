@@ -163,7 +163,7 @@ export default class JdxDatabase {
     let stores = {
       settings: '++key',
       relations: relationDefinition,
-      jdx_errors: ['++id', 'creationTime', 'message', 'path', 'type', 'typeId', 'severity'].join(','),
+      jdx_errors: ['++id', 'creationTime', 'message', 'path', 'type', 'typeId', 'severity', '[type+typeId]'].join(','),
     };
 
     // Stores per definition type
@@ -503,6 +503,12 @@ export default class JdxDatabase {
       throw new Error('Unknown project definition type: `' + id + '`.');
     }
     return this.definitions[id];
+  }
+
+  static getTypeDefinition(project, typeId) {
+    const definition = this.getDefinition(project.gameType);
+
+    return definition.types.find(x => x.id === typeId);
   }
 
   static async loadRelations(project, type, id) {
