@@ -37,21 +37,25 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
     // Filter on known path info
     let sourceData = db[definition.sourceType.id];
-    if (args.paths) {
-      const paths = StructureLoaderTask.filterPaths(definition, args.paths);
-      if (paths.length === 0) {
-        return null;
-      }
-      sourceData = sourceData.where('path').anyOf(paths);
-    } else {
-      if (definition.sourceType.path) {
-        sourceData = sourceData.where({path: definition.sourceType.path.replace('{type.id}', definition.id)});
-      }
-      if (definition.sourceType.pathPrefix) {
-        sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
-      }
-      if (definition.sourceType.pathPattern) {
-        sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
+    const sourceDefinition = JdxDatabase.getTypeDefinition(args.project, definition.sourceType.id);
+
+    if (sourceDefinition.primaryKey === 'path') {
+      if (args.paths) {
+        const paths = StructureLoaderTask.filterPaths(definition, args.paths);
+        if (paths.length === 0) {
+          return null;
+        }
+        sourceData = sourceData.where('path').anyOf(paths);
+      } else {
+        if (definition.sourceType.path) {
+          sourceData = sourceData.where({path: definition.sourceType.path.replace('{type.id}', definition.id)});
+        }
+        if (definition.sourceType.pathPrefix) {
+          sourceData = sourceData.where('path').startsWith(definition.sourceType.pathPrefix.replace('{type.id}', definition.id));
+        }
+        if (definition.sourceType.pathPattern) {
+          sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
+        }
       }
     }
 
@@ -137,7 +141,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             fromId: item[definition.primaryKey],
             toKey: 'source', // definition.sourceTransform.relationsToName ? definition.sourceTransform.relationsToName : definition.sourceType.id,
             toType: definition.sourceType.id,
-            toId: sourceItem.path,
+            toId: definition.sourceTransform.sourceIdKey ? sourceItem[definition.sourceTransform.sourceIdKey] : sourceItem.path,
           }));
         }
       });
