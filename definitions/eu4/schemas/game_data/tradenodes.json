@@ -12,7 +12,7 @@
       "additionalProperties": false,
       "properties": {
         "location": {
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "color": {
           "$ref": "special_values.json#/definitions/rgb_color"
@@ -37,7 +37,7 @@
               "path": {
                 "type": "array",
                 "items": {
-                  "$ref": "identifiers.json#/definitions/map_provinces"
+                  "$ref": "identifiers.json#/definitions/map_province_ids"
                 }
               },
               "control": {
@@ -53,7 +53,7 @@
         "members": {
           "type": "array",
           "items": {
-            "$ref": "identifiers.json#/definitions/map_provinces"
+            "$ref": "identifiers.json#/definitions/map_province_ids"
           }
         }
       }

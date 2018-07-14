@@ -109,11 +109,11 @@
         },
         "capital": {
           "description": "The province that is the default capital",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "fixed_capital": {
           "description": "Forces the AI to never move their capital from the specified id, they will seek to move it back there as well if moved.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "monarch": {
           "description": "Defines a ruler for the country. Normally used within a history entry",

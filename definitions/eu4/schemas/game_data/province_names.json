@@ -16,7 +16,7 @@
     },
     "data": {
       "$identifierProperties": {
-        "map_provinces": {
+        "map_province_ids": {
           "type": "string"
         }
       }

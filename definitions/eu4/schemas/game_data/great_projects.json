@@ -15,7 +15,7 @@
           "type": "string"
         },
         "province": {
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "is_canal": {
           "$ref": "special_values.json#/definitions/boolean"

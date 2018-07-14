@@ -33,7 +33,7 @@
         },
         "location": {
           "description": "The province that the advisor is linked to.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "skill": {
           "description": "The skill of the advisor",

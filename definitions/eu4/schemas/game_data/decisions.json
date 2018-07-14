@@ -18,7 +18,7 @@
         "provinces_to_highlight": {"$ref": "province_conditions.json#/definitions/province_conditions"},
         "ai_importance": {"type": "number"},
         "major": {"$ref": "special_values.json#/definitions/yes"},
-        "do_not_core": {"$allowMultiple": {"$ref": "identifiers.json#/definitions/map_provinces"}},
+        "do_not_core": {"$allowMultiple": {"$ref": "identifiers.json#/definitions/map_province_ids"}},
         "do_not_integrate": {"$allowMultiple": {"$ref": "identifiers.json#/definitions/country_tags"}}
       }
     }

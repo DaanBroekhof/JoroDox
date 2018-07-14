@@ -66,7 +66,7 @@
                   "type": "number"
                 },
                 "seat_of_papacy": {
-                  "$ref": "identifiers.json#/definitions/map_provinces"
+                  "$ref": "identifiers.json#/definitions/map_province_ids"
                 }
               }
             },
@@ -224,7 +224,7 @@
         "holy_sites": {
           "type": "array",
           "items": {
-            "$ref": "identifiers.json#/definitions/map_provinces"
+            "$ref": "identifiers.json#/definitions/map_province_ids"
           }
         },
         "blessings": {

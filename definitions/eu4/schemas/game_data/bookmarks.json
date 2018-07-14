@@ -22,7 +22,7 @@
           "$ref": "special_values.json#/definitions/date"
         },
         "center": {
-          "$ref": "identifiers.json#/definitions/map_provinces",
+          "$ref": "identifiers.json#/definitions/map_province_ids",
           "description": "Centres the viewport in the selection view on a specific province"
         },
         "country": {

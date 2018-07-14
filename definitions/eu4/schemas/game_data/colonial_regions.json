@@ -58,7 +58,7 @@
           "description": "Provinces belonging to a region. A province may only belong to one region.",
           "type": "array",
           "items": {
-            "$ref": "identifiers.json#/definitions/map_provinces"
+            "$ref": "identifiers.json#/definitions/map_province_ids"
           }
         },
         "names": {

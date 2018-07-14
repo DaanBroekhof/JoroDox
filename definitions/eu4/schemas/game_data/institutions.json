@@ -21,7 +21,7 @@
           "$ref": "special_values.json#/definitions/date"
         },
         "historical_start_province": {
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "history": {
           "$ref": "province_conditions.json#/definitions/province_conditions"

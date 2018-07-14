@@ -73,7 +73,7 @@
                       },
                       "location": {
                         "description": "Province the battle is in",
-                        "$ref": "identifiers.json#/definitions/map_provinces"
+                        "$ref": "identifiers.json#/definitions/map_province_ids"
                       },
                       "attacker": {
                         "description": "Attacking army",
