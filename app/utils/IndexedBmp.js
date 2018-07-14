@@ -12,11 +12,12 @@ function parse(path) {
   const colorNrs = [];
   let colorNr = 0;
   for (let i = 0; i < data.width * data.height; i += 1) {
-    const colorName = data.data[i * 4] + ',' + data.data[(i * 4) + 1] + ',' + data.data[(i * 4) + 2];
+    // Color format is 'BGR', color_name is 'RGB'
+    const colorName = data.data[(i * 4) + 2] + ',' + data.data[(i * 4) + 1] + ',' + data.data[i * 4];
     if (!indexMap[colorName]) {
       indexMap[colorName] = {
         nr: colorNr,
-        colorName: colorName,
+        color_name: colorName,
         size: 0,
         // pixels: [],
         adjacencies: {},
@@ -44,16 +45,16 @@ function parse(path) {
           continue;
         }
 
-        colorNrs[self].adjacencies[colorNrs[right].colorName] = true;
-        colorNrs[right].adjacencies[colorNrs[self].colorName] = true;
+        colorNrs[self].adjacencies[colorNrs[right].color_name] = true;
+        colorNrs[right].adjacencies[colorNrs[self].color_name] = true;
       }
       if (self !== down && down !== -1) {
         if (colorNrs[self] === undefined || colorNrs[down] === undefined) {
           console.log(self, down, x, y);
           continue;
         }
-        colorNrs[self].adjacencies[colorNrs[down].colorName] = true;
-        colorNrs[down].adjacencies[colorNrs[self].colorName] = true;
+        colorNrs[self].adjacencies[colorNrs[down].color_name] = true;
+        colorNrs[down].adjacencies[colorNrs[self].color_name] = true;
       }
     }
   }

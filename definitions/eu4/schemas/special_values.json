@@ -180,7 +180,7 @@
     "province_id_or_scope": {
       "anyOf": [
         {
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         {
           "$ref": "special_values.json#/definitions/province_scope"
@@ -278,7 +278,7 @@
           "type": "number"
         },
         {
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         {
           "$ref": "special_values.json#/definitions/province_scope"
@@ -494,6 +494,34 @@
     "empty_array": {
       "type": "array",
       "maxItems": 0
+    },
+    "3d_position": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "special_values.json#/definitions/float"
+      }
+    },
+    "float": {
+      "type": "string",
+      "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
+    },
+    "integer_string": {
+      "type": "string",
+      "pattern": "^-?[0-9]+$"
+    },
+    "3d_rotation": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "special_values.json#/definitions/float"
+      }
+    },
+    "color_string": {
+      "type": "string",
+      "pattern": "^[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}$"
     }
   }
 }

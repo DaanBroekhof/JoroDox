@@ -1,0 +1,76 @@
+{
+  "$id": "http://jorodox.org/schemas/map_canals.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "122,122,122": {
+          "description": "Color of 'sea'",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "255,255,255": {
+          "description": "Color of 'land'",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "0,225,255": {
+          "description": "Color of a small river",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "0,100,255": {
+          "description": "Color of a large river",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "255,252,0": {
+          "description": "Color where two rivers join",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "255,0,0": {
+          "description": "Color where two small rivers join",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "0,255,0": {
+          "description": "Start of rivers, and start of the canal path",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        },
+        "0,0,200": {
+          "description": "Color of the canal 'path'",
+          "$ref": "map_canals.json#/definitions/color_adjacency"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ],
+  "definitions": {
+    "color_adjacency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nr": {
+          "type": "number"
+        },
+        "size": {
+          "type": "number"
+        },
+        "color_name": {
+          "type": "string"
+        },
+        "adjacencies": {
+          "type": "array",
+          "items": {
+            "$ref": "special_values.json#/definitions/color_string"
+          }
+        }
+     }
+    }
+  }
+}

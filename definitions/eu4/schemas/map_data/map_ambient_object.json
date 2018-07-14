@@ -1,0 +1,72 @@
+{
+  "$id": "http://jorodox.org/schemas/map_ambient_object.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["type"]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Refers to the graphical asset in ambient_object.gfx",
+          "type": "string"
+        },
+        "use_animation": {
+          "description": "Used set set if an object is animated or not",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "always_visible": {
+          "description": "Used to force visibility",
+          "$ref": "special_values.json#/definitions/yes"
+        },
+        "visible_in_all_map_modes": {
+          "description": "Used to show is non-terrain mapmodes",
+          "$ref": "special_values.json#/definitions/yes"
+        },
+        "scale": {
+          "description": "Sets the scale of the asset. 1.0 is default size.",
+          "type": "number"
+        },
+        "time_duration": {
+          "description": "Always set to 300 for animated objects, may be redundant",
+          "type": "number"
+        },
+        "object": {
+          "$allowMultiple": {
+            "name": {
+              "description": "Name does not have to be unique",
+              "type": "string"
+            },
+            "hidden_on_start": {
+              "description": "Whether the object is hidden (can be revealed with show_ambient_object)",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "position": {
+              "description": "Position: Horizontal coordinate, Height coordinate - 0.0 is base, Vertical coordinate",
+              "$ref": "special_values.json#/definitions/3d_position"
+            },
+            "rotation": {
+              "description": "Rotation: Horizontal rotation, Height rotation - this is used for most rotations, Vertical rotation",
+              "$ref": "special_values.json#/definitions/3d_rotation"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "nr",
+    "data"
+  ]
+}

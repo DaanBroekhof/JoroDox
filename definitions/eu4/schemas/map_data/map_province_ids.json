@@ -1,0 +1,36 @@
+{
+  "$id": "http://jorodox.org/schemas/map_province_ids.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "province": {
+          "type": "string"
+        },
+        "red": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        },
+        "green": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        },
+        "blue": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

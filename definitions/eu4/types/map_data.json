@@ -2,7 +2,7 @@
   {
     "id": "map_ambient_object",
     "title": "Map ambient objects",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "nr",
     "sourceType": {
@@ -19,7 +19,8 @@
         "type"
       ],
       "removeFields": [
-        "id"
+        "id",
+        "namespace"
       ]
     },
     "listView": {
@@ -43,7 +44,7 @@
   {
     "id": "map_area",
     "title": "Map areas",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -66,7 +67,7 @@
           "provinces"
         ],
         "fromName": "map_area",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "provinces"
       }
     ],
@@ -84,7 +85,7 @@
   {
     "id": "map_climate",
     "title": "Map climate",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -107,7 +108,7 @@
           "provinces"
         ],
         "fromName": "map_climate",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "provinces"
       }
     ],
@@ -125,7 +126,7 @@
   {
     "id": "map_continent",
     "title": "Map continents",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -148,7 +149,7 @@
           "provinces"
         ],
         "fromName": "map_continent",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "provinces"
       }
     ],
@@ -166,7 +167,7 @@
   {
     "id": "map_positions",
     "title": "Map city positions",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "province",
     "sourceType": {
@@ -189,7 +190,7 @@
           "province"
         ],
         "fromName": "map_positions",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "province"
       }
     ],
@@ -207,7 +208,7 @@
   {
     "id": "map_region",
     "title": "Map regions",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -249,7 +250,7 @@
   {
     "id": "map_superregion",
     "title": "Map superregions",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -290,7 +291,7 @@
   {
     "id": "map_provincegroups",
     "title": "Map province groups",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -320,7 +321,7 @@
   {
     "id": "map_season",
     "title": "Map seasons",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -364,7 +365,7 @@
   {
     "id": "map_terrain_categories",
     "title": "Map terrain categories",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -389,7 +390,7 @@
           "terrain_override"
         ],
         "fromName": "map_terrain_categories_override",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "map_terrain_categories_overrides"
       }
     ],
@@ -421,7 +422,7 @@
   {
     "id": "map_terrain_terrain",
     "title": "Map terrains",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -459,7 +460,7 @@
   {
     "id": "map_terrain_tree",
     "title": "Map terrain trees",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -497,7 +498,7 @@
   {
     "id": "map_tradewinds",
     "title": "Map tradewinds",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "province",
     "sourceType": {
@@ -520,7 +521,7 @@
           "province"
         ],
         "fromName": "map_tradewinds",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "province"
       }
     ],
@@ -542,7 +543,7 @@
   {
     "id": "map_lakes",
     "title": "Map lakes",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "nr",
     "sourceType": {
@@ -558,6 +559,10 @@
       ],
       "types": [
         "lake"
+      ],
+      "removeFields": [
+        "id",
+        "namespace"
       ]
     },
     "listView": {
@@ -580,7 +585,7 @@
   {
     "id": "map_random_tweaks",
     "title": "Map random tweaks",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -623,7 +628,7 @@
   {
     "id": "map_random_tiles",
     "title": "Map random tiles",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "path",
     "sourceType": {
@@ -660,7 +665,7 @@
   {
     "id": "map_random_lakenames",
     "title": "Map random lake names",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -689,7 +694,7 @@
   {
     "id": "map_random_landnames",
     "title": "Map random land names",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -729,7 +734,7 @@
   {
     "id": "map_random_seanames",
     "title": "Map random sea names",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -758,7 +763,7 @@
   {
     "id": "map_random_scenarios",
     "title": "Map random scenarios",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "name",
     "sourceType": {
@@ -788,7 +793,7 @@
   {
     "id": "map_adjacencies",
     "title": "Map province adjacencies",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "nr",
     "sourceType": {
@@ -811,7 +816,7 @@
           "From"
         ],
         "fromName": "map_adjacencies_from",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "from_province"
       },
       {
@@ -821,7 +826,7 @@
           "To"
         ],
         "fromName": "map_adjacencies_to",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "to_province"
       },
       {
@@ -831,7 +836,7 @@
           "Through"
         ],
         "fromName": "map_adjacencies_through",
-        "toType": "map_provinces",
+        "toType": "map_province_ids",
         "toName": "through_province"
       }
     ],
@@ -861,11 +866,11 @@
     }
   },
   {
-    "id": "map_provinces",
-    "title": "Map provinces",
-    "category": "Map information",
+    "id": "map_province_ids",
+    "title": "Map province IDs",
+    "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "province",
+    "primaryKey": "id",
     "sourceType": {
       "id": "csv_files",
       "path": "map/definition.csv"
@@ -877,7 +882,7 @@
       ],
       "valueName": "data",
       "customFields": {
-        "province": {
+        "id": {
           "type": "get",
           "fields": [
             "data",
@@ -891,15 +896,87 @@
             "x"
           ]
         }
-      }
+      },
+      "removeFields": [
+        ["data", "x"],
+        ["data", "x_1"]
+      ]
     },
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "Province",
-          "dataIndex": "province",
-          "linkTo": "[self]"
+          "name": "Province ID",
+          "dataIndex": "id",
+          "linkTo": "[self]",
+          "width": 25
+        },
+        {
+          "name": "Name",
+          "dataIndex": "name"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_province_colors",
+    "title": "Map province colors",
+    "category": "Map data",
+    "reader": "StructureLoader",
+    "primaryKey": "color_string",
+    "sourceType": {
+      "id": "csv_files",
+      "path": "map/definition.csv"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data"
+      ],
+      "valueName": "data",
+      "customFields": {
+        "province_id": {
+          "type": "get",
+          "fields": [
+            "data",
+            "province"
+          ]
+        },
+        "color_string": {
+          "type": "concat",
+          "fields": [
+            [
+              "data",
+              "red"
+            ],
+            [
+              "data",
+              "green"
+            ],
+            [
+              "data",
+              "blue"
+            ]
+          ],
+          "separator": ","
+        }
+      },
+      "removeFields": [
+        ["data"]
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Province Color",
+          "dataIndex": "color_string",
+          "linkTo": "[self]",
+          "width": 25
+        },
+        {
+          "name": "Province ID",
+          "dataIndex": "province_id"
         }
       ]
     }
@@ -907,7 +984,7 @@
   {
     "id": "map_province_map",
     "title": "Map provinces location",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "color",
     "sourceType": {
@@ -950,7 +1027,7 @@
   {
     "id": "map_canals",
     "title": "Map canals",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "path",
     "sourceType": {
@@ -978,7 +1055,7 @@
   {
     "id": "map_rivers",
     "title": "Map rivers",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "path",
     "sourceType": {
@@ -1005,7 +1082,7 @@
   {
     "id": "map_terrain_map",
     "title": "Map terrain map",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "color",
     "sourceType": {
@@ -1034,7 +1111,7 @@
   {
     "id": "map_terrain_textures",
     "title": "Map terrain textures",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "path",
     "sourceType": {
@@ -1061,7 +1138,7 @@
   {
     "id": "map_trees_map",
     "title": "Map terrain trees map",
-    "category": "Map information",
+    "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "color",
     "sourceType": {

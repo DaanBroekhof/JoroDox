@@ -1,0 +1,156 @@
+{
+  "$id": "http://jorodox.org/schemas/map_positions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "province": {
+      "$ref": "identifiers.json#/definitions/map_provinces"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "position": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "items": [
+            {
+              "description": "City model X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "City model Y",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Standing unit model X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Standing unit model Y",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province name X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province name Y",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province port X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province port Y",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province trade route X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province trade route Y",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Fighting unit X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Fighting unit Y",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Trade wind icon X",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Trade wind icon Y",
+              "$ref": "special_values.json#/definitions/float"
+            }
+          ]
+        },
+        "rotation": {
+          "description": "Dictates the rotation of each element. The value here is rotations (rot). 1 rot = 360 degrees",
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": [
+            {
+              "description": "City model rotation",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Standing unit rotation",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province name rotation",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province port rotation",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province trade route rotation",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Fighting unit rotation",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Trade wind icon rotation",
+              "$ref": "special_values.json#/definitions/float"
+            }
+          ]
+        },
+        "height": {
+          "description": "Dictates the height of each element. The value here is is roughly equal to 1 step in the greyscale used for the heightmap.bmp. So -1.00 results in a model one step below the base level (96), whilst 1.00 results in a model one step above.",
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": [
+            {
+              "description": "City model height. Unfortunately, this only affects the central city model, and none of the additional ones that appear in high base tax provinces.",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Standing unit height",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province name height, Does not actually change the height of the text in an obvious way. Never change this.",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province port height",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Province trade route height",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Fighting unit height",
+              "$ref": "special_values.json#/definitions/float"
+            },
+            {
+              "description": "Trade wind icon height",
+              "$ref": "special_values.json#/definitions/float"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "province",
+    "data"
+  ]
+}

@@ -172,8 +172,8 @@
       "$identifierValue": "map_provincegroups",
       "type": "string"
     },
-    "map_provinces": {
-      "$identifierValue": "map_provinces",
+    "map_province_ids": {
+      "$identifierValue": "map_province_ids",
       "type": ["number", "string"]
     },
     "map_region": {

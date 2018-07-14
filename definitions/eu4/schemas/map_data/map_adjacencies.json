@@ -1,0 +1,58 @@
+{
+  "$id": "http://jorodox.org/schemas/map_adjacencies.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "From": {
+          "anyOf": [
+            {"enum": ["-1"]},
+            {"$ref": "identifiers.json#/definitions/map_provinces"}
+          ]
+        },
+        "To": {
+          "anyOf": [
+            {"enum": ["-1"]},
+            {"$ref": "identifiers.json#/definitions/map_provinces"}
+          ]
+        },
+        "Type": {
+          "type": "string",
+          "enum": ["sea", "canal", "lake", ""]
+        },
+        "Through": {
+          "anyOf": [
+            {"enum": ["-1"]},
+            {"$ref": "identifiers.json#/definitions/map_provinces"}
+          ]
+        },
+        "start_x": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        },
+        "start_y": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        },
+        "stop_x": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        },
+        "stop_y": {
+          "$ref": "special_values.json#/definitions/integer_string"
+        },
+        "Comment": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "nr",
+    "data"
+  ]
+}

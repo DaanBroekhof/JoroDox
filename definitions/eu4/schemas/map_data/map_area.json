@@ -1,0 +1,41 @@
+{
+  "$id": "http://jorodox.org/schemas/map_area.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "provinces": {
+      "anyOf": [
+        {"$ref": "special_values.json#/definitions/empty_array"},
+        {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_provinces"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "color": {
+              "$ref": "special_values.json#/definitions/rgb_color"
+            },
+            "_array_":  {
+              "type": "array",
+              "items": {
+                "$ref": "identifiers.json#/definitions/map_provinces"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "provinces"
+  ]
+}
