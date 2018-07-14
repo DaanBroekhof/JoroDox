@@ -134,9 +134,9 @@ class StructureView extends Component {
 
     await JdxDatabase.deleteAllErrors(this.props.project);
 
-    types.forEach(type => {
-      new Promise((resolve, reject) => {
-        SchemaValidatorTask.start(
+    for (const type of types) {
+      try {
+        await SchemaValidatorTask.start(
           {
             project: this.props.project,
             typeDefinition: type,
@@ -144,17 +144,15 @@ class StructureView extends Component {
           },
           (progress, total, message) => null,
           (result) => {
-            resolve(result);
-            console.log('results');
-            console.log(result);
           },
           (error) => {
-            reject(error);
             console.error(error);
           },
         );
-      });
-    });
+      } catch (exception) {
+        console.error('Type '+ type.id, exception);
+      }
+    }
   }
 
   reloadDiff() {

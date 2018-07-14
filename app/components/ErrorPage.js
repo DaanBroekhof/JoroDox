@@ -81,7 +81,7 @@ class ErrorPage extends Component {
       const errorTotal = errors.length;
       return this.setState({errors, errorTotal});
     } else {
-      const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(100).toArray();
+      const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(1000).toArray();
       const errorTotal = await (await JdxDatabase.getErrors(project)).count();
 
       return this.setState({errors, errorTotal});

@@ -484,14 +484,17 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
   hasIdentifier(identifierType, id) {
     if (!this.identifierCache[identifierType]) {
-      this.identifierCache[identifierType] = (
+      /*this.identifierCache[identifierType] = (
         async () => {
           return await JdxDatabase.getTypeIdentifiers(identifierType);
         }
       )();
+      */
 
         //await JdxDatabase.getTypeIdentifiers(identifierType);
       console.error(`Uncached identifier type '${identifierType}'`);
+
+      throw new Error(`Uncached identifier type '${identifierType}'`);
     }
 
     return this.identifierCache[identifierType].has(id.toString());
