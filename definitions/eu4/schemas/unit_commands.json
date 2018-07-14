@@ -3,22 +3,74 @@
   "$id": "http://jorodox.org/schemas/unit_commands.json",
   "type": "object",
   "definitions": {
-    "tradenode_commands": {
+    "unit_commands": {
       "$mergeProps": [
         {
           "$ref": "#/definitions/unit_commands_scopes"
         },
         {
-          "$ref": "unit_commands.json#/definitions/province_commands"
+          "$ref": "province_commands.json#/definitions/province_commands"
         }
       ]
     },
     "unit_commands_scopes": {
       "properties": {
+        "if" : {
+          "$ref": "unit_commands.json#/definitions/if"
+        },
+        "else_if" : {
+          "$ref": "unit_commands.json#/definitions/else_if"
+        },
+        "else" : {
+          "$ref": "unit_commands.json#/definitions/unit_commands"
+        },
+        "while" : {
+          "$ref": "unit_commands.json#/definitions/while"
+        },
+
         "unit_owner": {
           "$ref": "country_commands.json#/definitions/country_commands"
         }
       }
+    },
+    "if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "unit_conditions.json#/definitions/unit_conditions"
+            }
+          }
+        },
+        {"$ref": "unit_commands.json#/definitions/unit_commands"}
+      ]
+    },
+    "else_if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "unit_conditions.json#/definitions/unit_conditions"
+            }
+          }
+        },
+        {"$ref": "unit_commands.json#/definitions/unit_commands"}
+      ]
+    },
+    "while": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "unit_conditions.json#/definitions/unit_conditions"
+            }
+          }
+        },
+        {"$ref": "unit_commands.json#/definitions/unit_commands"}
+      ]
     }
   }
 }

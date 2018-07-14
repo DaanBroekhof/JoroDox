@@ -95,6 +95,12 @@
             {"properties": {"type": {"type": "string", "enum": ["all"]}}}
           ]
         },
+        "owns_or_non_sovereign_subject_of": {
+          "description": "Returns true, if the country or a subject that is not categorized as \"sovereign\" (e.g. tributary states are excluded) owns the specified province.",
+          "todo": "is this an actual prov condition?",
+          "$ref": "special_values.json#/definitions/country_tag_or_scope"
+        },
+
 
         "variable_arithmetic_trigger": {
           "description": "Can use variable effects and triggers to compare or change and compare modifier and trigger values. \"variable_arithmetic_trigger\" sections can include more \"variable_arithmetic_trigger\" sections. This has to be done for effects such as \"change_variable\" or effects of \"if\" sections inside the \"variable_arithmetic_trigger\", since the game may crash otherwise.",

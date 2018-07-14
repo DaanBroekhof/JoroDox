@@ -476,7 +476,7 @@
     "country_modifiers": {
       "anyOf": [
         {"$identifierValue": "<scope_key:country_modifiers.json#/definitions/country_modifiers>"},
-        {"$identifierValue": "evnet_modifiers"},
+        {"$identifierValue": "event_modifiers"},
         {"$identifierValue": "triggered_modifiers"},
         {"$identifierValue": "static_modifiers"}
       ],

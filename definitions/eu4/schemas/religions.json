@@ -56,7 +56,48 @@
 
         "papacy": {
           "description": "Uses the Catholic Papacy system",
-          "$ref": "special_values.json#/definitions/boolean"
+          "$mergeProps": [
+            {
+              "properties": {
+                "papal_tag": {
+                  "$ref": "identifiers.json#/definitions/country_tags"
+                },
+                "election_cost": {
+                  "type": "number"
+                },
+                "seat_of_papacy": {
+                  "$ref": "identifiers.json#/definitions/map_provinces"
+                }
+              }
+            },
+            {
+              "patternProperties": {
+                "^[a-z_]+$": {
+                  "description": "Papal actions - for now not a separate type?",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "cost": {
+                      "type": "number"
+                    },
+                    "potential": {
+                      "$ref": "country_conditions.json#/definitions/country_conditions"
+                    },
+                    "allow": {
+                      "$ref": "country_conditions.json#/definitions/country_conditions"
+                    },
+                    "effect": {
+                      "$ref": "country_commands.json#/definitions/country_commands"
+                    },
+                    "ai_will_do": {
+                      "description": "The importance the AI will have on using this aspect.",
+                      "$ref": "scope_factors.json#/definitions/country_factor"
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         "hre_religion": {
           "description": "Uses the HRE religious factions and thirty years war systems. A religion with this attribute will be the default official religion of the HRE, as Catholicism is in the vanilla game.",
@@ -118,7 +159,17 @@
           "description": "Countries with this religion can have a syncretic faith, like the Tengri religion in the vanilla game.",
           "$ref": "special_values.json#/definitions/boolean"
         },
-
+        "flags_with_emblem_percentage": {
+          "description": "Custom & client nation flags: How likely a generated flag is to contain an emblem",
+          "type": "number"
+        },
+        "flag_emblem_index_range": {
+          "description": "Custom & client nation flags: Range of emblems that can be generated",
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 2,
+          "maxItems": 2
+        },
 
         "allowed_center_conversion": {
           "todo": "Add to wiki",
@@ -157,6 +208,30 @@
         "orthodox_icons": {
           "todo": "Add to wiki",
           "type": "object"
+        },
+        "uses_anglican_power": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "uses_harmony": {
+          "todo": "Add to wiki",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "reform_tooltip": {
+          "todo": "Add to wiki",
+          "type": "string"
+        },
+        "holy_sites": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_provinces"
+          }
+        },
+        "blessings": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/church_aspects"
+          }
         }
       }
     }

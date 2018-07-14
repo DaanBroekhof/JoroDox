@@ -1,25 +1,77 @@
 {
   "$schema": "http://json-schema.org/schema#",
   "$id": "http://jorodox.org/schemas/unit_conditions.json",
-  "type": "object",
   "definitions": {
     "unit_conditions": {
-      "type": "object",
+      "$mergeProps": [
+        {
+          "$ref": "#/definitions/unit_conditions_scopes"
+        },
+        {
+          "$ref": "#/definitions/unit_conditions_properties"
+        },
+        {
+          "$ref": "province_conditions.json#/definitions/province_conditions"
+        }
+      ]
+    },
+    "unit_conditions_scopes": {
       "properties": {
         "unit_owner": {
-          "AND": {
-            "$ref": "unit_conditions.json#/definitions/unit_conditions"
-          },
-          "OR": {
-            "$ref": "unit_conditions.json#/definitions/unit_conditions"
-          },
-          "NOT": {
-            "$ref": "unit_conditions.json#/definitions/unit_conditions"
-          },
-
           "$ref": "country_conditions.json#/definitions/country_conditions"
         }
       }
+    },
+    "unit_conditions_properties": {
+      "properties": {
+        "and": {
+          "$ref": "unit_conditions.json#/definitions/unit_conditions"
+        },
+        "or": {
+          "$ref": "unit_conditions.json#/definitions/unit_conditions"
+        },
+        "not": {
+          "$ref": "unit_conditions.json#/definitions/unit_conditions"
+        },
+        "AND": {
+          "$ref": "unit_conditions.json#/definitions/unit_conditions"
+        },
+        "OR": {
+          "$ref": "unit_conditions.json#/definitions/unit_conditions"
+        },
+        "NOT": {
+          "$ref": "unit_conditions.json#/definitions/unit_conditions"
+        },
+        "general_with_steam_name": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      }
+    },
+    "if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "unit_conditions.json#/definitions/unit_conditions"
+            }
+          }
+        },
+        {"$ref": "unit_conditions.json#/definitions/unit_conditions"}
+      ]
+    },
+    "else_if": {
+      "$mergeProps": [
+        {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "$ref": "unit_conditions.json#/definitions/unit_conditions"
+            }
+          }
+        },
+        {"$ref": "unit_conditions.json#/definitions/unit_conditions"}
+      ]
     }
   }
 }
