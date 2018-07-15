@@ -431,6 +431,11 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             const dir = _.get(ajv._item, identifierSchema.prefixFileDir);
             data = syspath.dirname(dir ? dir : '') + '/' + data;
           }
+          if (Array.isArray(identifierSchema.replaceAll)) {
+            identifierSchema.replaceAll.forEach((replace) => {
+              data = _.replace(data, new RegExp(replace.match, 'g'), replace.replace);
+            });
+          }
 
           if (scopeKeyMatch) {
             const scopeKeyRef = scopeKeyMatch[1];
