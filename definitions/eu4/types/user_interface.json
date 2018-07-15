@@ -139,35 +139,6 @@
     }
   },
   {
-    "id": "graphicalculturetypes",
-    "title": "Graphical culture types",
-    "category": "User interface",
-    "reader": "StructureLoader",
-    "primaryKey": "name",
-    "sourceType": {
-      "id": "pdx_scripts",
-      "path": "common/graphicalculturetype.txt"
-    },
-    "sourceTransform": {
-      "type": "keyValues",
-      "path": [
-        "data",
-        "data"
-      ],
-      "valueName": "name"
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Name",
-          "dataIndex": "name",
-          "linkTo": "[self]"
-        }
-      ]
-    }
-  },
-  {
     "id": "gfx_cursor_images",
     "title": "Cursor images",
     "category": "User interface",

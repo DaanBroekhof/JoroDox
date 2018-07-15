@@ -1,0 +1,182 @@
+{
+  "$id": "http://jorodox.org/schemas/map_random_tiles.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sea_province": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "lake_province": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "wasteland_province": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "region": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "num_sea_provinces": {
+          "type": "number"
+        },
+        "num_land_provinces": {
+          "type": "number"
+        },
+        "regions": {
+          "type": "number"
+        },
+        "Regions": {
+          "todo": "this a typo?",
+          "type": "number"
+        },
+        "unique": {
+          "type": "number"
+        },
+        "continent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "restrict_to_south_edge": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "restrict_to_north_edge": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "restrict_to_equator": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "restrict_to_north_edge": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "restrict_to_north_edge": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "size": {
+          "type": "array",
+          "items": [
+            {"$ref": "special_values.json#/definitions/integer_string"}
+          ]
+        },
+        "do_not_rotate": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "do_not_rotate_or_mirror": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "fantasy": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "important_natural_harbor": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "strait": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "from": {
+                "$ref": "special_values.json#/definitions/rgb_color"
+              },
+              "to": {
+                "$ref": "special_values.json#/definitions/rgb_color"
+              },
+              "through": {
+                "$ref": "special_values.json#/definitions/rgb_color"
+              }
+            }
+          }
+        },
+        "weight": {
+          "type": "number"
+        },
+        "add_moisture": {
+          "type": "number"
+        },
+        "river_estuary_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "devils_gate_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "paradise_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "comet_ore_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "atlantean_remnants_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "djanges_estuary_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "sindus_estuary_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "krodavari_estuary_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "chrishna_estuary_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "inland_center_of_trade_modifier": {
+          "$allowMultiple": {
+            "$ref": "special_values.json#/definitions/rgb_color"
+          }
+        },
+        "province_names": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": {
+              ".*": {
+                "$ref": "special_values.json#/definitions/rgb_color"
+              }
+            }
+          }
+        },
+        "empty": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

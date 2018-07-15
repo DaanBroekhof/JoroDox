@@ -1,0 +1,94 @@
+{
+  "$id": "http://jorodox.org/schemas/map_terrain_categories.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color"
+        },
+        "type": {
+          "$ref": "map_terrain_categories.json#/definitions/terrain_types"
+        },
+        "sound_type": {
+          "$ref": "map_terrain_categories.json#/definitions/terrain_sound_types"
+        },
+        "is_water": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "inland_sea": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "movement_cost": {
+          "type": "number"
+        },
+        "allowed_num_of_buildings": {
+          "type": "number"
+        },
+        "local_development_cost": {
+          "type": "number"
+        },
+        "defence": {
+          "type": "number"
+        },
+        "local_defensiveness": {
+          "type": "number"
+        },
+        "cs_only_local_development_cost": {
+          "type": "number"
+        },
+        "nation_designer_cost_multiplier": {
+          "type": "number"
+        },
+        "supply_limit": {
+          "type": "number"
+        },
+        "terrain_override": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_province_ids"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "terrain_types": {
+      "type": "string",
+      "enum": [
+        "plains",
+        "mountains",
+        "hills",
+        "desert",
+        "artic",
+        "forest",
+        "jungle",
+        "marsh",
+        "pti",
+        "sea"
+      ]
+    },
+    "terrain_sound_types": {
+      "type": "string",
+      "enum": [
+        "plains",
+        "forest",
+        "desert",
+        "sea",
+        "jungle",
+        "mountains"
+      ]
+    }
+  }
+}

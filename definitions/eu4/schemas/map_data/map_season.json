@@ -1,0 +1,55 @@
+{
+  "$id": "http://jorodox.org/schemas/map_season.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "start_date": {
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "end_date": {
+          "$ref": "special_values.json#/definitions/date"
+        },
+        "hsv_north": {
+          "$ref": "special_values.json#/definitions/rgb_color_float"
+        },
+        "colorbalance_north": {
+          "$ref": "map_season.json#/definitions/colorbalance_vector"
+        },
+        "hsv_center": {
+          "$ref": "special_values.json#/definitions/rgb_color_float"
+        },
+        "colorbalance_center": {
+          "$ref": "map_season.json#/definitions/colorbalance_vector"
+        },
+        "hsv_south": {
+          "$ref": "special_values.json#/definitions/rgb_color_float"
+        },
+        "colorbalance_south": {
+          "$ref": "map_season.json#/definitions/colorbalance_vector"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "colorbalance_vector": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "special_values.json#/definitions/float"
+      }
+    }
+  }
+}

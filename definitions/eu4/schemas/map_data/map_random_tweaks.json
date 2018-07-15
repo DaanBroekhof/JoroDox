@@ -1,0 +1,27 @@
+{
+  "$id": "http://jorodox.org/schemas/map_random_tweaks.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "data": {
+      "type": ["object", "array"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {"type": ["number", "string"]},
+        "comment": {"type": ["string", "null"]}
+      }
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "data"
+  ]
+}

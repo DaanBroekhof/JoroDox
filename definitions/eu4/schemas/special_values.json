@@ -49,7 +49,7 @@
     },
     "date": {
       "type": "string",
-      "pattern": "^[0-9]{4}.[0-9]{1,2}.[0-9]{1,2}$"
+      "pattern": "^[0-9]{2,4}.[0-9]{1,2}.[0-9]{1,2}$"
     },
     "country_scope": {
       "type": "string",
@@ -410,11 +410,38 @@
     },
     "construction": {
       "type": "string",
-      "enum": ["core", "culture", "building", "merchant", "diplomat", "missionary", "army", "navy", "canal", "great_project", "siberian"]
+      "enum": [
+        "core",
+        "culture",
+        "building",
+        "merchant",
+        "diplomat",
+        "missionary",
+        "army",
+        "navy",
+        "canal",
+        "great_project",
+        "siberian"
+      ]
     },
     "ai_attitudes": {
       "type": "string",
-      "enum": ["attitude_neutral", "atittude_rivalry", "attitude_hostile", "attitude_friendly", "attitude_defensive", "attitude_threatened", "attitude_outraged", "attitude_protective", "attitude_domineering", "attitude_overlord", "attitude_loyal", "attitude_disloyal", "attitude_rebellious", "attitude_allied"]
+      "enum": [
+        "attitude_neutral",
+        "atittude_rivalry",
+        "attitude_hostile",
+        "attitude_friendly",
+        "attitude_defensive",
+        "attitude_threatened",
+        "attitude_outraged",
+        "attitude_protective",
+        "attitude_domineering",
+        "attitude_overlord",
+        "attitude_loyal",
+        "attitude_disloyal",
+        "attitude_rebellious",
+        "attitude_allied"
+      ]
     },
     "school_opinion": {
       "type": "number",
@@ -461,7 +488,7 @@
       "maxItems": 3,
       "items": {
         "type": "string",
-        "pattern": "^[0-9]{1,3}$"
+        "pattern": "^([2][5][0-5]|[2][0-4][0-9]|[1]?[0-9]{1,2})$"
       }
     },
     "rgb_color_float": {
@@ -522,6 +549,27 @@
     "color_string": {
       "type": "string",
       "pattern": "^[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}$"
+    },
+    "color_adjacency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nr": {
+          "type": "number"
+        },
+        "size": {
+          "type": "number"
+        },
+        "color_name": {
+          "type": "string"
+        },
+        "adjacencies": {
+          "type": "array",
+          "items": {
+            "$ref": "special_values.json#/definitions/color_string"
+          }
+        }
+      }
     }
   }
 }

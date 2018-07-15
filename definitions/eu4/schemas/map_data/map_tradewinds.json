@@ -1,0 +1,18 @@
+{
+  "$id": "http://jorodox.org/schemas/map_tradewinds.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "province_id": {
+      "$ref": "identifiers.json#/definitions/map_province_ids"
+    },
+    "wind_direction": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "province_id",
+    "wind_direction"
+  ]
+}

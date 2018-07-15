@@ -14,13 +14,13 @@
         "From": {
           "anyOf": [
             {"enum": ["-1"]},
-            {"$ref": "identifiers.json#/definitions/map_provinces"}
+            {"$ref": "identifiers.json#/definitions/map_province_ids"}
           ]
         },
         "To": {
           "anyOf": [
             {"enum": ["-1"]},
-            {"$ref": "identifiers.json#/definitions/map_provinces"}
+            {"$ref": "identifiers.json#/definitions/map_province_ids"}
           ]
         },
         "Type": {
@@ -30,7 +30,7 @@
         "Through": {
           "anyOf": [
             {"enum": ["-1"]},
-            {"$ref": "identifiers.json#/definitions/map_provinces"}
+            {"$ref": "identifiers.json#/definitions/map_province_ids"}
           ]
         },
         "start_x": {

@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/map_continent.json",
+  "$id": "http://jorodox.org/schemas/map_superregion.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -7,13 +7,13 @@
     "name": {
       "type": "string"
     },
-    "provinces": {
+    "regions": {
       "anyOf": [
         {"$ref": "special_values.json#/definitions/empty_array"},
         {
           "type": "array",
           "items": {
-            "$ref": "identifiers.json#/definitions/map_province_ids"
+            "$ref": "identifiers.json#/definitions/map_region"
           }
         }
       ]
@@ -21,6 +21,6 @@
   },
   "required": [
     "name",
-    "provinces"
+    "regions"
   ]
 }

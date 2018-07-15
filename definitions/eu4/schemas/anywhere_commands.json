@@ -72,7 +72,7 @@
     },
     "anywhere_commands_identifier_dual_scopes": {
       "$identifierProperties": {
-        "map_provinces": {
+        "map_province_ids": {
           "$ref": "province_commands.json#/definitions/province_commands"
         },
         "country_tags": {

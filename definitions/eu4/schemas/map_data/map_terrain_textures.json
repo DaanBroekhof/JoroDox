@@ -1,0 +1,17 @@
+{
+  "$id": "http://jorodox.org/schemas/map_terrain_textures.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

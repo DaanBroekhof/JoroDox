@@ -1,0 +1,36 @@
+{
+  "$id": "http://jorodox.org/schemas/map_province_map.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "color_name": {
+      "$ref": "identifiers.json#/definitions/map_province_colors"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nr": {
+          "type": "number"
+        },
+        "size": {
+          "type": "number"
+        },
+        "color_name": {
+          "type": "string"
+        },
+        "adjacencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "color_name",
+    "data"
+  ]
+}

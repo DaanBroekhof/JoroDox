@@ -1,0 +1,28 @@
+{
+  "$id": "http://jorodox.org/schemas/map_heightmap.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "description": "Only grey values are allowed.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^([0-9]+),\\1,\\1$": {
+          "$ref": "special_values.json#/definitions/color_adjacency"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ],
+  "definitions": {
+
+  }
+}

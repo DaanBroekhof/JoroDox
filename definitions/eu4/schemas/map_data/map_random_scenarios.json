@@ -1,0 +1,129 @@
+{
+  "$id": "http://jorodox.org/schemas/map_random_scenarios.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min_provinces": {
+          "type": "number"
+        },
+        "max_provinces": {
+          "type": "number"
+        },
+        "min_countries": {
+          "type": "number"
+        },
+        "max_countries": {
+          "type": "number"
+        },
+        "min_country_size": {
+          "type": "number"
+        },
+        "max_country_size": {
+          "type": "number"
+        },
+        "min_native_size": {
+          "type": "number"
+        },
+        "max_native_size": {
+          "type": "number"
+        },
+        "min_native_hostility": {
+          "type": "number"
+        },
+        "max_native_hostility": {
+          "type": "number"
+        },
+        "min_native_ferocity": {
+          "type": "number"
+        },
+        "max_native_ferocity": {
+          "type": "number"
+        },
+        "religion": {
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "country_religion": {
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "technology_group": {
+          "$ref": "identifiers.json#/definitions/technology_groups"
+        },
+        "government": {
+          "$ref": "identifiers.json#/definitions/governments"
+        },
+        "graphical_culture": {
+          "$ref": "identifiers.json#/definitions/graphicalculturetypes"
+        },
+        "culture": {
+          "$ref": "identifiers.json#/definitions/cultures"
+        },
+        "culture_group": {
+          "$ref": "identifiers.json#/definitions/culture_groups"
+        },
+        "unit_type": {
+          "$ref": "identifiers.json#/definitions/technology_groups"
+        },
+        "unique": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "region": {
+          "type": "string"
+        },
+        "chance": {
+          "type": "number"
+        },
+        "tile_index": {
+          "type": "number"
+        },
+        "fantasy": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "arid": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "temperate": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "tropical": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "arctic": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "minor_tags": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "force_apart": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "force_coastal": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "force_together": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "force_all_provinces_owned": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

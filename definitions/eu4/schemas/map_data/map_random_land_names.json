@@ -1,0 +1,34 @@
+{
+  "$id": "http://jorodox.org/schemas/map_random_land_names.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "plains",
+        "mountains",
+        "glacial",
+        "marsh",
+        "island",
+        "island2",
+        "coast",
+        "desert",
+        "grassland",
+        "wasteland",
+        "river",
+        "jungle",
+        "hills",
+        "forest",
+        "arctic"
+      ]
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

@@ -176,6 +176,10 @@
       "$identifierValue": "map_province_ids",
       "type": ["number", "string"]
     },
+    "map_province_colors": {
+      "$identifierValue": "map_province_colors",
+      "type": "string"
+    },
     "map_region": {
       "$identifierValue": "map_region",
       "type": "string"
@@ -184,8 +188,8 @@
       "$identifierValue": "map_superregion",
       "type": "string"
     },
-    "map_terrain_terrain": {
-      "$identifierValue": "map_terrain_terrain",
+    "map_terrains": {
+      "$identifierValue": "map_terrains",
       "type": "string"
     },
     "mission_series": {
@@ -314,6 +318,10 @@
     },
     "state_edicts": {
       "$identifierValue": "state_edicts",
+      "type": "string"
+    },
+    "map_terrain_categories": {
+      "$identifierValue": "map_terrain_categories",
       "type": "string"
     }
   }

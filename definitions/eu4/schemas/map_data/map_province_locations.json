@@ -1,14 +1,10 @@
 {
-  "$id": "http://jorodox.org/schemas/map_province_colors.json",
+  "$id": "http://jorodox.org/schemas/map_province_locations.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
   "properties": {
     "color_name": {
-      "type": "string",
-      "dev_note": "Could have a `$ref`: `identifiers.json#/definitions/map_province_map` here, but apparently EU4 reserves ~1000 province colors."
-    },
-    "name": {
       "type": "string"
     },
     "province_id": {

@@ -5,7 +5,7 @@
   "additionalProperties": false,
   "properties": {
     "province": {
-      "$ref": "identifiers.json#/definitions/map_provinces"
+      "$ref": "identifiers.json#/definitions/map_province_ids"
     },
     "data": {
       "type": "object",

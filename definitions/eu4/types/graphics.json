@@ -68,6 +68,35 @@
     }
   },
   {
+    "id": "graphicalculturetypes",
+    "title": "Graphical culture types",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "common/graphicalculturetype.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "valueName": "name"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
     "id": "model_textures",
     "title": "Model textures",
     "category": "Graphics",

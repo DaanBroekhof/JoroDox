@@ -1,0 +1,14 @@
+{
+  "$id": "http://jorodox.org/schemas/map_random_sea_names.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

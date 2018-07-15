@@ -420,7 +420,7 @@
     }
   },
   {
-    "id": "map_terrain_terrain",
+    "id": "map_terrains",
     "title": "Map terrains",
     "category": "Map data",
     "reader": "StructureLoader",
@@ -458,7 +458,7 @@
     }
   },
   {
-    "id": "map_terrain_tree",
+    "id": "map_terrain_trees",
     "title": "Map terrain trees",
     "category": "Map data",
     "reader": "StructureLoader",
@@ -500,7 +500,7 @@
     "title": "Map tradewinds",
     "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "province",
+    "primaryKey": "province_id",
     "sourceType": {
       "id": "pdx_scripts",
       "path": "map/trade_winds.txt"
@@ -511,7 +511,7 @@
         "data",
         "data"
       ],
-      "keyName": "province",
+      "keyName": "province_id",
       "valueName": "wind_direction"
     },
     "relations": [
@@ -530,7 +530,7 @@
       "columns": [
         {
           "name": "Province",
-          "dataIndex": "province",
+          "dataIndex": "province_id",
           "linkTo": "[self]"
         },
         {
@@ -593,11 +593,12 @@
       "path": "map/random/tweaks.lua"
     },
     "sourceTransform": {
-      "type": "keyValues",
+      "type": "keyKeyValues",
       "path": [
-        "data"
+        "data", "RandomWorld"
       ],
       "keyName": "name",
+      "parentKeyName": "category",
       "valueName": "data"
     },
     "listView": {
@@ -663,7 +664,7 @@
     }
   },
   {
-    "id": "map_random_lakenames",
+    "id": "map_random_lake_names",
     "title": "Map random lake names",
     "category": "Map data",
     "reader": "StructureLoader",
@@ -692,7 +693,7 @@
     }
   },
   {
-    "id": "map_random_landnames",
+    "id": "map_random_land_names",
     "title": "Map random land names",
     "category": "Map data",
     "reader": "StructureLoader",
@@ -732,7 +733,7 @@
     }
   },
   {
-    "id": "map_random_seanames",
+    "id": "map_random_sea_names",
     "title": "Map random sea names",
     "category": "Map data",
     "reader": "StructureLoader",
@@ -923,7 +924,7 @@
     "title": "Map province colors",
     "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "color_string",
+    "primaryKey": "color_name",
     "sourceType": {
       "id": "csv_files",
       "path": "map/definition.csv"
@@ -942,7 +943,7 @@
             "province"
           ]
         },
-        "color_string": {
+        "color_name": {
           "type": "concat",
           "fields": [
             [
@@ -959,6 +960,13 @@
             ]
           ],
           "separator": ","
+        },
+        "name": {
+          "type": "get",
+          "fields": [
+            "data",
+            "x"
+          ]
         }
       },
       "removeFields": [
@@ -970,23 +978,28 @@
       "columns": [
         {
           "name": "Province Color",
-          "dataIndex": "color_string",
+          "dataIndex": "color_name",
           "linkTo": "[self]",
           "width": 25
         },
         {
           "name": "Province ID",
-          "dataIndex": "province_id"
+          "dataIndex": "province_id",
+          "width": 25
+        },
+        {
+          "name": "Name",
+          "dataIndex": "name"
         }
       ]
     }
   },
   {
     "id": "map_province_map",
-    "title": "Map provinces location",
+    "title": "Map province map",
     "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "color",
+    "primaryKey": "color_name",
     "sourceType": {
       "id": "indexed_bmps",
       "path": "map/provinces.bmp"
@@ -996,7 +1009,7 @@
       "path": [
         "data"
       ],
-      "keyName": "color",
+      "keyName": "color_name",
       "valueName": "data"
     },
     "listView": {
@@ -1004,7 +1017,7 @@
       "columns": [
         {
           "name": "Color",
-          "dataIndex": "color",
+          "dataIndex": "color_name",
           "linkTo": "[self]"
         },
         {
@@ -1080,11 +1093,38 @@
     }
   },
   {
+    "id": "map_heightmap",
+    "title": "Map heightmap",
+    "category": "Map data",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "indexed_bmps",
+      "path": "map/heightmap.bmp"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
     "id": "map_terrain_map",
     "title": "Map terrain map",
     "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "color",
+    "primaryKey": "color_name",
     "sourceType": {
       "id": "indexed_bmps",
       "path": "map/terrain.bmp"
@@ -1094,7 +1134,7 @@
       "path": [
         "data"
       ],
-      "keyName": "color",
+      "keyName": "color_name",
       "valueName": "data"
     },
     "listView": {
@@ -1102,7 +1142,7 @@
       "columns": [
         {
           "name": "Color",
-          "dataIndex": "color",
+          "dataIndex": "color_name",
           "linkTo": "[self]"
         }
       ]
@@ -1140,7 +1180,7 @@
     "title": "Map terrain trees map",
     "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "color",
+    "primaryKey": "color_name",
     "sourceType": {
       "id": "indexed_bmps",
       "path": "map/trees.bmp"
@@ -1150,7 +1190,7 @@
       "path": [
         "data"
       ],
-      "keyName": "color",
+      "keyName": "color_name",
       "valueName": "data"
     },
     "listView": {
@@ -1158,7 +1198,7 @@
       "columns": [
         {
           "name": "Color",
-          "dataIndex": "color",
+          "dataIndex": "color_name",
           "linkTo": "[self]"
         }
       ]

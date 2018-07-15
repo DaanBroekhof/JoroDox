@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/map_terrain_trees.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "terrain": {
+          "$ref": "identifiers.json#/definitions/map_terrains"
+        },
+        "color": {
+          "type": "array",
+          "items": {
+            "$ref": "special_values.json#/definitions/integer_string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

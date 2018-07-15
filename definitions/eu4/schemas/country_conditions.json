@@ -599,7 +599,7 @@
         },
         "capital": {
           "description": "Returns true if the country's capital is the province with the ID X.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "capital_distance": {
           "description": "Returns true if distance between the capitals of the countries is at least X.",
@@ -689,7 +689,7 @@
         },
         "controls": {
           "description": "Returns true if the province with id X is controlled by the country.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "core_claim": {
           "description": "Returns true if the country has a core on any province owned by country X.",
@@ -1095,7 +1095,7 @@
           "description": "Returns true if the country has discovered the province with the ID X.",
           "anyOf": [
             {
-              "$ref": "identifiers.json#/definitions/map_provinces"
+              "$ref": "identifiers.json#/definitions/map_province_ids"
             },
             {
               "$ref": "identifiers.json#/definitions/map_areas"
@@ -1670,7 +1670,7 @@
             "participants": {"$ref": "special_values.json#/definitions/country_tag_or_scope"},
             "war_score": {"type": "number"},
             "start_date": {"$ref": "special_values.json#/definitions/date"},
-            "war_goal_province": {"$ref": "identifiers.json#/definitions/map_provinces"},
+            "war_goal_province": {"$ref": "identifiers.json#/definitions/map_province_ids"},
             "duration": {"type": "number"}
           },
           "required": []
@@ -1784,7 +1784,7 @@
         },
         "is_state_core": {
           "description": "Returns true if the country has a state core on the province with the ID X.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "is_subject": {
           "description": "Returns true if the country is a subject.",
@@ -1800,7 +1800,7 @@
         },
         "is_territorial_core": {
           "description": "Returns true if the country has a territorial core on the province with the ID X.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "is_threat": {
           "description": "Returns true if country X is threatened by the country.",
@@ -2267,11 +2267,11 @@
         },
         "owns": {
           "description": "Returns true if the country owns the specified province.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "owns_core_province": {
           "description": "Returns true if the country owns and has a core on the specified province.",
-          "$ref": "identifiers.json#/definitions/map_provinces"
+          "$ref": "identifiers.json#/definitions/map_province_ids"
         },
         "owns_or_non_sovereign_subject_of": {
           "description": "Returns true, if the country or a subject that is not categorized as \"sovereign\" (e.g. tributary states are excluded) owns the specified province.",

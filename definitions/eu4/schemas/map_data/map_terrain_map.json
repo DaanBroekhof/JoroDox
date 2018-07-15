@@ -1,0 +1,33 @@
+{
+  "$id": "http://jorodox.org/schemas/map_terrain_map.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "color_name": {
+      "type": "string",
+      "enum": [
+        "0,247,255",
+        "103,191,203",
+        "107,214,200",
+        "130,31,8",
+        "17,42,65",
+        "174,147,75",
+        "220,90,55",
+        "255,255,255",
+        "27,124,86",
+        "31,74,112",
+        "6,86,0",
+        "77,130,158",
+        "99,169,206"
+      ]
+    },
+    "data": {
+      "$ref": "special_values.json#/definitions/color_adjacency"
+    }
+  },
+  "required": [
+    "color_name",
+    "data"
+  ]
+}
