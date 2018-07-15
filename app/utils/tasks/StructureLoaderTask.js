@@ -176,10 +176,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           return;
         }
 
-        if (definition.sourceTransform.customFields) {
-          this.getCustomFields(item, definition.sourceTransform.customFields);
-        }
-        item[definition.primaryKey] = item[definition.primaryKey].toString();
+        this.doCommonItemOperations(item, definition, sourceItem.path);
 
         items.push(item);
 
@@ -439,7 +436,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       }
     }
     if (definition.sourceTransform.customFields) {
-      this.getCustomFields(item, definition.sourceTransform.customFields);
+      this.getCustomFields(item, definition.sourceTransform.customFields, filePath);
     }
 
     if (item[definition.primaryKey] !== undefined) {
@@ -519,7 +516,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return result;
   }
 
-  getCustomFields(item, fields) {
+  getCustomFields(item, fields, filePath) {
     _.forOwn(fields, (fieldDef, fieldName) => {
       if (fieldDef.type === 'concat') {
         item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator ? fieldDef.separator : '.');
@@ -527,6 +524,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         item[fieldName] = _.get(item, fieldDef.fields);
       } else if (fieldDef.type === 'splitUnderscore') {
         item[fieldName] = _.get(item, fieldDef.fields).split('_');
+      } else if (fieldDef.type === 'filePath') {
+        item[fieldName] = filePath;
       } else {
         console.warn(`Unknown custom config field \`${fieldDef.type}\`.`, fieldDef);
       }
