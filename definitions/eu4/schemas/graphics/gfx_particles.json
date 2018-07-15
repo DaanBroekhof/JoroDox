@@ -1,0 +1,181 @@
+{
+  "$id": "http://jorodox.org/schemas/gfx_particles.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "comments": {
+      "type": "string"
+    },
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "particle"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "subsystem": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "max_amount": {
+                "type": "number"
+              },
+              "sort": {
+                "type": "string",
+                "enum": ["depth"]
+              },
+              "texture": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "shader": {
+                    "$ref": "identifiers.json#/definitions/pdx_mesh_shaders"
+                  },
+                  "file": {
+                    "$ref": "identifiers.json#/definitions/gfx_particle_textures"
+                  }
+                }
+              },
+              "position": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "x": {"type": "number"},
+                  "y": {"type": "number"},
+                  "z": {"type": "number"}
+                }
+              },
+              "start": {
+                "type": "number"
+              },
+              "duration": {
+                "type": "number"
+              },
+              "life": {
+                "type": "number"
+              },
+              "emission": {
+                "type": "array",
+                "items": {
+                  "$ref": "special_values.json#/definitions/float"
+                }
+              },
+              "velocity": {
+                "$ref": "special_values.json#/definitions/2d_vector"
+              },
+              "velocity_pitch": {
+                "$ref": "special_values.json#/definitions/2d_vector"
+              },
+              "velocity_yaw": {
+                "$ref": "special_values.json#/definitions/2d_vector"
+              },
+              "size": {
+                "type": "array",
+                "items": [
+                  {"type": "string"},
+                  {"$ref": "special_values.json#/definitions/float"}
+                ]
+              },
+              "color": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "r": {"type": "array", "items": {"$ref": "special_values.json#/definitions/integer_string"}},
+                  "g": {"type": "array", "items": {"$ref": "special_values.json#/definitions/integer_string"}},
+                  "b": {"type": "array", "items": {"$ref": "special_values.json#/definitions/integer_string"}},
+                  "alpha": {"type": "array", "items": {"type": "string"}}
+                }
+              },
+              "rotation": {
+                "type": "array",
+                "items": [
+                  {"type": "string"},
+                  {"$ref": "special_values.json#/definitions/integer_string"}
+                ]
+              },
+              "force": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "animation": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "time": {
+                "type": "string",
+                "enum": ["life_abs"]
+              },
+              "start": {
+                "type": "number"
+              },
+              "duration": {
+                "type": "number"
+              },
+              "op": {
+                "type": "string",
+                "enum": ["MUL"]
+              },
+              "minValue": {
+                "type": "number"
+              },
+              "maxValue": {
+                "type": "number"
+              },
+              "curve": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "force": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["planar"]
+              },
+              "name": {
+                "type": "string"
+              },
+              "direction": {
+                "$ref": "special_values.json#/definitions/2d_vector"
+              },
+              "amount": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

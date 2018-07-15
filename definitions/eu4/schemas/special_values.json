@@ -530,6 +530,14 @@
         "$ref": "special_values.json#/definitions/float"
       }
     },
+    "2d_vector": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "special_values.json#/definitions/float"
+      }
+    },
     "float": {
       "type": "string",
       "pattern": "^-?[0-9]+(\\.[0-9]+)?$"

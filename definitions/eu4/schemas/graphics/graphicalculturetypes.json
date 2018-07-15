@@ -1,16 +1,14 @@
 {
-  "$id": "http://jorodox.org/schemas/gfx_model_textures.json",
+  "$id": "http://jorodox.org/schemas/graphicalculturetypes.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "path": {
+    "name": {
       "type": "string"
-    },
-    "data": {
     }
   },
   "required": [
-    "path"
+    "name"
   ]
 }

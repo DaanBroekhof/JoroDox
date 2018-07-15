@@ -1,0 +1,23 @@
+{
+  "$id": "http://jorodox.org/schemas/gfx_flags.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "flag_tag": {
+      "anyOf": [
+        {"$ref": "identifiers.json#/definitions/rebel_types"},
+        {"$ref": "identifiers.json#/definitions/country_tags"}
+      ]
+    },
+    "data": {
+    }
+  },
+  "required": [
+    "path",
+    "flag_tag"
+  ]
+}

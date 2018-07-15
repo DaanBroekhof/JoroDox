@@ -1,0 +1,53 @@
+{
+  "$id": "http://jorodox.org/schemas/pdx_anims.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "pdx_anims.json#/definitions/pdx_anims_object_data"
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ],
+  "definitions": {
+    "pdx_anims_object_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["object"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array"
+        },
+        "depth": {
+          "type": "number"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.*$": {
+              "anyOf": [
+                {"$ref": "pdx_anims.json#/definitions/pdx_anims_object_data"},
+                {
+                  "type": ["array", "string", "number"]
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

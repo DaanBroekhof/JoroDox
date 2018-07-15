@@ -248,6 +248,10 @@
       "idPath": [
         "data",
         "name"
+      ],
+      "removeFields": [
+        "namespace",
+        "nr"
       ]
     },
     "listView": {
@@ -440,6 +444,9 @@
       "idPath": [
         "data",
         "name"
+      ],
+      "removeFields": [
+        "namespace"
       ]
     },
     "listView": {

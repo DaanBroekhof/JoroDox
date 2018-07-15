@@ -1,16 +1,23 @@
 {
-  "$id": "http://jorodox.org/schemas/gfx_model_textures.json",
+  "$id": "http://jorodox.org/schemas/event_pictures.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "name": {
+      "type": "string"
+    },
     "path": {
       "type": "string"
     },
     "data": {
+      "type": "object",
+      "additionalProperties": false
     }
   },
   "required": [
-    "path"
+    "name",
+    "path",
+    "data"
   ]
 }

@@ -310,8 +310,8 @@
     }
   },
   {
-    "id": "interface_assets",
-    "title": "Interface Assets",
+    "id": "interface_pdxmesh_assets",
+    "title": "Interface Pdxmesh Assets",
     "category": "User interface",
     "reader": "StructureLoader",
     "primaryKey": "id",
@@ -329,6 +329,42 @@
       ],
       "types": [
         "pdxmesh"
+      ],
+      "idPath": [
+        "name"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "interface_pdxparticle_assets",
+    "title": "Interface Particle Assets",
+    "category": "User interface",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "interface/assets/",
+      "pathPattern": "interface/assets/*.gfx"
+    },
+    "sourceTransform": {
+      "type": "typesListData",
+      "path": [
+        "data",
+        "data",
+        "objectTypes"
+      ],
+      "types": [
+        "pdxparticle"
       ],
       "idPath": [
         "name"

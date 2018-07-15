@@ -1,0 +1,113 @@
+{
+  "$id": "http://jorodox.org/schemas/gfx_entities.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "comments": {
+      "type": "string"
+    },
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "entity"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "clone": {
+          "$ref": "identifiers.json#/definitions/gfx_entities"
+        },
+        "name": {
+          "type": "string"
+        },
+        "pdxmesh": {
+          "$ref": "identifiers.json#/definitions/interface_pdxmesh_assets"
+        },
+        "scale": {
+          "type": "number"
+        },
+        "version": {
+          "type": "number"
+        },
+        "attach": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "patternProperties": {
+            "^.*$": {
+              "type": "string"
+            }
+          }
+        },
+        "default_state": {
+          "todo": "actualkly both?",
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "animation": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "state": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "animation": {
+                "type": "string"
+              },
+              "event": {
+                "$allowMultiple": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "time": {
+                      "type": "number"
+                    },
+                    "node": {
+                      "type": "string"
+                    },
+                    "particle": {
+                      "$ref": "identifiers.json#/definitions/interface_pdxparticle_assets"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

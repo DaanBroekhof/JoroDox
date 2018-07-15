@@ -350,6 +350,26 @@
           "path"
         ]
       }
+    },
+    "gfx_entities": {
+      "$identifierValue": "gfx_entities",
+      "type": "string"
+    },
+    "interface_pdxmesh_assets": {
+      "$identifierValue": "interface_pdxmesh_assets",
+      "type": "string"
+    },
+    "interface_pdxparticle_assets": {
+      "$identifierValue": "interface_pdxparticle_assets",
+      "type": "string"
+    },
+    "gfx_particles": {
+      "$identifierValue": "gfx_particles",
+      "type": "string"
+    },
+    "gfx_particle_textures": {
+      "$identifierValue": "gfx_particle_textures",
+      "type": "string"
     }
   }
 }

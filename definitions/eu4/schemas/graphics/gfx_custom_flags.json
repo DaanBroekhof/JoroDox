@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/gfx_model_textures.json",
+  "$id": "http://jorodox.org/schemas/gfx_custom_flags.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -8,6 +8,7 @@
       "type": "string"
     },
     "data": {
+
     }
   },
   "required": [
