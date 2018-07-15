@@ -74,7 +74,18 @@ export default class PdxScript {
           propertyScope.data = token;
         }
 
-        if (scope.data[propertyScope.name]) {
+        if (propertyScope.name === null) {
+          // value list style object
+          if (!Array.isArray(scope.value)) {
+            if (scope.value !== null) {
+              scope.value = [scope.value];
+            } else {
+              scope.value = [];
+            }
+          }
+          scope.icon = 'list'; // Should not be here.
+          scope.value.push(propertyScope.value);
+        } else if (scope.data[propertyScope.name]) {
           // Convert key into array if there are multiple keys with the same name
           if (!Array.isArray(scope.data[propertyScope.name]) || !scope.data[propertyScope.name].multipleKeys) {
             scope.data[propertyScope.name] = [scope.data[propertyScope.name]];
