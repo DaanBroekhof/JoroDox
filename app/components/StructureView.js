@@ -141,6 +141,7 @@ class StructureView extends Component {
             project: this.props.project,
             typeDefinition: type,
             taskTitle: 'Validating `' + type.id + '`',
+            useCachedValidator: true
           },
           (progress, total, message) => null,
           (result) => {

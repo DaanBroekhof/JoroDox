@@ -504,25 +504,32 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.project);
     const definition = args.typeDefinition;
 
-    this.progress(0, 1, 'Reloading definitions...');
-    JdxDatabase.loadDefinitions();
+    let ajv = SchemaValidatorTask.cachedAjv;
 
-    let ajv = new Ajv({extendRefs: true});
+    if (!args.useCachedValidator || !ajv) {
+      this.progress(0, 1, 'Reloading definitions...');
+      JdxDatabase.loadDefinitions();
 
-    ajv = this.addMergePropsKeyword(ajv);
-    ajv = this.addMatchPropsKeyword(ajv);
-    ajv = this.addAllowMultipleKeyword(ajv);
-    ajv = this.addIdentifierPropertiesKeyword(ajv);
-    ajv = this.addIdentifierValueKeyword(ajv);
+      ajv = new Ajv({extendRefs: true});
+
+      ajv = this.addMergePropsKeyword(ajv);
+      ajv = this.addMatchPropsKeyword(ajv);
+      ajv = this.addAllowMultipleKeyword(ajv);
+      ajv = this.addIdentifierPropertiesKeyword(ajv);
+      ajv = this.addIdentifierValueKeyword(ajv);
 
 
-    this.progress(0, 1, 'Loading identifier cache...');
-    await this.buildIdentifierCache(args.project);
-    this.progress(1, 1, 'Loading identifier cache...');
+      this.progress(0, 1, 'Loading identifier cache...');
+      await this.buildIdentifierCache(args.project);
+      this.progress(1, 1, 'Loading identifier cache...');
 
-    this.progress(0, 1, 'Loading validator...');
+      this.progress(0, 1, 'Loading validator...');
 
-    JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
+      JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
+
+      SchemaValidatorTask.cachedAjv = ajv;
+    }
+
     const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
 
     if (!validator) {
@@ -532,25 +539,32 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     //this.progress(0, 1, 'Loading validator...');
 
     let items = [];
+    let itemCount = 0;
+
+    this.progress(0, 1, 'Loading data...');
 
     if (args.typeId) {
-      items = await db[definition.id].where({[definition.primaryKey]: args.typeId}).toArray();
+      items = await db[definition.id].where({[definition.primaryKey]: args.typeId});
+      itemCount = 1;
       await db.jdx_errors.where({type: definition.id, typeId: args.typeId}).delete();
     } else {
-      items = await db[definition.id].limit(50000).toArray();
+      items = await db[definition.id];
+      itemCount = (await JdxDatabase.getTypeIdentifiers(args.project, definition.id)).size;
       await db.jdx_errors.where({type: definition.id}).delete();
     }
     this.sendResponse({errorsUpdate: true});
 
 
     let nr = 0;
-    const allTime = Date.now();
-
     const errorPromises = [];
 
+    const errors = [];
+
     let invalidCount = 0;
-    for (const item of items) {
-      this.progress(nr, items.length, `Validating ${items.length} items...`);
+    await items.each((item) => {
+      if (nr % Math.floor(itemCount / 100) === 0) {
+        this.progress(nr, itemCount, `Validating ${itemCount} items...`);
+      }
       const valid = validator(item);
 
       const validErrors = [];
@@ -558,6 +572,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       if (!valid) {
         validator.errors.forEach((error) => {
           if (error.keyword && error.keyword.includes('$mergeProps')) {
+            console.log('Progression '+ nr)
             return;
           }
 
@@ -572,14 +587,16 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             error.message = 'Should be equal to one of: \'' + error.params.allowedValues.join("', '") + "'";
           }
 
-          errorPromises.push(JdxDatabase.addError(args.project, {
+//          console.log(error);
+
+          errors.push({
             message: validator.errors[0].message,
             path: null,
             type: definition.id,
             typeId: item[definition.primaryKey],
             severity: 'error',
             data: validator.errors[0],
-          }));
+          });
         });
 
         if (validErrors.length === 0) {
@@ -587,10 +604,12 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
         }
       }
       nr += 1;
-    }
+    });
+
+    await JdxDatabase.addErrors(args.project, errors, this);
 
     // console.log('Done validating ' + definition.id);
-    this.progress(items.length, items.length, `Validated ${items.length} items...`);
+    this.progress(items.length, items.length, `Validated ${itemCount} items...`);
     // console.log('Validate cos ALL: ' + (Date.now() - allTime) + ' - avg ' + ((Date.now() - allTime) / items.length));
     // console.log('Invalid ' + invalidCount);
 

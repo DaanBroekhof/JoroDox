@@ -7,6 +7,10 @@ const minimatch = require('minimatch');
 
 export default class DbBackgroundTask extends BackgroundTask {
   saveChunked(data, store, chunkNr, chunkSize) {
+    if (chunkSize <= 0) {
+      throw new Error('Invalid chunk size');
+    }
+
     const slice = data.slice(chunkNr * chunkSize, (chunkNr + 1) * chunkSize);
 
     const task = this;

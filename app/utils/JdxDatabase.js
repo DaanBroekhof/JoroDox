@@ -661,6 +661,23 @@ export default class JdxDatabase {
     return db.jdx_errors.add(error);
   }
 
+  static async addErrors(project, errors, task) {
+    const db = await JdxDatabase.get(project);
+
+    errors = errors.map((error) => {
+      if (!error.creationTime) {
+        error.creationTime = new Date();
+      }
+      if (!error.message) {
+        error.message = '- no message -';
+      }
+
+      return error;
+    });
+
+    return task.saveChunked(errors, db.jdx_errors, 0, 500);
+  }
+
   static async getErrors(project) {
     const db = await JdxDatabase.get(project);
     return db.jdx_errors;
