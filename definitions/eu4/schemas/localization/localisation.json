@@ -1,0 +1,37 @@
+{
+  "$id": "http://jorodox.org/schemas/localisation.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "language": {
+      "$ref": "identifiers.json#/definitions/localisation_languages"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "number"
+        },
+        "value": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "data"
+  ]
+}

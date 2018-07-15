@@ -320,8 +320,8 @@
       "$identifierValue": "state_edicts",
       "type": "string"
     },
-    "map_terrain_categories": {
-      "$identifierValue": "map_terrain_categories",
+    "localisation_languages": {
+      "$identifierValue": "localisation_languages",
       "type": "string"
     }
   }

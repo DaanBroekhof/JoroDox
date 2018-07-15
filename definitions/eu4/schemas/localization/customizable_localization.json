@@ -1,0 +1,57 @@
+{
+  "$id": "http://jorodox.org/schemas/customizable_localization.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "$ref": "special_values.json#/definitions/integer_string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["defined_text"]
+    },
+    "category": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "random": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "text": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "localisation_key": {
+                "type": "string"
+              },
+              "trigger": {
+                "anyOf": [
+                  {"$ref": "country_conditions.json#/definitions/country_conditions"},
+                  {"$ref": "province_conditions.json#/definitions/province_conditions"}
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

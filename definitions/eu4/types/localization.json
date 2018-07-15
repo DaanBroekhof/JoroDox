@@ -24,7 +24,10 @@
         "children"
       ],
       "filenamePattern": "/([^/]+).txt",
-      "filenamePatternKey": "category"
+      "filenamePatternKey": "category",
+      "removeFields": [
+        "namespace"
+      ]
     },
     "listView": {
       "pageSize": 100,
