@@ -1,0 +1,78 @@
+{
+  "$id": "http://jorodox.org/schemas/pdx_meshes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "pdx_meshes.json#/definitions/pdx_mesh_object_data"
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ],
+  "definitions": {
+    "pdx_mesh_object_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["object"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array"
+        },
+        "depth": {
+          "type": "number"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "material": {
+              "type": "object",
+              "properties": {
+                "props": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "shader": {
+                      "$ref": "identifiers.json#/definitions/pdx_mesh_shaders"
+                    },
+                    "diff": {
+                      "$ref": "identifiers.json#/definitions/gfx_model_textures_relative"
+                    },
+                    "n": {
+                      "$ref": "identifiers.json#/definitions/gfx_model_textures_relative"
+                    },
+                    "spec": {
+                      "$ref": "identifiers.json#/definitions/gfx_model_textures_relative"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "patternProperties": {
+            "^.*$": {
+              "anyOf": [
+                {"$ref": "pdx_meshes.json#/definitions/pdx_mesh_object_data"},
+                {
+                  "type": ["array", "string", "number"]
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

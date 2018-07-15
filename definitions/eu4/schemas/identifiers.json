@@ -323,6 +323,25 @@
     "localisation_languages": {
       "$identifierValue": "localisation_languages",
       "type": "string"
+    },
+    "pdx_mesh_shaders": {
+      "type": "string"
+    },
+    "gfx_model_textures_relative": {
+      "anyOf": [
+        {
+          "$identifierValue": {
+            "type": "gfx_model_textures",
+            "prefixFileDir": [
+              "path"
+            ]
+          }
+        },
+        {
+          "type": "string",
+          "enum": ["nonormal.dds", "nospec.dds"]
+        }
+      ]
     }
   }
 }

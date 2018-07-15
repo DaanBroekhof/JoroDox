@@ -1,0 +1,14 @@
+{
+  "$id": "http://jorodox.org/schemas/gfx_model_textures.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

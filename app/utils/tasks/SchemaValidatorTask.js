@@ -4,6 +4,7 @@ import JdxDatabase from '../JdxDatabase';
 import DbBackgroundTask from './DbBackgroundTask';
 
 const Ajv = require('ajv');
+const syspath = require('electron').remote.require('path');
 
 /* eslint-disable no-param-reassign, no-continue */
 
@@ -410,23 +411,25 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     ajv.addKeyword('$identifierValue', {
       compile: (schema, parentSchema, it) => {
         let identifierType = schema;
-        let identifierPrefix = null;
-        let identifierPostfix = null;
+        let identifierSchema = {};
 
         if (schema.type) {
           identifierType = schema.type;
-          identifierPrefix = schema.prefix;
-          identifierPostfix = schema.postfix;
+          identifierSchema = schema;
         }
 
         return function v(data, dataPath, object, key) {
           const scopeKeyMatch = identifierType.match(/^<scope_key:(.+)>$/);
 
-          if (identifierPrefix !== null) {
-            data = identifierPrefix + data;
+          if (identifierSchema.prefix) {
+            data = identifierSchema.prefix + data;
           }
-          if (identifierPostfix !== null) {
-            data = data + identifierPostfix;
+          if (identifierSchema.postFix) {
+            data = data + identifierSchema.postFix;
+          }
+          if (identifierSchema.prefixFileDir) {
+            const dir = _.get(ajv._item, identifierSchema.prefixFileDir);
+            data = syspath.dirname(dir ? dir : '') + '/' + data;
           }
 
           if (scopeKeyMatch) {
@@ -556,7 +559,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
 
     let nr = 0;
-    const errorPromises = [];
 
     const errors = [];
 
@@ -565,15 +567,28 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       if (nr % Math.floor(itemCount / 100) === 0) {
         this.progress(nr, itemCount, `Validating ${itemCount} items...`);
       }
+
+      ajv._item = item;
       const valid = validator(item);
 
       const validErrors = [];
 
       if (!valid) {
+        const errorDataPaths = [];
         validator.errors.forEach((error) => {
           if (error.keyword && error.keyword.includes('$mergeProps')) {
             console.log('Progression '+ nr)
             return;
+          }
+
+          // Sub-errors in same data path are not redundant errors
+          if (error.dataPath) {
+            for (const errorDataPath of errorDataPaths) {
+              if (_.startsWith(errorDataPath, error.dataPath)) {
+                return;
+              }
+            }
+            errorDataPaths.push(error.dataPath);
           }
 
           validErrors.push(error);
@@ -587,7 +602,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             error.message = 'Should be equal to one of: \'' + error.params.allowedValues.join("', '") + "'";
           }
 
-//          console.log(error);
+          console.log(error);
 
           errors.push({
             message: validator.errors[0].message,
@@ -606,20 +621,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       nr += 1;
     });
 
-    await JdxDatabase.addErrors(args.project, errors, this);
-
-    // console.log('Done validating ' + definition.id);
-    this.progress(items.length, items.length, `Validated ${itemCount} items...`);
-    // console.log('Validate cos ALL: ' + (Date.now() - allTime) + ' - avg ' + ((Date.now() - allTime) / items.length));
-    // console.log('Invalid ' + invalidCount);
-
-    await Promise.all(errorPromises);
-    if (errorPromises.length > 0) {
+    if (errors.length > 0) {
+      console.log(errors);
+      await JdxDatabase.addErrors(args.project, errors, this);
       this.sendResponse({errorsUpdate: true});
     }
 
-    console.log('All errors added ');
-
+    this.progress(items.length, items.length, `Validated ${itemCount} items...`);
 
     return true;
   }
