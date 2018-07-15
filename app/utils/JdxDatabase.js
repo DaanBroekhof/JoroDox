@@ -289,7 +289,11 @@ export default class JdxDatabase {
           this.updateTypeIdentifiers(project, type);
         }
       }
+
+      return updateByType;
     }
+
+    return {};
   }
 
   static async reloadTypePaths(project, typeId, paths, taskTitle) {

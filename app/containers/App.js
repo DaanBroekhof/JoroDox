@@ -29,6 +29,7 @@ import ErrorPage from '../components/ErrorPage';
 import {incrementVersion} from '../actions/database';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
+import SchemaValidatorTask from "../utils/tasks/SchemaValidatorTask";
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 const jetpack = require('electron').remote.require('fs-jetpack');
@@ -161,11 +162,30 @@ class App extends Component {
       (data) => {
         const names = _(data).filter(x => x.eventType !== 'dirChange').map('filename').uniq().value();
 
-        return JdxDatabase.loadByPaths(this.state.project, names, null, 'Change detected...').then(() => {
+        return JdxDatabase.loadByPaths(this.state.project, names, null, 'Change detected...').then((result) => {
           // this.props.incrementDatabaseVersion();
           this.changeProject({lastGlobalUpdate: new Date()}, true);
           this.props.dispatch(incrementVersion());
-          return this;
+          return result;
+        }).then((updateByType) => {
+          console.log('Bla', updateByType);
+          _.keys(updateByType).forEach((typeId) => {
+            try {
+              SchemaValidatorTask.start(
+                {
+                  project: this.state.project,
+                  typeDefinition: JdxDatabase.getTypeDefinition(this.state.project, typeId),
+                  taskTitle: 'Validating `' + typeId + '`',
+                  useCachedValidator: true
+                },
+                (progress, total, message) => null,
+                (result) => {},
+                (error) => { console.error('Type ' + typeId, error); },
+              );
+            } catch (exception) {
+              console.error('Type ' + typeId, exception);
+            }
+          });
         });
       }
     );
