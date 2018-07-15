@@ -1,0 +1,64 @@
+{
+  "$id": "http://jorodox.org/schemas/combat_result_environment.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "camera_position": {
+          "$ref": "special_values.json#/definitions/3d_position"
+        },
+        "camera_look_at": {
+          "$ref": "special_values.json#/definitions/3d_position"
+        },
+        "fov": {
+          "type": "number"
+        },
+        "near": {
+          "type": "number"
+        },
+        "far": {
+          "type": "number"
+        },
+        "min_zoom": {
+          "type": "number"
+        },
+        "max_zoom": {
+          "type": "number"
+        },
+        "position": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "zoom": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unit_type": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

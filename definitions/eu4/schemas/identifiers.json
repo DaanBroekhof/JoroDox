@@ -342,6 +342,14 @@
           "enum": ["nonormal.dds", "nospec.dds"]
         }
       ]
+    },
+    "pdx_anims_relative": {
+      "$identifierValue": {
+        "type": "pdx_anims",
+        "prefixFileDir": [
+          "path"
+        ]
+      }
     }
   }
 }

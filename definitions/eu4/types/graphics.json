@@ -151,7 +151,15 @@
       "idPath": [
         "data",
         "name"
-      ]
+      ],
+      "removeFields": [
+        "namespace"
+      ],
+      "customFields": {
+        "path": {
+          "type": "filePath"
+        }
+      }
     },
     "listView": {
       "pageSize": 100,
@@ -169,26 +177,24 @@
     "title": "Combat result environment",
     "category": "Graphics",
     "reader": "StructureLoader",
-    "primaryKey": "setting",
+    "primaryKey": "path",
     "sourceType": {
       "id": "pdx_scripts",
       "path": "gfx/combat_result/combat_result_environment.txt"
     },
     "sourceTransform": {
-      "type": "keyValues",
+      "type": "fileData",
       "path": [
         "data",
         "data"
-      ],
-      "keyName": "setting",
-      "valueName": "value"
+      ]
     },
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "Setting",
-          "dataIndex": "setting",
+          "name": "Path",
+          "dataIndex": "path",
           "linkTo": "[self]"
         }
       ]

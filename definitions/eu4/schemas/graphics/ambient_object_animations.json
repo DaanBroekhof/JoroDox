@@ -1,0 +1,40 @@
+{
+  "$id": "http://jorodox.org/schemas/ambient_object_animations.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "nr": {
+      "type": "string"
+    },
+    "comments": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["animation"]
+    },
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "file": {
+          "$ref": "identifiers.json#/definitions/pdx_anims_relative"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}
