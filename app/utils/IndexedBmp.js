@@ -11,9 +11,10 @@ function parse(path) {
   const pixels = [];
   const colorNrs = [];
   let colorNr = 0;
+
   for (let i = 0; i < data.width * data.height; i += 1) {
-    // Color format is 'BGR', color_name is 'RGB'
-    const colorName = data.data[(i * 4) + 2] + ',' + data.data[(i * 4) + 1] + ',' + data.data[i * 4];
+    // Todo: color order can be RGB or BGR - need to fix so it always is RGB
+    const colorName = data.data[i * 4] + ',' + data.data[(i * 4) + 1] + ',' + data.data[(i * 4) + 2];
     if (!indexMap[colorName]) {
       indexMap[colorName] = {
         nr: colorNr,
