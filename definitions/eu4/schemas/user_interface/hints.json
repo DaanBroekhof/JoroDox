@@ -1,0 +1,40 @@
+{
+  "$id": "http://jorodox.org/schemas/hints.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "window": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "allowMultiple": {
+            "type": "string"
+          }
+        },
+        "button": {
+          "allowMultiple": {
+            "type": "string"
+          }
+        },
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

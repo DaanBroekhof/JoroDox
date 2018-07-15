@@ -1,0 +1,62 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_checkboxes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_checkboxes.json#/definitions/checkbox_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "checkbox_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "quadTextureSprite": {
+          "type": "string"
+        },
+        "tooltip": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "tooltipText": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "buttonText": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "delayedTooltipText": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "buttonFont": {
+          "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "Orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        }
+      }
+    }
+  }
+}

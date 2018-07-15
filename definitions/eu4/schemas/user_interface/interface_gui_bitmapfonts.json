@@ -1,0 +1,61 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_bitmapfonts.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "bitmapfont"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "path": {
+          "anyOf": [
+            {"$ref": "identifiers.json#/definitions/gfx_font_images_postfix"},
+            {"$ref": "identifiers.json#/definitions/gfx_font_textures_postfix"}
+          ],
+          "$ref": "identifiers.json#/definitions/gfx_font_definitions_postfix"
+        },
+        "pdxmesh": {
+          "$ref": "identifiers.json#/definitions/interface_pdxmesh_assets"
+        },
+        "color": {
+          "type": "number"
+        },
+        "border_color": {
+          "type": "number"
+        },
+        "effect": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "textcolors": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[A-Z]$": {
+              "$ref": "special_values.json#/definitions/rgb_color"
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

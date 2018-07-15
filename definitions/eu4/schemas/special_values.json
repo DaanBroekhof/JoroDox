@@ -578,6 +578,54 @@
           }
         }
       }
+    },
+    "coordinate_xy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "string_or_zero": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "gui_orientation": {
+      "type": "string",
+      "enum": [
+        "UPPER_LEFT",
+        "CENTER",
+        "LOWER_RIGHT",
+        "UPPER_RIGHT",
+        "LOWER_LEFT",
+        "CENTER_UP",
+        "CENTER_DOWN",
+        "RIGHT",
+        "LEFT",
+        "CENTER_LEFT",
+        "CENTER_RIGHT"
+      ]
+    },
+    "gui_format": {
+      "type": "string",
+      "todo": "center or centre??",
+      "enum": [
+        "left",
+        "centre",
+        "center",
+        "right"
+      ]
     }
   }
 }

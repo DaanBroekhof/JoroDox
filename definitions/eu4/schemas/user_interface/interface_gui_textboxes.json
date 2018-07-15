@@ -1,0 +1,62 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_textboxes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_textboxes.json#/definitions/textbox_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "textbox_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "text": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "font": {
+          "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "format": {
+          "$ref": "special_values.json#/definitions/gui_format"
+        },
+        "maxWidth": {
+          "type": "number"
+        },
+        "maxHeight": {
+          "type": "number"
+        },
+        "textureFile": {
+          "anyOf": [
+            {"type": "number", "enum": [0]},
+            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
+          ]
+        }
+      }
+    }
+  }
+}

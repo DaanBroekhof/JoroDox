@@ -1,0 +1,16 @@
+{
+  "$id": "http://jorodox.org/schemas/gfx_font_textures.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+    }
+  },
+  "required": [
+    "path"
+  ]
+}

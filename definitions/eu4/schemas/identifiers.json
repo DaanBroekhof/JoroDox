@@ -304,6 +304,20 @@
       "$identifierValue": "ai_personalities",
       "type": "string"
     },
+    "interface_images": {
+      "$identifierValue": "gfx_interface_images",
+      "type": "string"
+    },
+    "interface_images_fixpath": {
+      "$identifierValue":  {
+        "type": "gfx_interface_images",
+        "replaceAll": [{
+          "match": "\\\\\\\\",
+          "replace": "/"
+        }]
+      },
+      "type": "string"
+    },
     "interface_images_ideas_eu4": {
       "$identifierValue": {
         "type": "gfx_interface_images",
@@ -369,6 +383,35 @@
     },
     "gfx_particle_textures": {
       "$identifierValue": "gfx_particle_textures",
+      "type": "string"
+    },
+    "sound": {
+      "$identifierValue": "sound",
+      "type": "string"
+    },
+    "gfx_font_images_postfix": {
+      "$identifierValue": {
+        "type": "gfx_font_images",
+        "postfix": ".tga"
+      },
+      "type": "string"
+    },
+    "gfx_font_textures_postfix": {
+      "$identifierValue": {
+        "type": "gfx_font_textures",
+        "postfix": ".dds"
+      },
+      "type": "string"
+    },
+    "gfx_font_definitions_postfix": {
+      "$identifierValue": {
+        "type": "gfx_font_definitions",
+        "postfix": ".fnt"
+      },
+      "type": "string"
+    },
+    "interface_gui_bitmapfonts": {
+      "$identifierValue": "interface_gui_bitmapfonts",
       "type": "string"
     }
   }

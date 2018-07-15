@@ -1,0 +1,81 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_items.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "backGround": {
+          "type": "number"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "textureFile": {
+          "anyOf": [
+            {"type": "number", "enum": [0]},
+            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
+          ]
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "font": {
+          "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
+        },
+        "text": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "moveable": {
+          "type": "number"
+        },
+        "dontRender": {
+          "type": "number"
+        },
+        "horizontalBorder": {
+          "type": "number"
+        },
+        "verticalBorder": {
+          "type": "number"
+        },
+        "fullscreen": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "maxWidth": {
+          "type": "number"
+        },
+        "maxHeight": {
+          "type": "number"
+        },
+        "checkboxType": {
+          "$ref": "interface_gui_items.json#/data"
+        },
+        "instantTextBoxType": {
+          "$ref": "interface_gui_items.json#/data"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

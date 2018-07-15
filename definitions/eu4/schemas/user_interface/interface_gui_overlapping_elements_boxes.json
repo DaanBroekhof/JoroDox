@@ -1,0 +1,53 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_overlapping_elements_boxes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_overlapping_elements_boxes.json#/definitions/overlapping_elements_box_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "overlapping_elements_box_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "spacing": {
+          "type": "number"
+        },
+        "format": {
+          "$ref": "special_values.json#/definitions/gui_format"
+        },
+        "orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "Orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        }
+      }
+    }
+  }
+}

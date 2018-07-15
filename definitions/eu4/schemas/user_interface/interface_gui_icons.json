@@ -1,0 +1,72 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_icons.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_icons.json#/definitions/icon_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "icon_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "quadTextureSprite": {
+          "anyOf": [
+            {"type": "number", "enum": [0]},
+            {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
+          ]
+        },
+        "spriteType": {
+          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "frame": {
+          "type": "number"
+        },
+        "scale": {
+          "type": "number"
+        },
+        "rotation": {
+          "type": "number"
+        },
+        "Orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "allwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "alwaystransparent": {
+          "todo": "all or al??",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "hint_tag": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

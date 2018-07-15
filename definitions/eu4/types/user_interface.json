@@ -310,6 +310,78 @@
     }
   },
   {
+    "id": "interface_gui_windows",
+    "title": "Interface GUI windows",
+    "category": "User interface",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "interface/",
+      "pathPattern": "interface/*.gui"
+    },
+    "sourceTransform": {
+      "type": "typesListData",
+      "path": [
+        "data",
+        "data",
+        "guiTypes"
+      ],
+      "types": [
+        "windowType"
+      ],
+      "idPath": [
+        "name"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "interface_gui_positions",
+    "title": "Interface GUI positions",
+    "category": "User interface",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "interface/",
+      "pathPattern": "interface/*.gui"
+    },
+    "sourceTransform": {
+      "type": "typesListData",
+      "path": [
+        "data",
+        "data",
+        "guiTypes"
+      ],
+      "types": [
+        "positionType"
+      ],
+      "idPath": [
+        "name"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
     "id": "interface_pdxmesh_assets",
     "title": "Interface Pdxmesh Assets",
     "category": "User interface",

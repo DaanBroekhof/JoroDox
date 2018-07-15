@@ -1,0 +1,114 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_buttons.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_buttons.json#/definitions/button_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "button_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "quadTextureSprite": {
+          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+        },
+        "spriteType": {
+          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "tooltip": {
+          "type": "number"
+        },
+        "tooltipText": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "delayedTooltipText": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "font": {
+          "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
+        },
+        "buttonFont": {
+          "anyOf": [
+            {"type": "number", "enum": [0]},
+            {"$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"}
+          ]
+        },
+        "text": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "pdx_tooltip": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "pdx_tooltip_delayed": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "buttonText": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "Orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "hint_tag": {
+          "type": "string"
+        },
+        "shortcut": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "extra_shortcut": {
+          "$ref": "special_values.json#/definitions/string_or_zero"
+        },
+        "alwaystransparent": {
+          "todo": "all or al??",
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "clicksound": {
+          "anyOf": [
+            {"type": "number", "enum": [0]},
+            {"$ref": "identifiers.json#/definitions/sound"}
+          ]
+        },
+        "format": {
+          "$ref": "special_values.json#/definitions/gui_format"
+        },
+        "scale": {
+          "type": "number"
+        },
+        "frame": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

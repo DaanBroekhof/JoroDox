@@ -1,0 +1,38 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_positions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_positions.json#/definitions/position_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "position_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        }
+      }
+    }
+  }
+}
