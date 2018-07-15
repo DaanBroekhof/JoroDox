@@ -51,7 +51,9 @@
       {
         "from": "definitions",
         "to": "definitions",
-        "filter": ["**/*.json"]
+        "filter": [
+          "**/*.json"
+        ]
       }
     ],
     "dmg": {
@@ -222,6 +224,8 @@
     "luaparse": "^0.2.1",
     "material-design-icons-iconfont": "^3.0.3",
     "mime": "^2.2.0",
+    "moo": "^0.4.3",
+    "nearley": "^2.13.0",
     "object-hash": "^1.2.0",
     "project-version": "^1.0.0",
     "prop-types": "^15.6.2",

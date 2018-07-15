@@ -424,8 +424,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           if (identifierSchema.prefix) {
             data = identifierSchema.prefix + data;
           }
-          if (identifierSchema.postFix) {
-            data = data + identifierSchema.postFix;
+          if (identifierSchema.postfix) {
+            data = data + identifierSchema.postfix;
           }
           if (identifierSchema.prefixFileDir) {
             const dir = _.get(ajv._item, identifierSchema.prefixFileDir);
@@ -577,14 +577,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
         const errorDataPaths = [];
         validator.errors.forEach((error) => {
           if (error.keyword && error.keyword.includes('$mergeProps')) {
-            console.log('Progression '+ nr)
             return;
           }
 
           // Sub-errors in same data path are not redundant errors
           if (error.dataPath) {
             for (const errorDataPath of errorDataPaths) {
-              if (_.startsWith(errorDataPath, error.dataPath)) {
+              if (errorDataPath !== error.dataPath && _.startsWith(errorDataPath, error.dataPath)) {
                 return;
               }
             }
@@ -605,12 +604,12 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           console.log(error);
 
           errors.push({
-            message: validator.errors[0].message,
+            message: error.message,
             path: null,
             type: definition.id,
             typeId: item[definition.primaryKey],
             severity: 'error',
-            data: validator.errors[0],
+            data: error,
           });
         });
 
@@ -622,7 +621,6 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     });
 
     if (errors.length > 0) {
-      console.log(errors);
       await JdxDatabase.addErrors(args.project, errors, this);
       this.sendResponse({errorsUpdate: true});
     }
