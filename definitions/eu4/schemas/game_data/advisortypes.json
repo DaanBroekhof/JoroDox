@@ -24,6 +24,7 @@
               "$ref": "special_values.json#/definitions/boolean"
             },
             "chance": {
+              "todo": "Should be last",
               "$ref": "scope_factors.json#/definitions/country_factor"
             },
             "ai_will_do": {

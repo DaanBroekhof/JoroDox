@@ -216,8 +216,17 @@
       "type": "string"
     },
     "rebel_types": {
-      "$identifierValue": "rebel_types",
-      "type": "string"
+      "anyOf": [
+        {
+          "$identifierValue": "rebel_types",
+          "type": "string"
+        },
+        {
+          "description": "Hardcoded 'category' types.",
+          "type": "string",
+          "enum": ["religious_rebels", "nationalist_rebels"]
+        }
+      ]
     },
     "religion_groups": {
       "$identifierValue": "religion_groups",
