@@ -23,6 +23,7 @@
   ],
   "definitions": {
     "position_type": {
+      "$setScope": "guiPositionType",
       "type": "object",
       "additionalProperties": false,
       "properties": {

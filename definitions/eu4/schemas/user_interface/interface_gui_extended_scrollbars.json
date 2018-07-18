@@ -1,0 +1,109 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_extended_scrollbars.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_extended_scrollbars.json#/definitions/extended_scrollbar_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "extended_scrollbar_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "leftbutton": {
+          "type": "string"
+        },
+        "rightbutton": {
+          "type": "string"
+        },
+        "tileSize": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            }
+          }
+        },
+        "size": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            }
+          }
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "priority": {
+          "type": "number"
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "maxValue": {
+          "type": "number"
+        },
+        "minValue": {
+          "type": "number"
+        },
+        "stepSize": {
+          "type": "number"
+        },
+        "startValue": {
+          "type": "number"
+        },
+        "scroll_speed": {
+          "type": "number"
+        },
+        "horizontal": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "slider": {
+          "$ref": "interface_gui_buttons.json#/definitions/button_type"
+        },
+        "track": {
+          "$ref": "interface_gui_buttons.json#/definitions/button_type"
+        },
+        "decreaseButton": {
+          "$ref": "interface_gui_buttons.json#/definitions/button_type"
+        },
+        "increaseButton": {
+          "$ref": "interface_gui_buttons.json#/definitions/button_type"
+        },
+        "guiButtonType": {
+          "$allowMultiple": {
+            "$ref": "interface_gui_buttons.json#/definitions/button_type"
+          }
+        }
+      }
+    }
+  }
+}

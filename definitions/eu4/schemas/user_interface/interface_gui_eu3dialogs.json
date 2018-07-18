@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/interface_gui_windows.json",
+  "$id": "http://jorodox.org/schemas/interface_gui_eu3dialogs.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -14,7 +14,7 @@
       "type": "string"
     },
     "data": {
-      "$ref": "interface_gui_windows.json#/definitions/window_type"
+      "$ref": "interface_gui_eu3dialogs.json#/definitions/eu3dialog_type"
     }
   },
   "required": [
@@ -22,18 +22,13 @@
     "data"
   ],
   "definitions": {
-    "window_type": {
-      "$setScope": "guiWindowType",
+    "eu3dialog_type": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string"
-        },
-        "backGround": {
-          "type": ["number", "string"]
-        },
-        "background": {
+        }, "backGround": {
           "type": ["number", "string"]
         },
         "position": {
@@ -42,84 +37,19 @@
         "size": {
           "$ref": "special_values.json#/definitions/coordinate_xy"
         },
-        "show_position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "hide_position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
-                  },
-                  "min_height": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "$ref": "interface_gui_windows.json#/definitions/window_type"
-              }
-            ]
-          }
-        },
-        "textureFile": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
-          ]
-        },
         "moveable": {
-          "anyOf": [
-            {"type": "string", "enum": [""]},
-            {"type": "number", "min": 0, "max": 1}
-          ]
+          "type": "number"
         },
         "dontRender": {
           "type": "string"
         },
-        "upsound": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/sound"}
-          ]
-        },
-        "downsound": {
-          "anyOf": [
-            {"type": "string", "enum": [""]},
-            {"$ref": "identifiers.json#/definitions/sound"}
-          ]
-        },
         "horizontalBorder": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"type": "string"}
-          ]
+          "type": "string"
         },
         "verticalBorder": {
           "type": "string"
         },
-        "animation_type": {
-          "type": "string",
-          "enum": ["decelerated", "linear"]
-        },
-        "animation_time": {
-          "type": "number"
-        },
-        "priority": {
-          "type": "number"
-        },
-        "fullscreen": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
         "fullScreen": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "click_to_front": {
           "$ref": "special_values.json#/definitions/boolean"
         },
         "guiButtonType": {
@@ -187,9 +117,9 @@
             "$ref": "interface_gui_windows.json#/definitions/window_type"
           }
         },
-        "WindowType": {
+        "shieldtype": {
           "$allowMultiple": {
-            "$ref": "interface_gui_windows.json#/definitions/window_type"
+            "$ref": "interface_gui_eu3dialogs.json#/definitions/shield_type"
           }
         },
         "orientation": {
@@ -197,7 +127,101 @@
         },
         "Orientation": {
           "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "x": {}
+      }
+    },
+    "shield_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        }, "backGround": {
+          "type": ["number", "string"]
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "spriteType": {
+          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
         }
+      }
+    },
+    "bal": {
+      "bla": {
+        "name": {
+          "type": "string"
+        },
+        "backGround": {
+          "type": ["number", "string"]
+        },
+        "background": {
+          "type": ["number", "string"]
+        },
+
+        "show_position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "hide_position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "if_resolution": {
+          "$allowMultiple": {
+            "$mergeProps": [
+              {
+                "properties": {
+                  "max_height": {
+                    "type": "number"
+                  },
+                  "min_height": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "$ref": "interface_gui_eu3dialogs.json#/definitions/eu3dialog_type"
+              }
+            ]
+          }
+        },
+        "textureFile": {
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
+            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
+          ]
+        },
+
+
+        "upsound": {
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
+            {"$ref": "identifiers.json#/definitions/sound"}
+          ]
+        },
+        "downsound": {
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
+            {"$ref": "identifiers.json#/definitions/sound"}
+          ]
+        },
+
+        "animation_type": {
+          "type": "string",
+          "enum": ["decelerated", "linear"]
+        },
+        "animation_time": {
+          "type": "number"
+        },
+        "fullscreen": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+
+        "click_to_front": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+
+
       }
     }
   }

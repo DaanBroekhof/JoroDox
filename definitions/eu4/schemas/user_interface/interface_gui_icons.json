@@ -31,7 +31,13 @@
         },
         "quadTextureSprite": {
           "anyOf": [
-            {"type": "number", "enum": [0]},
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
+            {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
+          ]
+        },
+        "buttonMesh": {
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
             {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
           ]
         },
@@ -63,8 +69,36 @@
           "todo": "all or al??",
           "$ref": "special_values.json#/definitions/boolean"
         },
+        "tooltip": {
+          "type": "string"
+        },
+        "tooltipText": {
+          "type": "string"
+        },
+        "delayedTooltipText": {
+          "type": "string"
+        },
         "hint_tag": {
           "type": "string"
+        },
+        "if_resolution": {
+          "$allowMultiple": {
+            "$mergeProps": [
+              {
+                "properties": {
+                  "max_height": {
+                    "type": "number"
+                  },
+                  "min_height": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "$ref": "interface_gui_icons.json#/definitions/icon_type"
+              }
+            ]
+          }
         }
       }
     }

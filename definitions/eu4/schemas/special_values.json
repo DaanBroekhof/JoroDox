@@ -591,13 +591,17 @@
         }
       }
     },
-    "string_or_zero": {
+    "empty_string_or_zero": {
       "anyOf": [
         {
-          "type": "string"
+          "type": "string",
+          "enum": [""]
         },
         {
-          "type": "number"
+          "type": "number",
+          "min": 0,
+          "max": 0
+
         }
       ]
     },
@@ -615,6 +619,22 @@
         "LEFT",
         "CENTER_LEFT",
         "CENTER_RIGHT"
+      ]
+    },
+    "gui_orientation_lowercase": {
+      "type": "string",
+      "enum": [
+        "upper_left",
+        "center",
+        "lower_right",
+        "upper_right",
+        "lower_left",
+        "center_up",
+        "center_down",
+        "right",
+        "left",
+        "center_left",
+        "center_right"
       ]
     },
     "gui_format": {

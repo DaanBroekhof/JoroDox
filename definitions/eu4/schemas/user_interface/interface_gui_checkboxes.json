@@ -33,22 +33,50 @@
           "type": "string"
         },
         "tooltip": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "tooltipText": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "buttonText": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "delayedTooltipText": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "buttonFont": {
           "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
         },
         "position": {
           "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "pdx_tooltip": {
+          "type": "string"
+        },
+        "pdx_tooltip_delayed": {
+          "type": "string"
+        },
+        "if_resolution": {
+          "$allowMultiple": {
+            "$mergeProps": [
+              {
+                "properties": {
+                  "max_height": {
+                    "type": "number"
+                  },
+                  "min_height": {
+                    "type": "number"
+                  }
+                }
+              },
+              {
+                "$ref": "interface_gui_checkboxes.json#/definitions/checkbox_type"
+              }
+            ]
+          }
+        },
+        "shortcut": {
+          "type": "string"
         },
         "Orientation": {
           "$ref": "special_values.json#/definitions/gui_orientation"

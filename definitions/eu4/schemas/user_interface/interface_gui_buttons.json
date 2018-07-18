@@ -29,8 +29,31 @@
         "name": {
           "type": "string"
         },
+        "parent": {
+          "type": "string"
+        },
         "quadTextureSprite": {
-          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+          "anyOf": [
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
+            {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
+          ]
+        },
+        "if_resolution": {
+          "$allowMultiple": {
+            "$mergeProps": [
+              {
+                "properties": {
+                  "max_height": {
+                    "type": "number"
+                  },
+                  "min_height": {
+                    "type": "number"
+                  }
+                }
+              }  ,
+              {"$ref": "interface_gui_buttons.json#/definitions/button_type"}
+            ]
+          }
         },
         "spriteType": {
           "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
@@ -45,34 +68,34 @@
           "$ref": "special_values.json#/definitions/coordinate_xy"
         },
         "tooltip": {
-          "type": "number"
+          "type": "string"
         },
         "tooltipText": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "delayedTooltipText": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "font": {
           "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
         },
         "buttonFont": {
           "anyOf": [
-            {"type": "number", "enum": [0]},
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
             {"$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"}
           ]
         },
         "text": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "pdx_tooltip": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "pdx_tooltip_delayed": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "buttonText": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": ["string", "number"]
         },
         "Orientation": {
           "$ref": "special_values.json#/definitions/gui_orientation"
@@ -84,10 +107,10 @@
           "type": "string"
         },
         "shortcut": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": ["string", "number"]
         },
         "extra_shortcut": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": "string"
         },
         "alwaystransparent": {
           "todo": "all or al??",
@@ -95,7 +118,7 @@
         },
         "clicksound": {
           "anyOf": [
-            {"type": "number", "enum": [0]},
+            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
             {"$ref": "identifiers.json#/definitions/sound"}
           ]
         },

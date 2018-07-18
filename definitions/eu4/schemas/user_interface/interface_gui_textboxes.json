@@ -30,7 +30,7 @@
           "type": "string"
         },
         "text": {
-          "$ref": "special_values.json#/definitions/string_or_zero"
+          "type": ["string", "number"]
         },
         "font": {
           "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
@@ -52,9 +52,15 @@
         },
         "textureFile": {
           "anyOf": [
-            {"type": "number", "enum": [0]},
+            {"type": "string", "enum": [""]},
             {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
           ]
+        },
+        "orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
+        },
+        "Orientation": {
+          "$ref": "special_values.json#/definitions/gui_orientation"
         }
       }
     }

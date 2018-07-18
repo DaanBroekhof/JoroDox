@@ -160,7 +160,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             v.errors = validatorPrep().errors;
             if (v.errors) {
               v.errors = v.errors.map(err => {
-                err.dataPath = dataPath + '.' + err.dataPath;
+                err.dataPath = dataPath + err.dataPath;
 
                 return err;
               });
@@ -484,6 +484,26 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     return ajv;
   }
 
+  addScopeReferenceKeywords(ajv) {
+    ajv._scopes = {};
+    ajv.addKeyword('$setScope', {
+      compile: (schema, parentSchema, it) => {
+
+        const itAtComp = it.util.copy(it);
+        itAtComp.bla = it.util.copy(it.dataPathArr)
+
+        return function v(data, dataPath, object, key, rootData) {
+          ajv._scopes[dataPath] = schema;
+          console.log(schema, dataPath, it, parentSchema, itAtComp);
+
+          return true;
+        };
+      }
+    });
+
+    return ajv;
+  }
+
   async buildIdentifierCache(project) {
     if (!this.identifierCache) {
       this.identifierCache = await JdxDatabase.getAllIdentifiers(project);
@@ -518,13 +538,19 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
       this.progress(0, 1, 'Reloading definitions...');
       JdxDatabase.loadDefinitions();
 
-      ajv = new Ajv({extendRefs: true});
+      ajv = new Ajv({
+        extendRefs: true,
+        // jsonPointers: true,
+        // inlineRefs: false,
+        // verbose: true,
+      });
 
       ajv = this.addMergePropsKeyword(ajv);
       ajv = this.addMatchPropsKeyword(ajv);
       ajv = this.addAllowMultipleKeyword(ajv);
       ajv = this.addIdentifierPropertiesKeyword(ajv);
       ajv = this.addIdentifierValueKeyword(ajv);
+      // ajv = this.addScopeReferenceKeywords(ajv);
 
 
       this.progress(0, 1, 'Loading identifier cache...');
@@ -580,6 +606,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
       if (!valid) {
         const errorDataPaths = [];
+        const isAnyOf = validator.errors.some((x) => x.keyword === 'anyOf');
         validator.errors.forEach((error) => {
           if (error.keyword && error.keyword.includes('$mergeProps')) {
             return;
@@ -606,7 +633,9 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             error.message = 'Should be equal to one of: \'' + error.params.allowedValues.join("', '") + "'";
           }
 
-          console.log(error);
+          if (isAnyOf && error.keyword !== 'anyOf') {
+            error.message = '[Any of] ' + error.message;
+          }
 
           errors.push({
             message: error.message,

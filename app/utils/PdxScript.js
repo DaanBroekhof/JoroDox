@@ -64,7 +64,7 @@ export default class PdxScript {
           this.readObject(propertyScope);
         } else {
           // Convert numeric values
-          if (!isNaN(token)) {
+          if (!isNaN(token) && token !== '') {
             token = +token;
           }
 

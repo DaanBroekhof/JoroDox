@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/interface_gui_listboxes.json",
+  "$id": "http://jorodox.org/schemas/interface_gui_smooth_listboxes.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -14,7 +14,7 @@
       "type": "string"
     },
     "data": {
-      "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
+      "$ref": "interface_gui_smooth_listboxes.json#/definitions/smooth_listbox_type"
     }
   },
   "required": [
@@ -22,7 +22,7 @@
     "data"
   ],
   "definitions": {
-    "listbox_type": {
+    "smooth_listbox_type": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -42,9 +42,6 @@
           "type": "number"
         },
         "priority": {
-          "type": "number"
-        },
-        "step": {
           "type": "number"
         },
         "size": {
@@ -77,25 +74,6 @@
         "alwaystransparent": {
           "todo": "all or al??",
           "$ref": "special_values.json#/definitions/boolean"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
-                  },
-                  "min_height": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
-              }
-            ]
-          }
         }
       }
     }
