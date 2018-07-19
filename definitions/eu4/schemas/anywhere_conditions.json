@@ -128,7 +128,16 @@
           "description": "If the tutorial is active.",
           "$ref": "special_values.json#/definitions/boolean"
         },
-
+        "num_of_centers_of_reformation": {
+          "todo": "Add to wiki",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "religion": {"$ref": "identifiers.json#/definitions/religions"},
+            "count": {"type": "number"}
+          },
+          "required": ["religion", "count"]
+        },
 
         "allows_female_emperor": {
           "description": "Returns true if females can become emperor.",
