@@ -132,6 +132,9 @@
             "moveable": {
               "type": "string"
             },
+            "movable": {
+              "type": "string"
+            },
             "dontRender": {
               "type": "string"
             },

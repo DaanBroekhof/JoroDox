@@ -79,10 +79,10 @@
             "textureFile": {
               "anyOf": [
                 {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
                 },
                 {
-                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
                 }
               ]
             },
