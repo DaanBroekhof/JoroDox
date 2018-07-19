@@ -23,68 +23,67 @@
   ],
   "definitions": {
     "checkbox_type": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
-        "quadTextureSprite": {
-          "type": "string"
-        },
-        "tooltip": {
-          "type": "string"
-        },
-        "tooltipText": {
-          "type": "string"
-        },
-        "buttonText": {
-          "type": "string"
-        },
-        "delayedTooltipText": {
-          "type": "string"
-        },
-        "buttonFont": {
-          "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
-        },
-        "position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "pdx_tooltip": {
-          "type": "string"
-        },
-        "pdx_tooltip_delayed": {
-          "type": "string"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
+        {
+          "properties": {
+            "quadTextureSprite": {
+              "type": "string"
+            },
+            "tooltip": {
+              "type": "string"
+            },
+            "tooltipText": {
+              "type": "string"
+            },
+            "buttonText": {
+              "type": "string"
+            },
+            "delayedTooltipText": {
+              "type": "string"
+            },
+            "buttonFont": {
+              "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "if_resolution": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "max_height": {
+                        "type": "number"
+                      },
+                      "min_height": {
+                        "type": "number"
+                      }
+                    }
                   },
-                  "min_height": {
-                    "type": "number"
+                  {
+                    "$ref": "interface_gui_checkboxes.json#/definitions/checkbox_type"
                   }
-                }
-              },
-              {
-                "$ref": "interface_gui_checkboxes.json#/definitions/checkbox_type"
+                ]
               }
-            ]
+            },
+            "shortcut": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "Orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            }
           }
-        },
-        "shortcut": {
-          "type": "string"
-        },
-        "Orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
         }
-      }
+      ]
     }
   }
 }

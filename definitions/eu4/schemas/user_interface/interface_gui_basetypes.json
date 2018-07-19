@@ -1,0 +1,27 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_basetypes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "base_type": {
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "dontRender": {
+          "type": "string"
+        },
+        "pdx_tooltip": {
+          "type": "string"
+        },
+        "pdx_tooltip_delayed": {
+          "type": "string"
+        },
+        "tint": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

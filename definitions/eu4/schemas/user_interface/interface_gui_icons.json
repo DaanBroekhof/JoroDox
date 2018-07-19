@@ -23,84 +23,94 @@
   ],
   "definitions": {
     "icon_type": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
-        "quadTextureSprite": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
-          ]
-        },
-        "buttonMesh": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
-          ]
-        },
-        "spriteType": {
-          "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
-        },
-        "position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "frame": {
-          "type": "number"
-        },
-        "scale": {
-          "type": "number"
-        },
-        "rotation": {
-          "type": "number"
-        },
-        "Orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "allwaystransparent": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "alwaystransparent": {
-          "todo": "all or al??",
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "tooltip": {
-          "type": "string"
-        },
-        "tooltipText": {
-          "type": "string"
-        },
-        "delayedTooltipText": {
-          "type": "string"
-        },
-        "hint_tag": {
-          "type": "string"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
-                  },
-                  "min_height": {
-                    "type": "number"
-                  }
+        {
+          "properties": {
+             "quadTextureSprite": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
                 }
-              },
-              {
-                "$ref": "interface_gui_icons.json#/definitions/icon_type"
+              ]
+            },
+            "buttonMesh": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+                }
+              ]
+            },
+            "spriteType": {
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "frame": {
+              "type": "number"
+            },
+            "scale": {
+              "type": "number"
+            },
+            "rotation": {
+              "type": "number"
+            },
+            "Orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "allwaystransparent": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "alwaystransparent": {
+              "todo": "all or al??",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "tooltip": {
+              "type": "string"
+            },
+            "tooltipText": {
+              "type": "string"
+            },
+            "delayedTooltipText": {
+              "type": "string"
+            },
+            "hint_tag": {
+              "type": "string"
+            },
+            "if_resolution": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "max_height": {
+                        "type": "number"
+                      },
+                      "min_height": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "interface_gui_icons.json#/definitions/icon_type"
+                  }
+                ]
               }
-            ]
+            }
           }
         }
-      }
+      ]
     }
   }
 }

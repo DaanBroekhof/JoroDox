@@ -4,7 +4,13 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+    }
   },
   "required": [
+    "path"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "$id": "http://jorodox.org/schemas/interface_gui_positions.json",
+  "$id": "http://jorodox.org/schemas/interface_gui_curvegraphs.json",
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "additionalProperties": false,
@@ -14,7 +14,7 @@
       "type": "string"
     },
     "data": {
-      "$ref": "interface_gui_positions.json#/definitions/position_type"
+      "$ref": "interface_gui_curvegraphs.json#/definitions/curvegraph_type"
     }
   },
   "required": [
@@ -22,15 +22,21 @@
     "data"
   ],
   "definitions": {
-    "position_type": {
+    "curvegraph_type": {
       "$mergeProps": [
         {
           "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
         {
           "properties": {
-             "position": {
+            "position": {
               "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "size": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "spriteType": {
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
             }
           }
         }

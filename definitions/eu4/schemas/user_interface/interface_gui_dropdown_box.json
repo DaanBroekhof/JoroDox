@@ -1,0 +1,92 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_dropdown_boxes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_dropdown_boxes.json#/definitions/dropdown_box_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "dropdown_box_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "quadTextureSprite": {
+              "anyOf": [
+                {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
+                {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
+              ]
+            }
+          }
+        },
+        "position": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "size": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "width": {
+              "type": ["number", "string"]
+            },
+            "height": {
+              "type": ["number", "string"]
+            }
+          }
+        },
+        "margin": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "top": {
+              "type": "number"
+            },
+            "left": {
+              "type": "number"
+            },
+            "bottom": {
+              "type": "number"
+            },
+            "right": {
+              "type": "number"
+            }
+          }
+        },
+        "slotsize": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "width": {
+              "type": ["number", "string"]
+            },
+            "height": {
+              "type": ["number", "string"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

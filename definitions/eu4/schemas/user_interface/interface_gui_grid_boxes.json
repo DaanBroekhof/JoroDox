@@ -1,0 +1,134 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_grid_boxes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "$ref": "interface_gui_grid_boxes.json#/definitions/grid_box_type"
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ],
+  "definitions": {
+    "grid_box_type": {
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
+        },
+        {
+          "properties": {
+            "background": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "quadTextureSprite": {
+                  "anyOf": [
+                    {
+                      "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                    },
+                    {
+                      "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+                    }
+                  ]
+                }
+              }
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "size": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "width": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                },
+                "height": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                }
+              }
+            },
+            "margin": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "top": {
+                  "type": "number"
+                },
+                "left": {
+                  "type": "number"
+                },
+                "bottom": {
+                  "type": "number"
+                },
+                "right": {
+                  "type": "number"
+                }
+              }
+            },
+            "slotsize": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "width": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                },
+                "height": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                }
+              }
+            },
+            "max_slots": {
+              "type": "number"
+            },
+            "max_slots_horizontal": {
+              "type": "number"
+            },
+            "max_slots_vertical": {
+              "type": "number"
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "add_horizontal": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "padding": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "format": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

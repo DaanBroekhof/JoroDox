@@ -97,30 +97,5 @@
   "required": [
     "path",
     "data"
-  ],
-  "definitions": {
-    "if_resolution": {
-      "$allowMultiple": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "max_height": {
-            "type": "number"
-          },
-          "min_height": {
-            "type": "number"
-          },
-          "position": {
-            "$ref": "special_values.json#/definitions/coordinate_xy"
-          },
-          "show_position": {
-            "$ref": "special_values.json#/definitions/coordinate_xy"
-          },
-          "hide_position": {
-            "$ref": "special_values.json#/definitions/coordinate_xy"
-          }
-        }
-      }
-    }
-  }
+  ]
 }

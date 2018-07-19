@@ -23,81 +23,89 @@
   ],
   "definitions": {
     "listbox_type": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
-        "backGround": {
-          "type": ["number", "string"]
-        },
-        "background": {
-          "type": ["number", "string"]
-        },
-        "horizontal": {
-          "type": "number"
-        },
-        "spacing": {
-          "type": "number"
-        },
-        "priority": {
-          "type": "number"
-        },
-        "step": {
-          "type": "number"
-        },
-        "size": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "offset": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "borderSize": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "scrollbartype": {
-          "type": "string"
-        },
-        "scrollbar_side": {
-          "type": "string"
-        },
-        "orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "Orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "allwaystransparent": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "alwaystransparent": {
-          "todo": "all or al??",
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
+        {
+          "properties": {
+            "backGround": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "background": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "horizontal": {
+              "type": "number"
+            },
+            "spacing": {
+              "type": "number"
+            },
+            "priority": {
+              "type": "number"
+            },
+            "step": {
+              "type": "number"
+            },
+            "size": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "offset": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "borderSize": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "scrollbartype": {
+              "type": "string"
+            },
+            "scrollbar_side": {
+              "type": "string"
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "Orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "allwaystransparent": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "alwaystransparent": {
+              "todo": "all or al??",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "if_resolution": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "max_height": {
+                        "type": "number"
+                      },
+                      "min_height": {
+                        "type": "number"
+                      }
+                    }
                   },
-                  "min_height": {
-                    "type": "number"
+                  {
+                    "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
                   }
-                }
-              },
-              {
-                "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
+                ]
               }
-            ]
+            }
           }
         }
-      }
+      ]
     }
   }
 }

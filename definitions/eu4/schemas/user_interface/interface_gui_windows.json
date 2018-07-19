@@ -23,182 +23,242 @@
   ],
   "definitions": {
     "window_type": {
-      "$setScope": "guiWindowType",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
-        "backGround": {
-          "type": ["number", "string"]
-        },
-        "background": {
-          "type": ["number", "string"]
-        },
-        "position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "size": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "show_position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "hide_position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
+        {
+          "properties": {
+            "backGround": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "background": {
+              "type": [
+                "number",
+                "string"
+              ]
+            },
+            "parent": {
+              "type": "string"
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "size": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "show_position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "hide_position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "if_resolution": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "max_height": {
+                        "type": "number"
+                      },
+                      "min_height": {
+                        "type": "number"
+                      }
+                    }
                   },
-                  "min_height": {
-                    "type": "number"
+                  {
+                    "$ref": "interface_gui_windows.json#/definitions/window_type"
                   }
+                ]
+              }
+            },
+            "textureFile": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
                 }
-              },
-              {
+              ]
+            },
+            "moveable": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    ""
+                  ]
+                },
+                {
+                  "type": "number",
+                  "min": 0,
+                  "max": 1
+                }
+              ]
+            },
+            "upsound": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/sound"
+                }
+              ]
+            },
+            "downsound": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    ""
+                  ]
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/sound"
+                }
+              ]
+            },
+            "horizontalBorder": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "verticalBorder": {
+              "type": "string"
+            },
+            "verticalScrollbar": {
+              "type": "string"
+            },
+            "horizontalScrollbar": {
+              "type": "string"
+            },
+            "animation_type": {
+              "type": "string",
+              "enum": [
+                "decelerated",
+                "linear"
+              ]
+            },
+            "animation_time": {
+              "type": "number"
+            },
+            "priority": {
+              "type": "number"
+            },
+            "fullscreen": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "fullScreen": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "click_to_front": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "Orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+
+            "guiButtonType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_buttons.json#/definitions/button_type"
+              }
+            },
+            "checkboxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_checkboxes.json#/definitions/checkbox_type"
+              }
+            },
+            "textBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_textboxes.json#/definitions/textbox_type"
+              }
+            },
+            "instantTextBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_instant_textboxes.json#/definitions/instant_textbox_type"
+              }
+            },
+            "iconType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_icons.json#/definitions/icon_type"
+              }
+            },
+            "positionType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_positions.json#/definitions/position_type"
+              }
+            },
+            "listboxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
+              }
+            },
+            "smoothListboxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_smooth_listboxes.json#/definitions/smooth_listbox_type"
+              }
+            },
+            "listBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
+              }
+            },
+            "scrollbarType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_scrollbars.json#/definitions/scrollbar_type"
+              }
+            },
+            "editBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_editboxes.json#/definitions/editbox_type"
+              }
+            },
+            "OverlappingElementsBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_overlapping_elements_boxes.json#/definitions/overlapping_elements_box_type"
+              }
+            },
+            "gridBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_grid_boxes.json#/definitions/grid_box_type"
+              }
+            },
+            "dropDownBoxType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_dropdown_boxes.json#/definitions/dropdown_box_type"
+              }
+            },
+            "curveGraphType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_curvegraphs.json#/definitions/curvegraph_type"
+              }
+            },
+            "windowType": {
+              "$allowMultiple": {
                 "$ref": "interface_gui_windows.json#/definitions/window_type"
               }
-            ]
+            },
+            "WindowType": {
+              "$allowMultiple": {
+                "$ref": "interface_gui_windows.json#/definitions/window_type"
+              }
+            }
           }
-        },
-        "textureFile": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
-          ]
-        },
-        "moveable": {
-          "anyOf": [
-            {"type": "string", "enum": [""]},
-            {"type": "number", "min": 0, "max": 1}
-          ]
-        },
-        "dontRender": {
-          "type": "string"
-        },
-        "upsound": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/sound"}
-          ]
-        },
-        "downsound": {
-          "anyOf": [
-            {"type": "string", "enum": [""]},
-            {"$ref": "identifiers.json#/definitions/sound"}
-          ]
-        },
-        "horizontalBorder": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"type": "string"}
-          ]
-        },
-        "verticalBorder": {
-          "type": "string"
-        },
-        "animation_type": {
-          "type": "string",
-          "enum": ["decelerated", "linear"]
-        },
-        "animation_time": {
-          "type": "number"
-        },
-        "priority": {
-          "type": "number"
-        },
-        "fullscreen": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "fullScreen": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "click_to_front": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "guiButtonType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_buttons.json#/definitions/button_type"
-          }
-        },
-        "checkboxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_checkboxes.json#/definitions/checkbox_type"
-          }
-        },
-        "textBoxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_textboxes.json#/definitions/textbox_type"
-          }
-        },
-        "instantTextBoxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_instant_textboxes.json#/definitions/instant_textbox_type"
-          }
-        },
-        "iconType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_icons.json#/definitions/icon_type"
-          }
-        },
-        "positionType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_positions.json#/definitions/position_type"
-          }
-        },
-        "listboxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
-          }
-        },
-        "smoothListboxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_smooth_listboxes.json#/definitions/smooth_listbox_type"
-          }
-        },
-        "listBoxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_listboxes.json#/definitions/listbox_type"
-          }
-        },
-        "scrollbarType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_scrollbars.json#/definitions/scrollbar_type"
-          }
-        },
-        "editBoxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_editboxes.json#/definitions/editbox_type"
-          }
-        },
-        "OverlappingElementsBoxType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_overlapping_elements_boxes.json#/definitions/overlapping_elements_box_type"
-          }
-        },
-        "windowType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_windows.json#/definitions/window_type"
-          }
-        },
-        "WindowType": {
-          "$allowMultiple": {
-            "$ref": "interface_gui_windows.json#/definitions/window_type"
-          }
-        },
-        "orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "Orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
         }
-      }
+      ]
     }
   }
 }

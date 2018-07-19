@@ -23,46 +23,58 @@
   ],
   "definitions": {
     "textbox_type": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
-        "text": {
-          "type": ["string", "number"]
-        },
-        "font": {
-          "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
-        },
-        "position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "borderSize": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "format": {
-          "$ref": "special_values.json#/definitions/gui_format"
-        },
-        "maxWidth": {
-          "type": "number"
-        },
-        "maxHeight": {
-          "type": "number"
-        },
-        "textureFile": {
-          "anyOf": [
-            {"type": "string", "enum": [""]},
-            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
-          ]
-        },
-        "orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "Orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
+        {
+          "properties": {
+            "text": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "font": {
+              "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "borderSize": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "format": {
+              "$ref": "special_values.json#/definitions/gui_format"
+            },
+            "maxWidth": {
+              "type": "number"
+            },
+            "maxHeight": {
+              "type": "number"
+            },
+            "textureFile": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    ""
+                  ]
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
+                }
+              ]
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "Orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            }
+          }
         }
-      }
+      ]
     }
   }
 }

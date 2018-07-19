@@ -23,107 +23,124 @@
   ],
   "definitions": {
     "instant_textbox_type": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string"
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_basetypes.json#/definitions/base_type"
         },
-        "text": {
-          "type": ["string", "number"]
-        },
-        "font": {
-          "todo": "mnultiple allowed?",
-          "$allowMultiple": {
-            "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
-          }
-        },
-        "position": {
-          "$ref": "special_values.json#/definitions/coordinate_xy"
-        },
-        "borderSize": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "special_values.json#/definitions/coordinate_xy"}
-          ]
-        },
-        "bordersize": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "special_values.json#/definitions/coordinate_xy"}
-          ]
-        },
-        "maxWidth": {
-          "type": "number"
-        },
-        "maxwidth": {
-          "type": "number"
-        },
-        "maxHeight": {
-          "type": "number"
-        },
-        "maxheight": {
-          "type": "number"
-        },
-        "textureFile": {
-          "anyOf": [
-            {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-            {"$ref": "identifiers.json#/definitions/interface_images_fixpath"}
-          ]
-        },
-        "format": {
-          "$ref": "special_values.json#/definitions/gui_format"
-        },
-        "allwaystransparent": {
-          "todo": "all or al??",
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "alwaystransparent": {
-          "todo": "all or al??",
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "alwaysTransparent": {
-          "todo": "all or al??",
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "fixedsize": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "truncate": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "Orientation": {
-          "$ref": "special_values.json#/definitions/gui_orientation"
-        },
-        "hint_tag": {
-          "type": "string"
-        },
-        "scrollbartype": {
-          "type": "string"
-        },
-        "if_resolution": {
-          "$allowMultiple": {
-            "$mergeProps": [
-              {
-                "properties": {
-                  "max_height": {
-                    "type": "number"
-                  },
-                  "min_height": {
-                    "type": "number"
-                  }
-                }
-              },
-              {
-                "$ref": "interface_gui_instant_textboxes.json#/definitions/instant_textbox_type"
+        {
+          "properties": {
+            "text": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "font": {
+              "todo": "mnultiple allowed?",
+              "$allowMultiple": {
+                "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
               }
-            ]
+            },
+            "position": {
+              "$ref": "special_values.json#/definitions/coordinate_xy"
+            },
+            "borderSize": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "special_values.json#/definitions/coordinate_xy"
+                }
+              ]
+            },
+            "bordersize": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "special_values.json#/definitions/coordinate_xy"
+                }
+              ]
+            },
+            "maxWidth": {
+              "type": "number"
+            },
+            "maxwidth": {
+              "type": "number"
+            },
+            "maxHeight": {
+              "type": "number"
+            },
+            "maxheight": {
+              "type": "number"
+            },
+            "textureFile": {
+              "anyOf": [
+                {
+                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
+                },
+                {
+                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
+                }
+              ]
+            },
+            "format": {
+              "$ref": "special_values.json#/definitions/gui_format"
+            },
+            "allwaystransparent": {
+              "todo": "all or al??",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "alwaystransparent": {
+              "todo": "all or al??",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "alwaysTransparent": {
+              "todo": "all or al??",
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "fixedsize": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "truncate": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "Orientation": {
+              "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "hint_tag": {
+              "type": "string"
+            },
+            "scrollbartype": {
+              "type": "string"
+            },
+            "if_resolution": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "max_height": {
+                        "type": "number"
+                      },
+                      "min_height": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "interface_gui_instant_textboxes.json#/definitions/instant_textbox_type"
+                  }
+                ]
+              }
+            }
           }
         }
-      }
+      ]
     }
   }
 }
