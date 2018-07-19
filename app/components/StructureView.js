@@ -132,7 +132,7 @@ class StructureView extends Component {
       .filter(x => x.reader === 'StructureLoader')
       .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
 
-    await JdxDatabase.deleteAllErrors(this.props.project);
+    await JdxDatabase.deleteErrorsByTypes(this.props.project, types);
 
     for (const type of types) {
       try {

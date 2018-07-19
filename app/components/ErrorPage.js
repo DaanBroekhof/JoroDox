@@ -48,13 +48,15 @@ class ErrorPage extends Component {
     }
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
       // reload
-      this.loadErrors(nextProps.project, nextProps.type, nextProps.typeId);
+      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
     } else if (nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.loadErrors(nextProps.project, nextProps.type, nextProps.typeId);
+      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
     } else if (nextProps.type !== this.props.type) {
-      this.loadErrors(nextProps.project, nextProps.type, nextProps.typeId);
+      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
     } else if (nextProps.typeId !== this.props.typeId) {
-      this.loadErrors(nextProps.project, nextProps.type, nextProps.typeId);
+      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
+    } else if (nextProps.category !== this.props.category) {
+      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
     }
   }
 
@@ -63,7 +65,7 @@ class ErrorPage extends Component {
   }
 
 
-  async loadErrors(project, type, typeId) {
+  async loadErrors(project, category, type, typeId) {
     if (project === undefined) {
       project = this.props.project;
     }
@@ -73,6 +75,9 @@ class ErrorPage extends Component {
     if (typeId === undefined) {
       typeId = this.props.typeId;
     }
+    if (category === undefined) {
+      category = this.props.category;
+    }
 
     if (this.state.filterByView && type) {
       let errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(10000).toArray();
@@ -80,12 +85,21 @@ class ErrorPage extends Component {
 
       const errorTotal = errors.length;
       return this.setState({errors, errorTotal});
-    } else {
-      const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(1000).toArray();
-      const errorTotal = await (await JdxDatabase.getErrors(project)).count();
+    }
+    if (this.state.filterByView && category) {
+      const typeIds = this.state.definition.types.filter(x => x.category === category || (!x.category && category === "Game structures")).map(x => x.id);
 
+      let errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(10000).toArray();
+      errors = errors.filter(x => typeIds.includes(x.type));
+
+      const errorTotal = errors.length;
       return this.setState({errors, errorTotal});
     }
+
+    const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(1000).toArray();
+    const errorTotal = await (await JdxDatabase.getErrors(project)).count();
+
+    return this.setState({errors, errorTotal});
   }
 
   toggleFilterByView() {

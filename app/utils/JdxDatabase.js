@@ -696,4 +696,9 @@ export default class JdxDatabase {
     const db = await JdxDatabase.get(project);
     return db.jdx_errors.clear();
   }
+
+  static async deleteErrorsByTypes(project, types) {
+    const db = await JdxDatabase.get(project);
+    return db.jdx_errors.where('path').anyOf(types.map(x => x.id)).delete();
+  }
 }

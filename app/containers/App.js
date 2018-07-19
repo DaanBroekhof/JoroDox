@@ -286,9 +286,10 @@ class App extends Component {
                 <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
               </Switch>
               <Switch>
-                <Route path="/structure/t/:type/:id(.*)" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={props.match.params.type} typeId={props.match.params.id} {...props} /> : <div />)} />
-                <Route path="/structure/t/:type" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={props.match.params.type} typeId={false} {...props} /> : <div />)} />
-                <Route path="/" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={false} typeId={false} {...props} /> : <div />)} />
+                <Route path="/structure/t/:type/:id(.*)" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={props.match.params.type} typeId={props.match.params.id} category={false}  {...props} /> : <div />)} />
+                <Route path="/structure/t/:type" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={props.match.params.type} typeId={false} category={false} {...props} /> : <div />)} />
+                <Route path="/structure/c/:type" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} category={props.match.params.type} typeId={false} type={false} {...props} /> : <div />)} />
+                <Route path="/" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={false} typeId={false} category={false} {...props} /> : <div />)} />
               </Switch>
             </SplitterLayout>
           </SplitterLayout>
