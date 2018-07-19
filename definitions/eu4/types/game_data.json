@@ -2580,13 +2580,56 @@
       "pathPattern": "common/{type.id}/*.txt"
     },
     "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "parentKeyName": "group",
+      "parentRelationType": "religious_reform_groups",
+      "parentRelationKey": "religious_reform_group",
+      "ignoreKeys": [
+        "trigger",
+        "can_buy_idea",
+        "ai_will_do"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religious_reform_groups",
+    "title": "Religious reform groups",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/religious_reforms/",
+      "pathPattern": "common/religious_reforms/*.txt"
+    },
+    "sourceTransform": {
       "type": "keyValues",
       "path": [
         "data",
         "data"
       ],
       "keyName": "name",
-      "valueName": "data"
+      "valueName": "data",
+      "onlyValueKeys": [
+        "trigger",
+        "can_buy_idea",
+        "ai_will_do"
+      ]
     },
     "listView": {
       "pageSize": 100,

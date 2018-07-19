@@ -1,0 +1,39 @@
+{
+  "$id": "http://jorodox.org/schemas/religious_conversions.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "religion": {
+          "$ref": "identifiers.json#/definitions/religions"
+        },
+        "map_icon": {
+          "type": "string"
+        },
+        "max_distance": {
+          "type": "number"
+        },
+        "base_conversion_speed": {
+          "type": "number"
+        },
+        "trading_policy": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "target_province_weights": {
+          "$ref": "scope_factors.json#/definitions/province_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

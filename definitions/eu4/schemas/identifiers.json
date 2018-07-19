@@ -422,6 +422,10 @@
     "interface_gui_bitmapfonts": {
       "$identifierValue": "interface_gui_bitmapfonts",
       "type": "string"
+    },
+    "religious_reform_groups": {
+      "$identifierValue": "religious_reform_groups",
+      "type": "string"
     }
   }
 }

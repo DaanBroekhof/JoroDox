@@ -1,0 +1,24 @@
+{
+  "$id": "http://jorodox.org/schemas/religious_reforms.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "group": {
+      "$ref": "identifiers.json#/definitions/religious_reform_groups"
+    },
+    "data": {
+      "$mergeProps": [
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+        {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "$id": "http://jorodox.org/schemas/religious_reform_groups.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trigger": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "can_buy_idea": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "ai_will_do": {
+          "$ref": "scope_factors.json#/definitions/country_factor"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}
