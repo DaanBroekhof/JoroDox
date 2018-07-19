@@ -22,6 +22,15 @@
             "properties": {
               "factor": {
                 "type": "number"
+              },
+              "scale": {
+                "$ref": "special_values.json#/definitions/boolean"
+              },
+              "force_potential": {
+                "$ref": "special_values.json#/definitions/boolean"
+              },
+              "potential": {
+                "$ref": "country_conditions.json#/definitions/country_conditions"
               }
             }
           },
@@ -50,6 +59,15 @@
             "properties": {
               "factor": {
                 "type": "number"
+              },
+              "scale": {
+                "$ref": "special_values.json#/definitions/boolean"
+              },
+              "force_potential": {
+                "$ref": "special_values.json#/definitions/boolean"
+              },
+              "potential": {
+                "$ref": "province_conditions.json#/definitions/province_conditions"
               }
             }
           },

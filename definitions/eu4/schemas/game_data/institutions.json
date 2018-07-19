@@ -39,32 +39,8 @@
           "$ref": "province_conditions.json#/definitions/province_conditions"
         },
         "embracement_speed": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "modifier": {
-              "$allowMultiple": {
-                "$mergeProps": [
-                  {
-                    "properties": {
-                      "factor": {
-                        "type": "number"
-                      },
-                      "scale": {
-                        "$ref": "special_values.json#/definitions/boolean"
-                      },
-                      "force_potential": {
-                        "$ref": "special_values.json#/definitions/boolean"
-                      },
-                      "potential": {
-                        "$ref": "province_conditions.json#/definitions/province_conditions"
-                      }
-                    }
-                  },
-                  {"$ref": "province_conditions.json#/definitions/province_conditions"}
-                ]
-              }
-            }
+          "$allowMultiple": {
+            "$ref": "scope_factors.json#/definitions/province_factor"
           }
         },
         "ai_will_do": {

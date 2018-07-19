@@ -76,43 +76,43 @@
         "map_area": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         },
         "map_region": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         },
         "map_superregion": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         },
         "map_provincegroups": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         },
         "map_continent": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         },
         "trade_companies": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         },
         "colonial_regions": {
           "$mergeProps": [
             {"$ref": "province_conditions.json#/definitions/province_conditions"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_conditions.json#/definitions/dual_scope_condition_type"}
           ]
         }
       }
@@ -343,6 +343,13 @@
             {"$ref": "country_conditions.json#/definitions/country_conditions"},
             {"$ref": "province_conditions.json#/definitions/province_conditions"}
           ]
+        }
+      }
+    },
+    "dual_scope_condition_type": {
+      "properties": {
+        "type": {
+          "$ref": "special_values.json#/definitions/any_or_all"
         }
       }
     }

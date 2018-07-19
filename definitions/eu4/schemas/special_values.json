@@ -11,6 +11,14 @@
       "type": "string",
       "enum": ["any"]
     },
+    "all": {
+      "type": "string",
+      "enum": ["all"]
+    },
+    "any_or_all": {
+      "type": "string",
+      "enum": ["all", "any"]
+    },
     "null": {
       "type": "string",
       "enum": ["null"]

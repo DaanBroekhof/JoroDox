@@ -81,43 +81,43 @@
         "map_area": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         },
         "map_region": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         },
         "map_superregion": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         },
         "map_provincegroups": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         },
         "map_continent": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         },
         "trade_companies": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         },
         "colonial_regions": {
           "$mergeProps": [
             {"$ref": "province_commands.json#/definitions/province_commands"},
-            {"properties": {"type": {"type": "string", "enum": ["all"]}}}
+            {"$ref": "anywhere_commands.json#/definitions/dual_scope_command_type"}
           ]
         }
 
@@ -203,6 +203,13 @@
             "value": {"type": "string"},
             "who": {"type": "string"}
           }
+        }
+      }
+    },
+    "dual_scope_command_type": {
+      "properties": {
+        "type": {
+          "$ref": "special_values.json#/definitions/any"
         }
       }
     }
