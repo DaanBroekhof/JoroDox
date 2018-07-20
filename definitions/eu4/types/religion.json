@@ -1,0 +1,444 @@
+[
+  {
+    "id": "church_aspects",
+    "title": "Church Aspects",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religion_groups",
+    "title": "Religion groups",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/religions/",
+      "pathPattern": "common/religions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyValueKeys": [
+        "defender_of_faith",
+        "can_form_personal_unions",
+        "flags_with_emblem_percentage",
+        "flag_emblem_index_range",
+        "center_of_religion",
+        "harmonized_modifier",
+        "crusade_name",
+        "ai_will_propagate_through_trade"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Center of religion",
+          "dataIndex": [
+            "data",
+            "center_of_religion"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "religions",
+    "title": "Religions",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "parentKeyName": "religion_group",
+      "valueName": "data",
+      "parentRelationType": "religionGroups",
+      "parentRelationKey": "parentReligionGroup",
+      "ignoreKeys": [
+        "defender_of_faith",
+        "can_form_personal_unions",
+        "flags_with_emblem_percentage",
+        "flag_emblem_index_range",
+        "center_of_religion",
+        "harmonized_modifier",
+        "crusade_name",
+        "ai_will_propagate_through_trade",
+        "religious_schools"
+      ]
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "religion_group"
+        ],
+        "fromName": "religion_group",
+        "toType": "religion_groups",
+        "toName": "religion"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religious_schools",
+    "title": "Religious schools",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/religions/",
+      "pathPattern": "common/religions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "parentSubPath": [
+        "religious_schools"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "parentKeyName": "religion_group",
+      "parentRelationType": "religionGroups",
+      "parentRelationKey": "parentReligionGroup"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "religion_group"
+        ],
+        "fromName": "religion_group",
+        "toType": "religion_groups",
+        "toName": "religion"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religion_orthodox_icons",
+    "title": "Religion orthodox icons",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "religions",
+      "pathPrefix": "common/religions/",
+      "pathPattern": "common/religions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "orthodox_icons"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "sourceIdKey": "name"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religious_conversions",
+    "title": "Religious conversions",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Base conversion speed",
+          "dataIndex": [
+            "data",
+            "base_conversion_speed"
+          ],
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religious_reforms",
+    "title": "Religious reforms",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "parentKeyName": "group",
+      "parentRelationType": "religious_reform_groups",
+      "parentRelationKey": "religious_reform_group",
+      "ignoreKeys": [
+        "trigger",
+        "can_buy_idea",
+        "ai_will_do"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "religious_reform_groups",
+    "title": "Religious reform groups",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/religious_reforms/",
+      "pathPattern": "common/religious_reforms/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyValueKeys": [
+        "trigger",
+        "can_buy_idea",
+        "ai_will_do"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "personal_deities",
+    "title": "Personal deities",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "allow",
+          "religion"
+        ],
+        "fromName": "personal_deities_allow",
+        "toType": "religions",
+        "toName": "religion"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "fervor",
+    "title": "Fervor",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Cost",
+          "dataIndex": [
+            "data",
+            "cost"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "fetishist_cults",
+    "title": "Fetishist cults",
+    "category": "Religion",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  }
+]

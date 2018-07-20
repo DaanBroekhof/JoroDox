@@ -1,0 +1,538 @@
+[
+  {
+    "id": "buildings",
+    "title": "Buildings",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "make_obsolete"
+        ],
+        "fromName": "made_obsolete_by",
+        "toType": "buildings",
+        "toName": "makes_obsolete"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Cost",
+          "dataIndex": [
+            "data",
+            "cost"
+          ]
+        },
+        {
+          "name": "Time",
+          "dataIndex": [
+            "data",
+            "time"
+          ]
+        },
+        {
+          "name": "Makes obsolete",
+          "dataIndex": [
+            "data",
+            "make_obsolete"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "custom_idea_groups",
+    "title": "Custom idea groups",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/custom_ideas/",
+      "pathPattern": "common/custom_ideas/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "onlyValueKeys": [
+        "category"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "data",
+            "category"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "custom_ideas",
+    "title": "Custom ideas",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "ignoreKeys": [
+        "category"
+      ],
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "parentKeyName": "custom_idea_group",
+      "valueName": "data",
+      "parentRelationType": "customIdeaGroup",
+      "parentRelationKey": "custom_idea_groups"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "great_projects",
+    "title": "Great projects",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "province"
+        ],
+        "fromName": "great_project",
+        "toType": "map_provinces",
+        "toName": "map_province"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "idea_groups",
+    "title": "Idea groups",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/ideas/",
+      "pathPattern": "common/ideas/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyValueKeys": [
+        "category",
+        "bonus",
+        "trigger",
+        "ai_will_do",
+        "free",
+        "start"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Country tag",
+          "dataIndex": [
+            "data",
+            "trigger",
+            "tag"
+          ]
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "data",
+            "category"
+          ]
+        }
+      ]
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "tag"
+        ],
+        "fromName": "idea_country_tag",
+        "toType": "country_tags",
+        "toName": "country_tags"
+      }
+    ]
+  },
+  {
+    "id": "ideas",
+    "title": "Ideas",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/ideas/",
+      "pathPattern": "common/ideas/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "ignoreKeys": [
+        "category",
+        "bonus",
+        "trigger",
+        "ai_will_do",
+        "free",
+        "start"
+      ],
+      "keyName": "name",
+      "parentKeyName": "idea_group",
+      "valueName": "data",
+      "parentRelationType": "idea_group",
+      "parentRelationKey": "parent_idea_group"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Group",
+          "dataIndex": [
+            "idea_group"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "institutions",
+    "title": "Institutions",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "native_advancement_groups",
+    "title": "Native advancement groups",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/native_advancement/",
+      "pathPattern": "common/native_advancement/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyValueKeys": ["category", "ai_will_do"]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "data",
+            "category"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "native_advancement_ideas",
+    "title": "Native advancement ideas",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/native_advancement/",
+      "pathPattern": "common/native_advancement/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "ignoreKeys": [
+        "category",
+        "ai_will_do"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "parentKeyName": "native_advancement_group",
+      "parentRelationType": "native_advancement_groups",
+      "parentRelationKey": "parent_group"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Group",
+          "dataIndex": [
+            "native_advancement_group"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "technologies",
+    "title": "Technologies",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "nr",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "technology"
+      ],
+      "removeFields": [
+        "id"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Nr",
+          "dataIndex": "nr",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Year",
+          "dataIndex": [
+            "data",
+            "year"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "technology_groups",
+    "title": "Technology groups",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "common/technology.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data",
+        "groups"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Start level",
+          "dataIndex": [
+            "data",
+            "start_level"
+          ]
+        },
+        {
+          "name": "Start cost modifier",
+          "dataIndex": [
+            "data",
+            "start_cost_modifier"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "technology_tables",
+    "title": "Technology tables",
+    "category": "Advancement",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "common/technology.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data",
+        "tables"
+      ],
+      "keyName": "name",
+      "valueName": "file_path"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "File path",
+          "dataIndex": "file_path"
+        }
+      ]
+    }
+  }
+]

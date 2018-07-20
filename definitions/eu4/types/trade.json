@@ -1,0 +1,178 @@
+[
+  {
+    "id": "prices",
+    "title": "Prices",
+    "category": "Trade",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Base price",
+          "dataIndex": [
+            "data",
+            "base_price"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "trade_companies",
+    "title": "Trade companies",
+    "category": "Trade",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "tradegoods",
+    "title": "Tradegoods",
+    "category": "Trade",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "tradenodes",
+    "title": "Tradenodes",
+    "category": "Trade",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Inland",
+          "dataIndex": [
+            "data",
+            "inland"
+          ]
+        },
+        {
+          "name": "Location",
+          "dataIndex": [
+            "data",
+            "location"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "trading_policies",
+    "title": "Trading policies",
+    "category": "Trade",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  }
+]

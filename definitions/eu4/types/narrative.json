@@ -1,0 +1,474 @@
+[
+  {
+    "id": "country_events",
+    "title": "Country events",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "events/",
+      "pathPattern": "events/*.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "country_event"
+      ],
+      "idPath": [
+        "data",
+        "id"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Id",
+          "dataIndex": [
+            "id"
+          ],
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "type"
+          ]
+        },
+        {
+          "name": "Comments",
+          "dataIndex": [
+            "comments"
+          ]
+        },
+        {
+          "name": "Namespace",
+          "dataIndex": [
+            "namespace",
+            "namespace"
+          ]
+        },
+        {
+          "name": "MTT",
+          "dataIndex": [
+            "data",
+            "mean_time_to_happen",
+            "months"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "province_events",
+    "title": "Province events",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "events/",
+      "pathPattern": "events/*.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "province_event"
+      ],
+      "idPath": [
+        "data",
+        "id"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Id",
+          "dataIndex": [
+            "id"
+          ],
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "type"
+          ]
+        },
+        {
+          "name": "Comments",
+          "dataIndex": [
+            "comments"
+          ]
+        },
+        {
+          "name": "Namespace",
+          "dataIndex": [
+            "namespace",
+            "namespace"
+          ]
+        },
+        {
+          "name": "MTT",
+          "dataIndex": [
+            "data",
+            "mean_time_to_happen",
+            "months"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "disasters",
+    "title": "Disasters",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "event_modifiers",
+    "title": "Event modifiers",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "incidents",
+    "title": "Incidents",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Frame",
+          "dataIndex": [
+            "data",
+            "frame"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "isolationism",
+    "title": "Isolationism",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Isolation value",
+          "dataIndex": [
+            "data",
+            "isolation_value"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "mission_series",
+    "title": "Missions series",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "missions/",
+      "pathPattern": "missions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyValueKeys": ["slot", "generic", "potential", "potential_on_load", "has_country_shield", "ai"]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "data",
+            "category"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "missions",
+    "title": "Missions",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "missions/",
+      "pathPattern": "missions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "requiredProperty": "icon",
+      "keyName": "name",
+      "parentKeyName": "mission_series",
+      "valueName": "data",
+      "parentRelationType": "mission_series",
+      "parentRelationKey": "parent_mission_series"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Mission series",
+          "dataIndex": [
+            "mission_series"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "rebel_types",
+    "title": "Rebel types",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "revolt_triggers",
+    "title": "Revolt triggers",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "tag",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "tag",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Tag",
+          "dataIndex": "tag",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "province_triggered_modifiers",
+    "title": "Province triggered modifiers",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "triggered_modifiers",
+    "title": "Triggered modifiers",
+    "category": "Narrative",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,532 @@
+[
+  {
+    "id": "bookmarks",
+    "title": "Bookmarks",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data",
+        "bookmark"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Name",
+          "dataIndex": [
+            "data",
+            "name"
+          ]
+        },
+        {
+          "name": "Date",
+          "dataIndex": [
+            "data",
+            "date"
+          ]
+        }
+      ]
+    },
+    "relations": [
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "country"
+        ],
+        "fromName": "bookmark",
+        "toType": "country_tags",
+        "toName": "country_tag"
+      }
+    ]
+  },
+  {
+    "id": "history_provinces",
+    "title": "History provinces",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "province_id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "history/provinces/",
+      "pathPattern": "history/provinces/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ],
+      "filenamePattern": "/([0-9]+)[^0-9][^/]*\\.txt",
+      "filenamePatternKey": "province_id"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Province",
+          "dataIndex": "province_id",
+          "linkTo": "[self]",
+          "width": "50"
+        },
+        {
+          "name": "Path",
+          "width": "200",
+          "dataIndex": "path"
+        },
+        {
+          "name": "Culture",
+          "dataIndex": [
+            "data",
+            "culture"
+          ]
+        },
+        {
+          "name": "Trade goods",
+          "dataIndex": [
+            "data",
+            "trade_goods"
+          ]
+        },
+        {
+          "name": "Owner",
+          "width": "50",
+          "dataIndex": [
+            "data",
+            "owner"
+          ]
+        },
+        {
+          "name": "Controller",
+          "width": "50",
+          "dataIndex": [
+            "data",
+            "controller"
+          ]
+        }
+      ]
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "owner"
+        ],
+        "fromName": "history_province_owner",
+        "toType": "country_tags",
+        "toName": "owner_country_tag"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "controller"
+        ],
+        "fromName": "history_province_controller",
+        "toType": "country_tags",
+        "toName": "controller_country_tag"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "add_core"
+        ],
+        "fromName": "history_province_add_core",
+        "toType": "country_tags",
+        "toName": "controller_country_tag"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "culture"
+        ],
+        "fromName": "history_province_culture",
+        "toType": "cultures",
+        "toName": "culture"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "religion"
+        ],
+        "fromName": "history_province_religion",
+        "toType": "religions",
+        "toName": "religion"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data/*/+(controller|owner|add_core)"
+        ],
+        "fromName": "history_province_future",
+        "toType": "country_tags",
+        "toName": "controller_country_tag"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trade_goods"
+        ],
+        "fromName": "history_province_trade_goods",
+        "toType": "tradegoods",
+        "toName": "tradegoods_province"
+      }
+    ]
+  },
+  {
+    "id": "history_countries",
+    "title": "History countries",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "tag",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "history/countries/",
+      "pathPattern": "history/countries/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ],
+      "filenamePattern": "/([A-Z]+)\\s+-[^/]*\\.txt",
+      "filenamePatternKey": "tag"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "government"
+        ],
+        "fromName": "country_history_government",
+        "toType": "governments",
+        "toName": "government"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "religion"
+        ],
+        "fromName": "country_history_religion",
+        "toType": "religions",
+        "toName": "religion"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "primary_culture"
+        ],
+        "fromName": "country_history_culture",
+        "toType": "cultures",
+        "toName": "culture"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "capital"
+        ],
+        "fromName": "country_capital",
+        "toType": "map_provinces",
+        "toName": "capital_province"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "fixed_capital"
+        ],
+        "fromName": "country_fixed_capital",
+        "toType": "map_provinces",
+        "toName": "fixed_capital_province"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "technology_group"
+        ],
+        "fromName": "country_technology_group",
+        "toType": "technology_groups",
+        "toName": "country_technology_group"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Tag",
+          "dataIndex": "tag",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Path",
+          "dataIndex": "path"
+        },
+        {
+          "name": "Government",
+          "dataIndex": [
+            "data",
+            "government"
+          ]
+        },
+        {
+          "name": "Tech group",
+          "dataIndex": [
+            "data",
+            "technology_group"
+          ]
+        },
+        {
+          "name": "Religion",
+          "dataIndex": [
+            "data",
+            "religion"
+          ]
+        },
+        {
+          "name": "Culture",
+          "dataIndex": [
+            "data",
+            "primary_culture"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "history_advisors",
+    "title": "History advisors",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "history/advisors/",
+      "pathPattern": "history/advisors/*.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "advisor"
+      ],
+      "idPath": [
+        "data",
+        "advisor_id"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "ID",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Name",
+          "dataIndex": [
+            "data",
+            "name"
+          ]
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "data",
+            "type"
+          ]
+        },
+        {
+          "name": "Skill",
+          "dataIndex": [
+            "data",
+            "skill"
+          ]
+        },
+        {
+          "name": "Date",
+          "dataIndex": [
+            "data",
+            "date"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "history_diplomacy",
+    "title": "History diplomacy",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "history/diplomacy/",
+      "pathPattern": "history/diplomacy/!(hre|celestial_empire).txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "removeFields": [
+        "namespace"
+      ],
+      "filenamePattern": "/([^/.]+).txt$",
+      "filenamePatternKey": "file_name",
+      "customFields": {
+        "id": {
+          "type": "concat",
+          "fields": ["file_name", "nr"]
+        }
+      }
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "id",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Comments",
+          "dataIndex": [
+            "comments"
+          ]
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "type"
+          ]
+        },
+        {
+          "name": "From",
+          "dataIndex": [
+            "data",
+            "first"
+          ]
+        },
+        {
+          "name": "To",
+          "dataIndex": [
+            "data",
+            "second"
+          ]
+        },
+        {
+          "name": "Start",
+          "dataIndex": [
+            "data",
+            "start_date"
+          ]
+        },
+        {
+          "name": "End",
+          "dataIndex": [
+            "data",
+            "end_date"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "history_diplomacy_empires",
+    "title": "History diplomacy empires",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "history/diplomacy/",
+      "pathPattern": "history/diplomacy/+(hre|celestial_empire).txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ],
+      "filenamePattern": "/([^/.]+).txt$",
+      "filenamePatternKey": "id"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Empire",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "history_wars",
+    "title": "History wars",
+    "category": "History",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "history/wars/",
+      "pathPattern": "history/wars/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Name",
+          "dataIndex": [
+            "data",
+            "name"
+          ]
+        }
+      ]
+    }
+  }
+]

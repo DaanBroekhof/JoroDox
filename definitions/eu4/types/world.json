@@ -1,0 +1,478 @@
+[
+  {
+    "id": "ages",
+    "title": "Ages",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Start",
+          "dataIndex": [
+            "data",
+            "start"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "achievements",
+    "title": "Achievements",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "common/achievements.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "properties"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "country_tags",
+    "title": "Country tags",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "tag",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "tag",
+      "valueName": "filePath"
+    },
+    "relations": [
+      {
+        "type": "byPath",
+        "pathPrefix": "common/",
+        "property": "filePath",
+        "fromName": "tag",
+        "toName": "country",
+        "toType": "countries"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Tag",
+          "dataIndex": [
+            "tag"
+          ],
+          "width": "25",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Filepath",
+          "dataIndex": "filePath"
+        }
+      ]
+    }
+  },
+  {
+    "id": "countries",
+    "title": "Countries",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ],
+      "relationsFromName": "country"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "graphical_culture"
+        ],
+        "fromName": "graphical_culture",
+        "toType": "graphicalculturetypes",
+        "toName": "graphicalculturetype"
+      },
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "historical_idea_groups"
+        ],
+        "fromName": "country_historical_idea_groups",
+        "toType": "idea_groups",
+        "toName": "idea_group"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Culture",
+          "dataIndex": [
+            "data",
+            "graphical_culture"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "culture_groups",
+    "title": "Culture groups",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/cultures/",
+      "pathPattern": "common/cultures/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "onlyValueKeys": [
+        "graphical_culture",
+        "male_names",
+        "female_names",
+        "dynasty_names"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "graphical_culture"
+        ],
+        "fromName": "graphical_culture",
+        "toType": "graphicalculturetypes",
+        "toName": "graphicalculturetype"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Graphical culture",
+          "dataIndex": [
+            "data",
+            "graphical_culture"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "cultures",
+    "title": "Cultures",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "ignoreKeys": [
+        "graphical_culture",
+        "male_names",
+        "female_names",
+        "dynasty_names"
+      ],
+      "keyName": "name",
+      "parentKeyName": "culture_group",
+      "valueName": "data",
+      "parentRelationType": "culture_groups",
+      "parentRelationKey": "parent_culture_group"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Primary country",
+          "dataIndex": [
+            "data",
+            "primary"
+          ]
+        }
+      ]
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "primary"
+        ],
+        "fromName": "culture_primary_tag",
+        "toType": "country_tags",
+        "toName": "primary_country_tag"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "culture_group"
+        ],
+        "fromName": "culture",
+        "toType": "culture_groups",
+        "toName": "culture_group"
+      }
+    ]
+  },
+  {
+    "id": "colonial_regions",
+    "title": "Colonial regions",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "relations": [
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "provinces"
+        ],
+        "fromName": "colonial_regions",
+        "toType": "map_provinces",
+        "toName": "provinces"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Tax income",
+          "dataIndex": [
+            "data",
+            "tax_income"
+          ]
+        },
+        {
+          "name": "Native size",
+          "dataIndex": [
+            "data",
+            "native_size"
+          ]
+        },
+        {
+          "name": "Native ferocity",
+          "dataIndex": [
+            "data",
+            "native_ferocity"
+          ]
+        },
+        {
+          "name": "Native hostileness",
+          "dataIndex": [
+            "data",
+            "native_hostileness"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "historial_lucky",
+    "title": "Historical lucky countries",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "tag",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "common/historial_lucky.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "tag",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Tag",
+          "dataIndex": "tag",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Always",
+          "dataIndex": [
+            "data",
+            "always"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "natives",
+    "title": "Natives",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Graphical culture",
+          "dataIndex": [
+            "data",
+            "graphical_culture "
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "province_names",
+    "title": "Province names",
+    "category": "World",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ],
+      "filenamePattern": "/([^/.]+).txt$",
+      "filenamePatternKey": "culture_or_culture_group_or_tag"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  }
+]

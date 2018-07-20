@@ -1,0 +1,408 @@
+[
+  {
+    "id": "on_country_actions",
+    "title": "On Actions (Country)",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/on_actions/",
+      "pathPattern": "common/on_actions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "ignoreKeys": [
+        "on_battle_won_province",
+        "on_added_to_trade_company",
+        "on_removed_from_company",
+        "on_company_formed",
+        "on_company_disolved",
+        "on_battle_lost_province",
+        "on_siege_won_province",
+        "on_siege_lost_province",
+        "on_abandon_colony",
+        "on_adm_development",
+        "on_dip_development",
+        "on_mil_development",
+        "on_province_religion_converted",
+        "on_province_culture_converted",
+        "on_convert_by_trade_policy",
+        "on_province_owner_change",
+        "on_consecrate_patriarch",
+        "on_regiment_recruited",
+        "on_add_pasha",
+        "on_remove_pasha",
+        "on_janissaries_raised",
+        "on_revoke_estate_land",
+        "on_explore_coast",
+        "on_colonial_pulse",
+        "on_conquistador_native",
+        "on_conquistador_empty",
+        "on_battle_won_unit",
+        "on_battle_lost_unit"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "on_province_actions",
+    "title": "On Actions (Province)",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/on_actions/",
+      "pathPattern": "common/on_actions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyKeys": [
+        "on_battle_won_province",
+        "on_added_to_trade_company",
+        "on_removed_from_company",
+        "on_company_formed",
+        "on_company_disolved",
+        "on_battle_lost_province",
+        "on_siege_won_province",
+        "on_siege_lost_province",
+        "on_abandon_colony",
+        "on_adm_development",
+        "on_dip_development",
+        "on_mil_development",
+        "on_province_religion_converted",
+        "on_province_culture_converted",
+        "on_convert_by_trade_policy",
+        "on_province_owner_change",
+        "on_consecrate_patriarch",
+        "on_regiment_recruited",
+        "on_add_pasha",
+        "on_remove_pasha",
+        "on_janissaries_raised",
+        "on_revoke_estate_land",
+        "on_explore_coast",
+        "on_colonial_pulse",
+        "on_conquistador_native",
+        "on_conquistador_empty"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "on_unit_actions",
+    "title": "On Actions (Unit)",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/on_actions/",
+      "pathPattern": "common/on_actions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data",
+      "onlyKeys": [
+        "on_battle_won_unit",
+        "on_battle_lost_unit"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "scripted_effects",
+    "title": "Scripted effects",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "scripted_functions",
+    "title": "Scripted functions",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "scripted_triggers",
+    "title": "Scripted triggers",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "static_modifiers",
+    "title": "Static modifiers",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "timed_modifiers",
+    "title": "Timed modifiers",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "defines",
+    "title": "Defines",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "lua_scripts",
+      "path": "common/defines.lua"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data", "NDefines"
+      ],
+      "keyName": "name",
+      "parentKeyName": "category",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Value",
+          "dataIndex": [
+            "data",
+            "value"
+          ]
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "category"
+          ]
+        },
+        {
+          "name": "Comment",
+          "dataIndex": [
+            "data",
+            "comment"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "dlcs",
+    "title": "DLCs",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "dlc/",
+      "pathPattern": "dlc/*.dlc"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "keyName": "name",
+      "path": [
+        "data",
+        "data"
+      ],
+      "customFields": {
+        "name": {
+          "type": "get",
+          "fields": [
+            "data",
+            "name"
+          ]
+        }
+      }
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Affects compatibility",
+          "dataIndex": [
+            "data",
+            "affects_compatability"
+          ]
+        }
+      ]
+    }
+  }
+]

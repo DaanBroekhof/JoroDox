@@ -1,0 +1,139 @@
+[
+  {
+    "id": "custom_country_colors",
+    "title": "Custom country colors",
+    "category": "Map colors",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "dynasty_colors",
+    "title": "Dynasty Colors",
+    "category": "Map colors",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "region_colors",
+    "title": "Region colors",
+    "category": "Map colors",
+    "reader": "StructureLoader",
+    "primaryKey": "nr",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "color"
+      ],
+      "removeFields": [
+        "namespace",
+        "id",
+        "type",
+        "comments"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Nr",
+          "dataIndex": "nr",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Color",
+          "dataIndex": "data"
+        }
+      ]
+    }
+  },
+  {
+    "id": "country_colors",
+    "title": "Country colors",
+    "category": "Map colors",
+    "reader": "StructureLoader",
+    "primaryKey": "tag",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "tag",
+      "valueName": "color"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Tag",
+          "dataIndex": "tag",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Color",
+          "dataIndex": [
+            "data"
+          ]
+        }
+      ]
+    }
+  }
+]

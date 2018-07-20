@@ -1,0 +1,540 @@
+[
+  {
+    "id": "advisortypes",
+    "title": "Advisor types",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Monarch power",
+          "dataIndex": [
+            "data",
+            "monarch_power"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "estates",
+    "title": "Estates",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "government_names",
+    "title": "Government names",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "government"
+        ],
+        "fromName": "government_name_trigger",
+        "toType": "governments",
+        "toName": "governments"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "tag"
+        ],
+        "fromName": "government_name_trigger",
+        "toType": "countryTags",
+        "toName": "countryTags"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "primary_culture"
+        ],
+        "fromName": "government_name_trigger",
+        "toType": "cultures",
+        "toName": "cultures"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "culture_group"
+        ],
+        "fromName": "government_name_trigger",
+        "toType": "cultureGroups",
+        "toName": "cultureGroups"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "religion_group"
+        ],
+        "fromName": "government_name_trigger",
+        "toType": "religionGroups",
+        "toName": "religionGroups"
+      },
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "trigger",
+          "religion"
+        ],
+        "fromName": "government_name_trigger",
+        "toType": "religions",
+        "toName": "religions"
+      }
+    ]
+  },
+  {
+    "id": "governments",
+    "title": "Governments",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Monarchy",
+          "dataIndex": [
+            "data",
+            "monarchy"
+          ]
+        },
+        {
+          "name": "Max states",
+          "dataIndex": [
+            "data",
+            "max_states"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "government_mechanics",
+    "title": "Government mechanics",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/governments/",
+      "pathPattern": "common/governments/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "parentSubPath": [
+        "government_abilities"
+      ],
+      "valueName": "name"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "decrees",
+    "title": "Decrees",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Cost",
+          "dataIndex": [
+            "data",
+            "cost"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "decisions",
+    "title": "Decisions",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "decisions/",
+      "pathPattern": "decisions/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data",
+        "country_decisions"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "DLC",
+          "dataIndex": [
+            "data",
+            "potential",
+            "has_dlc"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "factions",
+    "title": "Factions",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Monarch power",
+          "dataIndex": [
+            "data",
+            "monarch_power"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "imperial_reforms",
+    "title": "Imperial reforms",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Empire",
+          "dataIndex": [
+            "data",
+            "empire"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "parliament_bribes",
+    "title": "Parliament bribes",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "parliament_issues",
+    "title": "Parliament issues",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Category",
+          "dataIndex": [
+            "data",
+            "category"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "policies",
+    "title": "Policies",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Monarch power",
+          "dataIndex": [
+            "data",
+            "monarch_power"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "state_edicts",
+    "title": "State edicts",
+    "category": "Government",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,211 @@
+[
+  {
+    "id": "cb_types",
+    "title": "CB types",
+    "category": "Warfare",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "relations": [
+      {
+        "type": "valueByPath",
+        "path": [
+          "data",
+          "war_goal"
+        ],
+        "fromName": "cb_type_war_goal",
+        "toType": "wargoal_types",
+        "toName": "cb_types"
+      }
+    ],
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Months",
+          "dataIndex": [
+            "data",
+            "months"
+          ]
+        },
+        {
+          "name": "War goal",
+          "dataIndex": [
+            "data",
+            "war_goal"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "leader_personalities",
+    "title": "Leader personalities",
+    "category": "Warfare",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "professionalism",
+    "title": "Professionalism",
+    "category": "Warfare",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Army professionalism",
+          "dataIndex": [
+            "data",
+            "army_professionalism"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "units",
+    "title": "Units",
+    "category": "Warfare",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data",
+        "data"
+      ],
+      "filenamePattern": "/([a-z_0-9]+).txt",
+      "filenamePatternKey": "name"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "data",
+            "type"
+          ]
+        },
+        {
+          "name": "Unit type",
+          "dataIndex": [
+            "data",
+            "unit_type"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "wargoal_types",
+    "title": "Wargoal types",
+    "category": "Warfare",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "common/{type.id}/",
+      "pathPattern": "common/{type.id}/*.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "data",
+            "type"
+          ]
+        }
+      ]
+    }
+  }
+]
