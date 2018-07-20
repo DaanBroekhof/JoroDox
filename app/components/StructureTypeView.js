@@ -195,7 +195,9 @@ class StructureTypeView extends Component {
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
-          <Typography variant="display2" gutterBottom><Link to="/structure">Type</Link>: {typeDefinition.title} ({this.state.rowCount})</Typography>
+          <Typography variant="display2" gutterBottom>
+            <Link to={'/structure/c/' + typeDefinition.category}>{typeDefinition.category}</Link>: {typeDefinition.title} ({this.state.rowCount})
+          </Typography>
           <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
               <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: itemPath})}><Icon color="action">pageview</Icon></IconButton>
