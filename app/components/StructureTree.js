@@ -55,7 +55,7 @@ export default class StructureTree extends React.Component {
     if (!category && type) {
       const typeDefinition = this.state.definition.types.find(x => x.id === type);
       if (typeDefinition) {
-        category = typeDefinition.category || 'Game structures';
+        category = typeDefinition.category;
       }
     }
 
@@ -147,7 +147,7 @@ export default class StructureTree extends React.Component {
           } else if (_.startsWith(parentNode.id, 'category:')) {
             const items = [];
             _(this.state.definition.types)
-              .filter(x => `category:${x.category ? x.category : 'Game structures'}` === parentNode.id)
+              .filter(x => `category:${x.category}` === parentNode.id)
               .sortBy(x => x.title).forEach(type => {
               items.push({
                   id: `type:${type.id}`,

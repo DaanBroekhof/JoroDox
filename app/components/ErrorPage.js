@@ -87,7 +87,7 @@ class ErrorPage extends Component {
       return this.setState({errors, errorTotal});
     }
     if (this.state.filterByView && category) {
-      const typeIds = this.state.definition.types.filter(x => x.category === category || (!x.category && category === "Game structures")).map(x => x.id);
+      const typeIds = this.state.definition.types.filter(x => x.category === category).map(x => x.id);
 
       let errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(10000).toArray();
       errors = errors.filter(x => typeIds.includes(x.type));

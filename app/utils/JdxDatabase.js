@@ -318,9 +318,11 @@ export default class JdxDatabase {
   }
 
   static async reloadTypesByIds(project, types) {
+    let nr = 0;
     return types.reduce((promise, type) => promise.then(() => {
       console.log(`Starting ${type.id}`);
-      return JdxDatabase.reloadTypeById(project, type.id).then(result => {
+      nr += 1;
+      return JdxDatabase.reloadTypeById(project, type.id, undefined, `Loading '${type.title}' [${nr}/${types.length}]`).then(result => {
         console.log(`Loaded ${type.id}`);
         return result;
       });
@@ -332,7 +334,7 @@ export default class JdxDatabase {
     const type = _(definition.types).find(x => x.id === typeId);
 
     if (!taskTitle) {
-      taskTitle = 'Loading `' + typeId + '`';
+      taskTitle = `Loading '${type.title}'`;
     }
 
     if (type.reader === 'StructureLoader') {

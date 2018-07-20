@@ -116,7 +116,7 @@ class StructureView extends Component {
   async reloadAll() {
     const types = this.state.definition.types
       .filter(x => x.reader === 'StructureLoader')
-      .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
+      .filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
 
     await JdxDatabase.deleteAllErrors(this.props.project);
     await JdxDatabase.reloadTypesByIds(this.props.project, types);
@@ -129,8 +129,7 @@ class StructureView extends Component {
 
   async validateAll() {
     const types = this.state.definition.types
-      .filter(x => x.reader === 'StructureLoader')
-      .filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
+      .filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
 
     await JdxDatabase.deleteErrorsByTypes(this.props.project, types);
 
@@ -176,12 +175,12 @@ class StructureView extends Component {
         return typeCopy;
       }
       return type;
-    }).filter(x => !this.props.match.params.category || this.props.match.params.category === (x.category || 'Game structures'));
+    }).filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
     extendedTypes = _.sortBy(extendedTypes, x => x.title);
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
-        <Typography variant="display2">{this.props.match.params.category || this.state.definition.name} - Game Data</Typography>
+        <Typography variant="display2">{this.props.match.params.category || this.state.definition.name}</Typography>
         <Typography variant="subheading" gutterBottom style={{color: 'grey'}}>
           Last global change: {this.props.project.lastGlobalUpdate ? (new Date(this.props.project.lastGlobalUpdate)).toLocaleString() : <i>- unknown -</i>}
         </Typography>
