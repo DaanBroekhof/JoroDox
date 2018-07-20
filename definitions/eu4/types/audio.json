@@ -50,6 +50,10 @@
       "idPath": [
         "data",
         "name"
+      ],
+      "removeFields": [
+        "namespace",
+        "nr"
       ]
     },
     "listView": {
@@ -65,7 +69,7 @@
   },
   {
     "id": "music_songs",
-    "title": "Music songs",
+    "title": "Music song factors",
     "category": "Audio",
     "reader": "StructureLoader",
     "primaryKey": "id",
@@ -86,6 +90,10 @@
       "idPath": [
         "data",
         "name"
+      ],
+      "removeFields": [
+        "namespace",
+        "nr"
       ]
     },
     "listView": {
@@ -114,6 +122,10 @@
       "type": "fileData",
       "path": [
         "info"
+      ],
+      "removeFields": [
+        "namespace",
+        "nr"
       ]
     },
     "listView": {
@@ -150,6 +162,10 @@
       "idPath": [
         "data",
         "name"
+      ],
+      "removeFields": [
+        "namespace",
+        "nr"
       ]
     },
     "listView": {

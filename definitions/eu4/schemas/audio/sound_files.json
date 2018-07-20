@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/sound_files.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "size": {
+          "type": "number"
+        },
+        "accessTime": {
+          "type": "string"
+        },
+        "modifyTime": {
+          "type": "string"
+        },
+        "changeTime": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}

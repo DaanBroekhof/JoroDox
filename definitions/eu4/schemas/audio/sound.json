@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/sound.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "comments": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "file": {
+          "$ref": "identifiers.json#/definitions/sound_files"
+        }
+      }
+    }
+  }
+}

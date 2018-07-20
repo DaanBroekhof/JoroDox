@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jorodox.org/schemas/files.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "info": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["file", "dir"]
+        },
+        "size": {
+          "type": "number"
+        },
+        "accessTime": {
+          "type": "string"
+        },
+        "modifyTime": {
+          "type": "string"
+        },
+        "changeTime": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "info"
+  ]
+}

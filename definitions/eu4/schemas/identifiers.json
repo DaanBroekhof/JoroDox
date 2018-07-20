@@ -426,6 +426,24 @@
     "religious_reform_groups": {
       "$identifierValue": "religious_reform_groups",
       "type": "string"
+    },
+    "music_files": {
+      "$identifierValue": {
+        "type": "music_files",
+        "prefix": "music/"
+      },
+      "type": "string"
+    },
+    "music": {
+      "$identifierValue": "music",
+      "type": "string"
+    },
+    "sound_files": {
+      "$identifierValue": {
+        "type": "sound_files",
+        "prefix": "sound/"
+      },
+      "type": "string"
     }
   }
 }
