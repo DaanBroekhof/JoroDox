@@ -261,12 +261,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     let nr = 0;
     sourceItems.forEach(async sourceItem => {
       const namespaceValues = {};
+      let nrFile = 0;
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), async (value) => {
         if (this.matchTypes(definition.sourceTransform.types, value.name)) {
           const item = {
             namespace: namespaceValues,
             comments: value.comments.join('\n').trim(),
             nr: nr.toString(),
+            nrFile: nrFile.toString(),
             id: definition.sourceTransform.idPath ? _.get(value, definition.sourceTransform.idPath) : null,
             type: value.name,
             data: value.data,
@@ -288,9 +290,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
           this.doCommonItemOperations(item, definition, sourceItem.path);
 
+          if (!definition.sourceTransform.nrFile) {
+            delete item.nrFile;
+          }
+
           items.push(item);
 
           nr += 1;
+          nrFile += 1;
           if (!skipRelations) {
             relations.push(this.addRelationId({
               fromKey: definition.sourceTransform.relationsFromName ? definition.sourceTransform.relationsFromName : definition.id,
@@ -519,17 +526,26 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   getCustomFields(item, fields, filePath) {
     _.forOwn(fields, (fieldDef, fieldName) => {
       if (fieldDef.type === 'concat') {
-        item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator ? fieldDef.separator : '.');
+        item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator !== undefined ? fieldDef.separator : '.');
       } else if (fieldDef.type === 'get') {
         item[fieldName] = _.get(item, fieldDef.fields);
       } else if (fieldDef.type === 'splitUnderscore') {
         item[fieldName] = _.get(item, fieldDef.fields).split('_');
       } else if (fieldDef.type === 'filePath') {
         item[fieldName] = filePath;
+      } else if (fieldDef.type === 'mixedConcat') {
+        item[fieldName] = fieldDef.fields.map(x => (Array.isArray(x) ? _.get(item, x) : x)).join(fieldDef.separator !== undefined ? fieldDef.separator : '.');
+      } else if (fieldDef.type === 'replaceAll') {
+        item[fieldName] = _.replace(_.get(item, fieldDef.fields), new RegExp(fieldDef.replace, 'g'), fieldDef.with);
       } else {
         console.warn(`Unknown custom config field \`${fieldDef.type}\`.`, fieldDef);
       }
+
+      if (fieldDef.operations && fieldDef.operations.includes('lowercase')) {
+        item[fieldName] = item[fieldName].toLowerCase();
+      }
     });
+
 
     return item;
   }

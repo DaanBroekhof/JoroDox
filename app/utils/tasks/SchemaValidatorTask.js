@@ -140,21 +140,26 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
         return function v(data, dataPath, object, key) {
           if (_.isArray(data) && data.multipleKeys) {
+            let isValid = true;
             for (let i = 0; i < data.length; i += 1) {
               const result = validatorPrep()(data[i]);
-              v.errors = validatorPrep().errors;
-              if (v.errors) {
-                v.errors = v.errors.map(err => {
+              let valErrors = validatorPrep().errors;
+              if (valErrors) {
+                valErrors = valErrors.map(err => {
                   err.dataPath = dataPath + '.' + i + err.dataPath;
 
                   return err;
                 });
+                if (!v.errors) {
+                  v.errors = [];
+                }
+                v.errors = v.errors.concat(valErrors);
               }
               if (!result) {
-                return false;
+                isValid = false;
               }
             }
-            return true;
+            return isValid;
           } else {
             const result = validatorPrep()(data);
             v.errors = validatorPrep().errors;
@@ -213,19 +218,22 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
           const myErrors = [];
           _.forOwn(data, (subItem, subItemKey) => {
             let items = null;
+            let singleItem = true;
             if (_.isArray(subItem) && subItem.multipleKeys) {
+              singleItem = false
               items = subItem;
             } else {
               items = [subItem];
             }
 
+            let itemNr = 0;
             items.forEach((itemValue) => {
               let isValid = validatorRefs.some(validatorRef => {
                 const val = compileValidatorByRef(validatorRef);
                 const subValid = val({[subItemKey]: itemValue});
 
                 if (!subValid && val.errors && val.errors[0].keyword !== 'additionalProperties') {
-                  val.errors[0].dataPath = dataPath + val.errors[0].dataPath;
+                  val.errors[0].dataPath = dataPath + (!singleItem ? val.errors[0].dataPath.replace(subItemKey + '.', subItemKey + '.' + itemNr + '.') : val.errors[0].dataPath);
                   myErrors.push(val.errors[0]);
                   isAllValid = false;
                 }
@@ -239,7 +247,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                   const dynValid = dynVal({[subItemKey]: itemValue});
 
                   if (!dynValid && dynVal.errors && dynVal.errors[0].keyword !== '$identifierProperties') {
-                    dynVal.errors[0].dataPath = dataPath + '.' + dynVal.errors[0].dataPath;
+                    dynVal.errors[0].dataPath = dataPath + (!singleItem ? dynVal.errors[0].dataPath.replace(subItemKey + '.', subItemKey + '.' + itemNr + '.') : dynVal.errors[0].dataPath);
                     myErrors.push(dynVal.errors[0]);
                     isAllValid = false;
                   }
@@ -260,6 +268,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                   isAllValid = false;
                 }
               }
+              itemNr += 1;
             });
           });
 
@@ -410,73 +419,118 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     ajv.addKeyword('$identifierValue', {
       compile: (schema, parentSchema, it) => {
-        let identifierType = schema;
-        let identifierSchema = {};
+        let identifierSchemas = [];
 
-        if (schema.type) {
-          identifierType = schema.type;
-          identifierSchema = schema;
+        if (_.isString(schema)) {
+          identifierSchemas.push({
+            type: schema
+          });
+        } else if (Array.isArray(schema)) {
+          identifierSchemas = schema;
+        } else if (_.isObject(schema)) {
+          identifierSchemas.push(schema);
         }
 
         return function v(data, dataPath, object, key) {
-          const scopeKeyMatch = identifierType.match(/^<scope_key:(.+)>$/);
+          let isValid = true;
+          for (const identifierSchema of identifierSchemas) {
+            // Only validate if requirements are met
+            if (identifierSchema.require) {
+              const requirements = Array.isArray(identifierSchema.require) ? identifierSchema.require : [identifierSchema.require];
+              const requirementsMet = requirements.every((req) => {
+                const reqValue = req.data !== undefined ? _.get(object, req.data) : data;
+                if (req.value !== undefined) {
+                  switch (req.operator) {
+                    default:
+                    case '==':
+                      return req.value === reqValue;
+                    case '!=':
+                      return req.value !== reqValue;
+                    case 'regexp':
+                      return reqValue.toString().match(req.value);
+                    case 'is_empty':
+                      return !_.size(reqValue) === req.value;
+                    case '!regexp':
+                      return !reqValue.toString().match(req.value);
+                  }
+                }
+                //  Boolean eval
+                return !!reqValue;
+              });
 
-          if (identifierSchema.prefix) {
-            data = identifierSchema.prefix + data;
-          }
-          if (identifierSchema.postfix) {
-            data = data + identifierSchema.postfix;
-          }
-          if (identifierSchema.prefixFileDir) {
-            const dir = _.get(ajv._item, identifierSchema.prefixFileDir);
-            data = syspath.dirname(dir ? dir : '') + '/' + data;
-          }
-          if (Array.isArray(identifierSchema.replaceAll)) {
-            identifierSchema.replaceAll.forEach((replace) => {
-              data = _.replace(data, new RegExp(replace.match, 'g'), replace.replace);
+              if (!requirementsMet) {
+                continue;
+              }
+            }
+
+            let identifier = identifierSchema.usePropertyKey ? key : data;
+            const unchangedIdentifier = identifier;
+
+            // Add prefixes/postfixes/other identifier value manipulation
+            if (identifierSchema.prefix) {
+              identifier = identifierSchema.prefix + identifier;
+            }
+            if (identifierSchema.postfix) {
+              identifier = identifier + identifierSchema.postfix;
+            }
+            if (identifierSchema.prefixFileDir) {
+              const dir = _.get(ajv._item, identifierSchema.prefixFileDir);
+              identifier = syspath.dirname(dir ? dir : '') + '/' + identifier;
+            }
+            if (Array.isArray(identifierSchema.replaceAll)) {
+              identifierSchema.replaceAll.forEach((replace) => {
+                identifier = _.replace(identifier, new RegExp(replace.match, 'g'), replace.replace);
+              });
+            }
+
+
+            const scopeKeyMatch = identifierSchema.type.match(/^<scope_key:(.+)>$/);
+            if (scopeKeyMatch) {
+              const scopeKeyRef = scopeKeyMatch[1];
+              if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
+                ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
+                  $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
+                  $ref: scopeKeyRef,
+                });
+              }
+              if (key === 'on_trigger') {
+                ajv.jdxLastScopeKeyValidator = identifier;
+              }
+              const keyValidator = ajv.jdxScopeKeyValidators[scopeKeyRef];
+
+
+              const valid = keyValidator({[identifier]: null});
+
+              // We only look for invalid property key errors, any other error is ok for us.
+              const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property');
+              if (!unknownScopeKey) {
+                ajv.jdxScopeKeyValidators[scopeKeyRef + '/' + identifier] = keyValidator;
+                continue;
+              }
+            } else if (task.hasIdentifier(identifierSchema.type, identifier)) {
+              continue;
+            }
+
+            isValid = false;
+
+            if (!v.errors) {
+              v.errors = [];
+            }
+
+            v.errors.push({
+              keyword: '$identifierValue',
+              dataPath,
+              message: 'Property value `' + unchangedIdentifier + '`' + (unchangedIdentifier !== identifier ? ' (`' + identifier + '`)' : '') + ' is not a known identifier of `' + identifierSchema.type + '`.',
+              data,
+              identifierType: identifierSchema.type,
+              key,
+              params: {
+                data
+              }
             });
           }
 
-          if (scopeKeyMatch) {
-            const scopeKeyRef = scopeKeyMatch[1];
-            if (!ajv.jdxScopeKeyValidators[scopeKeyRef]) {
-              //console.log('Generating $identifierValue scope key ref', scopeKeyRef)
-              ajv.jdxScopeKeyValidators[scopeKeyRef] = ajv.compile({
-                $id: 'http://jorodox.org/schemas/not_a_real_schema-' + Math.floor(Math.random() * 10000000) + '.json',
-                $ref: scopeKeyRef,
-              });
-            }
-            if (key === 'on_trigger') {
-              ajv.jdxLastScopeKeyValidator = data;
-            }
-            const keyValidator = ajv.jdxScopeKeyValidators[scopeKeyRef];
-
-
-            const valid = keyValidator({[data]: null});
-
-            // We only look for invalid property key errors, any other error is ok for us.
-            const unknownScopeKey = keyValidator.errors && keyValidator.errors[0] && _.startsWith(keyValidator.errors[0].message, 'Unknown property');
-            if (!unknownScopeKey) {
-              ajv.jdxScopeKeyValidators[scopeKeyRef + '/' + data] = keyValidator;
-              return true;
-            }
-          } else if (task.hasIdentifier(identifierType, data)) {
-            return true;
-          }
-
-          v.errors = [{
-            keyword: '$identifierValue',
-            dataPath,
-            message: 'Property value `' + data + '` is not a known identifier of `' + identifierType + '`.',
-            data,
-            identifierType,
-            key,
-            params: {
-              data
-            }
-          }];
-
-          return false;
+          return isValid;
         };
       }
     });
@@ -486,7 +540,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
   addScopeReferenceKeywords(ajv) {
     ajv._scopes = {};
-    ajv.addKeyword('$setScope', {
+    ajv.addKeyword('$localised', {
       compile: (schema, parentSchema, it) => {
 
         const itAtComp = it.util.copy(it);
@@ -540,6 +594,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
       ajv = new Ajv({
         extendRefs: true,
+        allErrors: true,
         // jsonPointers: true,
         // inlineRefs: false,
         // verbose: true,
