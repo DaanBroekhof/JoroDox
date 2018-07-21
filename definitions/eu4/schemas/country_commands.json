@@ -848,7 +848,7 @@
         "custom_tooltip": {
           "description": "Displays a localized key in the effect tooltip.",
           "version_added": "1.1",
-          "type": "string"
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "declare_war": {
           "description": "Creates a no casus belli war against the defined scope for the current scope.",
@@ -1466,7 +1466,7 @@
             },
             "desc": {
               "description": "The text to display in the Influence tooltip for this modifier.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             },
             "influence": {
               "description": "The amount of influence to add or subtract.",
@@ -1516,7 +1516,7 @@
             },
             "desc": {
               "description": "The text to display in the Influence tooltip for this modifier.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             },
             "loyalty": {
               "description": "The amount of loyalty to add or subtract.",
@@ -1726,7 +1726,7 @@
             },
             "key": {
               "description": "The localisation key to display in the Trade Good's price tooltip.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             },
             "value": {
               "description": "The percentage to change the value by.",
@@ -1767,7 +1767,7 @@
             },
             "tooltip": {
               "description": "Optional. The tooltip to display in the effect tooltip country_event is used in.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             }
           },
           "required": [

@@ -1,0 +1,56 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_pdxmesh_assets.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "pdxmesh"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "file": {
+          "$ref": "identifiers.json#/definitions/pdx_meshes"
+        },
+        "scale": {
+          "type": "number"
+        },
+        "cull_distance": {
+          "type": "string"
+        },
+        "animation": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "$ref": "identifiers.json#/definitions/gfx_animation_assets"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

@@ -495,8 +495,9 @@
       "minItems": 3,
       "maxItems": 3,
       "items": {
-        "type": "string",
-        "pattern": "^([2][5][0-5]|[2][0-4][0-9]|[1]?[0-9]{1,2})$"
+        "type": "number",
+        "min": 0,
+        "max": 255
       }
     },
     "rgb_color_float": {
@@ -653,6 +654,56 @@
         "centre",
         "center",
         "right"
+      ]
+    },
+    "key_shortcuts": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "UP",
+            "DOWN",
+            "LSHIFT",
+            "RSHIFT",
+            "LCTRL",
+            "RCTRL",
+            "LALT",
+            "RALT",
+            "PAUSE",
+            "HOME",
+            "BACKSPACE",
+            "SPACE",
+            "END",
+            "INSERT",
+            "TAB",
+            "ESCAPE",
+            "DEL",
+            "PAGE_DOWN",
+            "PAGE_UP",
+            "RETURN",
+            "KP_RETURN",
+            "KP_PLUS",
+            "KP_MINUS",
+            "F1",
+            "F2",
+            "F3",
+            "F4",
+            "F5",
+            "F6",
+            "F7",
+            "F8",
+            "F9",
+            "F10",
+            "F11",
+            "F12"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^[0-9a-zA-Z]$"
+        }
       ]
     }
   }

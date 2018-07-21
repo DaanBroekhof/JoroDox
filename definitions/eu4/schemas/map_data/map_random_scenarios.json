@@ -77,7 +77,8 @@
         "names": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref": "identifiers.json#/definitions/localisation_plus_adj"
           }
         },
         "region": {

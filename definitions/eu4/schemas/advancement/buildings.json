@@ -4,6 +4,17 @@
   "type": "object",
   "properties": {
     "name": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.building_"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.building_",
+          "postfix": "_desc"
+        }
+      ],
       "type": "string"
     },
     "data": {

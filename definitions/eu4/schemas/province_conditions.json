@@ -211,7 +211,13 @@
           "description": "Hides the enclosed condition so that it is still required but cannot be seen by human players and displays the specified tooltip in its place.",
           "type": "object",
           "$mergeProps": [
-            {"properties": {"tooltip": {"type": "string"}}},
+            {
+              "properties": {
+                "tooltip": {
+                  "$ref": "identifiers.json#/definitions/localisation"
+                }
+              }
+            },
             {"$ref": "province_conditions.json#/definitions/province_conditions"}
           ]
         },

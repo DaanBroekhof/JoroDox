@@ -29,12 +29,6 @@
         },
         {
           "properties": {
-            "backGround": {
-              "type": [
-                "number",
-                "string"
-              ]
-            },
             "background": {
               "type": "object",
               "additionalProperties": false,
@@ -43,14 +37,7 @@
                   "type": "string"
                 },
                 "quadTextureSprite": {
-                  "anyOf": [
-                    {
-                      "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                    },
-                    {
-                      "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
-                    }
-                  ]
+                  "$ref": "identifiers.json#/definitions/interface_gui_spritetypes_not_empty"
                 },
                 "alwaystransparent": {
                   "todo": "all or al??",
@@ -117,17 +104,7 @@
               }
             },
             "textureFile": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    ""
-                  ]
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_not_empty"
             },
             "moveable": {
               "type": "string"
@@ -139,24 +116,10 @@
               "type": "string"
             },
             "upsound": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/sound"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/sound_not_empty"
             },
             "downsound": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/sound"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/sound_not_empty"
             },
             "horizontalBorder": {
               "type": "number"

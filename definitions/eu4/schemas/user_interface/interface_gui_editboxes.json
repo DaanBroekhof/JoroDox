@@ -33,7 +33,8 @@
               "type": [
                 "string",
                 "number"
-              ]
+              ],
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "size": {
               "$ref": "special_values.json#/definitions/coordinate_xy"
@@ -51,14 +52,7 @@
               "$ref": "special_values.json#/definitions/coordinate_xy"
             },
             "textureFile": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_not_empty"
             },
             "ignore_tab_navigation": {
               "$ref": "special_values.json#/definitions/boolean"

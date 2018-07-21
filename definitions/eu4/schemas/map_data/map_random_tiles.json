@@ -59,12 +59,6 @@
         "restrict_to_equator": {
           "$ref": "special_values.json#/definitions/boolean"
         },
-        "restrict_to_north_edge": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
-        "restrict_to_north_edge": {
-          "$ref": "special_values.json#/definitions/boolean"
-        },
         "size": {
           "type": "array",
           "items": [
@@ -164,7 +158,14 @@
             "additionalProperties": false,
             "patternProperties": {
               ".*": {
-                "$ref": "special_values.json#/definitions/rgb_color"
+                "$ref": "special_values.json#/definitions/rgb_color",
+                "$identifierValue": [
+                  {
+                    "type": "localisation",
+                    "prefix": "l_english.",
+                    "usePropertyKey": true
+                  }
+                ]
               }
             }
           }

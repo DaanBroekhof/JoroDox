@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation"
     },
     "religion_group": {
       "$ref": "identifiers.json#/definitions/religion_groups"
@@ -26,7 +27,8 @@
           "description": "The name/s of heretic rebel types for the religion. There should be at least one heretic type listed.",
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "$ref": "identifiers.json#/definitions/localisation"
           }
         },
         "country": {
@@ -203,10 +205,22 @@
         },
         "aspects_name": {
           "todo": "Add to wiki",
-          "type": "string"
+          "type": "string",
+          "$identifierValue": [
+            {
+              "type": "localisation",
+              "prefix": "l_english.",
+              "postfix": "_LONG"
+            },
+            {
+              "type": "localisation",
+              "prefix": "l_english.",
+              "postfix": "_SHORT"
+            }
+          ]
         },
         "orthodox_icons": {
-          "todo": "Add to wiki",
+          "todo": "Add to wiki - this needs to be here. (read by religion_orthodox_icons)",
           "type": "object"
         },
         "uses_anglican_power": {
@@ -219,7 +233,8 @@
         },
         "reform_tooltip": {
           "todo": "Add to wiki",
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "holy_sites": {
           "type": "array",

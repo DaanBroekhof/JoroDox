@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation"
     },
     "data": {
       "type": "object",
@@ -18,6 +19,7 @@
           "$ref": "special_values.json#/definitions/rgb_color"
         },
         "icon": {
+          "todo": "Hook this up",
           "type": "number"
         },
         "unit": {

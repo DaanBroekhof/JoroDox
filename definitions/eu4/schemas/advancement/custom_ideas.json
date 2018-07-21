@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation_plus_desc"
     },
     "custom_idea_group": {
       "$ref": "identifiers.json#/definitions/custom_idea_groups"

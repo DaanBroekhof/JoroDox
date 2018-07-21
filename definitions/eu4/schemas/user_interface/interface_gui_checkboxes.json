@@ -33,16 +33,22 @@
               "type": "string"
             },
             "tooltip": {
-              "type": "string"
+              "type": "string",
+              "todo": "These seem just to be empty, always... ?",
+              "enum": [""]
             },
             "tooltipText": {
-              "type": "string"
-            },
-            "buttonText": {
-              "type": "string"
+              "type": "string",
+              "todo": "These seem just to be empty, always... ?",
+              "enum": [""]
             },
             "delayedTooltipText": {
-              "type": "string"
+              "type": "string",
+              "todo": "These seem just to be empty, always... ?",
+              "enum": [""]
+            },
+            "buttonText": {
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "buttonFont": {
               "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
@@ -70,10 +76,7 @@
               }
             },
             "shortcut": {
-              "type": [
-                "string",
-                "number"
-              ]
+              "$ref": "special_values.json#/definitions/key_shortcuts"
             },
             "Orientation": {
               "$ref": "special_values.json#/definitions/gui_orientation"

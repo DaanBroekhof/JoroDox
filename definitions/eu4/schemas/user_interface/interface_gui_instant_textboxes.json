@@ -33,7 +33,8 @@
               "type": [
                 "string",
                 "number"
-              ]
+              ],
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "font": {
               "todo": "mnultiple allowed?",
@@ -77,14 +78,7 @@
               "type": "number"
             },
             "textureFile": {
-              "anyOf": [
-                {
-                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
-                },
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_not_empty"
             },
             "format": {
               "$ref": "special_values.json#/definitions/gui_format"
@@ -114,9 +108,10 @@
               "$ref": "special_values.json#/definitions/gui_orientation"
             },
             "hint_tag": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/hints"
             },
             "scrollbartype": {
+              "todo": "hook up reference",
               "type": "string"
             },
             "if_resolution": {

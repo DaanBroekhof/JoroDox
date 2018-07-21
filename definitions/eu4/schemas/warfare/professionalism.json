@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation"
     },
     "data": {
       "$mergeProps": [
@@ -15,10 +16,27 @@
               "type": "number"
             },
             "marker_sprite": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
             },
             "unit_sprite_start": {
-              "type": "string"
+              "$identifierValue": [
+                {
+                  "type": "interface_gui_spritetypes",
+                  "postfix": "unitpanel_bg"
+                },
+                {
+                  "type": "interface_gui_spritetypes",
+                  "postfix": "regiment_bg"
+                },
+                {
+                  "type": "interface_gui_spritetypes",
+                  "postfix": "multiselection_bg"
+                },
+                {
+                  "type": "interface_gui_spritetypes",
+                  "postfix": "unitpanel_assign_leader_bg"
+                }
+              ]
             },
             "trigger": {
               "$ref": "country_conditions.json#/definitions/country_conditions"

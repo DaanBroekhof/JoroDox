@@ -10,6 +10,15 @@
     "path": {
       "type": "string"
     },
+    "localisation_id": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "DLC"
+        }
+      ]
+    },
     "data": {
       "type": "object",
       "additionalProperties": false,

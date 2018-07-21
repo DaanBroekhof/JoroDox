@@ -5,7 +5,18 @@
   "additionalProperties": false,
   "properties": {
     "id": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.PROV",
+          "require": [{
+            "data": ["name"],
+            "operator": "!regexp",
+            "value": "^(Unused|RNW)"
+          }]
+        }
+      ]
     },
     "name": {
       "type": "string"

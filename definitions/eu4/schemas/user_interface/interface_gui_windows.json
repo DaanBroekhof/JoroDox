@@ -30,18 +30,15 @@
         {
           "properties": {
             "backGround": {
-              "type": [
-                "number",
-                "string"
-              ]
+              "type": "string",
+              "todo": "add ref"
             },
             "background": {
-              "type": [
-                "number",
-                "string"
-              ]
+              "type": "string",
+              "todo": "add ref"
             },
             "parent": {
+              "todo": "Hook up reference?",
               "type": "string"
             },
             "position": {
@@ -76,14 +73,7 @@
               }
             },
             "textureFile": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_not_empty"
             },
             "moveable": {
               "anyOf": [
@@ -116,45 +106,24 @@
               ]
             },
             "upsound": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/sound"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/sound_not_empty"
             },
             "downsound": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    ""
-                  ]
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/sound"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/sound_not_empty"
             },
             "horizontalBorder": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "type": "string"
-                }
-              ]
+              "type": ["string", "number"]
             },
             "verticalBorder": {
+              "todo": "hook up ref",
               "type": "string"
             },
             "verticalScrollbar": {
+              "todo": "hook up ref",
               "type": "string"
             },
             "horizontalScrollbar": {
+              "todo": "hook up ref",
               "type": "string"
             },
             "animation_type": {

@@ -12,11 +12,13 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "i.e. NEWWORLD_NAME, which is localised in a localisation file."
+          "description": "i.e. NEWWORLD_NAME, which is localised in a localisation file.",
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "desc": {
           "type": "string",
-          "description": "i.e. NEWWORLD_NAME, which is localised in a localisation file."
+          "description": "i.e. NEWWORLD_NAME, which is localised in a localisation file.",
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "date": {
           "$ref": "special_values.json#/definitions/date"

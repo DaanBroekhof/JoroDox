@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation_plus_desc"
     },
     "data": {
       "$mergeProps": [
@@ -34,7 +35,8 @@
               "$ref": "wargoal_types.json#/definitions/wargoal_repercussions"
             },
             "war_name": {
-              "type": "string"
+              "type": "string",
+              "$ref": "identifiers.json#/definitions/localisation"
             }
           }
         },
@@ -93,10 +95,12 @@
           "$ref": "special_values.json#/definitions/boolean"
         },
         "prov_desc": {
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "country_desc": {
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/localisation"
         }
       }
     }

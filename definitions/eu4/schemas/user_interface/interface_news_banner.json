@@ -1,28 +1,34 @@
 {
+  "$id": "http://jorodox.org/schemas/interface_news_banner.json",
   "$schema": "http://json-schema.org/schema#",
-  "$id": "http://jorodox.org/schemas/new_diplomatic_static_actions.json",
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "name": {
+    "path": {
       "type": "string"
     },
     "data": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-         "alert_index": {
+        "id": {
           "type": "number"
         },
-        "alert_tooltip": {
-          "type": "string",
+        "steam_depot_id": {
+          "type": "number"
+        },
+        "link_button_text": {
           "$ref": "identifiers.json#/definitions/localisation"
+        },
+        "link_url": {
+          "type": "string",
+          "format": "url"
         }
       }
     }
   },
   "required": [
-    "name",
+    "path",
     "data"
   ]
 }

@@ -5,7 +5,29 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_name"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_title"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_desc"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_army"
+        }
+      ]
     },
     "data": {
       "type": "object",
@@ -118,7 +140,9 @@
         },
 
         "demands_description": {
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/localisation_plus_desc"
+
         },
         "demands_enforced_effect": {
           "$ref": "country_commands.json#/definitions/country_commands"

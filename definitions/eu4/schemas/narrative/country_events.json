@@ -36,7 +36,8 @@
           ]
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "desc": {
           "$allowMultiple": {
@@ -49,12 +50,14 @@
                     "$ref": "country_conditions.json#/definitions/country_conditions"
                   },
                   "desc": {
-                    "type": "string"
+                    "type": "string",
+                    "$ref": "identifiers.json#/definitions/localisation"
                   }
                 }
               },
               {
-                "type": "string"
+                "type": "string",
+                "$ref": "identifiers.json#/definitions/localisation"
               }
             ]
           }
@@ -141,7 +144,8 @@
       "additionalProperties": false,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "highlight": {
           "$ref": "special_values.json#/definitions/boolean"

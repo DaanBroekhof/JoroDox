@@ -5,7 +5,27 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.harmonized_",
+          "require": {
+            "data": ["name"], "operator": "!=", "value": "eastern"
+          }
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.desc_harmonized_",
+          "require": {
+            "data": ["name"], "operator": "!=", "value": "eastern"
+          }
+        }
+      ]
     },
     "data": {
       "type": "object",
@@ -42,7 +62,14 @@
         },
         "crusade_name": {
           "description": "The name of a holy war declared in the name of this religion group using certain CB's.",
-          "type": "string"
+          "type": "string",
+          "todo": "Figure out if _DESC is a valid localization postfix",
+          "$identifierValue": [
+            {
+              "type": "localisation",
+              "prefix": "l_english."
+            }
+          ]
         }
       }
     }

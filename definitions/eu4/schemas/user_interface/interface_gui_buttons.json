@@ -33,14 +33,7 @@
               "type": "string"
             },
             "quadTextureSprite": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes_not_empty"
             },
             "if_resolution": {
               "$allowMultiple": {
@@ -64,6 +57,9 @@
             "spriteType": {
               "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
             },
+            "SpriteType": {
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
+            },
             "position": {
               "$ref": "special_values.json#/definitions/coordinate_xy"
             },
@@ -74,35 +70,25 @@
               "$ref": "special_values.json#/definitions/coordinate_xy"
             },
             "tooltip": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "tooltipText": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "delayedTooltipText": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "font": {
               "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
             },
             "buttonFont": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts_not_empty"
             },
             "text": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "buttonText": {
-              "type": [
-                "string",
-                "number"
-              ]
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "Orientation": {
               "$ref": "special_values.json#/definitions/gui_orientation"
@@ -111,30 +97,20 @@
               "$ref": "special_values.json#/definitions/gui_orientation"
             },
             "hint_tag": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/hints"
             },
             "shortcut": {
-              "type": [
-                "string",
-                "number"
-              ]
+              "$ref": "special_values.json#/definitions/key_shortcuts"
             },
             "extra_shortcut": {
-              "type": "string"
+              "$ref": "special_values.json#/definitions/key_shortcuts"
             },
             "alwaystransparent": {
               "todo": "all or al??",
               "$ref": "special_values.json#/definitions/boolean"
             },
             "clicksound": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/sound"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/sound_not_empty"
             },
             "format": {
               "$ref": "special_values.json#/definitions/gui_format"

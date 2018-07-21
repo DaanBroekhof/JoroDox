@@ -280,6 +280,125 @@
     }
   },
   {
+    "id": "interface_pdxmesh_assets",
+    "title": "Interface Pdxmesh Assets",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "interface/assets/",
+      "pathPattern": "interface/assets/*.gfx"
+    },
+    "sourceTransform": {
+      "type": "typesListData",
+      "path": [
+        "data",
+        "data",
+        "objectTypes"
+      ],
+      "types": [
+        "pdxmesh"
+      ],
+      "idPath": [
+        "name"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "interface_pdxparticle_assets",
+    "title": "Interface Particle Assets",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "interface/assets/",
+      "pathPattern": "interface/assets/*.gfx"
+    },
+    "sourceTransform": {
+      "type": "typesListData",
+      "path": [
+        "data",
+        "data",
+        "objectTypes"
+      ],
+      "types": [
+        "pdxparticle"
+      ],
+      "idPath": [
+        "name"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "gfx_animation_assets",
+    "title": "Model Animation assets",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "id",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "gfx/models/",
+      "pathPattern": "gfx/models/**/*.asset"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "animation"
+      ],
+      "idPath": [
+        "data",
+        "name"
+      ],
+      "removeFields": [
+        "namespace",
+        "nr"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "id",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Animation",
+          "dataIndex": [
+            "data",
+            "file"
+          ]
+        }
+      ]
+    }
+  },
+  {
     "id": "event_pictures",
     "title": "Event pictures",
     "category": "Graphics",

@@ -5,7 +5,29 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_start",
+          "require": {
+            "data": ["data", "start"]
+          }
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_bonus",
+          "require": {
+            "data": ["data", "bonus"]
+          }
+        }
+      ]
     },
     "data": {
       "type": "object",
@@ -27,6 +49,9 @@
         },
         "free": {
           "description": "All national idea groups should have 'free=yes'. This marks them as national rather than basic idea groups.",
+          "$ref": "special_values.json#/definitions/yes"
+        },
+        "important": {
           "$ref": "special_values.json#/definitions/yes"
         },
         "category": {

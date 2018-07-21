@@ -30,16 +30,12 @@
         {
           "properties": {
              "backGround": {
-              "type": [
-                "number",
-                "string"
-              ]
+              "type": "string",
+               "todo": "add ref"
             },
             "background": {
-              "type": [
-                "number",
-                "string"
-              ]
+              "type": "string",
+              "todo": "add ref"
             },
             "horizontal": {
               "type": "number"
@@ -66,7 +62,8 @@
               "type": "string"
             },
             "scrollbar_side": {
-              "type": "string"
+              "type": "string",
+              "enum": ["LEFT", "RIGHT"]
             },
             "orientation": {
               "$ref": "special_values.json#/definitions/gui_orientation"

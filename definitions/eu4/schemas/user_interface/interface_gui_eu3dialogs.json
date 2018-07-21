@@ -30,10 +30,12 @@
         {
           "properties": {
             "backGround": {
-              "type": [
-                "number",
-                "string"
-              ]
+              "todo": "add ref",
+              "type": "string"
+            },
+            "background": {
+              "todo": "add ref",
+              "type": "string"
             },
             "position": {
               "$ref": "special_values.json#/definitions/coordinate_xy"
@@ -131,8 +133,7 @@
             },
             "Orientation": {
               "$ref": "special_values.json#/definitions/gui_orientation"
-            },
-            "x": {}
+            }
           }
         }
       ]
@@ -145,10 +146,12 @@
           "type": "string"
         },
         "backGround": {
-          "type": [
-            "number",
-            "string"
-          ]
+          "todo": "add ref",
+          "type": "string"
+        },
+        "background": {
+          "todo": "add ref",
+          "type": "string"
         },
         "position": {
           "$ref": "special_values.json#/definitions/coordinate_xy"

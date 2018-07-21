@@ -209,7 +209,8 @@
         "trigger",
         "ai_will_do",
         "free",
-        "start"
+        "start",
+        "important"
       ]
     },
     "listView": {
@@ -274,7 +275,8 @@
         "trigger",
         "ai_will_do",
         "free",
-        "start"
+        "start",
+        "important"
       ],
       "keyName": "name",
       "parentKeyName": "idea_group",
@@ -418,7 +420,7 @@
     "title": "Technologies",
     "category": "Advancement",
     "reader": "StructureLoader",
-    "primaryKey": "nr",
+    "primaryKey": "id",
     "sourceType": {
       "id": "pdx_scripts",
       "pathPrefix": "common/{type.id}/",
@@ -433,16 +435,29 @@
       "types": [
         "technology"
       ],
+      "nrFile": true,
+      "customFields": {
+        "id": {
+          "type": "mixedConcat",
+          "fields": [
+            ["namespace", "monarch_power"],
+            "_tech_cs_",
+            ["nrFile"]
+          ],
+          "separator": "",
+          "operations": ["lowercase"]
+        }
+      },
       "removeFields": [
-        "id"
+        "nr", "nrFile"
       ]
     },
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "Nr",
-          "dataIndex": "nr",
+          "name": "ID",
+          "dataIndex": "id",
           "linkTo": "[self]"
         },
         {

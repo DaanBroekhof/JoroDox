@@ -5,7 +5,53 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_title"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_desc"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_member",
+          "require": [
+            {"data": ["data", "member"]}
+          ]
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.desc_",
+          "postfix": "_member",
+          "require": [
+            {"data": ["data", "member"]},
+            {"data": ["data", "empire"], "value": "hre"}
+          ]
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_emperor",
+          "require": [
+            {"data": ["data", "emperor"]}
+          ]
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.desc_",
+          "postfix": "_emperor",
+          "require": [
+            {"data": ["data", "emperor"]},
+            {"data": ["data", "empire"], "value": "hre"}
+          ]
+        }
+      ]
     },
     "data": {
       "type": "object",

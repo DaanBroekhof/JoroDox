@@ -5,7 +5,8 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation_plus_desc"
     },
     "religion_group": {
       "$ref": "identifiers.json#/definitions/religion_groups"
@@ -27,6 +28,7 @@
               "$ref": "country_modifiers.json#/definitions/country_modifiers"
             },
             "picture": {
+              "todo": "hook up",
               "type": "string"
             }
           }

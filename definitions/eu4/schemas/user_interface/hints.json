@@ -15,16 +15,16 @@
           "type": "string"
         },
         "title": {
-          "type": "string"
+          "$ref": "identifiers.json#/definitions/localisation"
         },
         "text": {
           "allowMultiple": {
-            "type": "string"
+            "$ref": "identifiers.json#/definitions/localisation"
           }
         },
         "button": {
           "allowMultiple": {
-            "type": "string"
+            "$ref": "identifiers.json#/definitions/hints"
           }
         },
         "trigger": {

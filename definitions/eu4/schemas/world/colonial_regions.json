@@ -4,7 +4,19 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "require": {"data": ["data", "provinces"]}
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.short_",
+          "require": {"data": ["data", "provinces"]}
+        }
+      ]
     },
     "data": {
       "type": "object",
@@ -74,7 +86,8 @@
               },
               "name": {
                 "description": "Localization string for nation. May be a province name if specified as PROV[1234].",
-                "type": "string"
+                "type": "string",
+                "$ref": "identifiers.json#/definitions/localisation"
               }
             }
           }

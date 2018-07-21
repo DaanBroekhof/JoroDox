@@ -29,25 +29,11 @@
         },
         {
           "properties": {
-             "quadTextureSprite": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
-                }
-              ]
+            "quadTextureSprite": {
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes_not_empty"
             },
             "buttonMesh": {
-              "anyOf": [
-                {
-                  "$ref": "special_values.json#/definitions/empty_string_or_zero"
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes_not_empty"
             },
             "spriteType": {
               "$ref": "identifiers.json#/definitions/interface_gui_spritetypes"
@@ -78,16 +64,22 @@
               "$ref": "special_values.json#/definitions/boolean"
             },
             "tooltip": {
-              "type": "string"
+              "type": "string",
+              "todo": "These seem just to be empty, always... ?",
+              "enum": [""]
             },
             "tooltipText": {
-              "type": "string"
+              "type": "string",
+              "todo": "These seem just to be empty, always... ?",
+              "enum": [""]
             },
             "delayedTooltipText": {
-              "type": "string"
+              "type": "string",
+              "todo": "These seem just to be empty, always... ?",
+              "enum": [""]
             },
             "hint_tag": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/hints"
             },
             "if_resolution": {
               "$allowMultiple": {

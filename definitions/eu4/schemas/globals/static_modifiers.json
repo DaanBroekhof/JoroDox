@@ -4,7 +4,8 @@
   "type": "object",
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation"
     },
     "data": {
       "anyOf": [

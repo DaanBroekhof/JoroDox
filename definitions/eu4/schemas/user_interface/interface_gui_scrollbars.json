@@ -30,15 +30,19 @@
         {
           "properties": {
             "slider": {
+              "todo": "hook up reference",
               "type": "string"
             },
             "track": {
+              "todo": "hook up reference",
               "type": "string"
             },
             "leftbutton": {
+              "todo": "hook up reference",
               "type": "string"
             },
             "rightbutton": {
+              "todo": "hook up reference",
               "type": "string"
             },
             "size": {

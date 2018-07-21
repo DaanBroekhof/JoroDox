@@ -143,6 +143,18 @@
       "$identifierValue": "interface_gui_spritetypes",
       "type": "string"
     },
+    "interface_gui_spritetypes_not_empty": {
+      "$identifierValue": [
+        {
+          "type": "interface_gui_spritetypes",
+          "prefix": "l_english.",
+          "require": [
+            {"operation": "regexp", "value": "^.{2,}$"}
+          ]
+        }
+      ],
+      "type": ["string", "number"]
+    },
     "leader_flags": {
       "type": "string"
     },
@@ -327,6 +339,19 @@
       },
       "type": "string"
     },
+    "interface_images_fixpath_not_empty": {
+      "$identifierValue":  {
+        "type": "gfx_interface_images",
+        "replaceAll": [{
+          "match": "\\\\\\\\",
+          "replace": "/"
+        }],
+        "require": [
+          {"operation": "regexp", "value": "^.{2,}$"}
+        ]
+      },
+      "type": ["string", "number"]
+    },
     "interface_images_ideas_eu4": {
       "$identifierValue": {
         "type": "gfx_interface_images",
@@ -348,6 +373,20 @@
       "type": "string"
     },
     "pdx_mesh_shaders": {
+      "type": "string"
+    },
+    "pdx_meshes": {
+      "$identifierValue":  {
+        "type": "pdx_meshes",
+        "replaceAll": [{
+          "match": "\\\\",
+          "replace": "/"
+        }]
+      },
+      "type": "string"
+    },
+    "gfx_animation_assets": {
+      "$identifierValue": "gfx_animation_assets",
       "type": "string"
     },
     "gfx_model_textures_relative": {
@@ -398,6 +437,18 @@
       "$identifierValue": "sound",
       "type": "string"
     },
+    "sound_not_empty": {
+      "$identifierValue": [
+        {
+          "type": "sound",
+          "prefix": "l_english.",
+          "require": [
+            {"operation": "regexp", "value": "^.{2,}$"}
+          ]
+        }
+      ],
+      "type": ["string", "number"]
+    },
     "gfx_font_images_postfix": {
       "$identifierValue": {
         "type": "gfx_font_images",
@@ -423,6 +474,18 @@
       "$identifierValue": "interface_gui_bitmapfonts",
       "type": "string"
     },
+    "interface_gui_bitmapfonts_not_empty": {
+      "$identifierValue": [
+        {
+          "type": "interface_gui_bitmapfonts",
+          "prefix": "l_english.",
+          "require": [
+            {"operation": "regexp", "value": "^.{2,}$"}
+          ]
+        }
+      ],
+      "type": ["string", "number"]
+    },
     "religious_reform_groups": {
       "$identifierValue": "religious_reform_groups",
       "type": "string"
@@ -444,6 +507,102 @@
         "prefix": "sound/"
       },
       "type": "string"
+    },
+    "hints": {
+      "$identifierValue": "hints",
+      "type": "string"
+    },
+    "localisation": {
+      "$identifierValue": {
+        "type": "localisation",
+        "prefix": "l_english."
+      },
+      "type": "string"
+    },
+    "localisation_plus_desc": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_desc"
+        }
+      ],
+      "type": "string"
+    },
+    "localisation_plus_title": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_title"
+        }
+      ],
+      "type": "string"
+    },
+    "localisation_plus_adj": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_adj"
+        }
+      ],
+      "type": "string"
+    },
+    "localisation_plus_name_adj": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_adj"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_name"
+        }
+      ],
+      "type": "string"
+    },
+    "localisation_plus_pre_desc": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.desc_"
+        }
+      ],
+      "type": "string"
+    },
+    "localisation_not_empty_capitalized": {
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "require": [
+            {"operation": "regexp", "value": "^[A-Z_0-9]+$"}
+          ]
+        }
+      ]
     }
   }
 }

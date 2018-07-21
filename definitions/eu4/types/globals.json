@@ -384,6 +384,15 @@
             "data",
             "name"
           ]
+        },
+        "localisation_id": {
+          "type": "replaceAll",
+          "fields": [
+            "data",
+            "name"
+          ],
+          "replace": "\\s+",
+          "with": ""
         }
       }
     },

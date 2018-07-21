@@ -5,12 +5,14 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation_plus_desc"
     },
     "idea_group": {
       "$ref": "identifiers.json#/definitions/idea_groups"
     },
     "data": {
+      "type": ["object", "array"],
       "$mergeProps": [
         {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
         {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}

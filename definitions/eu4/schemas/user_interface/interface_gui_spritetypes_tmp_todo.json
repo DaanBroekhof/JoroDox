@@ -1,0 +1,56 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_spritetypes_tmp_todo.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "spriteType",
+        "corneredTileSpriteType"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "texturefile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath"
+        },
+        "noOfFrames": {
+          "type": "number"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "effectFile": {
+          "type": "string"
+        },
+        "horizontal": {
+
+        },
+        "loadType": {
+          "type": "string",
+          "enum": ["INGAME"]
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

@@ -13,10 +13,10 @@
           "type": "string"
         },
         "pdx_tooltip": {
-          "type": "string"
+          "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
         },
         "pdx_tooltip_delayed": {
-          "type": "string"
+          "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
         },
         "tint": {
           "type": "number"

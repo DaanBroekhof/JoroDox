@@ -5,7 +5,19 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "require": {"data": ["data"], "operator": "is_empty", "value": false}
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.desc_",
+          "require": {"data": ["data"], "operator": "is_empty", "value": false}
+        }
+      ]
     },
     "data": {
       "anyOf": [

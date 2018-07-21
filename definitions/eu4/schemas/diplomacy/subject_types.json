@@ -5,7 +5,33 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_title",
+          "require": {"data": ["data", "copy_from"]}
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_title_plural",
+          "require": {"data": ["data", "copy_from"]}
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_long_desc",
+          "require": {"data": ["data", "copy_from"]}
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_is_our",
+          "require": {"data": ["data", "copy_from"]}
+        }
+      ]
     },
     "data": {
       "anyOf": [

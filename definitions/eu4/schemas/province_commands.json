@@ -719,7 +719,7 @@
             },
             "key": {
               "description": "The key to display as the modifier in the tooltip.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             }
           },
           "required": [
@@ -825,7 +825,7 @@
             },
             "tooltip": {
               "description": "Optional. The tooltip to display in the effect tooltip country_event is used in.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             }
           },
           "required": [
@@ -852,7 +852,7 @@
             },
             "tooltip": {
               "description": "Optional. The tooltip to display in the effect tooltip country_event is used in.",
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/localisation"
             }
           },
           "required": [

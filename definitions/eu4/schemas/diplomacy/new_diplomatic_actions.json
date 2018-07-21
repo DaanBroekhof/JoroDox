@@ -5,7 +5,24 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_title"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_desc"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_dialog"
+        }
+      ]
     },
     "data": {
       "type": "object",

@@ -34,10 +34,7 @@
               "type": "string"
             },
             "quadTextureSprite": {
-              "anyOf": [
-                {"$ref": "special_values.json#/definitions/empty_string_or_zero"},
-                {"$ref": "identifiers.json#/definitions/interface_gui_spritetypes"}
-              ]
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes_not_empty"
             }
           }
         },

@@ -16,8 +16,20 @@
         }
       }
     },
-    "nr": {
-      "type": "string"
+    "id": {
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_name"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_desc"
+        }
+      ]
     },
     "type": {
       "type": "string"
@@ -151,7 +163,7 @@
     }
   },
   "required": [
-    "nr",
+    "id",
     "namespace",
     "data"
   ]

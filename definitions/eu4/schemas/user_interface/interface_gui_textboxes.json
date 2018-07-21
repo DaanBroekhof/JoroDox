@@ -30,10 +30,7 @@
         {
           "properties": {
             "text": {
-              "type": [
-                "string",
-                "number"
-              ]
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "font": {
               "$ref": "identifiers.json#/definitions/interface_gui_bitmapfonts"
@@ -54,17 +51,7 @@
               "type": "number"
             },
             "textureFile": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "enum": [
-                    ""
-                  ]
-                },
-                {
-                  "$ref": "identifiers.json#/definitions/interface_images_fixpath"
-                }
-              ]
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_not_empty"
             },
             "orientation": {
               "$ref": "special_values.json#/definitions/gui_orientation"
