@@ -63,11 +63,6 @@ export default class PdxScript {
         if (token === '{') {
           this.readObject(propertyScope);
         } else {
-          // Convert numeric values
-          if (!isNaN(token) && token !== '') {
-            token = +token;
-          }
-
           propertyScope.type = 'property';
           propertyScope.icon = 'asterisk'; // This should not be here, presentational
           propertyScope.value = token;
@@ -193,6 +188,11 @@ export default class PdxScript {
       if (this.data[this.currentOffset] === '}') {
         break;
       }
+    }
+
+    // Convert numeric values
+    if (!isNaN(token) && token !== '') {
+      token = +token;
     }
 
     return token === '' ? false : token;

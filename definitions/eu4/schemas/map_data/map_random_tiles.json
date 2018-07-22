@@ -62,7 +62,7 @@
         "size": {
           "type": "array",
           "items": [
-            {"$ref": "special_values.json#/definitions/integer_string"}
+            {"type": "number"}
           ]
         },
         "do_not_rotate": {

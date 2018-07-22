@@ -5,7 +5,21 @@
   "properties": {
     "name": {
       "type": "string",
-      "$ref": "identifiers.json#/definitions/localisation"
+      "anyOf": [
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english."
+          }
+        },
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "toUpperCase": true
+          }
+        }
+      ]
     },
     "data": {
       "anyOf": [
@@ -41,9 +55,11 @@
           "$ref": "special_values.json#/definitions/boolean"
         },
         "expire_message_type": {
-          "type": "string"
+          "type": "string",
+          "$ref": "identifiers.json#/definitions/interface_messagetypes"
         },
         "picture": {
+          "todo": "hook up",
           "type": "string"
         }
       }

@@ -94,9 +94,9 @@
                 "type": "object",
                 "additionalProperties": false,
                 "properties": {
-                  "r": {"type": "array", "items": {"$ref": "special_values.json#/definitions/integer_string"}},
-                  "g": {"type": "array", "items": {"$ref": "special_values.json#/definitions/integer_string"}},
-                  "b": {"type": "array", "items": {"$ref": "special_values.json#/definitions/integer_string"}},
+                  "r": {"type": "array", "items": {"type": "number"}},
+                  "g": {"type": "array", "items": {"type": "number"}},
+                  "b": {"type": "array", "items": {"type": "number"}},
                   "alpha": {"type": "array", "items": {"type": "string"}}
                 }
               },
@@ -104,7 +104,7 @@
                 "type": "array",
                 "items": [
                   {"type": "string"},
-                  {"$ref": "special_values.json#/definitions/integer_string"}
+                  {"type": "number"}
                 ]
               },
               "force": {

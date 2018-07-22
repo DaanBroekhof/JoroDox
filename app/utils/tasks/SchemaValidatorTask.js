@@ -467,6 +467,13 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             const unchangedIdentifier = identifier;
 
             // Add prefixes/postfixes/other identifier value manipulation
+            if (identifierSchema.toUpperCase) {
+              identifier = identifier.toUpperCase();
+            }
+            if (identifierSchema.replacementIdentifier) {
+              identifier = identifierSchema.replacementIdentifier;
+            }
+
             if (identifierSchema.prefix) {
               identifier = identifierSchema.prefix + identifier;
             }

@@ -9,877 +9,1254 @@
           "properties": {
             "institution_growth": {
               "todo": "check?",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
-
 
             "adm_tech_cost_modifier": {
               "description": "Modifies the monarch power cost of <tech> technologies.",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "dip_tech_cost_modifier": {
               "description": "Modifies the monarch power cost of <tech> technologies.",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "mil_tech_cost_modifier": {
               "description": "Modifies the monarch power cost of <tech> technologies.",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "administrative_efficiency": {
               "description": "Modifies the base core creation cost, diplo-annexation costs and the impact of province development on overextension and warscore cost. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "advisor_cost": {
               "description": "Modifies the base cost of advisors. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "advisor_pool": {
               "description": "Adds to the pool size for advisors. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "ae_impact": {
               "description": "Modifies the total size of Aggressive Expansion gained during actions that confer it. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "all_power_cost": {
               "description": "Modifies the monarch power cost of every action that costs monarch power. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "amount_of_banners": {
               "description": "Modifies the maximum amount of banners available. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "army_tradition": {
               "description": "Adds to the rate of Army Tradition gained each year. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "army_tradition_decay": {
               "description": "Adds to the decay rate of Army Tradition. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "army_tradition_from_battle": {
               "description": "Modifies the Army Tradition bonus when gained through battles. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "artillery_bonus_vs_fort": {
               "description": "Adds to the bonus artillery get versus forts. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "artillery_cost": {
               "description": "Modifies the base cost of artillery units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "artillery_power": {
               "description": "Modifies the power artillery gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "autonomy_change_time": {
               "description": "Modifies the cooldown for the autonomy reduction and increase buttons. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "backrow_artillery_damage": {
               "description": "Modifies the bonus damage artillery inflict when in the backrow during combat. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "blockade_efficiency": {
               "description": "Modifies the efficiency of blockades against enemies. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "build_cost": {
               "description": "Modifies all building costs. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "build_time": {
               "description": "Modifies all building construction times. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "capture_ship_chance": {
               "description": "Adds to the chance for ship capture during naval battles. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "caravan_power": {
               "description": "Modifies the bonus trade power inland nodes receive from trade power sources. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "cav_to_inf_ratio": {
               "description": "Adds to the ratio required to negate the Insufficient Support penalty. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "cavalry_cost": {
               "description": "Modifies the base cost of cavalry units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "cavalry_flanking": {
               "description": "Modifies the effectiveness of cavalry flanking. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "cavalry_power": {
               "description": "Modifies the power cavalry gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "church_power_modifier": {
               "description": "Modifies the effectiveness of church power gains. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_CHURCH_POWER"
+              }
             },
             "claim_duration": {
               "description": "Modifies the duration of claims. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "colonist_placement_chance": {
               "description": "Adds to the base colonial placement chance for colonists, which is the chance that additional settlers will be spawned whilst the colonist is present. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "colonists": {
               "description": "Modifies the base colonist count for a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_COLONISTS"
+              }
             },
             "core_creation": {
               "description": "Modifies the base core creation cost. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "core_decay_on_your_own": {
               "description": "Modifies the rate at which the cores of a country will decay when under the ownership of a different country. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "culture_conversion_cost": {
               "description": "Modifies the diplomatic power cost for culture conversion in provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "defensiveness": {
               "description": "Modifies the siege defensiveness that affects siege phase length. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "development_cost": {
               "description": "Modifies the development cost for provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "devotion": {
               "description": "Adds to the yearly rate of devotion.\nDoes not appear or have an effect if a country's government does not use devotion. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "diplomatic_annexation_cost": {
               "description": "Modifies the diplomatic power cost for annexation. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "diplomatic_reputation": {
               "description": "Adds to a country's diplomatic reputation. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_DIPLO_SKILL"
+              }
             },
             "diplomatic_upkeep": {
               "description": "Adds to the maximum number of free diplomatic relations. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "diplomats": {
               "description": "Adds to a country's diplomat count. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_DIPLOMATS"
+              }
             },
             "discipline": {
               "description": "Modifies the discipline of land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "discovered_relations_impact": {
               "description": "Modifies the relations impact applied to a country when discovered commiting an espionage action. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_DISCOVERED_RELATION_IMPACT"
+              }
             },
             "drill_decay_modifier": {
               "description": "Modifies the army drill decay rate per year. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "drill_gain_modifier": {
               "description": "Modifies the army drill gains while drilling (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "embargo_efficiency": {
               "description": "Modifies the effectiveness of embargoing another country. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "embracement_cost": {
               "description": "Modifies the ducat cost for embracing an institution. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "enemy_core_creation": {
               "description": "Modifies the cost of coring provinces for enemies that have your cores. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "enforce_religion_cost": {
               "description": "Modifies the warscore cost for the Enforce Religion peace term. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "envoy_travel_time": {
               "description": "Modifies diplomat travel time during actions. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "fabricate_claims_cost": {
               "description": "Modifies diplomatic power cost for fabricating claim. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_FABRICATE_CLAIMS_TIME"
+              }
             },
             "female_advisor_chance": {
               "description": "Modifies the base chance rate for female advisors. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "fire_damage": {
               "description": "Modifies the fire damage done by land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "fire_damage_received": {
               "description": "Modifies the fire damage taken by land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_FIRE_DAMAGE_RECIEVED"
+              }
             },
             "fort_maintenance_modifier": {
               "description": "Modifies the base fort maintenance cost. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "free_leader_pool": {
               "description": "Adds to the maximum amount of free leaders. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "galley_cost": {
               "description": "Modifies the base cost of galley ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "galley_power": {
               "description": "Modifies the power galley ships gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "garrison_size": {
               "description": "Modifies the base garrison size in provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "general_cost": {
               "description": "Modifies the base military power cost for recruiting Generals. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_autonomy": {
               "description": "Adds to the monthly rate of autonomy in owned provinces. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "GLOBAL_AUTONOMY_MOD"
+              }
             },
             "global_colonial_growth": {
               "description": "Adds to the base yearly colonial growth gain. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_COLONIAL_GROWTH"
+              }
             },
             "global_foreign_trade_power": {
               "description": "Modifies the trade power for a country in tradenodes that are not domestic. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_garrison_growth": {
               "description": "Modifies the base garrison growth in provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_heretic_missionary_strength": {
               "description": "Adds to the base missionary strength against heretic religions. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_institution_spread": {
               "description": "Modifies the rate of spread for institutions in all owned provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_manpower": {
               "description": "Adds to the country's total manpower pool. 1 equals 1000 men. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MANPOWER"
+              }
             },
             "global_manpower_modifier": {
               "description": "Modifies a country's total manpower pool. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MANPOWER"
+              }
             },
             "global_missionary_strength": {
               "description": "Adds to the base missionary strength against all religions. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_naval_engagement_modifier": {
               "description": "Modifies the maximum naval engagement width. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_GLOBAL_NAVAL_ENGAGEMENT"
+              }
             },
             "global_own_trade_power": {
               "description": "Modifies the trade power for a country in tradenodes that are domestic. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_prov_trade_power_modifier": {
               "description": "Modifies the base trade power of owned provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_regiment_cost": {
               "description": "Modifies the base unit cost for all land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "REGIMENT_COST"
+              }
             },
             "global_regiment_recruit_speed": {
               "description": "Modifies the base speed at which land units are recruited. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "REGIMENT_RECRUIT_SPEED"
+              }
             },
             "global_sailors": {
               "description": "Adds to a country's maximum sailor pool. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "SAILORS"
+              }
             },
             "global_sailors_modifier": {
               "description": "Modifies a country's maximum sailor pool. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "GLOBAL_SAILORS"
+              }
             },
             "global_ship_cost": {
               "description": "Modifies the base cost of all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "SHIP_COST"
+              }
             },
             "global_ship_recruit_speed": {
               "description": "Modifies the base recruitmend speed of all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "SHIP_RECRUIT_SPEED"
+              }
             },
             "global_ship_repair": {
               "description": "Modifies the base repair speed (in port) of all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_ship_trade_power": {
               "description": "Modifies the trade power ships grant when protecting trade. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_spy_defence": {
               "description": "Modifies the base effectiveness of counter-espionage against enemy spies. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "SPY_GLOBAL_DEFENCE"
+              }
             },
             "global_tariffs": {
               "description": "Modifies the tariff income from colonial nations. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "GLOBAL_TARIFF_MODIFIER"
+              }
             },
             "global_tax_income": {
               "description": "Adds to the base tax income per year (i.e. 12 equals 1 extra per month). (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "TAX_INCOME"
+              }
             },
             "global_tax_modifier": {
               "description": "Modifies the base tax income by a percentage. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "TAX_INCOME"
+              }
             },
             "global_trade_goods_size_modifier": {
               "description": "Modifies the base trade good size of owned provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_trade_power": {
               "description": "Modifies the trade power in all tradenodes for a country. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "global_unrest": {
               "description": "Adds to the base unrest value. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "harmonization_speed": {
               "description": "Modifies the rate at which harmonization occurs. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "harsh_treatment_cost": {
               "description": "Modifies the military power cost for using harsh treatment. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "heavy_ship_cost": {
               "description": "Modifies the base cost of heavy ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "HEAVYSHIP_COST"
+              }
             },
             "heavy_ship_power": {
               "description": "Modifies the power heavy ships gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "HEAVYSHIP_POWER"
+              }
             },
             "heir_chance": {
               "description": "Modifies the base chance for an heir during the heir generation tick. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "horde_unity": {
               "description": "Adds to the yearly rate of horde unity.\nDoes not appear or have an effect if a country's government does not use horde unity. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "hostile_attrition": {
               "description": "Adss to the attrition enemies take in a country's provinces. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "idea_cost": {
               "description": "Modifies the monarch power cost of purchasable ideas. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "imperial_authority": {
               "description": "Modifies the impact of Imperial Authority gains. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "imperial_authority_value": {
               "description": "Adds to the rate of Imperial Authority gained per month. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "imperial_mandate": {
               "description": "Adds to the rate of Mandate gained per month. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "improve_relation_modifier": {
               "description": "Modifies the speed of the Improve Relations diplomatic action. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "infantry_cost": {
               "description": "Modifies the base cost of infantry units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "infantry_power": {
               "description": "Modifies the power infantry gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "inflation_action_cost": {
               "description": "Modifies the administrative power cost for reducing inflation. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "inflation_reduction": {
               "description": "Adds to the base yearly inflation rate. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "innovativeness_gain": {
               "description": "Modifies the amount of Innovativeness gained (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "institution_spread_from_true_faith": {
               "description": "Modifies the rate of spread for institutions in owned provinces following the owner's religion. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "interest": {
               "description": "Adds to the base interest rate. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "land_attrition": {
               "description": "Modifies the attrition taken by land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "land_forcelimit": {
               "description": "Adds to a country's forcelimit. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "land_forcelimit_modifier": {
               "description": "Modifies a country's forcelimit. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "land_maintenance_modifier": {
               "description": "Modifies the maintenance cost of all land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "land_morale": {
               "description": "Modifies the land morale of land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "leader_land_fire": {
               "description": "Adds to the minimum fire pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "leader_land_manuever": {
               "description": "Adds to the minimum manuever pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "LAND_LEADER_MANEUVER"
+              }
             },
             "leader_land_shock": {
               "description": "Adds to the minimum shock pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "leader_naval_fire": {
               "description": "Adds to the minimum fire pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "leader_naval_manuever": {
               "description": "Adds to the minimum manuever pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "NAVEL_LEADER_MANEUVER"
+              }
             },
             "leader_naval_shock": {
               "description": "Adds to the minimum shock pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "leader_siege": {
               "description": "Adds to the minimum siege pip count a leader can be generated with. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "legitimacy": {
               "description": "Adds to the yearly rate of legitimacy.\nDoes not appear or have an effect if a country's government does not use legitimacy. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "liberty_desire": {
               "description": "Adds to subject liberty desire against their overlord. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "liberty_desire_from_subject_development": {
               "description": "Adds to the subject liberty desire from development against their overlord. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "light_ship_cost": {
               "description": "Modifies the base cost of light ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "LIGHTSHIP_COST"
+              }
             },
             "light_ship_power": {
               "description": "Modifies the power light ships gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "LIGHTSHIP_POWER"
+              }
             },
             "loot_amount": {
               "description": "Modifies the amount of loot taken at once during looting. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "manpower_recovery_speed": {
               "description": "Modifies the rate at which manpower is recovered. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MANPOWER_RECOVERY"
+              }
             },
             "max_absolutism": {
               "description": "Adds to the maximum value of absolutism. Internally absolutism bonuses do not scale above 100. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "max_states": {
               "description": "Adds to the maximum number of states a country can support. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "merc_maintenance_modifier": {
               "description": "Modifies the maintenance cost of all mercenary units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "mercenary_cost": {
               "description": "Modifies the base cost for mercenary units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "mercenary_discipline": {
               "description": "Modifies the discipline of mercenary units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "merchants": {
               "description": "Adds to the base merchant count for a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_MERCHANTS"
+              }
             },
             "meritocracy": {
               "description": "Adds to the yearly rate of meritocracy. Does not appear or have an effect if a country's government does not use meritocracy. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "migration_cooldown": {
               "description": "Modifies the cooldown for the migration action for primitive nations that can migrate. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "min_autonomy": {
               "description": "Sets the minimum autonomy level allowed in all owned provinces. (Constant)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MINIMUM_GLOBAL_AUTONOMY"
+              }
             },
             "missionaries": {
               "description": "Adds to the base missionary count for a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_MISSIONARIES"
+              }
             },
             "monarch_admin_power": {
               "description": "Adds to the base ADM skill a ruler, heir and consort can be generated with.\nDoes not effect rulers created with fixed = yes. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monarch_diplomatic_power": {
               "description": "Adds to the base DIP skill a ruler, heir and consort can be generated with.\nDoes not effect rulers created with fixed = yes. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monarch_military_power": {
               "description": "Adds to the base MIL skill a ruler, heir and consort can be generated with.\nDoes not effect rulers created with fixed = yes. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monthly_fervor_increase": {
               "description": "Adds to the rate of fervor gained per month. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monthly_karma": {
               "description": "Adds to the rate of karma gained per month. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monthly_militarized_society": {
               "description": "Adds to the monthly rate of militarisation for governments with the militarisation mechanic. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monthly_piety": {
               "description": "Adds to the rate of piety gained per month. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "monthly_splendor": {
               "description": "Adds to the monthly rate of splendor points. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "movement_speed": {
               "description": "Modifies the base movement speed for all land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "native_advancement_cost": {
               "description": "Modifies the monarch power cost of native advancements. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "native_assimilation": {
               "description": "Modifies the bonus from assimilation in colonies. Native assimilation is bonus to goods produced depends on the native population. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "native_uprising_chance": {
               "description": "Adds to the chance of native uprisings in a colony province. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "naval_attrition": {
               "description": "Modifies the naval attrition taken by ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "naval_forcelimit": {
               "description": "Adds to a country's naval forcelimit. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "naval_forcelimit_modifier": {
               "description": "Modifies a country's naval forcelimit. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "naval_maintenance_modifier": {
               "description": "Modifies the naval maintenance for all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "naval_morale": {
               "description": "Modifies the naval morale of all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "naval_tradition_from_battle": {
               "description": "Modifies the base Navy Tradition gained from battles. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "navy_tradition": {
               "description": "Adds to the yearly Navy Tradition rate. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "navy_tradition_decay": {
               "description": "Adds to the decay rate of Navy Tradition. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "num_accepted_cultures": {
               "description": "Adds to the maximum number of accepted cultures a country can have. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_ACCEPTED_CULTURES"
+              }
             },
             "papal_influence": {
               "description": "Adds to the rate of papal influence gained per year. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "placed_merchant_power": {
               "description": "Modifies the additional trade power when a merchant present in a tradenode. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "possible_condottieri": {
               "description": "Modifies the base condottieri limit. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "possible_mercenaries": {
               "description": "Modifies the base mercenary limit. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "prestige": {
               "description": "Adds to the base yearly rate of prestige. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "prestige_decay": {
               "description": "Adds to the base rate of prestige decay. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "prestige_from_land": {
               "description": "Modifies the prestige bonus from combat. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "prestige_from_naval": {
               "description": "Modifies the prestige gained through naval battles. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "prestige_per_development_from_conversion": {
               "description": "Adds to the prestige bonus gained per development when successfully converting a province to a state religion. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "privateer_efficiency": {
               "description": "Modifies the effectiveness of privateers in a tradenode. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "production_efficiency": {
               "description": "Modifies the base production income by a percentage. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "promote_culture_cost": {
               "description": "Modifies the diplomatic power cost for promoting a culture. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "province_warscore_cost": {
               "description": "Modifies the warscore cost for taking provinces. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "range": {
               "description": "Modifies the base colonisation range, used for exploration, colonisation and coring province that border sea. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_COLONIAL_RANGE"
+              }
             },
             "raze_power_gain": {
               "description": "Modifies the amount of monarch power gained from razing. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "rebel_support_efficiency": {
               "description": "Modifies the effectiveness of supported rebels in other countries. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "recover_army_morale_speed": {
               "description": "Modifies the army morale recovery speed. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "recover_navy_morale_speed": {
               "description": "Modifies the morale recovery rate of ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "reduced_liberty_desire": {
               "description": "Adds to the liberty desire subjects have against their overlord. Applied to the overlord. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "reduced_liberty_desire_on_same_continent": {
               "description": "Adds to the liberty desire subjects have against their overlord if on the same continent. Applied to the overlord. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "reinforce_cost_modifier": {
               "description": "Modifies the cost of reinforcements when units are reinforced. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_REINFORCE_COST"
+              }
             },
             "reinforce_speed": {
               "description": "Modifies the rate at which units are reinforced with new men. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "religious_unity": {
               "description": "Adds to the base religious unity value for a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "republican_tradition": {
               "description": "Adds to the yearly rate of republican tradition.\nDoes not appear or have an effect if a country's government does not use republican tradition. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "reserves_organisation": {
               "description": "Modifies the morale damage taken by units in reserves (i.e. not in battle, but engaged with another unit) (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_RESERVES_ORGANIZATION"
+              }
             },
             "rival_border_fort_maintenance": {
               "description": "Modifies the base fort maintenance cost for forts in provinces that border rivals. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "rival_change_cost": {
               "description": "Modifies the diplomatic power cost to change rivals. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "sailor_maintenance_modifer": {
               "description": "Modifies the sailor maintenance for all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_SAILOR_MAINTENANCE"
+              }
             },
             "sailors_recovery_speed": {
               "description": "Modifies the sailor recovery rate for all ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "SAILORS_RECOVERY"
+              }
             },
             "same_culture_advisor_cost": {
               "description": "Modifies the advisor cost for advisors that share the same culture as the country's court they're in. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "ship_durability": {
               "description": "Modifies the durability of all ships. (discipline for ships) (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "ship_power_propagation": {
               "description": "Modifies the propagation of trade power from ships protecting trade. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "shock_damage": {
               "description": "Modifies the shock damage done by land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "shock_damage_received": {
               "description": "Modifies the shock damage taken by land units. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_SHOCK_DAMAGE_RECIEVED"
+              }
             },
             "siege_ability": {
               "description": "Modifies the siege ability that affects siege phase length. Reverse concept of defensiveness. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "siege_blockade_progress": {
               "description": "Modifies the bonus siege status by blockaded. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "spy_offence": {
               "description": "Modifies the base effectiveness of spies against enemies. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "stability_cost_modifier": {
               "description": "Modifies the administrative power cost of raising stability. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "state_maintenance_modifier": {
               "description": "Modifies the maintenance cost for states. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "sunk_ship_morale_hit_recieved": {
               "description": "Modifies the morale damage taken during battle by losing ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "technology_cost": {
               "description": "Modifies the monarch power cost of all technologies. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "tolerance_heathen": {
               "description": "Adds to the base tolerance for heathens within a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "tolerance_heretic": {
               "description": "Adds to the base tolerance for heretics within a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "tolerance_own": {
               "description": "Adds to the base tolerance for the true faith within a country. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "trade_efficiency": {
               "description": "Modifies a country's trade income. (Maximum is 200%) (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "trade_range_modifier": {
               "description": "Modifies the trade range used to determine if a country can place a merchant in a tradenode. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "MODIFIER_TRADE_RANGE"
+              }
             },
             "trade_steering": {
               "description": "Modifies the bonus to trade power used for steering when determining which outgoing node trade is steered to. If you have a merchant present, it also slightly increases the outgoing value. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "transport_cost": {
               "description": "Modifies the base cost of transport ships. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "transport_power": {
               "description": "Modifies the power transport ships gain from unit pips. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "unjustified_demands": {
               "description": "Modifies the weighting of demands in peace treaties. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "vassal_forcelimit_bonus": {
               "description": "Modifies the bonus to a country's forcelimit from their subjects. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "vassal_income": {
               "description": "Modifies the bonus to a country's income from their subjects. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "war_exhaustion": {
               "description": "Adds to the monthly war exhaustion rate. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "war_exhaustion_cost": {
               "description": "Modifies the diplomatic power cost for reducing war exhaustion. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "war_taxes_cost_modifier": {
               "description": "Modifies the military power cost for raising war taxes. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "warscore_cost_vs_other_religion": {
               "description": "Modifies the warscore costs for peace terms whilst in war against countries of a different religion. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "yearly_absolutism": {
               "description": "Adds to the yearly base rate of absolutism. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "yearly_army_professionalism": {
               "description": "Modifies the rate of Army Professionalism gained each year. (Multiplicative)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "yearly_corruption": {
               "description": "Adds to the yearly rate of corruption. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "yearly_harmony": {
               "description": "Adds to the rate of harmony gained per year. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "yearly_tribal_allegiance": {
               "description": "Adds to the yearly rate of tribal allegiance for governments with the tribal allegiance mechanic. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
             "years_of_nationalism": {
               "description": "Adds to the base nationalism value of provinces when conquered. (Additive)",
-              "type": "number"
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             }
           },
           "$identifierProperties": {

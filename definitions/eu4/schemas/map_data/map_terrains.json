@@ -19,7 +19,7 @@
           "minItems": 1,
           "maxItems": 1,
           "items": {
-            "$ref": "special_values.json#/definitions/integer_string"
+            "type": "number"
           }
         }
       }

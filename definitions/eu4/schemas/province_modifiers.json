@@ -8,36 +8,47 @@
         "land_forcelimit_modifier": {
           "description": "Modifies a country's forcelimit. (Multiplicative)",
           "todo": "actually on prov scope? see static modifiers?",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "naval_forcelimit_modifier": {
           "description": "Modifies a country's naval forcelimit. (Multiplicative)",
           "todo": "actually on prov scope? see static modifiers?",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "land_forcelimit": {
           "description": "Adds to a country's land forcelimit. (Additive)",
           "todo": "actually on prov scope? see static modifiers?",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "naval_forcelimit": {
           "description": "Adds to a country's naval forcelimit. (Additive)",
           "todo": "actually on prov scope? see static modifiers?",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
 
 
         "allowed_num_of_buildings": {
           "description": "Adds to the maximum number of building slots in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "attrition": {
           "description": "Adds to the base attrition in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "cs_only_local_development_cost": {
           "description": "Modifies the monarch power cost for development in a province. \nDoes not appear or affect non-Common Sense owners. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "LOCAL_DEVELOPMENT_COST"
+          }
         },
         "force_march_free": {
           "description": "Allows usage of the force march action for free. (Constant)",
@@ -45,11 +56,13 @@
         },
         "fort_level": {
           "description": "Adds to the fort level in a province, determining how difficult it is to siege. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "garrison_growth": {
           "description": "Modifies the rate of garrison growth in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "ignore_coring_distance": {
           "description": "Allows coring in any uncored province, regardless of distance. (Constant)",
@@ -57,183 +70,288 @@
         },
         "inflation_reduction_local": {
           "description": "Adds to the base yearly inflation value. Requires every province in a country to have the modifier to work however. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "INFLATION_REDUCTION"
+          }
         },
         "local_amount_of_banners": {
           "description": "Modiifes the amount of banners that can be raised from a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_autonomy": {
           "description": "Adds to the autonomy rate in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "LOCAL_AUTONOMY_MOD"
+          }
         },
         "local_build_cost": {
           "description": "Modifies the cost of constructing buildings in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_build_time": {
           "description": "Modifies the construction speed of buildings in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_colonial_growth": {
           "description": "Adds to the colonial growth in a colony province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_colonist_placement_chance": {
           "description": "Adds to the placement chance in a colony province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_core_creation": {
           "description": "Modifies the cost of coring in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_culture_conversion_cost": {
           "description": "Modifies the culture conversion cost in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MODIFIER_CULTURE_CONVERSION_COST"
+          }
         },
         "local_defensiveness": {
           "description": "Modifies the defensiveness of a province, impacting siege phase length. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_development_cost": {
           "description": "Modifies the monarch power cost for development in a province. \nConverts to local_tax_modifier in for non-Common Sense owners. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_friendly_movement_speed": {
           "description": "Modifies the movement speed of units in a province that are considered friendly. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_has_banners": {
           "description": "Allows Manchu banner units to be raised in owned provinces. Province scope. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MODIFIER_HAS_BANNERS"
+          }
         },
         "local_hostile_attrition": {
           "description": "Adds to the base attrition for enemies in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "HOSTILE_ATTRITION"
+          }
         },
         "local_hostile_movement_speed": {
           "description": "Modifies the movement speed of units in a province that are considered enemies. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_institution_spread": {
           "description": "Modifies the spread of institutions in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_manpower": {
           "description": "Adds to the base manpower value. 1 equals 1000 men. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MANPOWER"
+          }
         },
         "local_manpower_modifier": {
           "description": "Modifies the manpower efficiency in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "LOCAL_MANPOWER"
+          }
         },
         "local_missionary_strength": {
           "description": "Adds to the missionary strength in a province. 1 equals 100% strength. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_monthly_devastation": {
           "description": "Adds to the devastation rate in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_naval_engagement_modifier": {
           "description": "Modifies the naval engagement width in a province. Only usable in sea provinces. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MODIFIER_LOCAL_NAVAL_ENGAGEMENT"
+          }
         },
         "local_production_efficiency": {
           "description": "Modifies the production efficiency in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_regiment_cost": {
           "description": "Modifies the recruitment cost of land units in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_sailors": {
           "description": "Adds to the sailors value for a province. 1 equals 1 sailor. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "SAILORS"
+          }
         },
         "local_sailors_modifier": {
           "description": "Modifies the sailors efficiency of a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "LOCAL_SAILORS"
+          }
         },
         "local_ship_cost": {
           "description": "Modifies the cost of ship recruitment in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_ship_repair": {
           "description": "Modifies the speed of ship repair in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_state_maintenance_modifier": {
           "description": "Modifies the state maintenance cost for the state that a province belongs to. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "STATE_MAINTENANCE_MODIFIER"
+          }
         },
         "local_tax_modifier": {
           "description": "Modifies the tax efficiency in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_unrest": {
           "description": "Adds to the unrest value in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_years_of_nationalism": {
           "description": "Adds to the base nationalism value in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MODIFIER_YEARS_OF_NATIONALISM"
+          }
         },
         "max_attrition": {
           "description": "Adds to the maximum attrition that can be experienced in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "min_local_autonomy": {
           "description": "Sets the minimum autonomy value a province can have. (Constant)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MINIMUM_LOCAL_AUTONOMY"
+          }
         },
         "province_trade_power_modifier": {
           "description": "Modifies the trade power efficiency in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "PROVINCE_TRADE_VALUE"
+          }
         },
         "province_trade_power_value": {
           "description": "Adds to the trade power in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "PROVINCE_TRADE_VALUE"
+          }
         },
         "regiment_recruit_speed": {
           "description": "Modifies the recruitment speed of land units in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "religious_conversion_resistance": {
           "description": "Adds to conversion resistance from Centres of Reformation. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "ship_recruit_speed": {
           "description": "Modifies the recruitment speed of ships in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "supply_limit": {
           "description": "Adds to the base supply limit of a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "supply_limit_modifier": {
           "description": "Modifies the supply limit efficiency of a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "tax_income": {
           "description": "Adds to the yearly tax income of a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "trade_goods_size": {
           "description": "Adds to the trade good size in a province (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "trade_goods_size_modifier": {
           "description": "Modifies the goods produced efficiency in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "trade_value": {
           "description": "Adds to the base trade value in a province. (Additive)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "trade_value_modifier": {
           "description": "Modifies the base trade value in a province. (Multiplicative)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         }
       }
     }

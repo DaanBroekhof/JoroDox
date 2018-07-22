@@ -38,6 +38,36 @@
     }
   },
   {
+    "id": "interface_messagetypes",
+    "title": "Interface message types",
+    "category": "User interface",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "interface/messagetypes.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
     "id": "alerts",
     "title": "Alerts",
     "category": "User interface",

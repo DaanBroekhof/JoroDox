@@ -501,6 +501,10 @@
       "$identifierValue": "music",
       "type": "string"
     },
+    "interface_messagetypes": {
+      "$identifierValue": "interface_messagetypes",
+      "type": "string"
+    },
     "sound_files": {
       "$identifierValue": {
         "type": "sound_files",
@@ -601,6 +605,49 @@
           "require": [
             {"operation": "regexp", "value": "^[A-Z_0-9]+$"}
           ]
+        }
+      ]
+    },
+    "localisation_for_modifier": {
+      "anyOf": [
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.MODIFIER_",
+            "usePropertyKey": true,
+            "toUpperCase": true
+          }
+        },
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "usePropertyKey": true,
+            "toUpperCase": true
+          }
+        },
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "usePropertyKey": true
+          }
+        },
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.YEARLY_",
+            "usePropertyKey": true,
+            "toUpperCase": true
+          }
+        },
+        {
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.YEARLY_",
+            "usePropertyKey": true,
+            "toUpperCase": true
+          }
         }
       ]
     }

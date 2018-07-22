@@ -7,35 +7,59 @@
       "properties": {
         "attack_bonus_in_capital_terrain": {
           "description": "Grants attack bonus in provinces with the same terrain as capital province. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]          
         },
         "can_bypass_forts": {
           "description": "Allows units to ignore fort zones of control. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "can_chain_claim": {
           "description": "Allows claims to be enacted through already claimed provinces. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "can_colony_boost_development": {
           "description": "Grants bonus 1 tax, production and manpower on completed colonies. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "can_transfer_vassal_wargoal": {
           "description": "Allows usage of the Transfer Subject peace term at half cost. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "force_march_free": {
           "description": "Allows usage of the force march action for free. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "free_maintenance_on_expl_conq": {
           "description": "Removes maintenance cost for explorers and conquisadors. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "ignore_coring_distance": {
           "description": "Allows coring in any uncored province, regardless of distance. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         }
       }
     },
@@ -43,64 +67,111 @@
       "properties": {
         "cb_on_government_enemies": {
           "description": "Acts a visible script flag. Can be checked in triggers with cb_on_government_enemies = yes (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "cb_on_overseas": {
           "description": "Allows claims to be fabricated on overseas provinces in Trade Company regions. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "cb_on_primitives": {
           "description": "Allows claims to be fabricated on overseas provinces in Colonial regions. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "cb_on_religious_enemies": {
           "description": "Acts a visible script flag. Can be checked in triggers with cb_on_religious_enemies = yes (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "idea_claim_colonies": {
           "description": "Allows claims to be fabricated on overseas provinces in Colonial regions that are owned by by another nation that is alo overseas. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "may_explore": {
           "description": "Allows the recruitment of explorers and conquisadors. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "may_perform_slave_raid": {
           "description": "Allows ships to perform slave raids. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "may_recruit_female_generals": {
           "description": "Allows the recruitment of female generals. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "no_religion_penalty": {
           "description": "Removes the penalties associated with negative religious tolerance. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "reduced_stab_impacts": {
           "description": "Reduces the stability hits when taking diplomatic actions that cause them (i.e. Break Marriage). (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "sea_repair": {
           "description": "Allows ships to repair in coastal sea zones adjacent to owned provinces. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "may_establish_frontier": {
           "description": "Allows the usage of the Siberean Frontier mechanic. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "extra_manpower_at_religious_war": {
           "description": "Grants an increase in manpower recovery by a factor of 3 during religious wars. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "auto_explore_adjacent_to_colony": {
           "description": "Grants the abiliy to automatically discover undiscovered provinces adjacent to colonies. (Constant)",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
 
         "justify_trade_conflict_cost": {
           "todo": "figure out if this is an idea modifiers, or general country modifier",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MODIFIER_JUSTIFY_TRADE_CONFLICT_TIME"
+          }
         }
       }
     },
@@ -108,11 +179,17 @@
       "properties": {
         "has_banners": {
           "description": "Allows the usage of Manchu banner units. Country scope. (Constant)",
-          "type": "number"
+          "type": "number",
+          "$ref": "identifiers.json#/definitions/localisation_for_modifier"
         },
         "local_has_banners": {
           "description": "Allows Manchu banner units to be raised in owned provinces. Province scope. (Constant)",
-          "type": "number"
+          "type": "number",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MODIFIER_HAS_BANNERS"
+          }
         }
       }
     },
@@ -120,15 +197,24 @@
       "properties": {
         "religion": {
           "description": "Will cause the event modifier to disappear if the country changes religion (or syncretic religion).",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "secondary_religion": {
           "description": "Will cause the event modifier to disappear if the country changes religion (or syncretic religion).",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         },
         "is_janissary_modifier": {
           "description": "When added to an event modifier, the event modifier will only affect janissary regiments. Without the Cradle of Civilization this part is ignored and the event modifiers become a normal global modifier.",
-          "$ref": "special_values.json#/definitions/boolean"
+          "allOf": [
+            {"$ref": "special_values.json#/definitions/boolean"},
+            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
+          ]
         }
       }
     }
