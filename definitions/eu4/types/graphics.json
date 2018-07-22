@@ -1,5 +1,199 @@
 [
   {
+    "id": "map_ambient_object",
+    "title": "Map ambient objects",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "nr",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "map/ambient_object.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "type"
+      ],
+      "removeFields": [
+        "id",
+        "namespace"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Nr",
+          "dataIndex": "nr",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Type",
+          "dataIndex": [
+            "data",
+            "type"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_terrain_images",
+    "title": "Map terrain images",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "dds_images",
+      "pathPrefix": "map/terrain/",
+      "pathPattern": "map/terrain/**.+(dds|bmp|tga)"
+
+    },
+    "sourceTransform": {
+      "type": "fileData"
+    },
+    "listView": {
+      "pageSize": 100,
+      "unsetKeys": [
+        [
+          "data"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": [
+            "path"
+          ],
+          "width": "200",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_images",
+    "title": "Map random terrain images",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "dds_images",
+      "pathPrefix": "map/",
+      "pathPattern": "map/random/*.+(dds|bmp|tga)"
+
+    },
+    "sourceTransform": {
+      "type": "fileData"
+    },
+    "listView": {
+      "pageSize": 100,
+      "unsetKeys": [
+        [
+          "data"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": [
+            "path"
+          ],
+          "width": "200",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_render_images",
+    "title": "Map render images",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "files",
+      "pathPrefix": "map/",
+      "pathPattern": "map/+(heightmap|world_normal|minimap_base).bmp"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "path": [
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_terrain_textures",
+    "title": "Map terrain textures",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "dds_images",
+      "flipY": true,
+      "pathPrefix": "map/terrain/",
+      "pathPattern": "map/terrain/*.dds"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "keyName": "path"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_trees_map",
+    "title": "Map terrain trees map",
+    "category": "Graphics",
+    "reader": "StructureLoader",
+    "primaryKey": "color_name",
+    "sourceType": {
+      "id": "indexed_bmps",
+      "path": "map/trees.bmp"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data"
+      ],
+      "keyName": "color_name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Color",
+          "dataIndex": "color_name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
     "id": "pdx_meshes",
     "title": "3D Models",
     "category": "Graphics",

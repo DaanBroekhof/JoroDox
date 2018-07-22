@@ -177,7 +177,7 @@
     "sourceType": {
       "id": "files",
       "pathPrefix": "gfx/cursors/",
-      "pathPattern": "gfx/cursors/*.+(png|cur|ani)"
+      "pathPattern": "gfx/cursors/*.+(png|cur|CUR|ani)"
     },
     "sourceTransform": {
       "type": "fileData"
@@ -190,6 +190,33 @@
           "dataIndex": "path",
           "linkTo": "[self]"
         }
+      ]
+    }
+  },
+  {
+    "id": "interface_colors",
+    "title": "Interface colors",
+    "category": "User interface",
+    "reader": "StructureLoader",
+    "primaryKey": "nr",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "interface/colors.txt"
+    },
+    "sourceTransform": {
+      "type": "typesList",
+      "path": [
+        "data",
+        "children"
+      ],
+      "types": [
+        "color"
+      ],
+      "removeFields": [
+        "namespace",
+        "id",
+        "type",
+        "comments"
       ]
     }
   },

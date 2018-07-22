@@ -12,6 +12,12 @@
               "type": "number",
               "$ref": "identifiers.json#/definitions/localisation_for_modifier"
             },
+            "own_coast_naval_combat_bonus": {
+              "todo": "check?",
+              "type": "number",
+              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
+            },
+
 
             "adm_tech_cost_modifier": {
               "description": "Modifies the monarch power cost of <tech> technologies.",

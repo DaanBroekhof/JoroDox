@@ -1,42 +1,70 @@
 [
   {
-    "id": "map_ambient_object",
-    "title": "Map ambient objects",
+    "id": "map_default",
+    "title": "Map default settings",
     "category": "Map data",
     "reader": "StructureLoader",
-    "primaryKey": "nr",
+    "primaryKey": "path",
     "sourceType": {
       "id": "pdx_scripts",
-      "path": "map/ambient_object.txt"
+      "path": "map/default.map"
     },
     "sourceTransform": {
-      "type": "typesList",
+      "type": "fileData",
       "path": [
         "data",
-        "children"
-      ],
-      "types": [
-        "type"
-      ],
-      "removeFields": [
-        "id",
-        "namespace"
+        "data"
       ]
     },
+    "relations": [
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "sea_starts"
+        ],
+        "fromName": "sea_starts",
+        "toType": "map_province_ids",
+        "toName": "sea_starts_provinces"
+      },
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "lakes"
+        ],
+        "fromName": "lakes",
+        "toType": "map_province_ids",
+        "toName": "lakes_provinces"
+      },
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "force_coastal"
+        ],
+        "fromName": "force_coastal",
+        "toType": "map_province_ids",
+        "toName": "force_coastal_provinces"
+      },
+      {
+        "type": "arrayValuesByPath",
+        "path": [
+          "data",
+          "only_used_for_random"
+        ],
+        "fromName": "only_used_for_random",
+        "toType": "map_province_ids",
+        "toName": "only_used_for_random_provinces"
+      }
+    ],
     "listView": {
       "pageSize": 100,
       "columns": [
         {
-          "name": "Nr",
-          "dataIndex": "nr",
+          "name": "Settings",
+          "dataIndex": "path",
           "linkTo": "[self]"
-        },
-        {
-          "name": "Type",
-          "dataIndex": [
-            "data",
-            "type"
-          ]
         }
       ]
     }
@@ -105,6 +133,7 @@
       {
         "type": "arrayValuesByPath",
         "path": [
+          "data",
           "provinces"
         ],
         "fromName": "map_climate",
@@ -296,7 +325,7 @@
     "primaryKey": "name",
     "sourceType": {
       "id": "pdx_scripts",
-      "path": "map/provincegroups.txt"
+      "path": "map/provincegroup.txt"
     },
     "sourceTransform": {
       "type": "keyValues",
@@ -578,215 +607,6 @@
           "dataIndex": [
             "comments"
           ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_random_tweaks",
-    "title": "Map random tweaks",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "name",
-    "sourceType": {
-      "id": "lua_scripts",
-      "path": "map/random/tweaks.lua"
-    },
-    "sourceTransform": {
-      "type": "keyKeyValues",
-      "path": [
-        "data", "RandomWorld"
-      ],
-      "keyName": "name",
-      "parentKeyName": "category",
-      "valueName": "data"
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Name",
-          "dataIndex": "name",
-          "linkTo": "[self]"
-        },
-        {
-          "name": "Name",
-          "dataIndex": [
-            "data",
-            "value"
-          ]
-        },
-        {
-          "name": "Comment",
-          "dataIndex": [
-            "data",
-            "comment"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_random_tiles",
-    "title": "Map random tiles",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "path",
-    "sourceType": {
-      "id": "pdx_scripts",
-      "pathPrefix": "map/random/tiles/",
-      "pathPattern": "map/random/tiles/*.txt"
-    },
-    "sourceTransform": {
-      "type": "fileData",
-      "keyName": "path",
-      "path": [
-        "data",
-        "data"
-      ]
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Path",
-          "dataIndex": "path",
-          "linkTo": "[self]"
-        },
-        {
-          "name": "Continent",
-          "dataIndex": [
-            "data",
-            "continent"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_random_lake_names",
-    "title": "Map random lake names",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "name",
-    "sourceType": {
-      "id": "pdx_scripts",
-      "path": "map/random/RandomLakeNames.txt"
-    },
-    "sourceTransform": {
-      "type": "stringValues",
-      "path": [
-        "data",
-        "data",
-        "random_names"
-      ]
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Name",
-          "dataIndex": "name",
-          "linkTo": "[self]"
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_random_land_names",
-    "title": "Map random land names",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "name",
-    "sourceType": {
-      "id": "pdx_scripts",
-      "path": "map/random/RandomLandNames.txt"
-    },
-    "sourceTransform": {
-      "type": "stringValues",
-      "path": [
-        "data",
-        "data",
-        "random_names"
-      ],
-      "valueRegex": "^([^:]+)(:(.+))?$",
-      "valueRegexNames": [
-        null,
-        "name",
-        null,
-        "type"
-      ]
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Name",
-          "dataIndex": "name",
-          "linkTo": "[self]"
-        },
-        {
-          "name": "Type",
-          "dataIndex": "type"
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_random_sea_names",
-    "title": "Map random sea names",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "name",
-    "sourceType": {
-      "id": "pdx_scripts",
-      "path": "map/random/RandomSeaNames.txt"
-    },
-    "sourceTransform": {
-      "type": "stringValues",
-      "path": [
-        "data",
-        "data",
-        "random_names"
-      ]
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Name",
-          "dataIndex": "name",
-          "linkTo": "[self]"
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_random_scenarios",
-    "title": "Map random scenarios",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "name",
-    "sourceType": {
-      "id": "pdx_scripts",
-      "path": "map/random/RNWScenarios.txt"
-    },
-    "sourceTransform": {
-      "type": "keyValues",
-      "path": [
-        "data",
-        "data"
-      ],
-      "keyName": "name",
-      "valueName": "data"
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Name",
-          "dataIndex": "name",
-          "linkTo": "[self]"
         }
       ]
     }
@@ -1093,33 +913,6 @@
     }
   },
   {
-    "id": "map_heightmap",
-    "title": "Map heightmap",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "path",
-    "sourceType": {
-      "id": "indexed_bmps",
-      "path": "map/heightmap.bmp"
-    },
-    "sourceTransform": {
-      "type": "fileData",
-      "path": [
-        "data"
-      ]
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Path",
-          "dataIndex": "path",
-          "linkTo": "[self]"
-        }
-      ]
-    }
-  },
-  {
     "id": "map_terrain_map",
     "title": "Map terrain map",
     "category": "Map data",
@@ -1128,62 +921,6 @@
     "sourceType": {
       "id": "indexed_bmps",
       "path": "map/terrain.bmp"
-    },
-    "sourceTransform": {
-      "type": "keyValues",
-      "path": [
-        "data"
-      ],
-      "keyName": "color_name",
-      "valueName": "data"
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Color",
-          "dataIndex": "color_name",
-          "linkTo": "[self]"
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_terrain_textures",
-    "title": "Map terrain textures",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "path",
-    "sourceType": {
-      "id": "dds_images",
-      "flipY": true,
-      "pathPrefix": "map/terrain/",
-      "pathPattern": "map/terrain/*.dds"
-    },
-    "sourceTransform": {
-      "type": "fileData",
-      "keyName": "path"
-    },
-    "listView": {
-      "pageSize": 100,
-      "columns": [
-        {
-          "name": "Path",
-          "dataIndex": "path",
-          "linkTo": "[self]"
-        }
-      ]
-    }
-  },
-  {
-    "id": "map_trees_map",
-    "title": "Map terrain trees map",
-    "category": "Map data",
-    "reader": "StructureLoader",
-    "primaryKey": "color_name",
-    "sourceType": {
-      "id": "indexed_bmps",
-      "path": "map/trees.bmp"
     },
     "sourceTransform": {
       "type": "keyValues",

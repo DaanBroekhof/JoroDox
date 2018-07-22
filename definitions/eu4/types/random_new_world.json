@@ -1,0 +1,244 @@
+[
+  {
+    "id": "map_random_tile_images",
+    "title": "Map random tiles images",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "dds_images",
+      "pathPrefix": "map/",
+      "pathPattern": "map/random/tiles/data/*.bmp"
+    },
+    "sourceTransform": {
+      "type": "fileData"
+    },
+    "listView": {
+      "pageSize": 100,
+      "unsetKeys": [
+        [
+          "data"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": [
+            "path"
+          ],
+          "width": "200",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_tweaks",
+    "title": "Map random tweaks",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "lua_scripts",
+      "path": "map/random/tweaks.lua"
+    },
+    "sourceTransform": {
+      "type": "keyKeyValues",
+      "path": [
+        "data", "RandomWorld"
+      ],
+      "keyName": "name",
+      "parentKeyName": "category",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Name",
+          "dataIndex": [
+            "data",
+            "value"
+          ]
+        },
+        {
+          "name": "Comment",
+          "dataIndex": [
+            "data",
+            "comment"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_tiles",
+    "title": "Map random tiles",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "pathPrefix": "map/random/tiles/",
+      "pathPattern": "map/random/tiles/*.txt"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "keyName": "path",
+      "path": [
+        "data",
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Continent",
+          "dataIndex": [
+            "data",
+            "continent"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_lake_names",
+    "title": "Map random lake names",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "map/random/RandomLakeNames.txt"
+    },
+    "sourceTransform": {
+      "type": "stringValues",
+      "path": [
+        "data",
+        "data",
+        "random_names"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_land_names",
+    "title": "Map random land names",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "map/random/RandomLandNames.txt"
+    },
+    "sourceTransform": {
+      "type": "stringValues",
+      "path": [
+        "data",
+        "data",
+        "random_names"
+      ],
+      "valueRegex": "^([^:]+)(:(.+))?$",
+      "valueRegexNames": [
+        null,
+        "name",
+        null,
+        "type"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Type",
+          "dataIndex": "type"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_sea_names",
+    "title": "Map random sea names",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "map/random/RandomSeaNames.txt"
+    },
+    "sourceTransform": {
+      "type": "stringValues",
+      "path": [
+        "data",
+        "data",
+        "random_names"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "map_random_scenarios",
+    "title": "Map random scenarios",
+    "category": "Random new world",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "path": "map/random/RNWScenarios.txt"
+    },
+    "sourceTransform": {
+      "type": "keyValues",
+      "path": [
+        "data",
+        "data"
+      ],
+      "keyName": "name",
+      "valueName": "data"
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "$id": "http://jorodox.org/schemas/naval_doctrines.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "$ref": "identifiers.json#/definitions/localisation_plus_desc"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "can_select": {
+          "$ref": "country_conditions.json#/definitions/country_conditions"
+        },
+        "country_modifier": {
+          "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        "button_gfx": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ]
+}

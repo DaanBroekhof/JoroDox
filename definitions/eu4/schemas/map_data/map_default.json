@@ -1,0 +1,132 @@
+{
+  "$id": "http://jorodox.org/schemas/map_default.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "max_provinces": {
+          "type": "number"
+        },
+        "sea_starts": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_province_ids"
+          }
+        },
+        "only_used_for_random": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_province_ids"
+          }
+        },
+        "lakes": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_province_ids"
+          }
+        },
+        "force_coastal": {
+          "type": "array",
+          "items": {
+            "$ref": "identifiers.json#/definitions/map_province_ids"
+          }
+        },
+        "definitions": {
+          "type": "string"
+        },
+        "provinces": {
+          "type": "string"
+        },
+        "positions": {
+          "type": "string"
+        },
+        "terrain": {
+          "type": "string"
+        },
+        "rivers": {
+          "type": "string"
+        },
+        "terrain_definition": {
+          "type": "string"
+        },
+        "heightmap": {
+          "type": "string"
+        },
+        "tree_definition": {
+          "type": "string"
+        },
+        "continent": {
+          "type": "string"
+        },
+        "adjacencies": {
+          "type": "string"
+        },
+        "climate": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "superregion": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "provincegroup": {
+          "type": "string"
+        },
+        "ambient_object": {
+          "type": "string"
+        },
+        "seasons": {
+          "type": "string"
+        },
+        "trade_winds": {
+          "type": "string"
+        },
+        "canal_definition": {
+          "$allowMultiple": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "$ref": "identifiers.json#/definitions/great_projects"
+              },
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "tree": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "path",
+    "data"
+  ]
+}
