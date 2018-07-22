@@ -319,7 +319,7 @@ class StructureItemView extends Component {
         {typeDefinition.id !== 'dds_images' && typeDefinition.sourceType && typeDefinition.sourceType.id !== 'dds_images' && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {itemPath && (_.endsWith(itemPath, '.tga') || _.endsWith(itemPath, '.png') || _.endsWith(itemPath, '.jpg') || _.endsWith(itemPath, '.bmp')) && <div><ImageView file={{path: itemPath}} /><br /></div>}
 
-        {true && <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />}
+        {typeDefinition.id !== 'pdx_meshes' && <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />}
 
         {this.state.relationsFrom.length > 0 && (
           <div style={{display: 'flex', flexDirection: 'column'}}>

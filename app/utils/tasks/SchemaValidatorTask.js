@@ -257,7 +257,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
                 if (!isValid) {
                   myErrors.push({
-                    keyword: '$identifierProperties',
+                    keyword: '$matchProps',
+                    category: 'unknown_property',
                     dataPath,
                     message: 'Unknown property `' + subItemKey + '`.',
                     data,
@@ -395,6 +396,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
             v.errors = [{
               keyword: '$identifierProperties',
+              category: 'unknown_property',
               dataPath,
               message: 'Unknown property `' + dataKey + '`.',
               data,
@@ -455,6 +457,10 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
                       return req.value !== reqValue;
                     case 'regexp':
                       return reqValue.toString().match(req.value);
+                    case 'in':
+                      return req.value.includes(reqValue);
+                    case '!in':
+                      return !req.value.includes(reqValue);
                     case 'is_empty':
                       return !_.size(reqValue) === req.value;
                     case '!regexp':
@@ -533,6 +539,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
             v.errors.push({
               keyword: '$identifierValue',
+              category: identifierSchema.type === 'localisation' ? 'localisation_not_found' : 'identifier_not_found',
               dataPath,
               message: 'Property value `' + unchangedIdentifier + '`' + (unchangedIdentifier !== identifier ? ' (`' + identifier + '`)' : '') + ' is not a known identifier of `' + identifierSchema.type + '`.',
               data,

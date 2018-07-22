@@ -30,22 +30,16 @@
         {
           "properties": {
             "quadTextureSprite": {
-              "type": "string"
+              "$ref": "identifiers.json#/definitions/interface_gui_spritetypes_not_empty"
             },
             "tooltip": {
-              "type": "string",
-              "todo": "These seem just to be empty, always... ?",
-              "enum": [""]
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "tooltipText": {
-              "type": "string",
-              "todo": "These seem just to be empty, always... ?",
-              "enum": [""]
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "delayedTooltipText": {
-              "type": "string",
-              "todo": "These seem just to be empty, always... ?",
-              "enum": [""]
+              "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"
             },
             "buttonText": {
               "$ref": "identifiers.json#/definitions/localisation_not_empty_capitalized"

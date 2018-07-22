@@ -33,7 +33,7 @@
           "type": "string"
         },
         "steam_id": {
-          "type": "number"
+          "type": "string"
         },
         "affects_checksum": {
           "$ref": "special_values.json#/definitions/boolean"
