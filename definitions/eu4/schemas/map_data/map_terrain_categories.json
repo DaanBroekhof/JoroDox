@@ -6,7 +6,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "$ref": "identifiers.json#/definitions/localisation_plus_adj"
+      "$ref": "identifiers.json#/definitions/localisation"
     },
     "data": {
       "type": "object",
@@ -76,8 +76,7 @@
         "forest",
         "jungle",
         "marsh",
-        "pti",
-        "sea"
+        "pti"
       ]
     },
     "terrain_sound_types": {

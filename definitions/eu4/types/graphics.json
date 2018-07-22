@@ -7,8 +7,8 @@
     "primaryKey": "path",
     "sourceType": {
       "id": "pdx_data",
-      "pathPrefix": "",
-      "pathPattern": "**/*.mesh"
+      "pathPrefix": "gfx/models/",
+      "pathPattern": "gfx/models/**/*.mesh"
     },
     "sourceTransform": {
       "type": "fileData",
@@ -41,8 +41,8 @@
     "primaryKey": "path",
     "sourceType": {
       "id": "pdx_data",
-      "pathPrefix": "",
-      "pathPattern": "**/*.anim"
+      "pathPrefix": "gfx/models/",
+      "pathPattern": "gfx/models/**/*.anim"
     },
     "sourceTransform": {
       "type": "fileData",

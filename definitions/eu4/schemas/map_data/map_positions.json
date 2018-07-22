@@ -18,59 +18,59 @@
           "items": [
             {
               "description": "City model X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "City model Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Standing unit model X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Standing unit model Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province name X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province name Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province port X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province port Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province trade route X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province trade route Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Fighting unit X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Fighting unit Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Trade wind icon X",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Trade wind icon Y",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             }
           ]
         },
@@ -82,31 +82,31 @@
           "items": [
             {
               "description": "City model rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Standing unit rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province name rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province port rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province trade route rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Fighting unit rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Trade wind icon rotation",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             }
           ]
         },
@@ -118,31 +118,31 @@
           "items": [
             {
               "description": "City model height. Unfortunately, this only affects the central city model, and none of the additional ones that appear in high base tax provinces.",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Standing unit height",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province name height, Does not actually change the height of the text in an obvious way. Never change this.",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province port height",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Province trade route height",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Fighting unit height",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             },
             {
               "description": "Trade wind icon height",
-              "$ref": "special_values.json#/definitions/float"
+              "type": "number"
             }
           ]
         }

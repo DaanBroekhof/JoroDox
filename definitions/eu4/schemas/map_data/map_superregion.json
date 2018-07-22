@@ -6,7 +6,33 @@
   "properties": {
     "name": {
       "type": "string",
-      "$ref": "identifiers.json#/definitions/localisation_plus_name_adj"
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "require": [
+            {"operator": "!regexp", "value": "sea_superregion$"}
+          ]
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_adj",
+          "require": [
+            {"operator": "!regexp", "value": "sea_superregion$"},
+            {"operator": "!=", "value": "new_world_superregion"}
+          ]
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_name",
+          "require": [
+            {"operator": "!regexp", "value": "sea_superregion$"},
+            {"operator": "!=", "value": "new_world_superregion"}
+          ]
+        }
+      ]
     },
     "regions": {
       "anyOf": [

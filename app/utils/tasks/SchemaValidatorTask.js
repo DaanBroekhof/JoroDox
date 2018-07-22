@@ -438,10 +438,17 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
             if (identifierSchema.require) {
               const requirements = Array.isArray(identifierSchema.require) ? identifierSchema.require : [identifierSchema.require];
               const requirementsMet = requirements.every((req) => {
-                const reqValue = req.data !== undefined ? _.get(object, req.data) : data;
+                let reqValue = req.data !== undefined ? _.get(object, req.data) : data;
+                if (req.rootData !== undefined) {
+                  reqValue = _.get(ajv.jdxItem, req.rootData);
+                }
                 if (req.value !== undefined) {
                   switch (req.operator) {
                     default:
+                      if (req.operator !== undefined) {
+                        throw new Error("Unknown operator `" + req.operator + "`");
+                      }
+                      return req.value === reqValue;
                     case '==':
                       return req.value === reqValue;
                     case '!=':
@@ -481,7 +488,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
               identifier = identifier + identifierSchema.postfix;
             }
             if (identifierSchema.prefixFileDir) {
-              const dir = _.get(ajv._item, identifierSchema.prefixFileDir);
+              const dir = _.get(ajv.jdxItem, identifierSchema.prefixFileDir);
               identifier = syspath.dirname(dir ? dir : '') + '/' + identifier;
             }
             if (Array.isArray(identifierSchema.replaceAll)) {
@@ -661,7 +668,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
         this.progress(nr, itemCount, `Validating ${itemCount} items...`);
       }
 
-      ajv._item = item;
+      ajv.jdxItem = item;
       const valid = validator(item);
 
       const validErrors = [];

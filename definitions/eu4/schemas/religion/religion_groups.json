@@ -46,7 +46,7 @@
         "flag_emblem_index_range": {
           "description": "Custom & client nation flags: Range of emblems that can be generated",
           "type": "array",
-          "items": {"type": "string"},
+          "items": {"type": "number"},
           "minItems": 2,
           "maxItems": 2
         },

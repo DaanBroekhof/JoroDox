@@ -46,7 +46,7 @@
                 "todo": "What are these? Direction? Location? Arrow control?",
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "type": "number"
                 }
               }
             }

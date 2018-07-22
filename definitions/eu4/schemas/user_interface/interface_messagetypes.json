@@ -1,0 +1,147 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_messagetypes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_TITLE"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_SETUP"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_HEADER"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_1"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_2"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_3"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_4"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_5"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_6"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_LOG"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_BTN1"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_BTN2"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_BTN3"
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_MAP"
+        }
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "msg_icontype": {
+          "type": "string",
+          "enum": ["gov", "combat", "diplo", "event", "dip", "trade", "adm", "mil"],
+          "$identifierValue": {
+            "type": "interface_gui_spritetypes",
+            "prefix": "GFX_msg_"
+          }
+        },
+        "category": {
+          "type": "string",
+          "enum": ["cat_combat", "cat_diplomacy", "cat_dynasty", "cat_trade", "cat_event", "cat_military", "cat_government", "cat_religion", "cat_other"]
+        },
+        "go_to": {
+          "type": "string",
+          "enum": ["economy", "technology", "court", "government", "diplomacy", "trade", "religion", "missions", "decisions", "ideas", "stability", "military", "subjects", "estates", "count"]
+        },
+        "option": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "from_me": {
+          "$ref": "interface_messagetypes.json#/definitions/log_settings"
+        },
+        "to_me": {
+          "$ref": "interface_messagetypes.json#/definitions/log_settings"
+        },
+        "interesting": {
+          "$ref": "interface_messagetypes.json#/definitions/log_settings"
+        },
+        "default": {
+          "$ref": "interface_messagetypes.json#/definitions/log_settings"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "data"
+  ],
+  "definitions": {
+    "log_settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "log": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "onmap": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "popup": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "pausepopup": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "icon": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      }
+    }
+  }
+}

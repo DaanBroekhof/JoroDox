@@ -21,7 +21,7 @@
         "triangle_strip": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "number"
           }
         },
         "height": {

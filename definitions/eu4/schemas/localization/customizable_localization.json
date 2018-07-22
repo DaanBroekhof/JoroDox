@@ -36,10 +36,89 @@
             "additionalProperties": false,
             "properties": {
               "localisation_key": {
-                "type": "string"
+                "type": "string",
+                "$identifierValue": [
+                  {
+                    "type": "localisation",
+                    "prefix": "l_french.",
+                    "require": [
+                      {
+                        "rootData": ["category"],
+                        "operator": "regexp",
+                        "value": "_FR$"
+                      },
+                      {
+                        "description": "Ignore country-specific missing localisations.",
+                        "operator": "!regexp",
+                        "value": "^string_[A-Z]{3}_"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "localisation",
+                    "prefix": "l_german.",
+                    "require": [
+                      {
+                        "rootData": ["category"],
+                        "operator": "regexp",
+                        "value": "_DE$"
+                      },
+                      {
+                        "description": "Ignore country-specific missing localisations.",
+                        "operator": "!regexp",
+                        "value": "^string_[A-Z]{3}_"
+                      }
+                    ]
+                  },
+                  {
+                    "description": "Validation of Spanish localisations disabled, seems like it is only half implemented.",
+                    "type": "localisation",
+                    "prefix": "l_spanish.",
+                    "require": [
+                      {
+                        "rootData": ["category"],
+                        "operator": "regexp",
+                        "value": "DISABLED-_SP$"
+                      },
+                      {
+                        "description": "Ignore country-specific missing localisations.",
+                        "operator": "!regexp",
+                        "value": "^string_[A-Z]{3}_"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "localisation",
+                    "prefix": "l_english.",
+                    "require": {
+                      "rootData": ["category"],
+                      "operator": "!regexp",
+                      "value": "_(SP|DE|FR)$"
+                    }
+                  }
+                ]
               },
               "trigger": {
                 "anyOf": [
+                  {
+                    "description": "These localisations use mixed province and country contitions... but only primary_culture/culture.",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "OR": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "primary_culture": {
+                            "$ref": "country_conditions.json#/definitions/country_conditions_properties/properties/primary_culture"
+                          },
+                          "culture": {
+                            "$ref": "province_conditions.json#/definitions/province_conditions_properties/properties/culture"
+                          }
+                        }
+                      }
+                    }
+                  },
                   {"$ref": "country_conditions.json#/definitions/country_conditions"},
                   {"$ref": "province_conditions.json#/definitions/province_conditions"}
                 ]

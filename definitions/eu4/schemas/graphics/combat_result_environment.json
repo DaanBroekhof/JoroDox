@@ -41,7 +41,7 @@
             "minItems": 3,
             "maxItems": 3,
             "items": {
-              "type": "string"
+              "type": "number"
             }
           }
         },

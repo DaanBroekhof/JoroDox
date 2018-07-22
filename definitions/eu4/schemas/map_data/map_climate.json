@@ -5,8 +5,7 @@
   "additionalProperties": false,
   "properties": {
     "name": {
-      "type": "string",
-      "$ref": "identifiers.json#/definitions/localisation_plus_desc"
+      "type": "string"
     },
     "provinces": {
       "anyOf": [

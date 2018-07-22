@@ -6,7 +6,30 @@
   "properties": {
     "name": {
       "type": "string",
-      "$ref": "identifiers.json#/definitions/localisation_plus_name_adj"
+      "$identifierValue": [
+        {
+          "type": "localisation",
+          "prefix": "l_english."
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_adj",
+          "require": [
+            {"operator": "!regexp", "value": "(ocean|sea|pacific|atlantic|coast|gulf|channel|mediterrenean|strait|seas|baltic|triangle|kattegat)_area$"},
+            {"operator": "!regexp", "value": "^(sea_of|gulf|cape_of|bay_of|coast_of)"}
+          ]
+        },
+        {
+          "type": "localisation",
+          "prefix": "l_english.",
+          "postfix": "_name",
+          "require": [
+            {"operator": "!regexp", "value": "(ocean|sea|pacific|atlantic|coast|gulf|channel|mediterrenean|strait|seas|baltic|triangle|kattegat)_area$"},
+            {"operator": "!regexp", "value": "^(sea_of|gulf|cape_of|bay_of|coast_of)"}
+          ]
+        }
+      ]
     },
     "provinces": {
       "anyOf": [

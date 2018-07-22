@@ -228,17 +228,15 @@
       "type": "string"
     },
     "rebel_types": {
-      "anyOf": [
-        {
-          "$identifierValue": "rebel_types",
-          "type": "string"
-        },
-        {
-          "description": "Hardcoded 'category' types.",
-          "type": "string",
-          "enum": ["religious_rebels", "nationalist_rebels"]
-        }
-      ]
+      "$identifierValue": {
+        "type": "rebel_types",
+        "description": "Hardcoded 'category' types are ignored.",
+        "require": [
+          {"operator": "!=", "value": "religious_rebels"},
+          {"operator": "!=", "value": "nationalist_rebels"}
+        ]
+      },
+      "type": "string"
     },
     "religion_groups": {
       "$identifierValue": "religion_groups",
@@ -390,20 +388,16 @@
       "type": "string"
     },
     "gfx_model_textures_relative": {
-      "anyOf": [
-        {
-          "$identifierValue": {
-            "type": "gfx_model_textures",
-            "prefixFileDir": [
-              "path"
-            ]
-          }
-        },
-        {
-          "type": "string",
-          "enum": ["nonormal.dds", "nospec.dds"]
-        }
-      ]
+      "$identifierValue": {
+        "type": "gfx_model_textures",
+        "prefixFileDir": [
+          "path"
+        ],
+        "require": [
+          {"operator": "!=", "value": "nonormal.dds"},
+          {"operator": "!=", "value": "nospec.dds"}
+        ]
+      }
     },
     "pdx_anims_relative": {
       "$identifierValue": {
@@ -631,22 +625,6 @@
             "type": "localisation",
             "prefix": "l_english.",
             "usePropertyKey": true
-          }
-        },
-        {
-          "$identifierValue": {
-            "type": "localisation",
-            "prefix": "l_english.YEARLY_",
-            "usePropertyKey": true,
-            "toUpperCase": true
-          }
-        },
-        {
-          "$identifierValue": {
-            "type": "localisation",
-            "prefix": "l_english.YEARLY_",
-            "usePropertyKey": true,
-            "toUpperCase": true
           }
         }
       ]

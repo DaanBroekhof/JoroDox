@@ -505,8 +505,7 @@
       "minItems": 3,
       "maxItems": 3,
       "items": {
-        "type": "string",
-        "pattern": "^(0(\\.[0-9]+)?|1(\\.0+))$"
+        "type": "number"
       }
     },
     "country_modifiers": {
@@ -536,7 +535,7 @@
       "minItems": 3,
       "maxItems": 3,
       "items": {
-        "$ref": "special_values.json#/definitions/float"
+        "type": "number"
       }
     },
     "2d_vector": {

@@ -166,7 +166,7 @@
   },
   {
     "id": "map_positions",
-    "title": "Map city positions",
+    "title": "Map position info",
     "category": "Map data",
     "reader": "StructureLoader",
     "primaryKey": "province",
