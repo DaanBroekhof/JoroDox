@@ -22,7 +22,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
 
     const scripts = [];
     const relations = [];
-    filesList.each(async path => {
+    for (const path of files) {
       const parser = new PdxScript();
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
 
@@ -59,11 +59,11 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
         toType: 'files',
         toId: path
       }));
-    });
+    }
 
     await this.saveChunked(scripts, db.pdx_scripts, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
 
-    JdxDatabase.updateTypeIdentifiers(args.project, 'pdx_data');
+    JdxDatabase.updateTypeIdentifiers(args.project, 'pdx_scripts');
   }
 }

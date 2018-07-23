@@ -23,7 +23,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
     const datafiles = [];
     const relations = [];
-    filesList.each(async path => {
+    for (const path of files) {
       const parser = new PdxData();
 
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
@@ -51,7 +51,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
       relations.push(this.addRelationId({
         fromKey: 'pdx_data', fromType: 'pdx_data', fromId: path, toKey: 'source', toType: 'files', toId: path
       }));
-    });
+    }
 
     await this.saveChunked(datafiles, db.pdx_data, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);

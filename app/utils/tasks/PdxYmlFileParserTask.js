@@ -20,7 +20,7 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
 
     const results = [];
     const relations = [];
-    filesList.each(async (path) => {
+    for (const path of files) {
       const filePath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const fileData = jetpack.read(filePath);
       const pdxYmlData = await this.parsePdxYml(args.project, fileData, path);
@@ -38,12 +38,12 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
         toType: 'files',
         toId: path
       }));
-    });
+    }
 
     await this.saveChunked(results, db.pdxyml_files, 0, 5000);
     await this.saveChunked(relations, db.relations, 0, 5000);
 
-    JdxDatabase.updateTypeIdentifiers(args.project, 'pdx_data');
+    JdxDatabase.updateTypeIdentifiers(args.project, 'pdxyml_files');
   }
 
   // The .yml files are not quite YAML
