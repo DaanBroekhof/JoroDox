@@ -93,6 +93,21 @@ export default class PdxScript {
           scope.data[propertyScope.name] = propertyScope.data;
         }
 
+        do {
+          const nextToken = this.lookAheadToken(scope);
+          if (nextToken === ',') {
+            if (!Array.isArray(scope.data[propertyScope.name])) {
+              scope.data[propertyScope.name] = [scope.data[propertyScope.name]];
+            }
+            // Read comma token
+            this.readToken(scope);
+            const valueToken = this.readToken(scope);
+            scope.data[propertyScope.name].push(valueToken);
+          } else {
+            break;
+          }
+        } while (true);
+
         // Reset token for new property
         prevToken = null;
         token = null;
@@ -131,6 +146,22 @@ export default class PdxScript {
     }
   }
 
+  lookAheadToken(scope, stopAtNewline) {
+    const lineScope = this.lineScope;
+    const currentLine = this.currentLine;
+    const currentOffset = this.currentOffset;
+    const currentLineOffset = this.currentLineOffset;
+
+    const token = this.readToken(scope, stopAtNewline);
+
+    this.lineScope = lineScope;
+    this.currentLine = currentLine;
+    this.currentOffset = currentOffset;
+    this.currentLineOffset = currentLineOffset;
+
+    return token;
+  }
+
   readToken(scope, stopAtNewline) {
     // Skip first whitespace
     while (this.whiteSpace.indexOf(this.data[this.currentOffset]) !== -1) {
@@ -167,7 +198,7 @@ export default class PdxScript {
         return this.readToken(scope);
       }
       // '=', '{', '}' can only be a solo token
-      if (token !== '' && (this.data[this.currentOffset] === '=' || this.data[this.currentOffset] === '{' || this.data[this.currentOffset] === '}')) {
+      if (token !== '' && (this.data[this.currentOffset] === '=' || this.data[this.currentOffset] === '{' || this.data[this.currentOffset] === '}' || this.data[this.currentOffset] === ',')) {
         break;
       }
 
@@ -179,6 +210,11 @@ export default class PdxScript {
       if (token === '=' || token === '{' || token === '}') {
         break;
       }
+
+      if (token === ',') {
+        break;
+      }
+
 
       // Whitespace breaks token
       if (this.whiteSpace.indexOf(this.data[this.currentOffset]) !== -1) {
