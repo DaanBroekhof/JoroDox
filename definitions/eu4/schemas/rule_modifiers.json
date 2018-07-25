@@ -65,40 +65,75 @@
     },
     "idea_rule_modifiers": {
       "properties": {
+        "may_return_manpower_on_disband": {
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "IDEA_MAY_RETURN_MANPOWER_ON_DISBAND"
+          }
+        },
+        "may_build_supply_depot": {
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "IDEA_MAY_BUILD_SUPPLY_DEPOT"
+          }
+        },
+        "may_refill_garrison": {
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "IDEA_MAY_REFILL_GARRISON"
+          }
+        },
+
         "cb_on_government_enemies": {
           "description": "Acts a visible script flag. Can be checked in triggers with cb_on_government_enemies = yes (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MAY_ATTACK_GOVERNMENT_ENEMIES"
+          }
         },
         "cb_on_overseas": {
           "description": "Allows claims to be fabricated on overseas provinces in Trade Company regions. (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MAY_ATTACK_OVERSEAS"
+          }
         },
         "cb_on_primitives": {
           "description": "Allows claims to be fabricated on overseas provinces in Colonial regions. (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MAY_ATTACK_PRIMITIVES"
+          }
         },
         "cb_on_religious_enemies": {
           "description": "Acts a visible script flag. Can be checked in triggers with cb_on_religious_enemies = yes (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "IDEA_MAY_SIBERIAN_FRONTIER"
+          }
         },
         "idea_claim_colonies": {
           "description": "Allows claims to be fabricated on overseas provinces in Colonial regions that are owned by by another nation that is alo overseas. (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "CLAIM_COLONIES"
+          }
         },
         "may_explore": {
           "description": "Allows the recruitment of explorers and conquisadors. (Constant)",
@@ -137,17 +172,21 @@
         },
         "sea_repair": {
           "description": "Allows ships to repair in coastal sea zones adjacent to owned provinces. (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "MAY_REPAIR_AT_SEA"
+          }
         },
         "may_establish_frontier": {
           "description": "Allows the usage of the Siberean Frontier mechanic. (Constant)",
-          "allOf": [
-            {"$ref": "special_values.json#/definitions/boolean"},
-            {"$ref": "identifiers.json#/definitions/localisation_for_modifier"}
-          ]
+          "$ref": "special_values.json#/definitions/boolean",
+          "$identifierValue": {
+            "type": "localisation",
+            "prefix": "l_english.",
+            "replacementIdentifier": "IDEA_MAY_SIBERIAN_FRONTIER"
+          }
         },
         "extra_manpower_at_religious_war": {
           "description": "Grants an increase in manpower recovery by a factor of 3 during religious wars. (Constant)",

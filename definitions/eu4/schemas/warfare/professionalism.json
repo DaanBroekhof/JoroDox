@@ -41,15 +41,6 @@
             "trigger": {
               "$ref": "country_conditions.json#/definitions/country_conditions"
             },
-            "may_return_manpower_on_disband": {
-              "$ref": "special_values.json#/definitions/boolean"
-            },
-            "may_build_supply_depot": {
-              "$ref": "special_values.json#/definitions/boolean"
-            },
-            "may_refill_garrison": {
-              "$ref": "special_values.json#/definitions/boolean"
-            },
             "hidden": {
               "$ref": "special_values.json#/definitions/boolean"
             }
@@ -57,6 +48,9 @@
         },
         {
           "$ref": "country_modifiers.json#/definitions/country_modifiers"
+        },
+        {
+          "$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"
         }
       ]
     }

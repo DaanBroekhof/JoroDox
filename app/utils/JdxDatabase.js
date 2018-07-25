@@ -90,6 +90,15 @@ export default class JdxDatabase {
     task.progress(0, 1, 'Opening databases...');
 
     const db = new Dexie(dbName, {allowEmptyDB: true});
+
+    db.on('blocked', (e) => {
+      console.warn('Blocked', e);
+    });
+    db.on('versionchange', (e) => {
+      console.warn('Versionchange', e);
+      return true;
+    });
+
     console.log('Loading DB `' + dbName + '`');
     // Hacky way to allow empty DB editing
     /* eslint no-underscore-dangle: ["error", { "allow": ["db", "_allowEmptyDB"] }] */

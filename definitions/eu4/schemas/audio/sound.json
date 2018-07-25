@@ -22,6 +22,12 @@
         },
         "file": {
           "$ref": "identifiers.json#/definitions/sound_files"
+        },
+        "always_load": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "volume": {
+          "type": "number"
         }
       }
     }

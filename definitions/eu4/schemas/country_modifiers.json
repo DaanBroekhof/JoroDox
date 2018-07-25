@@ -67,12 +67,20 @@
             "army_tradition": {
               "description": "Adds to the rate of Army Tradition gained each year. (Additive)",
               "type": "number",
-              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_ARMY_TRADITION"
+              }
             },
             "army_tradition_decay": {
               "description": "Adds to the decay rate of Army Tradition. (Additive)",
               "type": "number",
-              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_ARMY_TRADITION_DECAY"
+              }
             },
             "army_tradition_from_battle": {
               "description": "Modifies the Army Tradition bonus when gained through battles. (Multiplicative)",
@@ -695,7 +703,7 @@
               "$identifierValue": {
                 "type": "localisation",
                 "prefix": "l_english.",
-                "replacementIdentifier": "NAVEL_LEADER_MANEUVER"
+                "replacementIdentifier": "NAVAL_LEADER_MANEUVER"
               }
             },
             "leader_naval_shock": {
@@ -910,12 +918,20 @@
             "navy_tradition": {
               "description": "Adds to the yearly Navy Tradition rate. (Additive)",
               "type": "number",
-              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_NAVY_TRADITION"
+              }
             },
             "navy_tradition_decay": {
               "description": "Adds to the decay rate of Navy Tradition. (Additive)",
               "type": "number",
-              "$ref": "identifiers.json#/definitions/localisation_for_modifier"
+              "$identifierValue": {
+                "type": "localisation",
+                "prefix": "l_english.",
+                "replacementIdentifier": "YEARLY_NAVY_TRADITION_DECAY"
+              }
             },
             "num_accepted_cultures": {
               "description": "Adds to the maximum number of accepted cultures a country can have. (Additive)",

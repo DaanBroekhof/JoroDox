@@ -9,15 +9,21 @@
       "$identifierValue": [
         {
           "type": "localisation",
-          "prefix": "l_english."
+          "prefix": "l_english.",
+          "require": {
+            "data": "provinces",
+            "operator": "is_empty",
+            "value": false
+          }
         },
         {
           "type": "localisation",
           "prefix": "l_english.",
           "postfix": "_adj",
           "require": [
-            {"operator": "!regexp", "value": "(ocean|sea|pacific|atlantic|coast|gulf|channel|mediterrenean|strait|seas|baltic|triangle|kattegat)_area$"},
-            {"operator": "!regexp", "value": "^(sea_of|gulf|cape_of|bay_of|coast_of)"}
+            {"operator": "!regexp", "value": "(ocean|sea|pacific|atlantic|coast|gulf|channel|mediterrenean|strait|seas|baltic|triangle|kattegat|bight)_area$"},
+            {"operator": "!regexp", "value": "^(sea_of|gulf|cape_of|bay_of|coast_of)"},
+            {"data": "provinces", "operator": "is_empty", "value": false}
           ]
         },
         {
@@ -25,8 +31,9 @@
           "prefix": "l_english.",
           "postfix": "_name",
           "require": [
-            {"operator": "!regexp", "value": "(ocean|sea|pacific|atlantic|coast|gulf|channel|mediterrenean|strait|seas|baltic|triangle|kattegat)_area$"},
-            {"operator": "!regexp", "value": "^(sea_of|gulf|cape_of|bay_of|coast_of)"}
+            {"operator": "!regexp", "value": "(ocean|sea|pacific|atlantic|coast|gulf|channel|mediterrenean|strait|seas|baltic|triangle|kattegat|bight)_area$"},
+            {"operator": "!regexp", "value": "^(sea_of|gulf|cape_of|bay_of|coast_of)"},
+            {"data": "provinces", "operator": "is_empty", "value": false}
           ]
         }
       ]

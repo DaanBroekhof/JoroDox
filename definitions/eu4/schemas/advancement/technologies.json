@@ -47,7 +47,7 @@
               "type": "number"
             },
             "military_tactics": {
-              "type": "number"
+              "$ref": "technologies.json#/definitions/number_and_localized"
             },
             "infantry_shock": {
               "type": "number"
@@ -68,7 +68,7 @@
               "type": "number"
             },
             "supply_limit": {
-              "type": "number"
+              "$ref": "technologies.json#/definitions/number_and_localized"
             },
             "sprite_level": {
               "type": "number"
@@ -89,55 +89,55 @@
               "type": "number"
             },
             "administrative_efficiency": {
-              "type": "number"
+              "$ref": "technologies.json#/definitions/number_and_localized"
             },
             "development_efficiency": {
-              "type": "number"
+              "$ref": "technologies.json#/definitions/number_and_localized"
             },
             "may_infiltrate_administration": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_agitate_for_liberty": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_corrupt_officials": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_sabotage_reputation": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_slander_merchants": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_sow_discontent": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_study_technology": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_fabricate_claims": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_support_rebels": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_steal_maps": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_sabotage_recruitment": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "may_force_march": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "allow_client_states": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "reduced_naval_attrition": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "merchants": {
-              "$ref": "special_values.json#/definitions/boolean"
+              "$ref": "technologies.json#/definitions/boolean_and_localized"
             },
             "enable": {
               "$allowMultiple": {
@@ -166,5 +166,25 @@
     "id",
     "namespace",
     "data"
-  ]
+  ],
+  "definitions": {
+    "boolean_and_localized": {
+      "$ref": "special_values.json#/definitions/boolean",
+      "$identifierValue": {
+        "type": "localisation",
+        "prefix": "l_english.",
+        "usePropertyKey": true,
+        "toUpperCase": true
+      }
+    },
+    "number_and_localized": {
+      "type": "number",
+      "$identifierValue": {
+        "type": "localisation",
+        "prefix": "l_english.",
+        "usePropertyKey": true,
+        "toUpperCase": true
+      }
+    }
+  }
 }
