@@ -65,6 +65,17 @@ export default class DbBackgroundTask extends BackgroundTask {
     return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys();
   }
 
+  async deleteMissing(newData, existingStorage, types, sourceTypeId, filterTypes, paths) {
+    const foundPaths = newData.map(x => x.path);
+    const existingData = await this.filterFilesByPath(existingStorage, types, 'pdx_scripts', filterTypes, paths);
+    const missingFiles = existingData.filter(x => !foundPaths.includes(x));
+    if (missingFiles.length !== 0) {
+      await this.deleteChunked(existingStorage.where('path').anyOf(missingFiles));
+    }
+
+    return missingFiles;
+  }
+
   static filterPaths(typeDefinition, paths) {
     return paths.filter(path => {
       let valid = true;

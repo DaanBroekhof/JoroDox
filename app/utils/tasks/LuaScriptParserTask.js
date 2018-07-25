@@ -42,6 +42,8 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
       }));
     });
 
+    // Delete not found file data
+    await this.deleteMissing(scripts, db.lua_scripts, definition.types, 'lua_scripts', args.filterTypes, args.paths);
 
     await this.saveChunked(scripts, db.lua_scripts, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);

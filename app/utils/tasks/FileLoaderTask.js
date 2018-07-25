@@ -65,12 +65,23 @@ export default class FileLoaderTask extends DbBackgroundTask {
       filesList = filesList.filter(file => args.fileFilters.some(x => minimatch(file, x)));
     }
 
-    const storedFileData = await db.files.where('path').startsWithAnyOf(filesList).toArray();
-
     const storedFilesMap = new Map();
-    storedFileData.forEach(f => {
-      storedFilesMap.set(f.path, f.info.modifyTime);
-    });
+
+    if (args.searchPath) {
+      const storedFileData = await db.files.where('path').startsWithAnyOf(args.searchPath).toArray();
+
+      storedFileData.forEach(f => {
+        if (!args.searchPattern || minimatch(f.path, args.searchPattern)) {
+          storedFilesMap.set(f.path, f.info.modifyTime);
+        }
+      });
+    } else if (args.exactPaths) {
+      const storedFileData = await db.files.where('path').startsWithAnyOf(filesList).toArray();
+
+      storedFileData.forEach(f => {
+        storedFilesMap.set(f.path, f.info.modifyTime);
+      });
+    }
 
     this.progress(0, 1, 'Getting file meta data...');
 
@@ -82,25 +93,27 @@ export default class FileLoaderTask extends DbBackgroundTask {
       deleted: [],
     };
 
+    // Compare existing files with files in DB
     for (const fileMetaData of filesMetaData) {
       const storedFileModified = storedFilesMap.get(fileMetaData.path);
       if (!storedFileModified && fileMetaData.info) {
         filesDiff.added.push(fileMetaData);
       } else if (storedFileModified) {
         if (!fileMetaData.info) {
-          filesDiff.deleted.push(fileMetaData);
-          filesDiff.deleted.push(...storedFileData.filter(x => _.startsWith(x.path, fileMetaData.path + '/')));
+          filesDiff.deleted.push(fileMetaData.path);
         } else if (storedFileModified !== fileMetaData.info.modifyTime.toString()) {
           filesDiff.changed.push(fileMetaData);
         }
+        storedFilesMap.delete(fileMetaData.path);
       }
     }
 
+    // All files left are not found and thus deleted
+    filesDiff.deleted.push(...storedFilesMap.keys());
+
     this.progress(0, 1, 'Saving file data...');
 
-    const deletePaths = filesDiff.deleted.map(x => x.path);
-
-    await this.deleteChunked(db.files.where('path').anyOf(deletePaths));
+    await this.deleteChunked(db.files.where('path').anyOf(filesDiff.deleted));
 
     await this.saveChunked(filesDiff.added, db.files, 0, 500);
     await this.saveChunked(filesDiff.changed, db.files, 0, 500);

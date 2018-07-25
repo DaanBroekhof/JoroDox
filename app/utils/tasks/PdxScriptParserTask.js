@@ -61,6 +61,9 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
       }));
     }
 
+    // Delete not found file data
+    await this.deleteMissing(scripts, db.pdx_scripts, definition.types, 'pdx_scripts', args.filterTypes, args.paths);
+
     await this.saveChunked(scripts, db.pdx_scripts, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
 

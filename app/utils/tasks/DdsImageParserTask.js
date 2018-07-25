@@ -34,6 +34,9 @@ export default class DdsImageParserTask extends DbBackgroundTask {
       }));
     }
 
+    // Delete not found file data
+    await this.deleteMissing(datafiles, db.dds_images, definition.types, 'dds_images', args.filterTypes, args.paths);
+
     await this.saveChunked(datafiles, db.dds_images, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
 

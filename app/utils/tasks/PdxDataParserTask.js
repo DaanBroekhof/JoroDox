@@ -23,11 +23,18 @@ export default class PdxDataParserTask extends DbBackgroundTask {
 
     const datafiles = [];
     const relations = [];
+    const foundPaths = [];
     for (const path of files) {
       const parser = new PdxData();
 
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
-      const data = parser.readFromBuffer(new Uint8Array(jetpack.read(fullPath, 'buffer')).buffer);
+      let data = null;
+      try {
+        data = parser.readFromBuffer(new Uint8Array(jetpack.read(fullPath, 'buffer')).buffer);
+      } catch (e) {
+        console.error(`"Error( parsing '${path}'`, e.toString());
+        continue;
+      }
 
       if (parser.errors && parser.errors.length > 0) {
         parser.errors.forEach(async (err) => {
@@ -47,11 +54,15 @@ export default class PdxDataParserTask extends DbBackgroundTask {
         this.progress(datafiles.length, filesList.size(), `Parsing ${filesList.size()} PDX binary data objects...`);
       }
 
+      foundPaths.push(path);
       datafiles.push({path, data});
       relations.push(this.addRelationId({
         fromKey: 'pdx_data', fromType: 'pdx_data', fromId: path, toKey: 'source', toType: 'files', toId: path
       }));
     }
+
+    // Delete not found file data
+    await this.deleteMissing(datafiles, db.pdx_data, definition.types, 'pdx_data', args.filterTypes, args.paths);
 
     await this.saveChunked(datafiles, db.pdx_data, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);

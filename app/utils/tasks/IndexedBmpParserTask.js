@@ -36,6 +36,9 @@ export default class IndexedBmpParserTask extends DbBackgroundTask {
       }));
     }
 
+    // Delete not found file data
+    await this.deleteMissing(datafiles, db.indexed_bmps, definition.types, 'indexed_bmps', args.filterTypes, args.paths);
+
     await this.saveChunked(datafiles, db.indexed_bmps, 0, 500);
     await this.saveChunked(relations, db.relations, 0, 500);
 
