@@ -85,9 +85,9 @@ export default class ProjectsPage extends Component {
             onChange={(event) => this.props.handleChange({gameType: event.target.value})}
             input={<Input name="definition-type" id="definition-type" />}
           >
-            <MenuItem value=""><em>None</em></MenuItem>
-            <MenuItem value="eu4">Europa Universalis 4</MenuItem>
-            <MenuItem value="stellaris">Stellaris</MenuItem>
+            {_.values(JdxDatabase.getDefinitions()).map(definition => {
+              return <MenuItem value={definition.id}>{definition.name}</MenuItem>
+            })}
           </Select>
         </FormControl>
         <br />

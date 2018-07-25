@@ -430,85 +430,90 @@ export default class JdxDatabase {
   }
 
   static loadDefinitions() {
-    const baseDir = syspath.join(this.getAppRootDir(), 'definitions');
+    const baseDirs = [
+      syspath.join(this.getAppRootDir(), 'definitions'),
+      syspath.join(this.getAppRootDir(), '..', 'JorodoxPrivateDefinitions'),
+    ];
 
-    jetpack.cwd(baseDir).find(
-      '.',
-      {
-        matching: '*',
-        directories: true,
-        files: false,
-        recursive: false,
-      }
-    ).forEach(definitionDir => {
-      if (!jetpack.exists(syspath.join(baseDir, definitionDir, 'index.json'))) {
-        console.error('Definition dir `' + definitionDir + '` has no index.json.');
-        return;
-      }
-      const indexDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'index.json'));
-
-      let data = {};
-      try {
-        data = JSON.parse(indexDataRaw);
-      } catch (exception) {
-        console.error('File `' + syspath.join(baseDir, definitionDir, 'index.json') + '`: ' + exception.message);
-        return;
-      }
-
-      if (!data || !data.id || !data.name) {
-        console.error('Definition dir `' + definitionDir + '` missing `id` or `name` in index.json.');
-        return;
-      }
-
-      this.definitions[data.id] = data;
-      this.definitions[data.id].types = [];
-
-      jetpack.cwd(syspath.join(baseDir, definitionDir, 'types')).find(
+    for (const baseDir of baseDirs) {
+      jetpack.cwd(baseDir).find(
         '.',
-        {matching: '*.json'}
-      ).forEach(typeFile => {
-        const typeDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'types', typeFile));
+        {
+          matching: '!.*',
+          directories: true,
+          files: false,
+          recursive: false,
+        }
+      ).forEach(definitionDir => {
+        if (!jetpack.exists(syspath.join(baseDir, definitionDir, 'index.json'))) {
+          console.error('Definition dir `' + definitionDir + '` has no index.json.');
+          return;
+        }
+        const indexDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'index.json'));
 
-        let typeData = {};
+        let data = {};
         try {
-          typeData = JSON.parse(typeDataRaw);
+          data = JSON.parse(indexDataRaw);
         } catch (exception) {
-          console.error('File `' + syspath.join(baseDir, definitionDir, 'types', typeFile) + '`: ' + exception.message);
+          console.error('File `' + syspath.join(baseDir, definitionDir, 'index.json') + '`: ' + exception.message);
           return;
         }
 
-        if (!typeData || !_.isArray(typeData)) {
-          console.error('Definition `' + definitionDir + '` type `' + typeFile + '` data missing or incorrect');
+        if (!data || !data.id || !data.name) {
+          console.error('Definition dir `' + definitionDir + '` missing `id` or `name` in index.json.');
           return;
         }
 
-        this.definitions[data.id].types = this.definitions[data.id].types.concat(typeData);
+        this.definitions[data.id] = data;
+        this.definitions[data.id].types = [];
+
+        jetpack.cwd(syspath.join(baseDir, definitionDir, 'types')).find(
+          '.',
+          {matching: '*.json'}
+        ).forEach(typeFile => {
+          const typeDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'types', typeFile));
+
+          let typeData = {};
+          try {
+            typeData = JSON.parse(typeDataRaw);
+          } catch (exception) {
+            console.error('File `' + syspath.join(baseDir, definitionDir, 'types', typeFile) + '`: ' + exception.message);
+            return;
+          }
+
+          if (!typeData || !_.isArray(typeData)) {
+            console.error('Definition `' + definitionDir + '` type `' + typeFile + '` data missing or incorrect');
+            return;
+          }
+
+          this.definitions[data.id].types = this.definitions[data.id].types.concat(typeData);
+        });
+
+        this.definitions[data.id].schemas = [];
+
+        jetpack.cwd(syspath.join(baseDir, definitionDir, 'schemas')).find(
+          '.',
+          {matching: '*.json'}
+        ).forEach(schemaFile => {
+          const schemaDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'schemas', schemaFile));
+
+          let schemaData = {};
+          try {
+            schemaData = JSON.parse(schemaDataRaw);
+          } catch (exception) {
+            console.error('File `' + syspath.join(baseDir, definitionDir, 'schemas', schemaFile) + '`: ' + exception.message);
+            return;
+          }
+
+          if (!schemaData || !_.isObject(schemaData)) {
+            console.error('Definition `' + definitionDir + '` schema `' + schemaFile + '` data missing or incorrect');
+            return;
+          }
+
+          this.definitions[data.id].schemas.push(schemaData);
+        });
       });
-
-      this.definitions[data.id].schemas = [];
-
-      jetpack.cwd(syspath.join(baseDir, definitionDir, 'schemas')).find(
-        '.',
-        {matching: '*.json'}
-      ).forEach(schemaFile => {
-        const schemaDataRaw = jetpack.read(syspath.join(baseDir, definitionDir, 'schemas', schemaFile));
-
-        let schemaData = {};
-        try {
-          schemaData = JSON.parse(schemaDataRaw);
-        } catch (exception) {
-          console.error('File `' + syspath.join(baseDir, definitionDir, 'schemas', schemaFile) + '`: ' + exception.message);
-          return;
-        }
-
-        if (!schemaData || !_.isObject(schemaData)) {
-          console.error('Definition `' + definitionDir + '` schema `' + schemaFile + '` data missing or incorrect');
-          return;
-        }
-
-        this.definitions[data.id].schemas.push(schemaData);
-      });
-    });
+    }
 
     return this.definitions;
   }
