@@ -46,6 +46,9 @@
             },
             "Orientation": {
               "$ref": "special_values.json#/definitions/gui_orientation"
+            },
+            "hint_tag": {
+              "$ref": "identifiers.json#/definitions/hints"
             }
           }
         }

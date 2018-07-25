@@ -77,6 +77,25 @@
             "alwaystransparent": {
               "todo": "all or al??",
               "$ref": "special_values.json#/definitions/boolean"
+            },
+            "if_resolution": {
+              "$allowMultiple": {
+                "$mergeProps": [
+                  {
+                    "properties": {
+                      "max_height": {
+                        "type": "number"
+                      },
+                      "min_height": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  {
+                    "$ref": "interface_gui_smooth_listboxes.json#/definitions/smooth_listbox_type"
+                  }
+                ]
+              }
             }
           }
         }

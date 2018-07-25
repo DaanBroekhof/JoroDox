@@ -60,22 +60,31 @@
                 }
               },
               "start": {
-                "type": "number"
+                "type": ["array", "number"],
+                "items": {
+                  "type": "number"
+                }
               },
               "duration": {
                 "type": "number"
               },
               "life": {
-                "type": "number"
+                "type": ["array", "number"],
+                "items": {
+                  "type": "number"
+                }
               },
               "emission": {
                 "type": "array",
                 "items": {
-                  "$ref": "special_values.json#/definitions/float"
+                  "type": "number"
                 }
               },
               "velocity": {
-                "$ref": "special_values.json#/definitions/2d_vector"
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
               },
               "velocity_pitch": {
                 "$ref": "special_values.json#/definitions/2d_vector"
@@ -86,8 +95,7 @@
               "size": {
                 "type": "array",
                 "items": [
-                  {"type": "string"},
-                  {"$ref": "special_values.json#/definitions/float"}
+                  {"type": ["string", "number"]}
                 ]
               },
               "color": {
@@ -97,18 +105,28 @@
                   "r": {"type": "array", "items": {"type": "number"}},
                   "g": {"type": "array", "items": {"type": "number"}},
                   "b": {"type": "array", "items": {"type": "number"}},
-                  "alpha": {"type": "array", "items": {"type": "string"}}
+                  "alpha": {"type": "array", "items": {"type": ["number", "string"]}}
                 }
               },
               "rotation": {
                 "type": "array",
-                "items": [
-                  {"type": "string"},
-                  {"type": "number"}
-                ]
+                "items": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
               },
               "force": {
-                "type": "string"
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {"type": "string"}
+                ]
               }
             }
           }
@@ -123,7 +141,7 @@
               },
               "time": {
                 "type": "string",
-                "enum": ["life_abs"]
+                "enum": ["life_abs", "life", "spawn"]
               },
               "start": {
                 "type": "number"
@@ -131,9 +149,12 @@
               "duration": {
                 "type": "number"
               },
+              "repeat": {
+                "$ref": "special_values.json#/definitions/boolean"
+              },
               "op": {
                 "type": "string",
-                "enum": ["MUL"]
+                "enum": ["MUL", "ABS"]
               },
               "minValue": {
                 "type": "number"
@@ -157,13 +178,16 @@
             "properties": {
               "type": {
                 "type": "string",
-                "enum": ["planar"]
+                "enum": ["planar", "turbulence", "friction"]
               },
               "name": {
                 "type": "string"
               },
               "direction": {
-                "$ref": "special_values.json#/definitions/2d_vector"
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
               },
               "amount": {
                 "type": "number"

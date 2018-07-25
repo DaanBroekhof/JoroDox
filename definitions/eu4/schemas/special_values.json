@@ -543,7 +543,7 @@
       "minItems": 2,
       "maxItems": 2,
       "items": {
-        "$ref": "special_values.json#/definitions/float"
+        "type": "number"
       }
     },
     "float": {
@@ -617,6 +617,7 @@
       "type": "string",
       "enum": [
         "UPPER_LEFT",
+        "center",
         "CENTER",
         "LOWER_RIGHT",
         "UPPER_RIGHT",
@@ -696,12 +697,13 @@
             "F9",
             "F10",
             "F11",
-            "F12"
+            "F12",
+            ""
           ]
         },
         {
           "type": "string",
-          "pattern": "^[0-9a-zA-Z]$"
+          "pattern": "^.$"
         }
       ]
     }
