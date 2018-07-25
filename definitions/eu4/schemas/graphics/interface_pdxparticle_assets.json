@@ -1,0 +1,39 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_pdxparticle_assets.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "pdxparticle"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "identifiers.json#/definitions/gfx_particles"
+        },
+        "scale": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

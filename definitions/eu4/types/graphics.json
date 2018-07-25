@@ -511,7 +511,7 @@
   },
   {
     "id": "interface_pdxparticle_assets",
-    "title": "Interface Particle Assets",
+    "title": "Interface Pdxparticle Assets",
     "category": "Graphics",
     "reader": "StructureLoader",
     "primaryKey": "id",
