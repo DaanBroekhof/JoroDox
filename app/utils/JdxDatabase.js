@@ -436,6 +436,11 @@ export default class JdxDatabase {
     ];
 
     for (const baseDir of baseDirs) {
+
+      if (!jetpack.exists(baseDir)) {
+        continue;
+      }
+
       jetpack.cwd(baseDir).find(
         '.',
         {

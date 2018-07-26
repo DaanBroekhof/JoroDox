@@ -35,6 +35,11 @@ export default class ThreeJsViewer extends Component {
     this.createScene();
   }
 
+  componentWillUnmount() {
+    this.renderer.dispose();
+    this.renderer = null;
+  }
+
   createScene() {
     if (this.props.objectScene === this.objectScene) {
       return;
@@ -103,7 +108,11 @@ export default class ThreeJsViewer extends Component {
   }
 
   animateScene() {
-    requestAnimationFrame(this.animateScene.bind(this));
+    if (this.renderer) {
+      requestAnimationFrame(this.animateScene.bind(this));
+    } else {
+      return;
+    }
 
     // Rotate camera
     const delta = this.clock.getDelta();

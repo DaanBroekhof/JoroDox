@@ -48,7 +48,9 @@ class StructureItemView extends Component {
     }
 
     if (nextProps.project && nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, nextProps.match.params.id));
+      if (nextProps.match.params.type !== 'pdx_meshes') {
+        this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, nextProps.match.params.id));
+      }
     }
   }
 
@@ -237,58 +239,62 @@ class StructureItemView extends Component {
     }
     */
 
-    const gridSettings = {
-      height: false,
-      gridType: 'tree',
-      emptyDataMessage: 'Loading...',
-      columns: [
-        {
-          name: 'Name',
-          dataIndex: 'key',
-          width: '25%',
-          expandable: true,
+    let gridSettings = null;
 
-        },
-        {
-          name: 'Value',
-          dataIndex: 'value',
-          expandable: false,
-        },
-      ],
-      plugins: {
-        COLUMN_MANAGER: {
-          resizable: true,
-          minColumnWidth: 10,
-          moveable: true,
-          sortable: false,
-        },
-        LOADER: {
-          enabled: true
-        },
-      },
-      dataSource: this.getDataSource(this.props.project.rootPath, this.props.match.params.type, this.props.match.params.id),
-      stateKey: `typeView-${this.props.match.params.type}-${this.props.match.params.id}`,
-      pageSize: 1000,
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-      },
-      events: {
-        HANDLE_ROW_CLICK: ({row}) => {
-          if (row.leaf === false && row._hasChildren === false) {
-            return this.gridSettings.dataSource({parentId: row._id}).then((result) => {
-              return this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
-            });
-          }
+    if (typeDefinition.id !== 'pdx_meshes') {
+      gridSettings = {
+        height: false,
+        gridType: 'tree',
+        emptyDataMessage: 'Loading...',
+        columns: [
+          {
+            name: 'Name',
+            dataIndex: 'key',
+            width: '25%',
+            expandable: true,
 
-          return this.props.setTreeNodeVisibility(row._id, !row._isExpanded, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, false);
+          },
+          {
+            name: 'Value',
+            dataIndex: 'value',
+            expandable: false,
+          },
+        ],
+        plugins: {
+          COLUMN_MANAGER: {
+            resizable: true,
+            minColumnWidth: 10,
+            moveable: true,
+            sortable: false,
+          },
+          LOADER: {
+            enabled: true
+          },
         },
-      },
-      ref2: (grid) => {
-        const x = 34234;
-        this.grid = grid;
-      }
-    };
+        dataSource: this.getDataSource(this.props.project.rootPath, this.props.match.params.type, this.props.match.params.id),
+        stateKey: `typeView-${this.props.match.params.type}-${this.props.match.params.id}`,
+        pageSize: 1000,
+        style: {
+          display: 'flex',
+          flexDirection: 'column',
+        },
+        events: {
+          HANDLE_ROW_CLICK: ({row}) => {
+            if (row.leaf === false && row._hasChildren === false) {
+              return this.gridSettings.dataSource({parentId: row._id}).then((result) => {
+                return this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
+              });
+            }
+
+            return this.props.setTreeNodeVisibility(row._id, !row._isExpanded, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, false);
+          },
+        },
+        ref2: (grid) => {
+          const x = 34234;
+          this.grid = grid;
+        }
+      };
+    }
     this.gridSettings = gridSettings;
 
     return (
@@ -310,7 +316,7 @@ class StructureItemView extends Component {
           </span>
         </div>
 
-        {typeDefinition.id === 'pdx_meshes' && itemPath && <div><PdxMeshView file={{path: itemPath}} /><br /></div>}
+        {typeDefinition.id === 'pdx_meshes' && itemPath && <div><PdxMeshView file={{path: itemPath}} databaseVersion={this.props.databaseVersion} /><br /></div>}
         {typeDefinition.id === 'indexed_bmps' && itemPath && <div><ImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.id === 'dds_images' && itemPath && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {typeDefinition.sourceType && typeDefinition.sourceType.id === 'dds_images' && itemPath && <div><DdsImageView file={{path: itemPath}} flipY={typeDefinition.sourceType.flipY} /><br /></div>}
