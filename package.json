@@ -89,7 +89,8 @@
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "icon-256-circular.ico"
     }
   },
   "repository": {
