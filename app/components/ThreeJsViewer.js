@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
+import {AutoSizer} from 'react-virtualized';
 
 const OrbitControls = require('../utils/threejs/OrbitControls')(THREE);
 
@@ -22,6 +23,7 @@ export default class ThreeJsViewer extends Component {
       showMeshes: true,
       showSpotlights: true,
       rotate: false,
+      largeView: false,
     };
 
     this.rotation = 0;
@@ -40,16 +42,21 @@ export default class ThreeJsViewer extends Component {
     this.renderer = null;
   }
 
-  createScene() {
-    if (this.props.objectScene === this.objectScene) {
+  createScene(force = false, width, height) {
+    if (this.props.objectScene === this.objectScene && !force) {
       return;
+    }
+
+    if (!width) {
+      width = this.canvas.clientWidth;
+      height = this.canvas.clientHeight;
     }
 
     this.objectScene = this.props.objectScene;
     const distance = (this.objectScene ? this.objectScene.distance * 4 : this.state.distance);
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(45, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     this.camera.up = new THREE.Vector3(0, 1, 0);
     this.camera.position.x = Math.cos(this.rotation) * distance;
     this.camera.position.y = distance / 4;
@@ -62,7 +69,7 @@ export default class ThreeJsViewer extends Component {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
     });
-    this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+    this.renderer.setSize(width, height);
 
     // Grid
     let size = 100;
@@ -182,19 +189,41 @@ export default class ThreeJsViewer extends Component {
           <FormControlLabel label="Spotlights" control={<Checkbox checked={this.state.showSpotlights} onChange={this.toggleValue('showSpotlights')} color="primary" />} />
 
           <FormControlLabel label="Rotate" control={<Checkbox defaultChecked={this.state.rotate} onChange={this.toggleValue('rotate')} color="primary" />} />
+          <FormControlLabel label="Large view" control={<Checkbox defaultChecked={this.state.rotate} onChange={this.toggleValue('largeView')} color="primary" />} />
 
         </FormGroup>
 
-        <div style={{position: 'relative', display: 'inline-block'}}>
-          <canvas ref={canvas => this.canvas = canvas} style={{width: 900, height: 600}} />
+        <AutoSizer disableHeight={true}>
+          {({height, width}) => {
 
-          <div style={{position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'}}>
-            Meshes: {this.props.objectScene ? this.props.objectScene.meshCount : '-'}<br />
-            Triangles: {this.props.objectScene ? this.props.objectScene.triangleCount : '-'}<br />
-            Bones: {this.props.objectScene ? this.props.objectScene.boneCount : '-'}<br />
-            Locators: {this.props.objectScene ? this.props.objectScene.locatorCount : '-'}<br />
-          </div>
-        </div>
+            height = width * 0.60;
+
+            if (!this.state.largeView) {
+              width = 900;
+              height = 600;
+            }
+
+            if (this.width && this.width !== width) {
+              this.createScene(true, width, height);
+            }
+
+            this.height = height;
+            this.width = width;
+
+            return (
+              <div style={{position: 'relative', width, height}}>
+                <canvas ref={canvas => this.canvas = canvas} style={{width, height, display: 'block'}} />
+
+                <div style={{position: 'absolute', left: 10, top: 10, color: 'white', fontSize: '70%'}}>
+                  Meshes: {this.props.objectScene ? this.props.objectScene.meshCount : '-'}<br />
+                  Triangles: {this.props.objectScene ? this.props.objectScene.triangleCount : '-'}<br />
+                  Bones: {this.props.objectScene ? this.props.objectScene.boneCount : '-'}<br />
+                  Locators: {this.props.objectScene ? this.props.objectScene.locatorCount : '-'}<br />
+                </div>
+              </div>
+            );
+          }}
+        </AutoSizer>
       </div>
     );
   }

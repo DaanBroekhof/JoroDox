@@ -72,7 +72,8 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "nsis",
+        "zip"
       ]
     },
     "linux": {
@@ -85,6 +86,10 @@
     "directories": {
       "buildResources": "resources",
       "output": "release"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
   },
   "repository": {
