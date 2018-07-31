@@ -42,7 +42,7 @@ function parse(path) {
 
       if (self !== right && right !== -1) {
         if (colorNrs[self] === undefined || colorNrs[right] === undefined) {
-          console.log(self, right, x, y);
+          // console.log(self, right, x, y);
           continue;
         }
 
@@ -51,7 +51,7 @@ function parse(path) {
       }
       if (self !== down && down !== -1) {
         if (colorNrs[self] === undefined || colorNrs[down] === undefined) {
-          console.log(self, down, x, y);
+          // console.log(self, down, x, y);
           continue;
         }
         colorNrs[self].adjacencies[colorNrs[down].color_name] = true;

@@ -39,6 +39,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     let sourceData = db[definition.sourceType.id];
     const sourceDefinition = JdxDatabase.getTypeDefinition(args.project, definition.sourceType.id);
 
+    const pathMapping = {};
+
     if (sourceDefinition.primaryKey === 'path') {
       if (args.paths) {
         const paths = StructureLoaderTask.filterPaths(definition, args.paths);
@@ -47,6 +49,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         }
         sourceData = sourceData.where('path').anyOf(paths);
       } else {
+        if (!definition.sourceType.directPath) {
+          sourceData = db.virtual_files;
+        }
+
         if (definition.sourceType.path) {
           sourceData = sourceData.where({path: definition.sourceType.path.replace('{type.id}', definition.id)});
         }
@@ -55,6 +61,16 @@ export default class StructureLoaderTask extends DbBackgroundTask {
         }
         if (definition.sourceType.pathPattern) {
           sourceData = sourceData.filter(sourceItem => minimatch(sourceItem.path, definition.sourceType.pathPattern.replace('{type.id}', definition.id)));
+        }
+
+        if (!definition.sourceType.directPath) {
+          const paths = [];
+          (await sourceData.toArray()).forEach(x => {
+            pathMapping[x.path] = x.source;
+            paths.push(x.source);
+          });
+
+          sourceData = db[definition.sourceType.id].where('path').anyOf(paths);
         }
       }
     }
@@ -68,17 +84,17 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     let result = {items: [], relations: []};
 
     if (definition.sourceTransform.type === 'keyValues') {
-      result = await this.sourceTransformByKeyValues(sourceItems, definition, !relationStorage);
+      result = await this.sourceTransformByKeyValues(sourceItems, definition, pathMapping, !relationStorage);
     } else if (definition.sourceTransform.type === 'keyKeyValues') {
-      result = await this.sourceTransformByKeyKeyValues(sourceItems, definition, !relationStorage);
+      result = await this.sourceTransformByKeyKeyValues(sourceItems, definition, pathMapping, !relationStorage);
     } else if (definition.sourceTransform.type === 'fileData') {
-      result = await this.sourceTransformByFileData(sourceItems, definition, !relationStorage);
+      result = await this.sourceTransformByFileData(sourceItems, definition, pathMapping, !relationStorage);
     } else if (definition.sourceTransform.type === 'typesList') {
-      result = await this.sourceTransformByTypesList(sourceItems, definition, !relationStorage);
+      result = await this.sourceTransformByTypesList(sourceItems, definition, pathMapping, !relationStorage);
     } else if (definition.sourceTransform.type === 'typesListData') {
-      result = await this.sourceTransformByTypesListData(sourceItems, definition, !relationStorage);
+      result = await this.sourceTransformByTypesListData(sourceItems, definition, pathMapping, !relationStorage);
     } else if (definition.sourceTransform.type === 'stringValues') {
-      result = await this.sourceTransformByStringValues(sourceItems, definition, !relationStorage);
+      result = await this.sourceTransformByStringValues(sourceItems, definition, pathMapping, !relationStorage);
     } else {
       console.warn(`Unknown sourceTransform type \`${definition.sourceTransform.type}\`.`);
     }
@@ -102,7 +118,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     JdxDatabase.updateTypeIdentifiers(this.project, definition.id);
   }
 
-  sourceTransformByKeyValues(sourceItems, definition, skipRelations) {
+  sourceTransformByKeyValues(sourceItems, definition, pathMapping, skipRelations) {
     const items = [];
     const relations = [];
     sourceItems.forEach(sourceItem => {
@@ -127,7 +143,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           item[definition.sourceTransform.valueName] = _.pick(item[definition.sourceTransform.valueName], definition.sourceTransform.onlyValueKeys);
         }
 
-        this.doCommonItemOperations(item, definition, sourceItem.path);
+        const virtualPath = pathMapping[sourceItem.path] ? pathMapping[sourceItem.path] : sourceItem.path;
+
+        this.doCommonItemOperations(item, definition, virtualPath);
 
         items.push(item);
 
@@ -146,7 +164,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  sourceTransformByStringValues(sourceItems, definition, skipRelations) {
+  sourceTransformByStringValues(sourceItems, definition, pathMapping, skipRelations) {
     const items = [];
     const relations = [];
     sourceItems.forEach(sourceItem => {
@@ -176,7 +194,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           return;
         }
 
-        this.doCommonItemOperations(item, definition, sourceItem.path);
+        const virtualPath = pathMapping[sourceItem.path] ? pathMapping[sourceItem.path] : sourceItem.path;
+
+        this.doCommonItemOperations(item, definition, virtualPath);
 
         items.push(item);
 
@@ -196,7 +216,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   }
 
 
-  sourceTransformByKeyKeyValues(sourceItems, definition, skipRelations) {
+  sourceTransformByKeyKeyValues(sourceItems, definition, pathMapping, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -223,7 +243,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             item[definition.sourceTransform.valueName] = value2;
           }
 
-          this.doCommonItemOperations(item, definition, sourceItem.path);
+          const virtualPath = pathMapping[sourceItem.path] ? pathMapping[sourceItem.path] : sourceItem.path;
+
+          this.doCommonItemOperations(item, definition, virtualPath);
 
           items.push(item);
 
@@ -254,7 +276,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  async sourceTransformByTypesList(sourceItems, definition, skipRelations) {
+  async sourceTransformByTypesList(sourceItems, definition, pathMapping, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -288,7 +310,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             return;
           }
 
-          this.doCommonItemOperations(item, definition, sourceItem.path);
+          const virtualPath = pathMapping[sourceItem.path] ? pathMapping[sourceItem.path] : sourceItem.path;
+
+          this.doCommonItemOperations(item, definition, virtualPath);
 
           if (!definition.sourceTransform.nrFile) {
             delete item.nrFile;
@@ -319,7 +343,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  async sourceTransformByTypesListData(sourceItems, definition, skipRelations) {
+  async sourceTransformByTypesListData(sourceItems, definition, pathMapping, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -357,7 +381,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 return;
               }
 
-              this.doCommonItemOperations(item, definition, sourceItem.path);
+              const virtualPath = pathMapping[sourceItem.path] ? pathMapping[sourceItem.path] : sourceItem.path;
+
+              this.doCommonItemOperations(item, definition, virtualPath);
 
               items.push(item);
 
@@ -382,7 +408,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     return {items, relations};
   }
 
-  async sourceTransformByFileData(sourceItems, definition, skipRelations) {
+  async sourceTransformByFileData(sourceItems, definition, pathMapping, skipRelations) {
     const items = [];
     const relations = [];
 
@@ -397,7 +423,9 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       item.path = sourceItem.path;
       item.data = definition.sourceTransform.path !== undefined ? _.get(sourceItem, definition.sourceTransform.path) : sourceItem.data;
 
-      this.doCommonItemOperations(item, definition, sourceItem.path);
+      const virtualPath = pathMapping[sourceItem.path] ? pathMapping[sourceItem.path] : sourceItem.path;
+
+      this.doCommonItemOperations(item, definition, virtualPath);
 
       if (item[definition.primaryKey] === undefined) {
         console.error('Primary key `' + definition.primaryKey + '` not found.', item);

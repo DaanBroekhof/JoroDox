@@ -39,7 +39,38 @@ export default class DbBackgroundTask extends BackgroundTask {
     return relationData;
   }
 
-  filterFilesByPath(files, types, sourceTypeId, filterTypes, paths) {
+  filterFilesByPath(files, types, sourceTypeId, filterTypes, paths, virtual) {
+    if (paths && !virtual) {
+      return paths;
+    }
+
+    const patterns = [];
+    const prefixes = [];
+    _(types).forOwn((typeDefinition) => {
+      if (filterTypes) {
+        if (!_.includes(filterTypes, typeDefinition.id)) {
+          return;
+        }
+        if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
+          patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
+          prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
+        }
+        if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
+          patterns.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+          prefixes.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
+        }
+      }
+    });
+
+    if (virtual) {
+      return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).toArray()
+        .then(result => result.map(x => x.source));
+    } else {
+      return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys();
+    }
+  }
+
+  filterVirtualFilesByPath(files, types, sourceTypeId, filterTypes, paths) {
     if (paths) {
       return paths;
     }
@@ -62,7 +93,7 @@ export default class DbBackgroundTask extends BackgroundTask {
       }
     });
 
-    return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys();
+    return virtual_files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys();
   }
 
   async deleteMissing(newData, existingStorage, types, sourceTypeId, filterTypes, paths) {

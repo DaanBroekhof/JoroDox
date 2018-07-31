@@ -10,6 +10,8 @@ import CsvFileParserTask from './tasks/CsvFileParserTask';
 import PdxYmlFileParserTask from './tasks/PdxYmlFileParserTask';
 import IndexedBmpParserTask from './tasks/IndexedBmpParserTask';
 import DdsImageParserTask from './tasks/DdsImageParserTask';
+import ZipParserTask from './tasks/ZipParserTask';
+import VirtualFileLoaderTask from './tasks/VirtualFileLoaderTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
 import ForegroundTask from './tasks/ForegroundTask';
@@ -33,6 +35,8 @@ export default class JdxDatabase {
     PdxYmlFileParser: PdxYmlFileParserTask,
     IndexedBmpParser: IndexedBmpParserTask,
     DdsImageParser: DdsImageParserTask,
+    ZipParser: ZipParserTask,
+    VirtualFileLoader: VirtualFileLoaderTask,
     DeleteRelated: DeleteRelatedTask,
   };
 
@@ -524,6 +528,10 @@ export default class JdxDatabase {
   }
 
   static getDefinition(id) {
+    if (_.size(this.definitions) === 0) {
+      JdxDatabase.loadDefinitions();
+    }
+
     if (!this.definitions[id]) {
       throw new Error('Unknown project definition type: `' + id + '`.');
     }
@@ -721,5 +729,93 @@ export default class JdxDatabase {
   static async deleteErrorsByTypes(project, types) {
     const db = await JdxDatabase.get(project);
     return db.jdx_errors.where('path').anyOf(types.map(x => x.id)).delete();
+  }
+
+  static makePathAbsolute(project, path, forPlatform) {
+    let newPath = path.replace(/^_game_\//, project.rootPath + '/');
+    newPath = newPath.replace(/^_user_\//, project.userPath + '/');
+
+    if (newPath === path) {
+      newPath = project.rootPath + '/' + path;
+    }
+
+    if (forPlatform) {
+      newPath = newPath.replace(new RegExp('/', 'g'), syspath.sep);
+    }
+
+    return newPath;
+  }
+
+  static async getVirtualPathMapping(project) {
+    if (this.virtualPathMappingCache) {
+      return this.virtualPathMappingCache;
+    }
+
+    const db = await JdxDatabase.get(project);
+
+    const virtualPathMapping = [];
+
+    db.dlcs.forEach(dlc => {
+      if (dlc.data.path) {
+        virtualPathMapping.push({
+          name: 'DLC: ' + dlc.name,
+          type: 'path',
+          path: '_game_/' + dlc.path
+        });
+      }
+      if (dlc.data.archive) {
+        virtualPathMapping.push({
+          name: 'DLC: ' + dlc.name,
+          type: 'archive',
+          archive: '_game_archive_/' + dlc.archive
+        });
+      }
+    });
+    db.mods.forEach(mod => {
+      if (mod.data.path) {
+        virtualPathMapping.push({
+          name: 'MOD: ' + mod.name,
+          type: 'path',
+          path: '_user_/' + mod.path
+        });
+      }
+      if (mod.data.archive) {
+        virtualPathMapping.push({
+          name: 'MOD: ' + mod.name,
+          type: 'archive',
+          archive: '_user_archive_/' + mod.archive
+        });
+      }
+    });
+
+    this.virtualPathMappingCache = virtualPathMapping;
+
+    return this.virtualPathMappingCache;
+  }
+
+  static async makePathVirtual(project, path, forPlatform) {
+    let newPath = path;
+
+    if (project.rootPath) {
+      newPath = newPath.replace(/^_game_\//, project.rootPath + '/');
+    }
+    if (project.userPath) {
+      newPath = newPath.replace(/^_user_\//, project.userPath + '/');
+    }
+
+    /*
+    const paths = [];
+    for (const mapping of JdxDatabase.getVirtualPathMapping(project)) {
+      if (mapping.type === 'path') {
+        paths.add()
+      }
+    }
+    */
+
+    if (forPlatform) {
+      newPath = newPath.replace(new RegExp(/\//, 'g'), syspath.sep);
+    }
+
+    return newPath;
   }
 }

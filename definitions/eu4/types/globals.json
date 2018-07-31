@@ -1,5 +1,39 @@
 [
   {
+    "id": "virtual_files",
+    "title": "Virtual files & directories",
+    "category": "Raw data",
+    "reader": "VirtualFileLoader",
+    "primaryKey": "path",
+    "indexedKeys": ["source"],
+    "sourceTypes": [
+      {"id": "dlcs"},
+      {"id": "dlc_zips"},
+      {"id": "mods"},
+      {"id": "mod_zips"},
+      {"id": "files"}
+    ],
+    "listView": {
+      "pageSize": 50,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": [
+            "path"
+          ],
+          "linkTo": "[self]"
+        },
+        {
+          "name": "Source",
+          "dataIndex": [
+            "source"
+          ]
+        }
+      ]
+    }
+  },
+
+  {
     "id": "on_country_actions",
     "title": "On Actions (Country)",
     "category": "Globals",
@@ -367,8 +401,9 @@
     "primaryKey": "name",
     "sourceType": {
       "id": "pdx_scripts",
-      "pathPrefix": "dlc/",
-      "pathPattern": "dlc/*.dlc"
+      "directPath": true,
+      "pathPrefix": "_game_/dlc/",
+      "pathPattern": "_game_/dlc/*.dlc"
     },
     "sourceTransform": {
       "type": "fileData",
@@ -410,6 +445,106 @@
             "data",
             "affects_compatability"
           ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "dlc_zips",
+    "title": "DLC Zips",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "zips",
+      "directPath": true,
+      "pathPrefix": "_game_/dlc/",
+      "pathPattern": "_game_/dlc/*.zip"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "keyName": "path",
+      "path": [
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "mods",
+    "title": "Mods",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "name",
+    "sourceType": {
+      "id": "pdx_scripts",
+      "directPath": true,
+      "pathPrefix": "_user_/mod/",
+      "pathPattern": "_user_/mod/*.mod"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "keyName": "name",
+      "path": [
+        "data",
+        "data"
+      ],
+      "customFields": {
+        "name": {
+          "type": "get",
+          "fields": [
+            "data",
+            "name"
+          ]
+        }
+      }
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Name",
+          "dataIndex": "name",
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
+    "id": "mod_zips",
+    "title": "Mod Zips",
+    "category": "Globals",
+    "reader": "StructureLoader",
+    "primaryKey": "path",
+    "sourceType": {
+      "id": "zips",
+      "directPath": true,
+      "pathPrefix": "_user_/mod/",
+      "pathPattern": "_user_/mod/*.zip"
+    },
+    "sourceTransform": {
+      "type": "fileData",
+      "keyName": "path",
+      "path": [
+        "data"
+      ]
+    },
+    "listView": {
+      "pageSize": 100,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": "path",
+          "linkTo": "[self]"
         }
       ]
     }

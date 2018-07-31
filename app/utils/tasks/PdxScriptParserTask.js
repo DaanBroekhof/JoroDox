@@ -17,14 +17,13 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
     const definition = JdxDatabase.getDefinition(args.project.gameType);
     this.progress(0, 1, 'Finding PDX scripts...');
 
-    const files = await this.filterFilesByPath(db.files, definition.types, 'pdx_scripts', args.filterTypes, args.paths);
-    const filesList = _(files);
+    const files = await this.filterFilesByPath(db.virtual_files, definition.types, 'pdx_scripts', args.filterTypes, args.paths, true);
 
     const scripts = [];
     const relations = [];
     for (const path of files) {
       const parser = new PdxScript();
-      const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
+      const fullPath = JdxDatabase.makePathAbsolute(args.project, path, true);
 
       if (!jetpack.exists(fullPath)) {
         return;
@@ -47,7 +46,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
       }
 
       if (scripts.length % 50 === 0) {
-        this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} PDX scripts...`);
+        this.progress(scripts.length, files.length, `Parsing ${files.length} PDX scripts...`);
       }
 
       scripts.push({path, data});

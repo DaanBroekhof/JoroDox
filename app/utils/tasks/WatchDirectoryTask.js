@@ -57,7 +57,7 @@ export default class WatchDirectoryTask extends BackgroundTask {
 
       new Promise(resolve => setTimeout(resolve, 200)).then(() => {
         if (this.lastEventTimestamp === eventTimestamp) {
-          console.log(eventsBuffer.length);
+          // console.log(eventsBuffer.length);
           const events = eventsBuffer;
           eventsBuffer = [];
           this.sendResponse(events);

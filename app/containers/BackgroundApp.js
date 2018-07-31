@@ -12,6 +12,8 @@ import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import IndexedBmpParserTask from '../utils/tasks/IndexedBmpParserTask';
 import DdsImageParserTask from '../utils/tasks/DdsImageParserTask';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
+import ZipParserTask from '../utils/tasks/ZipParserTask';
+import VirtualFileLoaderTask from '../utils/tasks/VirtualFileLoaderTask';
 import JdxDatabase from '../utils/JdxDatabase';
 
 const ipc = require('electron').ipcRenderer;
@@ -27,11 +29,17 @@ export default class BackgroundApp extends Component {
         case FileLoaderTask.getTaskType():
           FileLoaderTask.handle(request);
           break;
+        case VirtualFileLoaderTask.getTaskType():
+          VirtualFileLoaderTask.handle(request);
+          break;
         case PdxScriptParserTask.getTaskType():
           PdxScriptParserTask.handle(request);
           break;
         case PdxDataParserTask.getTaskType():
           PdxDataParserTask.handle(request);
+          break;
+        case ZipParserTask.getTaskType():
+          ZipParserTask.handle(request);
           break;
         case StructureLoaderTask.getTaskType():
           StructureLoaderTask.handle(request);

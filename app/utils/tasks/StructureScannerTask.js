@@ -266,9 +266,28 @@ export default class StructureScannerTask extends DbBackgroundTask {
 
   async execute(args) {
     const db = await JdxDatabase.get(args.project);
-    const definition = args.typeDefinition;
+    const definition = JdxDatabase.getDefinition(args.project.gameType);
+    const typeDefinition = args.typeDefinition;
 
-    const items = await db[definition.id].toArray();
+    //console.log(definition)
+
+    //const items = await db[definition.id].toArray();
+
+    let files = Array.from(await JdxDatabase.getTypeIdentifiers(args.project, 'files'));
+
+    //console.log(files)
+
+    for (const type of definition.types) {
+      if (type.sourceType && type.sourceType.path) {
+        files = files.filter(file => file !== type.sourceType.path.replace('{type.id}', type.id));
+      }
+      if (type.sourceType && type.sourceType.pathPattern) {
+        files = files.filter(file => !minimatch(file, type.sourceType.pathPattern.replace('{type.id}', type.id)));
+      }
+    }
+
+    console.log(files)
+
 /*
     const schemaTrainer = new SchemaTrainer();
 
@@ -281,8 +300,8 @@ export default class StructureScannerTask extends DbBackgroundTask {
     //console.log(javascriptStringify(schemaTrainer.toJS()));
 
 
-    await CsvReaderHelper.exportCountryCommands();
-    return;
+    //await CsvReaderHelper.exportCountryCommands();
+    //return;
 
     return true;
   }

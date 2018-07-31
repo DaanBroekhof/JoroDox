@@ -184,13 +184,13 @@ class StructureTypeView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
 
-
-    let itemPath = `${this.props.project.rootPath}/`;
+    let itemPath = '';
     if (typeDefinition.sourceType && typeDefinition.sourceType.pathPrefix) {
       itemPath += typeDefinition.sourceType.pathPrefix.replace('{type.id}', this.props.match.params.type);
     } else if (typeDefinition.sourceType && typeDefinition.sourceType.path) {
       itemPath += typeDefinition.sourceType.path.replace('{type.id}', this.props.match.params.type);
     }
+    itemPath = JdxDatabase.makePathAbsolute(this.props.project, itemPath, true)
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>

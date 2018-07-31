@@ -42,6 +42,25 @@
     }
   },
   {
+    "id": "zips",
+    "title": "Zip files",
+    "category": "Raw data",
+    "reader": "ZipParser",
+    "primaryKey": "path",
+    "listView": {
+      "pageSize": 50,
+      "columns": [
+        {
+          "name": "Path",
+          "dataIndex": [
+            "path"
+          ],
+          "linkTo": "[self]"
+        }
+      ]
+    }
+  },
+  {
     "id": "pdx_scripts",
     "title": "PDX script files",
     "category": "Raw data",

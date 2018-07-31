@@ -91,6 +91,7 @@ class App extends Component {
       id: crypto.randomBytes(10).toString('hex'),
       name: 'Unnamed Project',
       rootPath: '',
+      userPath: '',
       subPaths: [],
       gameType: 'eu4',
       isCurrent: true,
