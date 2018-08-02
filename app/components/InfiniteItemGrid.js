@@ -1,11 +1,13 @@
 import React from 'react';
 import {Column, Table, AutoSizer, InfiniteLoader} from 'react-virtualized';
+import {inject, observer} from 'mobx-react';
 import Draggable from 'react-draggable';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import ItemGrid from "./ItemGrid";
 
+@observer
 class InfiniteItemGrid extends React.Component {
   state = {
     list: [],

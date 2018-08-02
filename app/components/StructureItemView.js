@@ -391,10 +391,5 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-const mapStateToProps = state => {
-  return {
-    databaseVersion: state.database,
-  };
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(StructureItemView);
+export default StructureItemView;

@@ -220,4 +220,4 @@ const mapDispatchToProps = (dispatch) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ErrorPage);
+export default ErrorPage;

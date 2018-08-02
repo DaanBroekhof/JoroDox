@@ -1,10 +1,13 @@
 import React from 'react';
 import {Column, Table, AutoSizer} from 'react-virtualized';
 import Draggable from 'react-draggable';
+import {inject, observer} from 'mobx-react';
 import {Link} from 'react-router-dom';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 
+
+@observer
 class ItemGrid extends React.Component {
   state = {
     widths: []

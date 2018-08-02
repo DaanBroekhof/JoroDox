@@ -3,10 +3,18 @@ import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import Icon from '@material-ui/core/Icon';
 import {Route} from 'react-router';
+import {autorun} from 'mobx';
+import {inject, observer} from 'mobx-react';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 import FileView from './FileView';
 
-export default class ProjectsTree extends React.Component {
+type Props = {
+  store: RootStore
+};
+
+@inject('store')
+@observer
+export default class ProjectsTree extends React.Component<Props> {
   constructor(props) {
     super(props);
 
@@ -15,21 +23,23 @@ export default class ProjectsTree extends React.Component {
   }
 
   componentDidMount() {
-    this.setTreeState(this.props.projects);
+    this.disposeAutorun = autorun(() => {
+      //this.props.store.projectStore.currentProject;
+      this.setTreeState(this.props.store.projectStore.projects);
+    });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.projects !== nextProps.projects) {
-      this.setTreeState(nextProps.projects);
-    }
+  componentWillUnmount() {
+    this.disposeAutorun();
   }
 
   setTreeState(projects) {
     const treeData = [];
-    projects.forEach(project => {
+    _.sortBy(projects, 'name').forEach(project => {
       treeData.push({
         id: project.id,
         name: project.name,
+        isCurrent: project.isCurrent,
       });
     });
 
@@ -41,8 +51,8 @@ export default class ProjectsTree extends React.Component {
       },
     }, () => {
       this.tree.loadData(this.state.treeData);
-      if (this.props.project) {
-        this.tree.selectNode(this.tree.getNodeById(this.props.project.id));
+      if (this.props.store.projectStore.currentProject) {
+        this.tree.selectNode(this.tree.getNodeById(this.props.store.projectStore.currentProject.id));
       }
 
       return true;
@@ -53,7 +63,7 @@ export default class ProjectsTree extends React.Component {
   render() {
     const fileTree = this;
     return (
-      <Route render={({history}) => (
+      <Route render={() => (
         <InfiniteTree
           style={{display: 'flex', flex: 1, backgroundColor: 'white'}}
           ref={(c) => { this.tree = c ? c.tree : null; }}
@@ -124,7 +134,7 @@ export default class ProjectsTree extends React.Component {
           onCloseNode={(node) => {}}
           onSelectNode={(node) => {
             if (node && node.id !== 'root') {
-              this.props.selectProject(node.id);
+              this.props.store.goto(`/projects/${node.id}`);
             }
           }}
           onClusterWillChange={() => {}}

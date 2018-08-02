@@ -525,7 +525,8 @@ export default class JdxDatabase {
 
   static getDefinition(id) {
     if (!this.definitions[id]) {
-      throw new Error('Unknown project definition type: `' + id + '`.');
+      //throw new Error('Unknown project definition type: `' + id + '`.');
+      return {};
     }
     return this.definitions[id];
   }
@@ -619,7 +620,13 @@ export default class JdxDatabase {
     task.progress(0, 1, 'Fetching item counts...');
 
     const identifierCache = {};
-    for (const typeDefinition of JdxDatabase.getDefinition(project.gameType).types) {
+    const definition = JdxDatabase.getDefinition(project.gameType);
+
+    if (!definition || !definition.types) {
+      return;
+    }
+
+    for (const typeDefinition of definition.types) {
       if (!db[typeDefinition.id]) {
         continue;
       }

@@ -10,6 +10,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
+import {inject, observer} from 'mobx-react';
 import PdxData from '../utils/PdxData';
 import PdxDataView from './PdxDataView';
 import PdxMesh from '../utils/PdxMesh';
@@ -20,7 +21,8 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 const path = require('electron').remote.require('path');
 
 
-export default withRouter(class PdxMeshView extends Component {
+@inject('store')
+export default class PdxMeshView extends Component {
   constructor(props) {
     super(props);
 
@@ -137,7 +139,7 @@ export default withRouter(class PdxMeshView extends Component {
       const data = colladaData.createFromThreeJsObject(this.state.objectScene);
       const newFile = this.props.file.path.replace(/.mesh$/, '.dae');
       return jetpack.writeAsync(newFile, data).then(() => {
-        this.props.history.push(`/fileview/${newFile}`);
+        this.props.store.goto(`/fileview/${newFile}`);
       });
     };
   }
@@ -147,7 +149,7 @@ export default withRouter(class PdxMeshView extends Component {
       const data = (new PdxData()).writeToBuffer(this.state.editFileTreeData);
       const newFile = this.props.file.path;
       return jetpack.writeAsync(newFile, new Buffer(data)).then(() => {
-        this.props.history.push(`/fileview/${newFile}`);
+        this.props.store.goto(`/fileview/${newFile}`);
       });
     };
   }
@@ -243,4 +245,4 @@ export default withRouter(class PdxMeshView extends Component {
       </div>
     );
   }
-});
+}

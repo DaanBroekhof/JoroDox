@@ -7,6 +7,9 @@ import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Column} from 'react-virtualized';
+import {inject, observer} from 'mobx-react';
+import {reaction} from 'mobx';
+
 import JdxDatabase from '../utils/JdxDatabase';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
@@ -14,48 +17,18 @@ import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import {incrementVersion} from '../actions/database';
 import ItemGrid from './ItemGrid';
-import SchemaValidatorTask from "../utils/tasks/SchemaValidatorTask";
+import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 
+@inject('store')
+@observer
 class StructureView extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ids: {},
-      definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
-    };
-  }
 
   componentDidMount() {
-    this.reloadCounts();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.project.gameType !== this.state.gameType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
-    }
-    if (nextProps.project.rootPath !== this.props.project.rootPath) {
-      // reload grid?
-    }
-    if (nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.reloadCounts();
-    }
-  }
-
-  reloadCounts() {
-    if (!this.props.project) {
-      return;
-    }
-
-    JdxDatabase.getAllIdentifiers(this.props.project).then(ids => {
-      return this.setState({ids});
-    }).catch((e) => {
-      console.error(e);
-    });
+    //this.reloadCounts();
   }
 
   reloadType(typeId) {
-    const type = _(this.state.definition.types).find(x => x.id === typeId);
+    const type = _(this.props.project.definition.types).find(x => x.id === typeId);
     if (!type) {
       return;
     }
@@ -72,7 +45,7 @@ class StructureView extends Component {
   }
 
   loadStructureData(typeId) {
-    _(this.state.definition.types).forEach(type => {
+    _(this.props.project.definition.types).forEach(type => {
       if (type.sourceType && (!typeId || type.id === typeId)) {
         StructureLoaderTask.start(
           {project: this.props.project, typeDefinition: type},
@@ -84,7 +57,7 @@ class StructureView extends Component {
 
   deleteRelatedTest() {
     DeleteRelatedTask.start(
-      {project: this.props.project, type: 'files', typeIds: ['common/ages/00_default.txt'], types: this.state.definition.types},
+      {project: this.props.project, type: 'files', typeIds: ['common/ages/00_default.txt'], types: this.props.project.definition.types},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
     );
   }
@@ -114,21 +87,18 @@ class StructureView extends Component {
   }
 
   async reloadAll() {
-    const types = this.state.definition.types
+    const types = this.props.project.definition.types
       .filter(x => x.reader === 'StructureLoader')
       .filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
 
     await JdxDatabase.deleteAllErrors(this.props.project);
     await JdxDatabase.reloadTypesByIds(this.props.project, types);
 
-    if (!this.props.match.params.category) {
-      this.props.handleProjectChange({lastGlobalUpdate: new Date()});
-    }
-    this.props.incrementDatabaseVersion();
+    this.props.project.databaseVersion += 1;
   }
 
   async validateAll() {
-    const types = this.state.definition.types
+    const types = this.props.project.definition.types
       .filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
 
     await JdxDatabase.deleteErrorsByTypes(this.props.project, types);
@@ -164,23 +134,18 @@ class StructureView extends Component {
   }
 
   render() {
-    if (!this.state.definition) {
+    if (!this.props.project.definition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>No data.</p></Paper>);
     }
 
-    let extendedTypes = this.state.definition.types.map(type => {
-      if (this.state.ids && this.state.ids[type.id] && this.state.ids[type.id].size !== type.totalCount) {
-        const typeCopy = Object.assign({}, type);
-        typeCopy.totalCount = this.state.ids[type.id].size;
-        return typeCopy;
-      }
-      return type;
-    }).filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
-    extendedTypes = _.sortBy(extendedTypes, x => x.title);
+    const extendedTypes = this.props.project.definition.types.filter(x => !this.props.match.params.category || x.category === this.props.match.params.category);
+
+    // This is to trigger rerender... not sure why component below does not trigger it
+    this.props.project.typeIds;
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
-        <Typography variant="display2">{this.props.match.params.category || this.state.definition.name}</Typography>
+        <Typography variant="display2">{this.props.match.params.category || this.props.project.definition.name}</Typography>
         <Typography variant="subheading" gutterBottom style={{color: 'grey'}}>
           Last global change: {this.props.project.lastGlobalUpdate ? (new Date(this.props.project.lastGlobalUpdate)).toLocaleString() : <i>- unknown -</i>}
         </Typography>
@@ -202,7 +167,7 @@ class StructureView extends Component {
 
         </div>
         <div className="ItemGrid">
-          <ItemGrid list={extendedTypes} databaseVersion={this.props.databaseVersion}>
+          <ItemGrid list={extendedTypes}>
             <Column
               dataKey="title"
               label="Title"
@@ -213,6 +178,9 @@ class StructureView extends Component {
               dataKey="totalCount"
               label="Item count"
               width={50}
+              cellRenderer={({rowData}) => {
+                return <div>{this.props.project.typeIds && this.props.project.typeIds[rowData.id] ? this.props.project.typeIds[rowData.id].size : '-'}</div>;
+              }}
             />
             <Column
               dataKey="actions"
@@ -227,15 +195,4 @@ class StructureView extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  incrementDatabaseVersion: () => {
-    dispatch(incrementVersion());
-  }
-});
-
-const mapStateToProps = state => {
-  return {
-    databaseVersion: state.database,
-  };
-};
-export default connect(mapStateToProps, mapDispatchToProps)(StructureView);
+export default StructureView;

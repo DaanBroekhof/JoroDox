@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import Icon from '@material-ui/core/Icon';
 import {Route} from 'react-router';
+import {inject, observer} from 'mobx-react';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 import FileView from './FileView';
 import JdxDatabase from '../utils/JdxDatabase';
@@ -10,6 +11,8 @@ import JdxDatabase from '../utils/JdxDatabase';
 const jetpack = require('electron').remote.require('fs-jetpack');
 const syspath = require('electron').remote.require('path');
 
+@inject('store')
+@observer
 export default class StructureTree extends React.Component {
   constructor(props) {
     super(props);
@@ -108,18 +111,18 @@ export default class StructureTree extends React.Component {
   }
 
 
-  navigateToNode(node, history) {
+  navigateToNode(node) {
     if (node.info.view === 'types') {
-      if (history.location.pathname !== '/structure') { history.push('/structure'); }
+      this.props.store.goto('/structure');
     }
     if (node.info.view === 'category') {
-      if (history.location.pathname !== `/structure/c/${node.info.type}`) { history.push(`/structure/c/${node.info.type}`); }
+      this.props.store.goto(`/structure/c/${node.info.type}`);
     }
     if (node.info.view === 'type') {
-      if (history.location.pathname !== `/structure/t/${node.info.type}`) { history.push(`/structure/t/${node.info.type}`); }
+      this.props.store.goto(`/structure/t/${node.info.type}`);
     }
     if (node.info.view === 'item') {
-      if (history.location.pathname !== `/structure/t/${node.info.type}/${node.info.id}`) { history.push(`/structure/t/${node.info.type}/${node.info.id}`); }
+      this.props.store.goto(`/structure/t/${node.info.type}/${node.info.id}`);
     }
   }
 

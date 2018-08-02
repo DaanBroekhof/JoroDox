@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import SplitterLayout from 'react-splitter-layout';
 import {Link} from 'react-router-dom';
-import {Switch, Route} from 'react-router';
+import {Switch, Route, Router} from 'react-router';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Tabs from '@material-ui/core/Tabs';
@@ -11,6 +11,9 @@ import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
 import {connect} from 'react-redux';
+import {autorun} from 'mobx';
+
+import {inject, observer, Provider} from 'mobx-react';
 
 import searchInPage from 'electron-in-page-search';
 import FileTree from '../components/FileTree';
@@ -22,7 +25,7 @@ import StructureTypeView from '../components/StructureTypeView';
 import StructureItemView from '../components/StructureItemView';
 import StructureView from '../components/StructureView';
 import ProgressInfo from '../components/ProgressInfo';
-import ProjectsPage from '../components/ProjectsPage';
+import ProjectForm from '../components/ProjectForm';
 import EventEditor from '../components/EventEditor';
 import ProjectsTree from '../components/ProjectsTree';
 import ErrorPage from '../components/ErrorPage';
@@ -34,6 +37,7 @@ import SchemaValidatorTask from "../utils/tasks/SchemaValidatorTask";
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 const jetpack = require('electron').remote.require('fs-jetpack');
 const crypto = require('electron').remote.require('crypto');
+const remote = require('electron').remote;
 
 
 const theme = createMuiTheme({
@@ -53,21 +57,21 @@ const theme = createMuiTheme({
   },
 });
 
+@inject('store')
+@observer
 class App extends Component {
-  static currentAppFormatVersion = 1;
-
   constructor(props) {
     super(props);
 
     JdxDatabase.loadDefinitions();
 
-    this.loadProjects();
-    //JdxDatabase.clearProjectDatabases();
-
-    this.state = {
-      project: null,
-      projects: [],
-    };
+    autorun(() => {
+      if (this.props.store.projectStore.currentProject) {
+        remote.getCurrentWindow().setTitle('Jorodox - ' + this.props.store.projectStore.currentProject.name);
+      } else {
+        remote.getCurrentWindow().setTitle('Jorodox');
+      }
+    });
   }
 
   componentDidMount() {
@@ -79,72 +83,15 @@ class App extends Component {
       customCssPath: getGlobal('searchWindowDir') + '/default-style.css',
     });
 
-    this.startWatcher();
+    //this.startWatcher();
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.keyPressListener, false);
   }
 
-  async createNewProject() {
-    const newProject = {
-      id: crypto.randomBytes(10).toString('hex'),
-      name: 'Unnamed Project',
-      rootPath: '',
-      subPaths: [],
-      gameType: 'eu4',
-      isCurrent: true,
-      watchDirectory: false,
-      lastGlobalUpdate: null,
-      appFormatVersion: App.currentAppFormatVersion,
-    };
-
-    const projectTable = await JdxDatabase.getProjects();
-    await projectTable.add(newProject);
-
-    this.selectProject(newProject.id);
-
-    return newProject;
-  }
-
-  async selectProject(projectId) {
-    const projectTable = await JdxDatabase.getProjects();
-    const projects = await projectTable.toArray();
-
-    for (const project of projects) {
-      if (project.id !== projectId && project.isCurrent) {
-        await projectTable.update(project.id, {isCurrent: false});
-      } else if (project.id === projectId && !project.isCurrent) {
-        await projectTable.update(project.id, {isCurrent: true});
-      }
-    }
-  }
-
-  async loadProjects() {
-    let projects = await (await JdxDatabase.getProjects()).toArray();
-
-    let currentProject = projects.find(x => x.isCurrent);
-
-    if (!currentProject && projects.length > 0) {
-      currentProject = projects[0];
-    }
-
-    if (!currentProject) {
-      currentProject = await this.createNewProject();
-      projects = await (await JdxDatabase.getProjects()).toArray();
-    }
-
-    return new Promise((resolve) => {
-      this.setState({
-        project: currentProject,
-        projects,
-      }, () => {
-        resolve();
-      });
-    });
-  }
-
   startWatcher() {
+    return;
     if (this.watcher) {
       this.watcher.task.close();
     }
@@ -197,107 +144,97 @@ class App extends Component {
     }
   }
 
-  changeProject = async (newSettings, noWatcher) => {
-    if (newSettings === true) {
-      await this.createNewProject();
-    } else if (newSettings === false) {
-      const projects = await JdxDatabase.getProjects();
-      await projects.delete(this.state.project.id);
-    } else {
-      const newProjectState = {...(this.state.project), ...newSettings};
-      const projects = await JdxDatabase.getProjects();
-      projects.put(newProjectState);
-    }
-
-    await this.loadProjects();
-
-    if (!noWatcher) {
-      this.startWatcher();
-    }
-  };
-
-  selectProjectCaller = async (projectId) => {
-    if (this.state.project && this.state.project.id === projectId) {
-      return;
-    }
-
-    await this.selectProject(projectId);
-
-    this.loadProjects();
-  };
-
   handleTab = (event, newTab) => {
     switch (newTab) {
       default:
-      case 'fileview': this.props.history.push('/fileview/' + this.state.project.rootPath); break;
-      case 'structure': this.props.history.push('/structure'); break;
-      case 'projects': this.props.history.push('/projects'); break;
+      case 'fileview':
+        this.props.store.goto('/fileview/' + (this.props.store.projectStore.currentProject ? this.props.store.projectStore.currentProject.rootPath : ''));
+        break;
+      case 'structure':
+        this.props.store.goto('/structure');
+        break;
+      case 'projects':
+        this.props.store.goto('/projects');
+        break;
     }
   };
 
   render() {
+    const currentProject = this.props.store.projectStore.currentProject;
+    const currentProjectGameType = currentProject ? currentProject.gameType : null;
+
     let currentTab = false;
-    if (this.props.location.pathname.startsWith('/fileview')) {
+    if (this.props.store.routingStore.location.pathname.startsWith('/fileview') && currentProject) {
       currentTab = 'fileview';
     }
-    if (this.props.location.pathname.startsWith('/structure')) {
+    if (this.props.store.routingStore.location.pathname.startsWith('/structure') && currentProjectGameType) {
       currentTab = 'structure';
     }
-    if (this.props.location.pathname.startsWith('/projects')) {
+    if (this.props.store.routingStore.location.pathname.startsWith('/projects')) {
       currentTab = 'projects';
     }
 
     return (
-      <MuiThemeProvider theme={theme}>
-        <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-          <AppBar position="static">
-            <Toolbar>
-              <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>Jorodox Tool<br />
-                <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta-1</span>
-              </Typography>
-              <div style={{display: 'flex', flexGrow: 1}}>
-                <Tabs value={currentTab} onChange={this.handleTab}>
-                  <Tab value="projects" label="Project" />
-                  <Tab value="fileview" label="Files" />
-                  <Tab value="structure" label="Game data" />
-                </Tabs>
-                <ProgressInfo style={{marginLeft: '40px'}} />
-                <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/about">About</Button>
-              </div>
-            </Toolbar>
-          </AppBar>
-          <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300} customClassName="top-splitter">
-            <Switch>
-              <Route path="/structure/:kind?/:type?/:id?" render={(props) => this.state.project && <StructureTree project={this.state.project} {...props} />} />
-              <Route path="/fileview/:path(.*)" render={(props) => this.state.project && <FileTree project={this.state.project} {...props} />} />
-              <Route path="/projects" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProjectCaller} {...props} />} />
-              <Route path="/" render={(props) => <ProjectsTree project={this.state.project} projects={this.state.projects} selectProject={this.selectProjectCaller} {...props} />} />
-            </Switch>
-            <SplitterLayout vertical primaryIndex={0} primaryMinSize={100} secondaryInitialSize={34} secondaryMinSize={34} customClassName="sub-splitter">
-              <Switch>
-                <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={this.state.project} {...props.match.params} />} />
-                <Route path="/structure/c/:category" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
-                <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={this.state.project} {...props} />} />
-                <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={this.state.project} {...props} />} />
-                <Route path="/structure" component={(props) => <StructureView project={this.state.project} handleProjectChange={this.changeProject} {...props} />} />
-                <Route path="/fileview/:path(.*)" component={FileView} />
-                <Route path="/projects" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
-                <Route path="/settings" component={SettingsPage} />
-                <Route path="/" component={(props) => <ProjectsPage project={this.state.project} projects={this.state.projects} handleChange={this.changeProject} {...props} />} />
-              </Switch>
-              <Switch>
-                <Route path="/structure/t/:type/:id(.*)" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={props.match.params.type} typeId={props.match.params.id} category={false}  {...props} /> : <div />)} />
-                <Route path="/structure/t/:type" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={props.match.params.type} typeId={false} category={false} {...props} /> : <div />)} />
-                <Route path="/structure/c/:type" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} category={props.match.params.type} typeId={false} type={false} {...props} /> : <div />)} />
-                <Route path="/" render={(props) => (this.state.project ? <ErrorPage project={this.state.project} type={false} typeId={false} category={false} {...props} /> : <div />)} />
-              </Switch>
-            </SplitterLayout>
-          </SplitterLayout>
-          <Route path="/about" component={AboutPage} />
-        </div>
-      </MuiThemeProvider>
+      <Provider store={this.props.store}>
+        <Router history={this.props.history}>
+          <MuiThemeProvider theme={theme}>
+            <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+              <AppBar position="static">
+                <Toolbar>
+                  <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>Jorodox Tool<br />
+                    <span style={{fontSize: '50%', color: '#ccc', float: 'right'}}>v2.0.0-beta-1</span>
+                  </Typography>
+                  <div style={{display: 'flex', flexGrow: 1}}>
+                    <Tabs value={currentTab} onChange={this.handleTab}>
+                      <Tab value="projects" label="Project" />
+                      {currentProject && currentProject.rootPath && <Tab value="fileview" label="Files" />}
+                      {currentProjectGameType && <Tab value="structure" label="Game data" />}
+                    </Tabs>
+                    <ProgressInfo style={{marginLeft: '40px'}} />
+                    <Button color="primary" variant="raised" style={{marginRight: '10px'}} component={Link} to="/about">About</Button>
+                  </div>
+                </Toolbar>
+              </AppBar>
+              <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300} customClassName="top-splitter">
+                <Switch>
+                  {currentProjectGameType && <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={currentProject} {...props} />} />}
+                  {currentProject && <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={currentProject} {...props} />} />}
+                  <Route path="/projects(.*)" render={() => <ProjectsTree store={this.props.store} />} />
+                  <Route path="/" render={() => <ProjectsTree store={this.props.store} />} />
+                </Switch>
+                <SplitterLayout vertical primaryIndex={0} primaryMinSize={100} secondaryInitialSize={34} secondaryMinSize={34} customClassName="sub-splitter">
+                  <Switch>
+                    {currentProjectGameType && <Route path="/structure/e/events/:id" component={(props) => <EventEditor project={currentProject} {...props.match.params} />} />}
+                    {currentProjectGameType && <Route path="/structure/c/:category" component={(props) => <StructureView project={currentProject} {...props} />} />}
+                    {currentProjectGameType && <Route path="/structure/t/:type/:id(.*)" component={(props) => <StructureItemView project={currentProject} {...props} />} />}
+                    {currentProjectGameType && <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={currentProject} {...props} />} />}
+                    {currentProjectGameType && <Route path="/structure" component={(props) => <StructureView project={currentProject} {...props} />} />}
+                    {currentProject && <Route path="/fileview/:path(.*)" component={(props) => <FileView project={currentProject} {...props} />} />}
+                    <Route path="/projects/:id" component={(props) => {
+
+                      this.props.store.projectStore.setCurrentProjectById(props.match.params.id);
+                      const project = this.props.store.projectStore.projects.find(x => x.id === props.match.params.id);
+
+                      return <ProjectForm project={project} />
+                    }} />
+                    <Route path="/settings" component={SettingsPage} />
+                    {currentProject && <Route path="/" component={(props) => <ProjectForm project={currentProject} />} />}
+                  </Switch>
+                  <Switch>
+                    {currentProjectGameType && <Route path="/structure/t/:type/:id(.*)" render={(props) => <ErrorPage project={currentProject} type={props.match.params.type} typeId={props.match.params.id} category={false} {...props} />} />}
+                    {currentProjectGameType && <Route path="/structure/t/:type" render={(props) => <ErrorPage project={currentProject} type={props.match.params.type} typeId={false} category={false} {...props} />} />}
+                    {currentProjectGameType && <Route path="/structure/c/:type" render={(props) => <ErrorPage project={currentProject} category={props.match.params.type} typeId={false} type={false} {...props} />} />}
+                    {currentProject && <Route path="/" render={(props) => <ErrorPage project={currentProject} type={false} typeId={false} category={false} {...props} />} />}
+                  </Switch>
+                </SplitterLayout>
+              </SplitterLayout>
+              <Route path="/about" component={AboutPage} />
+            </div>
+          </MuiThemeProvider>
+        </Router>
+      </Provider>
     );
   }
 }
 
-export default connect(null, null)(App);
+export default App;

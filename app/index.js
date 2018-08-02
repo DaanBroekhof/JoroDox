@@ -1,11 +1,20 @@
 import React from 'react';
 import {render} from 'react-dom';
 import {AppContainer} from 'react-hot-loader';
+
 import Root from './containers/Root';
-import {configureStore, history} from './store/configureStore';
+import createHashHistory from 'history/createHashHistory';
+import {syncHistoryWithStore} from 'mobx-react-router';
+import RootStore from './store/RootStore';
+
 import './app.global.css';
 
-const store = configureStore();
+const store = new RootStore();
+
+console.log(window.location.pathname);
+
+const browserHistory = createHashHistory();
+const history = syncHistoryWithStore(browserHistory, store.routingStore);
 
 render(
   <AppContainer>

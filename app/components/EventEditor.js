@@ -152,4 +152,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps, {})(EventEditor);
+export default EventEditor;

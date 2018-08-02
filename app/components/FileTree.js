@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
+import {inject, observer} from 'mobx-react';
 
 import {Route} from 'react-router';
 import Icon from '@material-ui/core/Icon';
@@ -19,6 +20,7 @@ type State = {
   treeData: object
 };
 
+@observer
 export default class FileTree extends React.Component<Props, State> {
   constructor(props) {
     super(props);

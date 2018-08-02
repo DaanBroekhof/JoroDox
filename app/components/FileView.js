@@ -17,9 +17,17 @@ const jetpack = require('electron').remote.require('fs-jetpack');
 
 export default class FileView extends Component {
   static getFileType(file) {
-    if (!file) { return 'directory'; }
+    if (!file) {
+      return 'directory';
+    }
 
-    if (file.type === 'dir') { return 'directory'; }
+    if (file.type === 'dir') {
+      return 'directory';
+    }
+    if (file.name === undefined) {
+      return 'unknown';
+    }
+
     const extension = file.name.match(/\.([^.]+)$/);
 
     switch (extension ? extension[1].toLowerCase() : null) {

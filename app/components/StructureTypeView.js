@@ -8,10 +8,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 import {Column} from 'react-virtualized';
+import {inject, observer} from 'mobx-react';
+import {reaction, observable, autorun} from 'mobx';
+
 
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {connect, dispatch} from 'react-redux';
 import JdxDatabase from '../utils/JdxDatabase';
 import FileLoaderTask from '../utils/tasks/FileLoaderTask';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
@@ -21,48 +23,52 @@ import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 import {incrementVersion} from '../actions/database';
 import InfiniteItemGrid from './InfiniteItemGrid';
 
+@inject('store')
+@observer
 class StructureTypeView extends Component {
+
+  @observable data = {
+    rowCount: 0
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
       search: '',
       definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
-      items: [],
-      rowCount: 0,
+      items: []
     };
   }
 
   componentDidMount() {
-    this.loadRowCount();
+    autorun(
+      () => {
+        this.props.project.databaseVersion;
+
+        this.loadRowCount();
+      }
+    );
   }
 
   loadRowCount() {
-    if (!this.props.project) {
+    if (this.props.project.typeIds[this.props.match.params.type] === undefined) {
       return;
     }
 
-    const type = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
+    const ids = this.props.project.typeIds[this.props.match.params.type];
 
-    return JdxDatabase.getTypeIdentifiers(this.props.project, this.props.match.params.type).then((ids) => {
-
-      if (this.state.search) {
-        const count = Array.from(ids.entries()).filter(x => x.toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).length;
-        return this.setState({rowCount: count});
-      } else {
-        return this.setState({rowCount: ids.size});
+    if (this.state.search) {
+      const count = Array.from(ids.entries()).filter(x => x.toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).length;
+      this.data.rowCount = count;
+      if (this.itemGrid) {
+        this.itemGrid.reloadLastRows();
       }
-    }).then(() => {
-      this.itemGrid.reloadLastRows();
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.project.gameType !== this.props.project.gameType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
-    }
-    if (nextProps.project.rootPath !== this.props.project.rootPath || nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.loadRowCount();
+    } else {
+      this.data.rowCount = ids.size;
+      if (this.itemGrid) {
+        this.itemGrid.reloadLastRows();
+      }
     }
   }
 
@@ -158,7 +164,7 @@ class StructureTypeView extends Component {
   reloadTypeById(typeId) {
     JdxDatabase.loadDefinitions();
     return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
-      this.props.incrementDatabaseVersion();
+      this.props.project.databaseVersion += 1;
     });
   }
 
@@ -196,7 +202,7 @@ class StructureTypeView extends Component {
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
           <Typography variant="display2" gutterBottom>
-            <Link to={'/structure/c/' + typeDefinition.category}>{typeDefinition.category}</Link>: {typeDefinition.title} ({this.state.rowCount})
+            <Link to={'/structure/c/' + typeDefinition.category}>{typeDefinition.category}</Link>: {typeDefinition.title} ({this.data.rowCount})
           </Typography>
           <span style={{marginLeft: 20}}>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
@@ -233,7 +239,7 @@ class StructureTypeView extends Component {
         />
 
         <div className="ItemGrid">
-          <InfiniteItemGrid loadMoreRows={this.loadMoreRows.bind(this)} rowCount={this.state.rowCount} ref={(ref) => { this.itemGrid = ref; }}>
+          <InfiniteItemGrid loadMoreRows={this.loadMoreRows.bind(this)} rowCount={this.data.rowCount} ref={(ref) => { this.itemGrid = ref; }}>
             { typeDefinition.listView.columns.map((c, index) => {
               if (c.linkTo) {
                 c.renderer = ({rowData, cellData}) => {
@@ -269,17 +275,4 @@ class StructureTypeView extends Component {
   }
 }
 
-
-const mapDispatchToProps = (dispatch) => ({
-  incrementDatabaseVersion: () => {
-    dispatch(incrementVersion());
-  },
-});
-
-const mapStateToProps = state => {
-  return {
-    databaseVersion: state.database,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(StructureTypeView);
+export default StructureTypeView;
