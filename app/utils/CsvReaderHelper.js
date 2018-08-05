@@ -63,7 +63,7 @@ export default class CsvReaderHelper {
       }
 
       outData.Normal[modifier.name] = def;
-    })
+    });
 
     const sortedData = _(outData.Normal).toPairs().sortBy(0).fromPairs().value();
 

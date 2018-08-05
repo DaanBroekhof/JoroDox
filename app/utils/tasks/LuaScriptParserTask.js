@@ -27,7 +27,7 @@ export default class LuaScriptParserTask extends DbBackgroundTask {
 
       const data = this.convertAstTree(luaAST.body[0], luaAST.comments);
 
-      if (scripts.length % 500 === 0) {
+      if (scripts.length % Math.floor(files.length / this.progressReportRate) === 0) {
         this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} LUA scripts...`);
       }
 

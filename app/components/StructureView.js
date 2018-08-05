@@ -92,7 +92,7 @@ class StructureView extends Component {
       .filter(x => !this.props.match.params.category || this.props.match.params.category === x.category);
 
     await JdxDatabase.deleteAllErrors(this.props.project);
-    await JdxDatabase.reloadTypesByIds(this.props.project, types);
+    await JdxDatabase.reloadTypesByIds(this.props.project, types, !this.props.match.params.category);
 
     this.props.project.databaseVersion += 1;
   }
@@ -127,9 +127,7 @@ class StructureView extends Component {
 
   reloadDiff() {
     JdxDatabase.loadByPaths(this.props.project, null, null, 'Synchronizing changes...').then(() => {
-      if (!this.props.match.params.category) {
-        this.props.handleProjectChange({lastGlobalUpdate: new Date()});
-      }
+      this.props.project.databaseVersion += 1;
     });
   }
 

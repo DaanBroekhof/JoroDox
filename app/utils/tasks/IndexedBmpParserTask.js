@@ -26,7 +26,7 @@ export default class IndexedBmpParserTask extends DbBackgroundTask {
       const dataString = await IndexedBmpParserForkTask.start({path: fullPath});
       const data = JSON.parse(dataString);
 
-      if (datafiles.length % 50 === 0) {
+      if (datafiles.length % Math.floor(files.length / this.progressReportRate) === 0) {
         this.progress(datafiles.length, files.length, `Parsing ${files.length} indexed BMP data objects...`);
       }
 

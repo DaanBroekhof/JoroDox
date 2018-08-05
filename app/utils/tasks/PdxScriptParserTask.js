@@ -18,7 +18,6 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
     this.progress(0, 1, 'Finding PDX scripts...');
 
     const files = await this.filterFilesByPath(db.files, definition.types, 'pdx_scripts', args.filterTypes, args.paths);
-    const filesList = _(files);
 
     const scripts = [];
     const relations = [];
@@ -46,8 +45,8 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
         console.error(`"Error(s) parsing '${path}'`, parser.errors);
       }
 
-      if (scripts.length % 50 === 0) {
-        this.progress(scripts.length, filesList.size(), `Parsing ${filesList.size()} PDX scripts...`);
+      if (scripts.length % Math.floor(files.length / this.progressReportRate) === 0) {
+        this.progress(scripts.length, files.length, `Parsing ${files.length} PDX scripts...`);
       }
 
       scripts.push({path, data});

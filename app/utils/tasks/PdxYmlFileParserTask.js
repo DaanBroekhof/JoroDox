@@ -16,7 +16,6 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     this.progress(0, 1, 'Finding Paradox YML files...');
 
     const files = await this.filterFilesByPath(db.files, definition.types, 'pdxyml_files', args.filterTypes, args.paths);
-    const filesList = _(files);
 
     const results = [];
     const relations = [];
@@ -25,8 +24,8 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
       const fileData = jetpack.read(filePath);
       const pdxYmlData = await this.parsePdxYml(args.project, fileData, path);
 
-      if (results.length % 50 === 0) {
-        this.progress(results.length, filesList.size(), `Parsing ${filesList.size()} Paradox YML files...`);
+      if (results.length % Math.floor(files.length / this.progressReportRate) === 0) {
+        this.progress(results.length, files.length, `Parsing ${files.length} Paradox YML files...`);
       }
 
       results.push({path, data: pdxYmlData});

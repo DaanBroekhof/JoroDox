@@ -101,8 +101,8 @@ export default class Project {
     this.typeIds[type] = await JdxDatabase.updateTypeIdentifiers(this, type);
   }
 
-  clearAll() {
-    JdxDatabase.clearAll(this);
+  async clearAll() {
+    await JdxDatabase.clearAll(this);
     this.databaseVersion += 1;
   }
 

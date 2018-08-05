@@ -86,7 +86,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
 
     let invalidCount = 0;
     await items.each((item) => {
-      if (nr % Math.floor(itemCount / 100) === 0) {
+      if (nr % Math.floor(itemCount / this.progressReportRate) === 0) {
         this.progress(nr, itemCount, `Validating ${itemCount} items...`);
       }
 

@@ -1,18 +1,11 @@
 // @flow
 import React, {Component} from 'react';
-import InfiniteTree from 'react-infinite-tree';
-import {List, AutoSizer, Column} from 'react-virtualized';
-import * as iconv from 'iconv-lite';
-import classNames from 'classnames';
-import Icon from '@material-ui/core/Icon';
-
+import {Column} from 'react-virtualized';
 import ItemGrid from './ItemGrid';
 
 import {inject, observer} from 'mobx-react';
-import {autorun, observable, reaction} from 'mobx';
-import PdxScript from '../utils/PdxScript';
+import {autorun, observable, reaction, action} from 'mobx';
 
-const jetpack = require('electron').remote.require('fs-jetpack');
 
 @observer
 export default class StructureDataTree extends Component {
@@ -28,17 +21,16 @@ export default class StructureDataTree extends Component {
   }
 
   componentDidMount() {
-    this.disposeAutorun = autorun(() => {
-      this.loadData(this.props.data);
-    });
-
-
-    if (this.props.expandToDepth) {
-      this.disposeReaction = reaction(
-        () => this.props.data,
-        () => this.expandNodeChildren(this.treeData, this.props.expandToDepth)
-      );
-    }
+    this.disposeAutorun = reaction(
+      () => this.props.data,
+      () => {
+        this.loadData(this.props.data);
+        if (this.props.expandToDepth !== undefined) {
+          this.expandNodeChildren(this.treeData, this.props.expandToDepth);
+        }
+      },
+      {fireImmediately: true}
+    );
   }
 
   componentWillUnmount() {
@@ -48,12 +40,13 @@ export default class StructureDataTree extends Component {
     }
   }
 
+  @action
   expandNodeChildren(nodeChildren, depth) {
     if (!nodeChildren) {
       return;
     }
 
-    nodeChildren.forEach(x => {
+    nodeChildren.slice().forEach(x => {
       if (x.depth > depth) {
         return;
       }
@@ -65,13 +58,14 @@ export default class StructureDataTree extends Component {
   }
 
   loadData() {
-    const rootNode = this.createTreeNode('data', this.props.data);
+    const rootNode = this.createTreeNode('data', this.props.data, 'root');
     this.treeData = rootNode.children;
   }
 
+  @action
   toggleRowById(id) {
-    const index = this.treeData.findIndex(x => x.id === id);
-    if (index) {
+    const index = this.treeData.findIndex(x => x && x.id === id);
+    if (index !== -1) {
       this.toggleRow({index, rowData: this.treeData[index]});
     }
   }
@@ -93,7 +87,6 @@ export default class StructureDataTree extends Component {
       });
 
       change += rowData.children.length;
-
     } else {
       change = -this.getExpandedCount(rowData);
       this.treeData.splice(index + 1, -change);
@@ -118,12 +111,13 @@ export default class StructureDataTree extends Component {
       depth,
       name: key,
       children: [],
+      value: null,
     };
 
     if (_.isArray(value) && value.length > 100 && value.slice(100).every(x => !_.isObject(x))) {
       node.value = value;
     } else if (_.isArray(value)) {
-      node.children = value.map((x, index) => this.createTreeNode(index, x, path + '.' + key, depth + 1));
+      node.children = _.values(value).map((x, index) => this.createTreeNode(index, x, path + '.' + key, depth + 1));
     } else if (_.isObject(value)) {
       node.children = _.entries(value).map(([k, v]) => this.createTreeNode(k, v, path + '.' + key, depth + 1));
     } else {
@@ -172,6 +166,7 @@ export default class StructureDataTree extends Component {
             if (_.isArray(rowData.value)) {
               return rowData.value.length + ' items: [' + rowData.value.slice(0, 20).join(', ') + (rowData.value.length > 20 ? '... '+ (rowData.value.length - 20) + ' more items' : '') + ']';
             }
+            console.log(rowData.value);
             return rowData.value;
           }}
         />

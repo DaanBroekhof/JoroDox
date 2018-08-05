@@ -77,7 +77,7 @@ export default class StructureTree extends React.Component {
         this.selectedNode.selected = false;
       }
       this.selectedNode = node;
-      this.itemGrid.tableRef.scrollToRow(this.treeData.findIndex(x => x.id === node.id));
+      this.itemGrid.tableRef.scrollToRow(this.treeData.findIndex(x => x && node && x.id === node.id));
       return node;
     }
 
@@ -154,7 +154,7 @@ export default class StructureTree extends React.Component {
   }
 
   toggleRowById(id) {
-    const index = this.treeData.findIndex(x => x.id === id);
+    const index = this.treeData.findIndex(x => x && x.id === id);
     if (index !== -1) {
       this.toggleRow({index, rowData: this.treeData[index]});
     }

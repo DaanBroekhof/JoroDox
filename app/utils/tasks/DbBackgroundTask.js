@@ -6,6 +6,9 @@ const hash = require('object-hash');
 const minimatch = require('minimatch');
 
 export default class DbBackgroundTask extends BackgroundTask {
+
+  progressReportRate = 20;
+
   saveChunked(data, store, chunkNr, chunkSize) {
     if (chunkSize <= 0) {
       throw new Error('Invalid chunk size');

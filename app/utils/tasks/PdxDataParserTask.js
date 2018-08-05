@@ -17,9 +17,8 @@ export default class PdxDataParserTask extends DbBackgroundTask {
     this.progress(0, 1, 'Finding PDX data files...');
 
     const files = await this.filterFilesByPath(db.files, definition.types, 'pdx_data', args.filterTypes, args.paths);
-    const filesList = _(files);
 
-    this.progress(0, filesList.size(), `Parsing ${filesList.size()} PDX binary data files...`);
+    this.progress(0, files.length, `Parsing ${files.length} PDX binary data files...`);
 
     const datafiles = [];
     const relations = [];
@@ -50,8 +49,8 @@ export default class PdxDataParserTask extends DbBackgroundTask {
         console.error(`"Error(s) parsing '${path}'`, parser.errors);
       }
 
-      if (datafiles.length % 50 === 0) {
-        this.progress(datafiles.length, filesList.size(), `Parsing ${filesList.size()} PDX binary data objects...`);
+      if (datafiles.length % Math.floor(files.length / this.progressReportRate) === 0) {
+        this.progress(datafiles.length, files.length, `Parsing ${files.length} PDX binary data objects...`);
       }
 
       foundPaths.push(path);

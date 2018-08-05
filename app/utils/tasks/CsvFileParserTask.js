@@ -23,11 +23,10 @@ export default class CsvFileParserTask extends DbBackgroundTask {
     this.progress(0, 1, 'Finding CSV files...');
 
     const files = await this.filterFilesByPath(db.files, definition.types, 'csv_files', args.filterTypes, args.paths);
-    const filesList = _(files);
 
     const csvResults = [];
     const relations = [];
-    for (const path of filesList) {
+    for (const path of files) {
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
       const csvData = await new Promise((resolve, reject) => {
         csvparser(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'), {
@@ -55,8 +54,8 @@ export default class CsvFileParserTask extends DbBackgroundTask {
       });
       const csvDataObject = _.map(csvData.slice(1), (row) => _.zipObject(uniqueColumns, row));
 
-      if (csvResults.length % 500 === 0) {
-        this.progress(csvResults.length, filesList.size(), `Parsing ${filesList.size()} CSV files...`);
+      if (csvResults.length % Math.floor(files.length / this.progressReportRate) === 0) {
+        this.progress(csvResults.length, files.length, `Parsing ${files.length} CSV files...`);
       }
 
       csvResults.push({path, data: csvDataObject});

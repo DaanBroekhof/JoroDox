@@ -25,24 +25,28 @@ class ErrorPage extends Component {
       errorTotal: null,
       filterByView: true,
     };
-
+/*
     this.eventListener = (sender, response) => {
       if (response.type === 'response' && response.data && response.data.errorsUpdate) {
         this.loadErrors();
       }
     };
     ipc.on('background-response', this.eventListener);
+    */
   }
 
   componentDidMount() {
-    this.disposeAutorun = autorun(() => {
-      this.props.project.databaseVersion;
-      this.loadErrors();
-    });
+    this.disposeLoadErrorsReaction = reaction(
+      () => this.props.project.databaseVersion,
+      () => {
+        this.loadErrors();
+      },
+      {delay: 1000}
+    );
   }
 
   componentWillUnmount() {
-    this.disposeAutorun();
+    this.disposeLoadErrorsReaction();
     ipc.removeListener('background-response', this.eventListener);
   }
 

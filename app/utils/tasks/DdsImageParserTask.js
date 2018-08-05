@@ -24,7 +24,7 @@ export default class DdsImageParserTask extends DbBackgroundTask {
       // TODO: add DDS info parsing (size, type, mipmaps, etc)
       const data = {};
 
-      if (datafiles.length % 50 === 0) {
+      if (datafiles.length % Math.floor(files.length / this.progressReportRate) === 0) {
         this.progress(datafiles.length, files.length, `Parsing ${files.length} DDS images...`);
       }
 

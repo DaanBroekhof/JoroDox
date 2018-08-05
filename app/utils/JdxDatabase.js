@@ -193,9 +193,14 @@ export default class JdxDatabase {
   }
 
   static async clearAll(project) {
+    const task = ForegroundTask.start({taskTitle: 'Delete game data cache:'});
+    task.progress(0, 1, 'Truncating databases...');
+
     this.db = {};
     console.log(this.projectToDbName(project));
-    return Dexie.delete(this.projectToDbName(project));
+    await Dexie.delete(this.projectToDbName(project));
+
+    task.finish();
   }
 
   static getSourceTypePath(type, defaultPath) {
@@ -326,16 +331,59 @@ export default class JdxDatabase {
     return Promise.reject(new Error(`Unknown reader: ${type.reader}`));
   }
 
-  static async reloadTypesByIds(project, types) {
+  static async reloadTypesByIds(project, types, allFiles) {
+    const typeLoaders = {};
+    project.definition.types.forEach(x => { typeLoaders[x.id] = {loaded: false, type: x, dependentOn: [], sourceFor: []}; });
+
+    types.forEach(type => {
+      if (type.reader === 'StructureLoader') {
+        typeLoaders[type.sourceType.id].sourceFor.push(type.id);
+        typeLoaders[type.id].dependentOn.push(type.sourceType.id);
+        if (type.sourceType.id !== 'files' && typeLoaders[type.sourceType.id].reader !== 'StructureLoader') {
+          typeLoaders.files.sourceFor.push(type.id);
+          typeLoaders[type.id].dependentOn.push('files');
+        }
+      }
+    });
+
     let nr = 0;
-    return types.reduce((promise, type) => promise.then(() => {
-      console.log(`Starting ${type.id}`);
+    const loadType = async (typeLoader) => {
+      for (const source of typeLoader.dependentOn.reverse()) {
+        if (!typeLoaders[source].loaded) {
+          await loadType(typeLoaders[source]);
+        }
+      }
+
       nr += 1;
-      return JdxDatabase.reloadTypeById(project, type.id, undefined, `Loading '${type.title}' [${nr}/${types.length}]`).then(result => {
-        console.log(`Loaded ${type.id}`);
-        return result;
-      });
-    }), Promise.resolve());
+      const taskTitle = `Loading '${typeLoader.type.title}' [${nr}/${types.length}]`;
+
+      if (typeLoader.type.id === 'files' && !allFiles) {
+        for (const filterType of typeLoader.sourceFor) {
+          await this.parserToTask[typeLoader.type.reader].start({
+            taskTitle,
+            project,
+            filterType,
+            typeDefinition: typeLoader.type,
+          });
+        }
+      } else {
+        await this.parserToTask[typeLoader.type.reader].start({
+          taskTitle,
+          project,
+          filterTypes: typeLoader.sourceFor,
+          typeDefinition: typeLoader.type,
+        });
+      }
+      await this.updateTypeIdentifiers(project, typeLoader.type.id);
+      project.databaseVersion += 1;
+      typeLoader.loaded = true;
+    };
+
+    for (const typeLoader of _.values(typeLoaders)) {
+      if (typeLoader.dependentOn.length && !typeLoader.sourceFor.length) {
+        await loadType(typeLoader);
+      }
+    }
   }
 
   static async reloadTypeById(project, typeId, filterTypes, taskTitle) {
@@ -650,7 +698,6 @@ export default class JdxDatabase {
     if (!this.allIdentifiersCache[project.id]) {
       this.allIdentifiersCache[project.id] = {};
       console.log('No CACHE', type);
-      //return;
     }
 
     this.allIdentifiersCache[project.id][type] = await this.getTypeIdentifiers(project, type, true);

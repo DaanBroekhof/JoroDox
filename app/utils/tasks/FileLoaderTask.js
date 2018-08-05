@@ -21,6 +21,36 @@ export default class FileLoaderTask extends DbBackgroundTask {
 
     let filesList = [];
 
+    if (args.filterType) {
+      const type = JdxDatabase.getDefinition(args.project.gameType).types.find(x => x.id === args.filterType);
+
+      if (type.sourceType.path) {
+        args.searchPath = type.sourceType.path.replace('{type.id}', type.id);
+      }
+      if (type.sourceType.pathPrefix) {
+        args.searchPath = type.sourceType.pathPrefix.replace('{type.id}', type.id);
+      }
+      if (type.sourceType.pathPattern) {
+        args.searchPattern = type.sourceType.pathPattern.replace('{type.id}', type.id);
+      }
+    }
+    if (args.filterTypes) {
+      const definition = JdxDatabase.getDefinition(args.project.gameType);
+
+      args.searchPattern = '*';
+      args.searchPath = '.';
+      args.fileFilters = [];
+
+      definition.types.filter(x => args.filterTypes.includes(x.id)).forEach((type) => {
+        if (type.sourceType.path) {
+          args.fileFilters.push(type.sourceType.path.replace('{type.id}', type.id));
+        }
+        if (type.sourceType.pathPattern) {
+          args.fileFilters.push(type.sourceType.pathPattern.replace('{type.id}', type.id));
+        }
+      });
+    }
+
     if (args.searchPattern || args.searchPath) {
       let searchPattern = '*';
       if (args.searchPattern) {
