@@ -25,9 +25,11 @@ class ItemGrid extends React.Component {
 
   loadColumns(props) {
     if (props.children) {
+      const columns = _.isArray(props.children) ? props.children : [props.children];
+
       let newWidths = [];
       let total = 0;
-      props.children.forEach((column, i) => {
+      columns.forEach((column, i) => {
         newWidths[i] = column.props.width;
         total += column.props.width;
       });
@@ -98,7 +100,7 @@ class ItemGrid extends React.Component {
 
     let fullHeight = 0;
     if (_.isNumber(this.props.rowHeight)) {
-      fullHeight = (this.props.rowHeight * rowCount) + this.props.headerHeight;
+      fullHeight = (this.props.rowHeight * rowCount) + this.props.headerHeight + this.props.topMargin;
     } else {
       fullHeight = 100 + this.props.headerHeight;
     }
@@ -106,8 +108,8 @@ class ItemGrid extends React.Component {
     return (
       <AutoSizer disableHeight={this.props.disableHeight}>
         {({height, width}) => {
-          height -= 6;
-          width -= 2;
+          height += this.props.headerCorrectionHeight;
+          width += this.props.headerCorrectionWidth;
 
           if (fullHeight < height) {
             height = fullHeight;
@@ -121,6 +123,7 @@ class ItemGrid extends React.Component {
 
           return (
             <Table
+              {...this.props}
               ref={(ref) => {this.tableRef = ref; if (this.props.registerChild) { this.props.registerChild(ref) } }}
               headerHeight={this.props.headerHeight}
               rowHeight={this.props.rowHeight}
@@ -129,9 +132,12 @@ class ItemGrid extends React.Component {
               rowCount={rowCount}
               rowGetter={rowGetter}
               onRowClick={this.props.onRowClick}
+              style={this.props.tableStyle}
+              rowStyle={this.props.rowStyle}
+              className={this.props.className}
               onRowsRendered={this.props.onRowsRendered}
               rowRenderer={this.props.rowRenderer ? this.props.rowRenderer : defaultTableRowRenderer}
-              headerRowRenderer={({className, columns, style}) => {
+              headerRowRenderer={this.props.headerRowRenderer ? this.props.headerRowRenderer : ({className, columns, style}) => {
                 // Bugfix for when paddingRight is passed (we don't want it)
                 style.paddingRight = 0;
                 return <div className={className} role="row" style={style}>{columns}</div>;
@@ -162,6 +168,10 @@ ItemGrid.propTypes = {
   disableHeight: PropTypes.bool,
   onRowsRendered: PropTypes.func,
   registerChild: PropTypes.func,
+  headerRowRenderer: PropTypes.func,
+  headerCorrectionHeight: PropTypes.number,
+  headerCorrectionWidth: PropTypes.number,
+  topMargin: PropTypes.number,
 };
 
 ItemGrid.defaultProps = {
@@ -175,6 +185,9 @@ ItemGrid.defaultProps = {
   disableHeight: false,
   onRowsRendered: undefined,
   registerChild: null,
+  headerCorrectionHeight: 0,
+  headerCorrectionWidth: 0,
+  topMargin: 0,
 };
 
 

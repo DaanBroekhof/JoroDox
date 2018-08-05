@@ -34,7 +34,7 @@ export default class DeleteRelatedTask extends DbBackgroundTask {
     }
 
     // Fetch source relations
-    const relationKeys = typeIds.map(x => [type, x, 'source']);
+    const relationKeys = typeIds.map(x => [type, x ? x.toString() : '', 'source']);
     const relations = await db.relations.where('[toType+toId+toKey]').anyOf(relationKeys).toArray();
     const typeDeletion = {};
     relations.forEach((relation) => {

@@ -138,7 +138,7 @@ class StructureView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>No data.</p></Paper>);
     }
 
-    const extendedTypes = this.props.project.definition.types.filter(x => !this.props.match.params.category || x.category === this.props.match.params.category);
+    const extendedTypes = _.orderBy(this.props.project.definition.types.filter(x => !this.props.match.params.category || x.category === this.props.match.params.category), 'title');
 
     // This is to trigger rerender... not sure why component below does not trigger it
     this.props.project.typeIds;
@@ -167,7 +167,11 @@ class StructureView extends Component {
 
         </div>
         <div className="ItemGrid">
-          <ItemGrid list={extendedTypes}>
+          <ItemGrid
+            list={extendedTypes}
+            headerCorrectionWidth={-2}
+            headerCorrectionHeight={-6}
+          >
             <Column
               dataKey="title"
               label="Title"

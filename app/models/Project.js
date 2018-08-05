@@ -48,7 +48,8 @@ export default class Project {
     this.countHandler = autorun(async () => {
       this.databaseVersion;
       if (this.isCurrent && this.rootPath) {
-        this.typeIds = await JdxDatabase.getAllIdentifiers(this);
+        const typeIds = await JdxDatabase.getAllIdentifiers(this);
+        this.typeIds = typeIds;
       }
     }, {delay: 0});
   }
@@ -96,6 +97,9 @@ export default class Project {
     this.autoSave = true;
   }
 
+  async updateTypeIds(type) {
+    this.typeIds[type] = await JdxDatabase.updateTypeIdentifiers(this, type);
+  }
 
   clearAll() {
     JdxDatabase.clearAll(this);

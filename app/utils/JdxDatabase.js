@@ -250,15 +250,15 @@ export default class JdxDatabase {
         taskTitle,
         project,
         type: 'files',
-        typeIds: [...result.deleted, ...result.changed].map(x => x.path),
+        typeIds: [...result.deleted, ...result.changed.map(x => x.path)],
       });
       console.log(deleted + ' deleted');
     }
 
     const types = definition.types.filter(x => typeIds === null || typeIds.indexOf(x.id) !== -1);
 
-    if (result.added.length || result.changed.length) {
-      const updatePaths = [...result.added, ...result.changed];
+    if (result.added.length || result.changed.length || result.deleted.length) {
+      const updatePaths = [...result.added, ...result.changed, ...result.deleted.map(x => { return {path: x}; })];
       const updateByType = {};
 
       types.forEach((type) => {
@@ -289,13 +289,13 @@ export default class JdxDatabase {
       for (const type in updateByType) {
         if (!updateByType[type].source) {
           await this.reloadTypePaths(project, type, updateByType[type].paths);
-          this.updateTypeIdentifiers(project, type);
+          await project.updateTypeIds(type);
         }
       }
       for (const type in updateByType) {
         if (updateByType[type].source) {
           await this.reloadTypePaths(project, type, updateByType[type].paths);
-          this.updateTypeIdentifiers(project, type);
+          await project.updateTypeIds(type);
         }
       }
 
@@ -648,12 +648,14 @@ export default class JdxDatabase {
 
   static async updateTypeIdentifiers(project, type) {
     if (!this.allIdentifiersCache[project.id]) {
+      this.allIdentifiersCache[project.id] = {};
       console.log('No CACHE', type);
-      return;
+      //return;
     }
 
     this.allIdentifiersCache[project.id][type] = await this.getTypeIdentifiers(project, type, true);
     console.log('cache reread', type, this.allIdentifiersCache[project.id][type].size);
+    return this.allIdentifiersCache[project.id][type];
   }
 
   static async getTypeIdentifiers(project, type, refresh) {

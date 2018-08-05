@@ -8,20 +8,18 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
 import {Column} from 'react-virtualized';
 import ItemGrid from './ItemGrid';
-import InfiniteItemGrid from './InfiniteItemGrid';
 import {inject, observer} from 'mobx-react';
+import {reaction} from 'mobx';
 
 import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
-import {incrementVersion} from "../actions/database";
 import PdxMeshView from './PdxMeshView';
 import ImageView from './ImageView';
 import DdsImageView from './DdsImageView';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
-import StructureDataTree from "./StructureDataTree";
+import StructureDataTree from './StructureDataTree';
 
 const minimatch = require('minimatch');
 
@@ -35,13 +33,22 @@ class StructureItemView extends Component {
       item: null,
       relationsFrom: [],
       relationsTo: [],
-      definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : {types: []},
     };
   }
 
   componentDidMount() {
-    this.loadItemData(this.props);
-    this.loadRelations(this.props);
+    this.disposeReaction = reaction(
+      () => this.props.project.databaseVersion,
+      () => {
+        this.loadItemData(this.props);
+        this.loadRelations(this.props);
+      },
+      {fireImmediately: true}
+    );
+  }
+
+  componentWillUnmount() {
+    this.disposeReaction();
   }
 
   async loadItemData(props) {
@@ -52,10 +59,6 @@ class StructureItemView extends Component {
     const item = await db[typeDefinition.id].where({[typeDefinition.primaryKey]: id}).first();
 
     this.setState({item});
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.loadRelations(nextProps);
   }
 
   createTreeItem(key, item, startAtParentId, relations, parentId, idCounter, depth, path) {
@@ -129,11 +132,11 @@ class StructureItemView extends Component {
   }
 
   loadRelations(props) {
-    const typeDefinition = _(this.state.definition.types).find(x => x.id === props.match.params.type);
+    const typeDefinition = _(this.props.project.definition.types).find(x => x.id === props.match.params.type);
 
     if (typeDefinition) {
       return JdxDatabase.get(props.project).then((db) => {
-        const stores = _.uniq(this.state.definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
+        const stores = _.uniq(this.props.project.definition.types.map(x => _.get(x, ['sourceTransform', 'relationsStorage'])).filter(x => x));
         stores.push('relations');
 
 
@@ -159,7 +162,7 @@ class StructureItemView extends Component {
       return `${this.props.project.rootPath}/${this.state.item.path}`;
     }
 
-    const pathTypeIds = this.state.definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
+    const pathTypeIds = this.props.project.definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
 
     const fileRelation = this.state.relationsFrom.find(x => pathTypeIds.indexOf(x.toType) !== -1 );
 
@@ -170,31 +173,8 @@ class StructureItemView extends Component {
     return '';
   }
 
-  getDataSource(rootPath, type, id) {
-    const typeDefinition = this.state.definition.types.find(x => x.id === type);
-
-    return function getData({pageIndex, pageSize, parentId}) {
-      return new Promise((resolve) => {
-        return JdxDatabase.get(this.props.project).then(db => {
-          return db[typeDefinition.id].where({[typeDefinition.primaryKey]: id}).first(item => {
-            if (item) {
-              const treeItem = this.createTreeItem('root', item, parentId, typeDefinition.relations);
-              this.setState({item});
-
-              if (parentId) {
-                resolve({data: treeItem.children, partial: true});
-              } else {
-                resolve({data: treeItem, total: 1});
-              }
-            }
-          });
-        });
-      });
-    }.bind(this);
-  }
-
-  validateTypeItem () {
-    const type = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
+  validateTypeItem() {
+    const type = _(this.props.project.definition.types).find(x => x.id === this.props.match.params.type);
     JdxDatabase.loadDefinitions();
 
     return new Promise((resolve, reject) => {
@@ -222,84 +202,12 @@ class StructureItemView extends Component {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Error during type view load.</p></Paper>);
     }
 
-    const typeDefinition = this.state.definition.types.find(x => x.id === this.props.match.params.type);
+    const typeDefinition = this.props.project.definition.types.find(x => x.id === this.props.match.params.type);
     if (!typeDefinition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
 
     const itemPath = this.getItemPath();
-
-    /*
-      if (!this.state.item) {
-        JdxDatabase.get(this.props.root)[typeDefinition.id].where({[typeDefinition.primaryKey]: this.props.match.params.id}).first(item => {
-            if (item) {
-                console.log(this.createTreeItem('root', item));
-                this.setState({
-                    item: item,
-                    treeItem: this.createTreeItem('root', item),
-                });
-            }
-        });
-    }
-    */
-
-    let gridSettings = null;
-
-    if (typeDefinition.id !== 'pdx_meshes') {
-      gridSettings = {
-        height: false,
-        gridType: 'tree',
-        emptyDataMessage: 'Loading...',
-        columns: [
-          {
-            name: 'Name',
-            dataIndex: 'key',
-            width: '25%',
-            expandable: true,
-
-          },
-          {
-            name: 'Value',
-            dataIndex: 'value',
-            expandable: false,
-          },
-        ],
-        plugins: {
-          COLUMN_MANAGER: {
-            resizable: true,
-            minColumnWidth: 10,
-            moveable: true,
-            sortable: false,
-          },
-          LOADER: {
-            enabled: true
-          },
-        },
-        dataSource: this.getDataSource(this.props.project.rootPath, this.props.match.params.type, this.props.match.params.id),
-        stateKey: `typeView-${this.props.match.params.type}-${this.props.match.params.id}`,
-        pageSize: 1000,
-        style: {
-          display: 'flex',
-          flexDirection: 'column',
-        },
-        events: {
-          HANDLE_ROW_CLICK: ({row}) => {
-            if (row.leaf === false && row._hasChildren === false) {
-              return this.gridSettings.dataSource({parentId: row._id}).then((result) => {
-                return this.props.setPartialTreeData(result.data, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, row._id);
-              });
-            }
-
-            return this.props.setTreeNodeVisibility(row._id, !row._isExpanded, `typeView-${this.props.match.params.type}-${this.props.match.params.id}`, false);
-          },
-        },
-        ref2: (grid) => {
-          const x = 34234;
-          this.grid = grid;
-        }
-      };
-    }
-    this.gridSettings = gridSettings;
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}>

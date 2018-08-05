@@ -35,11 +35,11 @@ html, body, #root {
 
 /* File tree scroll-fixes */
 .splitter-layout.top-splitter > .layout-pane:first-child {
-  display: flex !important;
+  xdisplay: flex !important;
 }
 
 .splitter-layout.top-splitter > .layout-pane:first-child > div {
-  overflow-x: hidden !important;;
+  xoverflow-x: hidden !important;;
 }
 
 .infinite-tree {
@@ -343,6 +343,24 @@ a {
   height: 1em;
   width: 1em;
   fill: currentColor;
+}
+
+/* Virtualized Tree Grid - sidebar-tree */
+.tree-sidebar {
+  cursor: pointer;
+}
+
+.tree-sidebar .selected-row {
+  background-color: #fdd835 !important;
+}
+.tree-sidebar .ReactVirtualized__Grid__innerScrollContainer {
+  margin-top: 5px;
+}
+
+/* Virtualized Tree Grid - structure data tree */
+
+.structure-data-tree .expandable-row {
+  cursor: pointer;
 }
 
 /* List default theme */

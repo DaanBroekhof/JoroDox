@@ -28,16 +28,23 @@ export default class StructureDataTree extends Component {
   }
 
   componentDidMount() {
-    autorun(() => {
+    this.disposeAutorun = autorun(() => {
       this.loadData(this.props.data);
     });
 
 
     if (this.props.expandToDepth) {
-      reaction(
+      this.disposeReaction = reaction(
         () => this.props.data,
         () => this.expandNodeChildren(this.treeData, this.props.expandToDepth)
       );
+    }
+  }
+
+  componentWillUnmount() {
+    this.disposeAutorun();
+    if (this.disposeReaction) {
+      this.disposeReaction();
     }
   }
 
@@ -128,13 +135,23 @@ export default class StructureDataTree extends Component {
 
   render() {
     return (
-      <ItemGrid list={this.treeData} style={{minHeight: 200}} disableHeight maxHeight={this.props.maxHeight} onRowClick={this.toggleRow.bind(this)}>
+      <ItemGrid
+        list={this.treeData}
+        style={{minHeight: 200}}
+        disableHeight
+        maxHeight={this.props.maxHeight}
+        onRowClick={this.toggleRow.bind(this)}
+        className="structure-data-tree"
+        rowClassName={({index}) => this.treeData[index] && this.treeData[index].children.length ? 'expandable-row' : ''}
+        headerCorrectionWidth={-6}
+        headerCorrectionHeight={-2}
+      >
         <Column
           width={30}
           dataKey="name"
           label="Name"
           cellRenderer={({rowData}) => (
-            <span style={{marginLeft: (rowData.depth) * 20, position: 'relative'}} on>
+            <span style={{marginLeft: (rowData.depth) * 20, position: 'relative'}}>
               <a style={{position: 'absolute', display: 'block', left: -20, top: -2, width: 18, height: 22, textAlign: 'center', fontSize: 14, transform: rowData.expanded ? 'rotate(90deg)' : ''}}>{rowData.children.length ? '❯' : ''}</a>
               {rowData.name}
             </span>

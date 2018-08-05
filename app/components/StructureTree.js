@@ -1,115 +1,93 @@
 import React from 'react';
-import classNames from 'classnames';
-import InfiniteTree from 'react-infinite-tree';
 import Icon from '@material-ui/core/Icon';
-import {Route} from 'react-router';
 import {inject, observer} from 'mobx-react';
-import {autorun} from 'mobx';
+import {autorun, observable, reaction, action, computed} from 'mobx';
+import ItemGrid from './ItemGrid';
+import {Column} from 'react-virtualized';
 
 import 'react-infinite-tree/dist/react-infinite-tree.css';
-import FileView from './FileView';
-import JdxDatabase from '../utils/JdxDatabase';
-
-const jetpack = require('electron').remote.require('fs-jetpack');
-const syspath = require('electron').remote.require('path');
 
 @inject('store')
 @observer
 export default class StructureTree extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      treeData: null
-    };
-  }
+  @observable.shallow treeData = [];
+  @observable selectedNode = null;
 
   componentDidMount() {
-    this.setTreeState(this.props.project.rootPath);
+    this.disposeDataReaction = reaction(
+      () => this.props.project.id,
+      () => this.loadData(),
+      {fireImmediately: true}
+    );
 
-    autorun(() => {
-      const mappedParams = {
-        category: this.props.routeParams.kind === 'c' ? this.props.routeParams.type : null,
-        type: this.props.routeParams.kind === 't' ? this.props.routeParams.type : null,
-        id: this.props.routeParams.kind === 't' ? this.props.routeParams.id : null,
-      };
+    this.disposeRouteReaction = reaction(
+      () => this.props.routeParams,
+      () => {
+        const mappedParams = {
+          category: this.props.routeParams.kind === 'c' ? this.props.routeParams.type : null,
+          type: this.props.routeParams.kind === 't' ? this.props.routeParams.type : null,
+          id: this.props.routeParams.kind === 't' ? this.props.routeParams.id : null,
+        };
 
-      if (!mappedParams.category && mappedParams.type) {
-        const typeDefinition = this.props.project.definition.types.find(x => x.id === mappedParams.type);
-        if (typeDefinition) {
-          mappedParams.category = typeDefinition.category;
+        if (!mappedParams.category && mappedParams.type) {
+          const typeDefinition = this.props.project.definition.types.find(x => x.id === mappedParams.type);
+          if (typeDefinition) {
+            mappedParams.category = typeDefinition.category;
+          }
         }
-      }
 
-      const node = this.doOpenToPath(this.tree.getRootNode(), ['root', mappedParams.category, mappedParams.type].filter(x => x).join('.'));
-      if (node) {
-        this.tree.selectNode(node);
-      }
-    });
-  }
+        if (this.treeData[0]) {
+          const node = this.doOpenToPath(this.treeData[0], ['root', mappedParams.category, mappedParams.type].filter(x => x).join('.'));
+          if (node) {
+            // this.tree.selectNode(node);
+          }
+        }
+      },
+      {fireImmediately: true}
+    );
 
-  componentWillReceiveProps(nextProps) {
-    return;
-    if (nextProps.project.rootPath !== this.props.project.rootPath) {
-      this.setTreeState(nextProps.project.rootPath);
-    }
-
-
-    if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
-      if (nextProps.currentRouteMatch) {
-        // I think we don't want to navigate here... but not 100% sure
-        //this.doOpenToType(this.tree.getRootNode(), nextProps.routeParams.category, nextProps.routeParams.type);
-      }
+    if (this.props.expandToDepth !== undefined) {
+      this.disposeExpandReaction = reaction(
+        () => [this.props.expandToDepth, this.props.project.id],
+        () => this.expandNodeChildren(this.treeData, this.props.expandToDepth)
+      );
+      this.expandNodeChildren(this.treeData, this.props.expandToDepth);
     }
   }
 
-  tree = null;
-  treeData = null;
+  componentWillUnmount() {
+    this.disposeDataReaction();
+    this.disposeRouteReaction();
+    if (this.disposeExpandReaction) {
+      this.disposeExpandReaction();
+    }
+  }
 
   doOpenToPath(node, path) {
+    if (_.startsWith(path, node.id + '.') && !node.expanded) {
+      this.toggleRowById(node.id);
+    }
     if (node.id === path) {
-      this.tree.selectNode(node);
+      if (!node.expanded) {
+        //this.toggleRowById(node.id);
+      }
+      node.selected = true;
+      if (this.selectedNode) {
+        this.selectedNode.selected = false;
+      }
+      this.selectedNode = node;
+      this.itemGrid.tableRef.scrollToRow(this.treeData.findIndex(x => x.id === node.id));
       return node;
     }
 
-    if (_.startsWith(path, node.id + '.' )) {
-      if (!node.state.open) {
-        this.tree.openNode(node, {
-          async: true,
-          asyncCallback: () => {
-            console.log(node, path);
-            this.doOpenToPath(node, path);
-          }
-        });
-      }
-    }
-
-    for (const child of node.children) {
-      const foundNode = this.doOpenToPath(child, path);
+    for (const childNode of node.children) {
+      const foundNode = this.doOpenToPath(childNode, path);
       if (foundNode) {
         return foundNode;
       }
     }
   }
-
-  setTreeState() {
-    return this.setState({
-      treeData: {
-        id: 'root',
-        name: this.props.project.definition.name,
-        loadOnDemand: true,
-        kind: 'root',
-      },
-    }, () => {
-      this.tree.loadData(this.state.treeData);
-      this.tree.openNode(this.tree.getRootNode().children[0]);
-
-      //this.doOpenToPath(this.tree.getRootNode(), this.props.routeParams.category, this.props.routeParams.type);
-
-      return true;
-    });
-  }
-
 
   navigateToNode(node) {
     if (node.kind === 'root') {
@@ -126,130 +104,127 @@ export default class StructureTree extends React.Component {
     }
   }
 
+  expandNodeChildren(nodeChildren, depth) {
+    if (!nodeChildren) {
+      return;
+    }
+
+    nodeChildren.forEach(x => {
+      if (x.depth > depth) {
+        return;
+      }
+      if (!x.expanded) {
+        this.toggleRowById(x.id);
+      }
+      if (x.children.length > 0) {
+        this.expandNodeChildren(x.children, depth);
+      }
+    });
+  }
+
+  loadData() {
+    const rootNode = {
+      id: 'root',
+      name: this.props.project.definition.name,
+      kind: 'root',
+      children: [],
+      depth: 0,
+    };
+
+    rootNode.children = _(this.props.project.definition.types).map(type => type.category).uniq().map(category => ({
+      id: `root.${category}`,
+      name: category,
+      loadOnDemand: true,
+      kind: 'category',
+      kindId: category,
+      depth: 1,
+      children: _(this.props.project.definition.types).filter(x => x.category === category).sortBy(x => x.title).map(type => {
+        return {
+          id: `root.${category}.${type.id}`,
+          name: type.title,
+          kind: 'type',
+          kindId: type.id,
+          depth: 2,
+          children: []
+        };
+      }).value(),
+    })).value();
+
+    this.treeData = [rootNode];
+  }
+
+  toggleRowById(id) {
+    const index = this.treeData.findIndex(x => x.id === id);
+    if (index !== -1) {
+      this.toggleRow({index, rowData: this.treeData[index]});
+    }
+  }
+
+  toggleRow({index, rowData}, noToggle) {
+    if (!noToggle) {
+      rowData.expanded = !rowData.expanded;
+    }
+
+    let change = 0;
+
+    if (rowData.expanded) {
+      this.treeData.splice(index + 1, 0, ...rowData.children);
+
+      rowData.children.forEach((child, key) => {
+        if (child.expanded) {
+          change += this.toggleRow({index: index + key + change + 1, rowData: child}, true);
+        }
+      });
+
+      change += rowData.children.length;
+
+    } else {
+      change = -this.getExpandedCount(rowData);
+      this.treeData.splice(index + 1, -change);
+    }
+
+    return change;
+  }
+
+  getExpandedCount(node) {
+    const subSum = _.sumBy(node.children, (x) => x.expanded ? this.getExpandedCount(x) : 0);
+    return node.children.length + subSum;
+  }
+
   render() {
-    const fileTree = this;
     return (
-      <Route render={({history}) => (
-        <InfiniteTree
-          style={{display: 'flex', flex: 1, backgroundColor: 'white'}}
-          ref={(c) => { this.tree = c ? c.tree : null; }}
-          autoOpen
-          loadNodes={(parentNode, done) => {
-            if (parentNode.children.length) {
-              done(null, []);
-              return;
-            }
-            if (parentNode.kind === 'root') {
-              const categories = _(this.props.project.definition.types).map(type => type.category).uniq().map(category => ({
-                id: `root.${category}`,
-                name: category,
-                loadOnDemand: true,
-                kind: 'category',
-                kindId: category,
-              })).value();
+      <ItemGrid
+        ref={(ref) => { this.itemGrid = ref; }}
+        list={this.treeData}
+        headerHeight={0}
+        rowHeight={22}
+        rowStyle={{border: 'none'}}
+        style={{background: 'white'}}
+        onRowClick={(data) => {
+          this.toggleRow(data);
+          this.navigateToNode(data.rowData);
+        }}
+        headerRowRenderer={() => null}
+        className="tree-sidebar"
+        style={{overflowX: 'hidden'}}
+        rowClassName={({index}) => this.selectedNode && this.treeData[index] && this.treeData[index].id === this.selectedNode.id ? 'selected-row' : ''}
+        topMargin={5}>
+        <Column
+          width={30}
+          dataKey="name"
+          label="Name"
+          cellRenderer={({rowData}) => (
+            <span style={{marginLeft: (rowData.depth) * 20, position: 'relative', fontSize: 13.4}}>
+              <a style={{position: 'absolute', display: 'block', left: -20, top: -4, width: 18, height: 20, textAlign: 'center', fontSize: 14, transform: rowData.expanded ? 'rotate(90deg)' : ''}}>{rowData.children.length ? '❯' : ''}</a>
 
-              done(null, categories);
-            } else if (parentNode.kind === 'category') {
-              const items = [];
-              _(this.props.project.definition.types).filter(x => x.category === parentNode.kindId).sortBy(x => x.title).forEach(type => {
-                items.push({
-                  id: `root.${parentNode.kindId}.${type.id}`,
-                  name: type.title,
-                  kind: 'type',
-                  kindId: type.id,
-                });
-              });
-
-              done(null, items);
-            } else {
-              done(null, []);
-            }
-          }}
-          rowRenderer={(node, treeOptions) => {
-            const {id, name, loadOnDemand = false, state} = node;
-            const {depth, open, selected = false} = state;
-            const more = node.hasChildren();
-
-            return (
-              <div className={classNames('infinite-tree-item', {'infinite-tree-selected': selected})} data-id={id}>
-                <div className="infinite-tree-node" style={{marginLeft: (depth - 1) * 18}}>
-                  {!more && loadOnDemand &&
-                    <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
-                  }
-                  {more && open &&
-                    <a className={classNames(treeOptions.togglerClass)}>❯</a>
-                  }
-                  {more && !open &&
-                    <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>❯</a>
-                  }
-                  {!more && !loadOnDemand &&
-                    <span className={classNames(treeOptions.togglerClass)} />
-                  }
-                  <span
-                    className={classNames(['infinite-tree-type', more || loadOnDemand ? 'infinite-tree-type-more' : ''])}
-                  >{more || loadOnDemand ?
-                    <Icon style={{fontSize: '19px', paddingTop: '2px'}}>folder</Icon> :
-                    <Icon style={{fontSize: '19px', paddingTop: '2px'}}>description</Icon>
-                  }
-                  </span>
-                  <span className={classNames(['infinite-tree-title', FileView.getFileType(node) !== 'unknown' ? 'filetree-known-type' : ''])}>{name}</span>
-                </div>
-              </div>
-            );
-          }}
-          selectable
-          shouldSelectNode={(node) => {
-            if (!node || (node === this.tree.getSelectedNode())) {
-              if (node && node.kind === 'category') {
-                this.tree.toggleNode(node, {async: true});
-              }
-              return false; // Prevent from deselecting the current node
-            }
-            return true;
-          }}
-          onClick={(event) => {
-            const target = event.target || event.srcElement; // IE8
-            let nodeTarget = target;
-
-            // Find the node
-            while (nodeTarget && nodeTarget.parentElement !== this.tree.contentElement) {
-              nodeTarget = nodeTarget.parentElement;
-            }
-
-            if (nodeTarget && nodeTarget.dataset) {
-              const node = this.tree.getNodeById(nodeTarget.dataset.id);
-              this.navigateToNode(node, history);
-            }
-          }}
-          onDoubleClick={(event) => {
-            // dblclick event
-          }}
-          onKeyDown={(event) => {
-            // keydown event
-          }}
-          onKeyUp={(event) => {
-            // keyup event
-          }}
-          onOpenNode={(node) => {
-            //this.tree.openNode(node, {async: true});
-            //fileTree.doOpenToType(node);
-          }}
-          onCloseNode={(node) => {}}
-          onSelectNode={(node) => {
-            //this.tree.scrollToNode(node);
-            if (node.kind === 'category') {
-              //this.tree.openNode(node, {async: true});
-            }
-            //if (this.props.routeParams.kind === 'c' || this.props.routeParams.kind === 't') {
-            //  this.navigateToNode(node, history);
-            //}
-          }}
-          onClusterWillChange={() => {}}
-          onClusterDidChange={() => {}}
-          onContentWillUpdate={() => {}}
-          onContentDidUpdate={() => {}}
-        />)}
-      />
+              {rowData.children.length ?
+                <Icon style={{fontSize: '19px', paddingTop: 4, display: 'inline', verticalAlign: 'bottom', marginRight: 2}}>folder</Icon> :
+                <Icon style={{fontSize: '19px', paddingTop: 4, display: 'inline', verticalAlign: 'bottom', marginRight: 2}}>description</Icon>}
+              {rowData.name}
+            </span>
+          )}
+        />
+      </ItemGrid>
     );
   }
 }

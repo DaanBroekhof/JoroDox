@@ -10,8 +10,7 @@ import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import {MuiThemeProvider, createMuiTheme} from '@material-ui/core/styles';
-import {connect} from 'react-redux';
-import {autorun} from 'mobx';
+import {autorun, reaction} from 'mobx';
 
 import {inject, observer, Provider} from 'mobx-react';
 
@@ -29,14 +28,12 @@ import ProjectForm from '../components/ProjectForm';
 import EventEditor from '../components/EventEditor';
 import ProjectsTree from '../components/ProjectsTree';
 import ErrorPage from '../components/ErrorPage';
-import {incrementVersion} from '../actions/database';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
 import SchemaValidatorTask from "../utils/tasks/SchemaValidatorTask";
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 const jetpack = require('electron').remote.require('fs-jetpack');
-const crypto = require('electron').remote.require('crypto');
 const remote = require('electron').remote;
 
 
@@ -72,6 +69,13 @@ class App extends Component {
         remote.getCurrentWindow().setTitle('Jorodox');
       }
     });
+
+    reaction(
+      () => this.props.store.projectStore.currentProject ? this.props.store.projectStore.currentProject.watchDirectory : null,
+      () => {
+        this.startWatcher();
+      }
+    );
   }
 
   componentDidMount() {
@@ -91,39 +95,40 @@ class App extends Component {
   }
 
   startWatcher() {
-    return;
     if (this.watcher) {
       this.watcher.task.close();
     }
-    if (!this.state.project || !this.state.project.watchDirectory) {
+
+    const project = this.props.store.projectStore.currentProject;
+
+    if (!project || !project.watchDirectory) {
       return;
     }
 
-    if (this.state.project.rootPath === '/' || !this.state.project.rootPath || !jetpack.exists(this.state.project.rootPath)) {
+    if (project.rootPath === '/' || !project.rootPath || !jetpack.exists(project.rootPath)) {
       return;
     }
 
     this.watcher = WatchDirectoryTask.start(
-      {rootDir: this.state.project.rootPath},
+      {rootDir: project.rootPath},
       (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
       (data) => {
         const names = _(data).filter(x => x.eventType !== 'dirChange').map('filename').uniq().value();
 
-        return JdxDatabase.loadByPaths(this.state.project, names, null, 'Change detected...').then((result) => {
-          // this.props.incrementDatabaseVersion();
-          this.changeProject({lastGlobalUpdate: new Date()}, true);
-          this.props.dispatch(incrementVersion());
+        return JdxDatabase.loadByPaths(project, names, null, 'Change detected...').then((result) => {
+          project.databaseVersion += 1;
           return result;
         }).then((updateByType) => {
-          console.log('Bla', updateByType);
-          _.keys(updateByType).forEach((typeId) => {
+          _.forOwn(updateByType, (update, typeId) => {
             try {
+              const typeDefinition = JdxDatabase.getTypeDefinition(project, typeId);
               SchemaValidatorTask.start(
                 {
-                  project: this.state.project,
-                  typeDefinition: JdxDatabase.getTypeDefinition(this.state.project, typeId),
+                  project,
+                  typeDefinition: typeDefinition,
                   taskTitle: 'Validating `' + typeId + '`',
-                  useCachedValidator: true
+                  useCachedValidator: true,
+                  typeIds: typeDefinition.primaryKey === 'path' ? update.paths : null,
                 },
                 (progress, total, message) => null,
                 (result) => {},
@@ -178,7 +183,7 @@ class App extends Component {
       <Provider store={this.props.store}>
         <Router history={this.props.history}>
           <MuiThemeProvider theme={theme}>
-            <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            <div style={{height: '100%', display: 'flex', flexDirection: 'column', background: 'white'}}>
               <AppBar position="static">
                 <Toolbar>
                   <Typography variant="title" color="inherit" style={{paddingRight: 40, lineHeight: '90%'}}>Jorodox Tool<br />
@@ -197,7 +202,7 @@ class App extends Component {
               </AppBar>
               <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300} customClassName="top-splitter">
                 <Switch>
-                  {currentProjectGameType && <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={currentProject} routeParams={props.match.params} />} />}
+                  {currentProjectGameType && <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={currentProject} expandToDepth={0} routeParams={props.match.params} />} />}
                   {currentProject && <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={currentProject} {...props} />} />}
                   <Route path="/projects(.*)" render={() => <ProjectsTree store={this.props.store} />} />
                   <Route path="/" render={() => <ProjectsTree store={this.props.store} />} />
@@ -210,13 +215,12 @@ class App extends Component {
                     {currentProjectGameType && <Route path="/structure/t/:type" component={(props) => <StructureTypeView project={currentProject} {...props} />} />}
                     {currentProjectGameType && <Route path="/structure" component={(props) => <StructureView project={currentProject} {...props} />} />}
                     {currentProject && <Route path="/fileview/:path(.*)" component={(props) => <FileView project={currentProject} {...props} />} />}
-                    <Route path="/projects/:id" component={(props) => {
-
+                    {currentProject && <Route path="/projects/:id" component={(props) => {
                       this.props.store.projectStore.setCurrentProjectById(props.match.params.id);
                       const project = this.props.store.projectStore.projects.find(x => x.id === props.match.params.id);
 
                       return <ProjectForm project={project} />
-                    }} />
+                    }} />}
                     <Route path="/settings" component={SettingsPage} />
                     {currentProject && <Route path="/" component={(props) => <ProjectForm project={currentProject} />} />}
                   </Switch>

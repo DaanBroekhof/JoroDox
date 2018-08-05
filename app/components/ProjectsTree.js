@@ -7,9 +7,10 @@ import {autorun} from 'mobx';
 import {inject, observer} from 'mobx-react';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 import FileView from './FileView';
+import PropTypes from 'prop-types';
 
 type Props = {
-  store: RootStore
+  store: PropTypes.Object,
 };
 
 @inject('store')

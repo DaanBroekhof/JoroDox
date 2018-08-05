@@ -35,16 +35,16 @@ class ErrorPage extends Component {
   }
 
   componentDidMount() {
-    autorun(() => {
+    this.disposeAutorun = autorun(() => {
       this.props.project.databaseVersion;
       this.loadErrors();
     });
   }
 
   componentWillUnmount() {
+    this.disposeAutorun();
     ipc.removeListener('background-response', this.eventListener);
   }
-
 
   async loadErrors() {
     if (this.state.filterByView && this.props.type) {

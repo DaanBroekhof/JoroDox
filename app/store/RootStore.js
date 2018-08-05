@@ -11,11 +11,17 @@ export default class RootStore {
     this.routingStore = new RouterStore();
   }
 
-  goto(location) {
+  gotoForce(location) {
     if (this.routingStore.location.pathname !== location) {
       this.routingStore.history.push(location);
     } else {
       this.routingStore.history.replace(location);
+    }
+  }
+
+  goto(location) {
+    if (this.routingStore.location.pathname !== location) {
+      this.routingStore.history.push(location);
     }
   }
 }

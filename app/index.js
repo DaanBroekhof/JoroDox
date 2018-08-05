@@ -11,8 +11,6 @@ import './app.global.css';
 
 const store = new RootStore();
 
-console.log(window.location.pathname);
-
 const browserHistory = createHashHistory();
 const history = syncHistoryWithStore(browserHistory, store.routingStore);
 

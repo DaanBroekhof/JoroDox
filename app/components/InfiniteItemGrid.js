@@ -52,6 +52,7 @@ class InfiniteItemGrid extends React.Component {
       >
         {({onRowsRendered, registerChild}) => (
           <ItemGrid
+            {...this.props}
             onRowsRendered={onRowsRendered}
             registerChild={registerChild}
             rowCount={this.props.rowCount}

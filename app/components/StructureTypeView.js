@@ -42,15 +42,18 @@ class StructureTypeView extends Component {
   }
 
   componentDidMount() {
-    autorun(
-      () => {
-        this.props.project.databaseVersion;
-        this.loadRowCount();
-      }
+    this.disposeReaction = reaction(
+      () => this.props.project.typeIds,
+      () => this.loadRowCount(),
+      {fireImmediately: true}
     );
   }
 
-  loadRowCount() {
+  componentWillUnmount() {
+    this.disposeReaction();
+  }
+
+  async loadRowCount() {
     if (this.props.project.typeIds[this.props.match.params.type] === undefined) {
       return;
     }
@@ -238,7 +241,11 @@ class StructureTypeView extends Component {
         />
 
         <div className="ItemGrid">
-          <InfiniteItemGrid loadMoreRows={this.loadMoreRows.bind(this)} rowCount={this.data.rowCount} ref={(ref) => { this.itemGrid = ref; }}>
+          <InfiniteItemGrid
+            loadMoreRows={this.loadMoreRows.bind(this)} rowCount={this.data.rowCount} ref={(ref) => { this.itemGrid = ref; }}
+            headerCorrectionWidth={-2}
+            headerCorrectionHeight={-6}
+          >
             { typeDefinition.listView.columns.map((c, index) => {
               if (c.linkTo) {
                 c.renderer = ({rowData, cellData}) => {

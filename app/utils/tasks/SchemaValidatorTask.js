@@ -14,6 +14,147 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     return 'SchemaValidatorTask';
   }
 
+  async execute(args) {
+    const db = await JdxDatabase.get(args.project);
+    const definition = args.typeDefinition;
+
+    let ajv = SchemaValidatorTask.cachedAjv;
+
+    if (!args.useCachedValidator || !ajv) {
+      this.progress(0, 1, 'Reloading definitions...');
+      JdxDatabase.loadDefinitions();
+
+      ajv = new Ajv({
+        extendRefs: true,
+        allErrors: true,
+        // jsonPointers: true,
+        // inlineRefs: false,
+        // verbose: true,
+      });
+
+      ajv = this.addMergePropsKeyword(ajv);
+      ajv = this.addMatchPropsKeyword(ajv);
+      ajv = this.addAllowMultipleKeyword(ajv);
+      ajv = this.addIdentifierPropertiesKeyword(ajv);
+      ajv = this.addIdentifierValueKeyword(ajv);
+      // ajv = this.addScopeReferenceKeywords(ajv);
+
+
+      this.progress(0, 1, 'Loading identifier cache...');
+      await this.buildIdentifierCache(args.project);
+      this.progress(1, 1, 'Loading identifier cache...');
+
+      this.progress(0, 1, 'Loading validator...');
+
+      JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
+
+      SchemaValidatorTask.cachedAjv = ajv;
+    }
+
+    const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
+
+    if (!validator) {
+      throw new Error('No validator defined.');
+    }
+
+    //this.progress(0, 1, 'Loading validator...');
+
+    let items = [];
+    let itemCount = 0;
+
+    this.progress(0, 1, 'Loading data...');
+
+    if (args.typeId) {
+      items = await db[definition.id].where({[definition.primaryKey]: args.typeId});
+      itemCount = 1;
+      await db.jdx_errors.where({type: definition.id, typeId: args.typeId}).delete();
+    } else if (args.typeIds) {
+      items = await db[definition.id].where(definition.primaryKey).anyOf(args.typeIds);
+      itemCount = items.count();
+      await db.jdx_errors.where({type: definition.id}).filter(x => args.typeIds.includes(x.typeId)).delete();
+    } else {
+      items = await db[definition.id];
+      itemCount = (await JdxDatabase.getTypeIdentifiers(args.project, definition.id)).size;
+      await db.jdx_errors.where({type: definition.id}).delete();
+    }
+    this.sendResponse({errorsUpdate: true});
+
+
+    let nr = 0;
+
+    const errors = [];
+
+    let invalidCount = 0;
+    await items.each((item) => {
+      if (nr % Math.floor(itemCount / 100) === 0) {
+        this.progress(nr, itemCount, `Validating ${itemCount} items...`);
+      }
+
+      ajv.jdxItem = item;
+      const valid = validator(item);
+
+      const validErrors = [];
+
+      if (!valid) {
+        const errorDataPaths = [];
+        const isAnyOf = validator.errors.some((x) => x.keyword === 'anyOf');
+        validator.errors.forEach((error) => {
+          if (error.keyword && error.keyword.includes('$mergeProps')) {
+            return;
+          }
+
+          // Sub-errors in same data path are not redundant errors
+          if (error.dataPath) {
+            for (const errorDataPath of errorDataPaths) {
+              if (errorDataPath !== error.dataPath && _.startsWith(errorDataPath, error.dataPath)) {
+                return;
+              }
+            }
+            errorDataPaths.push(error.dataPath);
+          }
+
+          validErrors.push(error);
+
+          invalidCount += 1;
+          // Fix stupid messages
+          if (error && error.message === 'should NOT have additional properties') {
+            error.message = 'Unexpected additional property found: ' + error.params.additionalProperty;
+          }
+          if (error && error.message === 'should be equal to one of the allowed values') {
+            error.message = 'Should be equal to one of: \'' + error.params.allowedValues.join("', '") + "'";
+          }
+
+          if (isAnyOf && error.keyword !== 'anyOf') {
+            error.message = '[Any of] ' + error.message;
+          }
+
+          errors.push({
+            message: error.message,
+            path: null,
+            type: definition.id,
+            typeId: item[definition.primaryKey],
+            severity: 'error',
+            data: error,
+          });
+        });
+
+        if (validErrors.length === 0) {
+          console.error('Zero valid errors while invalid:', validator.errors);
+        }
+      }
+      nr += 1;
+    });
+
+    if (errors.length > 0) {
+      await JdxDatabase.addErrors(args.project, errors, this);
+      this.sendResponse({errorsUpdate: true});
+    }
+
+    this.progress(items.length, items.length, `Validated ${itemCount} items...`);
+
+    return true;
+  }
+
 
   static hashCode(string) {
     let hash = 0;
@@ -603,140 +744,4 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     return this.identifierCache[identifierType].has(id.toString());
   }
 
-  async execute(args) {
-    const db = await JdxDatabase.get(args.project);
-    const definition = args.typeDefinition;
-
-    let ajv = SchemaValidatorTask.cachedAjv;
-
-    if (!args.useCachedValidator || !ajv) {
-      this.progress(0, 1, 'Reloading definitions...');
-      JdxDatabase.loadDefinitions();
-
-      ajv = new Ajv({
-        extendRefs: true,
-        allErrors: true,
-        // jsonPointers: true,
-        // inlineRefs: false,
-        // verbose: true,
-      });
-
-      ajv = this.addMergePropsKeyword(ajv);
-      ajv = this.addMatchPropsKeyword(ajv);
-      ajv = this.addAllowMultipleKeyword(ajv);
-      ajv = this.addIdentifierPropertiesKeyword(ajv);
-      ajv = this.addIdentifierValueKeyword(ajv);
-      // ajv = this.addScopeReferenceKeywords(ajv);
-
-
-      this.progress(0, 1, 'Loading identifier cache...');
-      await this.buildIdentifierCache(args.project);
-      this.progress(1, 1, 'Loading identifier cache...');
-
-      this.progress(0, 1, 'Loading validator...');
-
-      JdxDatabase.getDefinition(args.project.gameType).schemas.forEach(schema => ajv.addSchema(schema));
-
-      SchemaValidatorTask.cachedAjv = ajv;
-    }
-
-    const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
-
-    if (!validator) {
-      throw new Error('No validator defined.');
-    }
-
-    //this.progress(0, 1, 'Loading validator...');
-
-    let items = [];
-    let itemCount = 0;
-
-    this.progress(0, 1, 'Loading data...');
-
-    if (args.typeId) {
-      items = await db[definition.id].where({[definition.primaryKey]: args.typeId});
-      itemCount = 1;
-      await db.jdx_errors.where({type: definition.id, typeId: args.typeId}).delete();
-    } else {
-      items = await db[definition.id];
-      itemCount = (await JdxDatabase.getTypeIdentifiers(args.project, definition.id)).size;
-      await db.jdx_errors.where({type: definition.id}).delete();
-    }
-    this.sendResponse({errorsUpdate: true});
-
-
-    let nr = 0;
-
-    const errors = [];
-
-    let invalidCount = 0;
-    await items.each((item) => {
-      if (nr % Math.floor(itemCount / 100) === 0) {
-        this.progress(nr, itemCount, `Validating ${itemCount} items...`);
-      }
-
-      ajv.jdxItem = item;
-      const valid = validator(item);
-
-      const validErrors = [];
-
-      if (!valid) {
-        const errorDataPaths = [];
-        const isAnyOf = validator.errors.some((x) => x.keyword === 'anyOf');
-        validator.errors.forEach((error) => {
-          if (error.keyword && error.keyword.includes('$mergeProps')) {
-            return;
-          }
-
-          // Sub-errors in same data path are not redundant errors
-          if (error.dataPath) {
-            for (const errorDataPath of errorDataPaths) {
-              if (errorDataPath !== error.dataPath && _.startsWith(errorDataPath, error.dataPath)) {
-                return;
-              }
-            }
-            errorDataPaths.push(error.dataPath);
-          }
-
-          validErrors.push(error);
-
-          invalidCount += 1;
-          // Fix stupid messages
-          if (error && error.message === 'should NOT have additional properties') {
-            error.message = 'Unexpected additional property found: ' + error.params.additionalProperty;
-          }
-          if (error && error.message === 'should be equal to one of the allowed values') {
-            error.message = 'Should be equal to one of: \'' + error.params.allowedValues.join("', '") + "'";
-          }
-
-          if (isAnyOf && error.keyword !== 'anyOf') {
-            error.message = '[Any of] ' + error.message;
-          }
-
-          errors.push({
-            message: error.message,
-            path: null,
-            type: definition.id,
-            typeId: item[definition.primaryKey],
-            severity: 'error',
-            data: error,
-          });
-        });
-
-        if (validErrors.length === 0) {
-          console.error('Zero valid errors while invalid:', validator.errors);
-        }
-      }
-      nr += 1;
-    });
-
-    if (errors.length > 0) {
-      await JdxDatabase.addErrors(args.project, errors, this);
-      this.sendResponse({errorsUpdate: true});
-    }
-
-    this.progress(items.length, items.length, `Validated ${itemCount} items...`);
-
-    return true;
-  }
 }

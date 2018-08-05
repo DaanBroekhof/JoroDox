@@ -99,7 +99,7 @@ export default class FileLoaderTask extends DbBackgroundTask {
       if (!storedFileModified && fileMetaData.info) {
         filesDiff.added.push(fileMetaData);
       } else if (storedFileModified) {
-        if (!fileMetaData.info) {
+        if (!fileMetaData.info || !fileMetaData.info.modifyTime) {
           filesDiff.deleted.push(fileMetaData.path);
         } else if (storedFileModified !== fileMetaData.info.modifyTime.toString()) {
           filesDiff.changed.push(fileMetaData);
