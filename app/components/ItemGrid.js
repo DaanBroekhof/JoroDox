@@ -1,5 +1,5 @@
 import React from 'react';
-import {Column, Table, AutoSizer} from 'react-virtualized';
+import {Column, Table, AutoSizer, defaultTableRowRenderer} from 'react-virtualized';
 import Draggable from 'react-draggable';
 import {inject, observer} from 'mobx-react';
 import {Link} from 'react-router-dom';
@@ -55,14 +55,12 @@ class ItemGrid extends React.Component {
             axis="x"
             defaultClassName="DragHandle"
             defaultClassNameDragging="DragHandleActive"
-            onDrag={(event, {deltaX}) =>
-              this.resizeRow({
-                dataKey,
-                colIndex,
-                deltaX,
-                width
-              })
-            }
+            onDrag={(event, {deltaX}) => this.resizeRow({
+              dataKey,
+              colIndex,
+              deltaX,
+              width
+            })}
             position={{x: 0}}
             zIndex={999}
           >
@@ -98,9 +96,12 @@ class ItemGrid extends React.Component {
       rowGetter = ({index}) => this.props.list[index];
     }
 
-    const rowHeight = 26;
-    const headerHeight = 28;
-    const fullHeight = (rowHeight * rowCount) + headerHeight;
+    let fullHeight = 0;
+    if (_.isNumber(this.props.rowHeight)) {
+      fullHeight = (this.props.rowHeight * rowCount) + this.props.headerHeight;
+    } else {
+      fullHeight = 100 + this.props.headerHeight;
+    }
 
     return (
       <AutoSizer disableHeight={this.props.disableHeight}>
@@ -114,17 +115,22 @@ class ItemGrid extends React.Component {
           if (this.props.disableHeight) {
             height = fullHeight;
           }
+          if (this.props.maxHeight && height > this.props.maxHeight) {
+            height = this.props.maxHeight;
+          }
 
           return (
             <Table
-              ref={this.props.registerChild}
-              headerHeight={headerHeight}
-              rowHeight={rowHeight}
+              ref={(ref) => {this.tableRef = ref; if (this.props.registerChild) { this.props.registerChild(ref) } }}
+              headerHeight={this.props.headerHeight}
+              rowHeight={this.props.rowHeight}
               height={height}
               width={width}
               rowCount={rowCount}
               rowGetter={rowGetter}
+              onRowClick={this.props.onRowClick}
               onRowsRendered={this.props.onRowsRendered}
+              rowRenderer={this.props.rowRenderer ? this.props.rowRenderer : defaultTableRowRenderer}
               headerRowRenderer={({className, columns, style}) => {
                 // Bugfix for when paddingRight is passed (we don't want it)
                 style.paddingRight = 0;
@@ -149,18 +155,26 @@ ItemGrid.propTypes = {
   list: PropTypes.arrayOf(PropTypes.object),
   rowCount: PropTypes.number,
   rowGetter: PropTypes.func,
+  rowRenderer: PropTypes.func,
+  rowHeight: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+  headerHeight: PropTypes.number,
   children: PropTypes.node,
   disableHeight: PropTypes.bool,
   onRowsRendered: PropTypes.func,
+  registerChild: PropTypes.func,
 };
 
 ItemGrid.defaultProps = {
   list: null,
   rowCount: null,
   rowGetter: null,
+  rowRenderer: null,
+  rowHeight: 26,
+  headerHeight: 28,
   children: [],
   disableHeight: false,
   onRowsRendered: undefined,
+  registerChild: null,
 };
 
 

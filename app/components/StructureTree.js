@@ -4,6 +4,8 @@ import InfiniteTree from 'react-infinite-tree';
 import Icon from '@material-ui/core/Icon';
 import {Route} from 'react-router';
 import {inject, observer} from 'mobx-react';
+import {autorun} from 'mobx';
+
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 import FileView from './FileView';
 import JdxDatabase from '../utils/JdxDatabase';
@@ -18,28 +20,45 @@ export default class StructureTree extends React.Component {
     super(props);
 
     this.state = {
-      treeData: null,
-      definition: JdxDatabase.getDefinition(props.project.gameType),
+      treeData: null
     };
   }
 
   componentDidMount() {
     this.setTreeState(this.props.project.rootPath);
+
+    autorun(() => {
+      const mappedParams = {
+        category: this.props.routeParams.kind === 'c' ? this.props.routeParams.type : null,
+        type: this.props.routeParams.kind === 't' ? this.props.routeParams.type : null,
+        id: this.props.routeParams.kind === 't' ? this.props.routeParams.id : null,
+      };
+
+      if (!mappedParams.category && mappedParams.type) {
+        const typeDefinition = this.props.project.definition.types.find(x => x.id === mappedParams.type);
+        if (typeDefinition) {
+          mappedParams.category = typeDefinition.category;
+        }
+      }
+
+      const node = this.doOpenToPath(this.tree.getRootNode(), ['root', mappedParams.category, mappedParams.type].filter(x => x).join('.'));
+      if (node) {
+        this.tree.selectNode(node);
+      }
+    });
   }
 
   componentWillReceiveProps(nextProps) {
+    return;
     if (nextProps.project.rootPath !== this.props.project.rootPath) {
       this.setTreeState(nextProps.project.rootPath);
     }
 
-    if (nextProps.project.gameType !== this.props.project.gameType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)}, () => this.setTreeState(nextProps.project.rootPath));
-    }
 
     if (!this.tree.getSelectedNode() || this.tree.getSelectedNode().id) {
-      if (nextProps.match) {
+      if (nextProps.currentRouteMatch) {
         // I think we don't want to navigate here... but not 100% sure
-        //this.doOpenToType(this.tree.getRootNode(), nextProps.match.params.category, nextProps.match.params.type);
+        //this.doOpenToType(this.tree.getRootNode(), nextProps.routeParams.category, nextProps.routeParams.type);
       }
     }
   }
@@ -47,64 +66,45 @@ export default class StructureTree extends React.Component {
   tree = null;
   treeData = null;
 
-  doOpenToType(node, category, type) {
-    if (!type && this.props.match.params.type) {
-      type = this.props.match.params.type;
-    }
-    if (!category && this.props.match.params.category) {
-      category = this.props.match.params.category;
+  doOpenToPath(node, path) {
+    if (node.id === path) {
+      this.tree.selectNode(node);
+      return node;
     }
 
-    if (!category && type) {
-      const typeDefinition = this.state.definition.types.find(x => x.id === type);
-      if (typeDefinition) {
-        category = typeDefinition.category;
+    if (_.startsWith(path, node.id + '.' )) {
+      if (!node.state.open) {
+        this.tree.openNode(node, {
+          async: true,
+          asyncCallback: () => {
+            console.log(node, path);
+            this.doOpenToPath(node, path);
+          }
+        });
       }
     }
 
     for (const child of node.children) {
-      if (child.info.view === 'types') {
-        if (!child.state.open) {
-          this.tree.openNode(child);
-        } else {
-          this.doOpenToType(child, category, type);
-        }
-        if (!type && !category) {
-          this.tree.selectNode(child);
-        }
-      } else if (child.info.view === 'category') {
-        if (child.info.type === category) {
-          if (!child.state.open && type) {
-            this.tree.openNode(child);
-          } else if (!type) {
-            this.tree.selectNode(child);
-          } else {
-            this.doOpenToType(child, category, type);
-          }
-        }
-      } else if (child.info.view === 'type') {
-        if (child.info.type === type) {
-          this.tree.selectNode(child);
-        }
+      const foundNode = this.doOpenToPath(child, path);
+      if (foundNode) {
+        return foundNode;
       }
     }
   }
 
-  setTreeState(root) {
+  setTreeState() {
     return this.setState({
       treeData: {
-        id: `root:${root}`,
-        name: this.state.definition.name,
+        id: 'root',
+        name: this.props.project.definition.name,
         loadOnDemand: true,
-        info: {
-          view: 'types',
-        },
+        kind: 'root',
       },
     }, () => {
       this.tree.loadData(this.state.treeData);
       this.tree.openNode(this.tree.getRootNode().children[0]);
 
-      this.doOpenToType(this.tree.getRootNode(), this.props.match.params.category, this.props.match.params.type);
+      //this.doOpenToPath(this.tree.getRootNode(), this.props.routeParams.category, this.props.routeParams.type);
 
       return true;
     });
@@ -112,17 +112,17 @@ export default class StructureTree extends React.Component {
 
 
   navigateToNode(node) {
-    if (node.info.view === 'types') {
+    if (node.kind === 'root') {
       this.props.store.goto('/structure');
     }
-    if (node.info.view === 'category') {
-      this.props.store.goto(`/structure/c/${node.info.type}`);
+    if (node.kind === 'category') {
+      this.props.store.goto(`/structure/c/${node.kindId}`);
     }
-    if (node.info.view === 'type') {
-      this.props.store.goto(`/structure/t/${node.info.type}`);
+    if (node.kind === 'type') {
+      this.props.store.goto(`/structure/t/${node.kindId}`);
     }
-    if (node.info.view === 'item') {
-      this.props.store.goto(`/structure/t/${node.info.type}/${node.info.id}`);
+    if (node.kind === 'item') {
+      this.props.store.goto(`/structure/t/${node.kindId}/${node.kindId}`);
     }
   }
 
@@ -135,37 +135,35 @@ export default class StructureTree extends React.Component {
           ref={(c) => { this.tree = c ? c.tree : null; }}
           autoOpen
           loadNodes={(parentNode, done) => {
-            if (parentNode.info.view === 'types') {
-              const categories = _(this.state.definition.types).map(type => (type.category ? type.category : 'Game structures')).uniq().map(category => ({
-                id: `category:${category}`,
+            if (parentNode.children.length) {
+              done(null, []);
+              return;
+            }
+            if (parentNode.kind === 'root') {
+              const categories = _(this.props.project.definition.types).map(type => type.category).uniq().map(category => ({
+                id: `root.${category}`,
                 name: category,
                 loadOnDemand: true,
-                info: {
-                  view: 'category',
-                  type: category,
-                }
+                kind: 'category',
+                kindId: category,
               })).value();
 
               done(null, categories);
-          } else if (_.startsWith(parentNode.id, 'category:')) {
-            const items = [];
-            _(this.state.definition.types)
-              .filter(x => `category:${x.category}` === parentNode.id)
-              .sortBy(x => x.title).forEach(type => {
-              items.push({
-                  id: `type:${type.id}`,
+            } else if (parentNode.kind === 'category') {
+              const items = [];
+              _(this.props.project.definition.types).filter(x => x.category === parentNode.kindId).sortBy(x => x.title).forEach(type => {
+                items.push({
+                  id: `root.${parentNode.kindId}.${type.id}`,
                   name: type.title,
-                  info: {
-                      view: 'type',
-                      type: type.id,
-                  },
+                  kind: 'type',
+                  kindId: type.id,
+                });
               });
-            });
 
-            done(null, items);
-          } else {
-            done(null, []);
-          }
+              done(null, items);
+            } else {
+              done(null, []);
+            }
           }}
           rowRenderer={(node, treeOptions) => {
             const {id, name, loadOnDemand = false, state} = node;
@@ -202,7 +200,7 @@ export default class StructureTree extends React.Component {
           selectable
           shouldSelectNode={(node) => {
             if (!node || (node === this.tree.getSelectedNode())) {
-              if (node && node.info.view === 'category') {
+              if (node && node.kind === 'category') {
                 this.tree.toggleNode(node, {async: true});
               }
               return false; // Prevent from deselecting the current node
@@ -233,14 +231,16 @@ export default class StructureTree extends React.Component {
             // keyup event
           }}
           onOpenNode={(node) => {
-            fileTree.doOpenToType(node);
+            //this.tree.openNode(node, {async: true});
+            //fileTree.doOpenToType(node);
           }}
           onCloseNode={(node) => {}}
           onSelectNode={(node) => {
-            if (node.info.view === 'category') {
-              this.tree.openNode(node, {async: true});
+            //this.tree.scrollToNode(node);
+            if (node.kind === 'category') {
+              //this.tree.openNode(node, {async: true});
             }
-            //if (this.props.match.params.kind === 'c' || this.props.match.params.kind === 't') {
+            //if (this.props.routeParams.kind === 'c' || this.props.routeParams.kind === 't') {
             //  this.navigateToNode(node, history);
             //}
           }}

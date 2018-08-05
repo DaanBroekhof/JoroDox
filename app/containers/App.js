@@ -197,7 +197,7 @@ class App extends Component {
               </AppBar>
               <SplitterLayout horizontal primaryIndex={1} secondaryInitialSize={300} customClassName="top-splitter">
                 <Switch>
-                  {currentProjectGameType && <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={currentProject} {...props} />} />}
+                  {currentProjectGameType && <Route path="/structure/:kind?/:type?/:id?" render={(props) => <StructureTree project={currentProject} routeParams={props.match.params} />} />}
                   {currentProject && <Route path="/fileview/:path(.*)" render={(props) => <FileTree project={currentProject} {...props} />} />}
                   <Route path="/projects(.*)" render={() => <ProjectsTree store={this.props.store} />} />
                   <Route path="/" render={() => <ProjectsTree store={this.props.store} />} />

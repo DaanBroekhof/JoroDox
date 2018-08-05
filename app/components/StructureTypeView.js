@@ -45,7 +45,6 @@ class StructureTypeView extends Component {
     autorun(
       () => {
         this.props.project.databaseVersion;
-
         this.loadRowCount();
       }
     );

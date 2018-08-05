@@ -304,6 +304,10 @@ a {
   align-items: center;
 }
 
+.ReactVirtualized__Table__row:focus {
+  outline: none;
+}
+
 .ReactVirtualized__Table__headerTruncatedText {
   display: inline-block;
   max-width: 100%;

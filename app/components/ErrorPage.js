@@ -1,30 +1,26 @@
 // @flow
 import React, {Component} from 'react';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
-import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
+import {inject, observer} from 'mobx-react';
+import {autorun, observable, reaction} from 'mobx';
 import {Column} from 'react-virtualized';
 import JdxDatabase from '../utils/JdxDatabase';
-import {incrementVersion} from '../actions/database';
 import ItemGrid from './ItemGrid';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
 
 const ipc = require('electron').ipcRenderer;
 
+@observer
 class ErrorPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       typeCounts: {},
-      definition: JdxDatabase.getDefinition(props.project.gameType),
-      gameType: props.project.gameType,
       errors: [],
       errorTotal: null,
       filterByView: true,
@@ -39,25 +35,10 @@ class ErrorPage extends Component {
   }
 
   componentDidMount() {
-    this.loadErrors();
-  }
-
-  componentWillReceiveProps(nextProps, nextState) {
-    if (nextProps.project.gameType !== this.state.gameType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
-    }
-    if (nextProps.project.rootPath !== this.props.project.rootPath) {
-      // reload
-      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
-    } else if (nextProps.databaseVersion !== this.props.databaseVersion) {
-      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
-    } else if (nextProps.type !== this.props.type) {
-      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
-    } else if (nextProps.typeId !== this.props.typeId) {
-      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
-    } else if (nextProps.category !== this.props.category) {
-      this.loadErrors(nextProps.project, nextProps.category, nextProps.type, nextProps.typeId);
-    }
+    autorun(() => {
+      this.props.project.databaseVersion;
+      this.loadErrors();
+    });
   }
 
   componentWillUnmount() {
@@ -65,39 +46,26 @@ class ErrorPage extends Component {
   }
 
 
-  async loadErrors(project, category, type, typeId) {
-    if (project === undefined) {
-      project = this.props.project;
-    }
-    if (type === undefined) {
-      type = this.props.type;
-    }
-    if (typeId === undefined) {
-      typeId = this.props.typeId;
-    }
-    if (category === undefined) {
-      category = this.props.category;
-    }
-
-    if (this.state.filterByView && type) {
-      let errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(10000).toArray();
-      errors = errors.filter(x => x.type === type && (typeId === false || x.typeId === typeId));
+  async loadErrors() {
+    if (this.state.filterByView && this.props.type) {
+      let errors = await (await JdxDatabase.getErrors(this.props.project)).orderBy('creationTime').reverse().limit(10000).toArray();
+      errors = errors.filter(x => x.type === this.props.type && (this.props.typeId === false || x.typeId === this.props.typeId));
 
       const errorTotal = errors.length;
       return this.setState({errors, errorTotal});
     }
-    if (this.state.filterByView && category) {
-      const typeIds = this.state.definition.types.filter(x => x.category === category).map(x => x.id);
+    if (this.state.filterByView && this.props.category) {
+      const typeIds = this.props.project.definition.types.filter(x => x.category === this.props.category).map(x => x.id);
 
-      let errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(10000).toArray();
+      let errors = await (await JdxDatabase.getErrors(this.props.project)).orderBy('creationTime').reverse().limit(10000).toArray();
       errors = errors.filter(x => typeIds.includes(x.type));
 
       const errorTotal = errors.length;
       return this.setState({errors, errorTotal});
     }
 
-    const errors = await (await JdxDatabase.getErrors(project)).orderBy('creationTime').reverse().limit(1000).toArray();
-    const errorTotal = await (await JdxDatabase.getErrors(project)).count();
+    const errors = await (await JdxDatabase.getErrors(this.props.project)).orderBy('creationTime').reverse().limit(1000).toArray();
+    const errorTotal = await (await JdxDatabase.getErrors(this.props.project)).count();
 
     return this.setState({errors, errorTotal});
   }
@@ -111,9 +79,9 @@ class ErrorPage extends Component {
       return `${this.props.project.rootPath}/${error.path}`;
     }
 
-    const pathTypeIds = this.state.definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
+    const pathTypeIds = this.props.project.definition.types.filter(x => x.primaryKey === 'path').map(x => x.id);
 
-    const fileRelation = this.state.relationsFrom.find(x => pathTypeIds.indexOf(x.toType) !== -1);
+    //const fileRelation = this.state.relationsFrom.find(x => pathTypeIds.indexOf(x.toType) !== -1);
 
     if (fileRelation) {
       return `${this.props.project.rootPath}/${fileRelation.toId}`;
@@ -165,9 +133,7 @@ class ErrorPage extends Component {
               <div style={{height: 30, fontSize: 14, paddingLeft: 10, verticalAlign: 'middle', display: 'flex', justifyContent: 'center', flexDirection: 'column', whiteSpace: 'nowrap', paddingRight: 10}}>
                 <span>(<Link to={`/structure/t/${currentError.type}`}>{currentError.type}</Link>: <Link to={currentError.typeId ? `/structure/t/${currentError.type}/${currentError.typeId}` : `/structure/t/${currentError.type}`}>{currentError.typeId}</Link>)</span>
               </div>
-              <Tooltip id="tooltip-icon" title="Open in default editor" placement="top">
-                <IconButton style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({openItem: this.getItemPath(currentError)})}><Icon color="action">open_in_new</Icon></IconButton>
-              </Tooltip>
+              <IconButton  title="Open in default editor" style={{width: 30, height: 30}} onClick={() => OperatingSystemTask.start({openItem: this.getItemPath(currentError)})}><Icon color="action">open_in_new</Icon></IconButton>
               <div style={{height: 30, fontSize: 14, verticalAlign: 'middle', display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
                 <Link to={`/structure/t/files/${currentError.path}`}>{currentError.path}</Link>
               </div>
@@ -206,18 +172,5 @@ class ErrorPage extends Component {
     );
   }
 }
-
-
-const mapStateToProps = state => {
-  return {
-    databaseVersion: state.database,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  incrementDatabaseVersion: () => {
-    dispatch(incrementVersion());
-  }
-});
 
 export default ErrorPage;

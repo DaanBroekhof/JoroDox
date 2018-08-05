@@ -39,8 +39,10 @@
     "react/jsx-no-bind": "off",
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
     "react/prefer-stateless-function": "off",
+    "react/destructuring-assignment": "off",
     "prefer-template": "off",
-    "no-unused-vars": ["off", { "vars": "all", "args": "none", "ignoreRestSiblings": false }]
+    "no-unused-vars": ["off", { "vars": "all", "args": "none", "ignoreRestSiblings": false }],
+    "no-param-reassign": "off"
   },
   "plugins": [
     "flowtype",

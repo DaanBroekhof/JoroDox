@@ -14,6 +14,7 @@ export default class Project {
   @observable lastGlobalUpdate = false;
   @observable databaseVersion = 1;
   @observable typeIds = {};
+  @observable errorsVersion = 1;
 
   store = null;
 

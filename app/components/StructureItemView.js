@@ -6,12 +6,13 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
-import {applyGridConfig, Grid, Actions} from 'react-redux-grid';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Column} from 'react-virtualized';
 import ItemGrid from './ItemGrid';
+import InfiniteItemGrid from './InfiniteItemGrid';
+import {inject, observer} from 'mobx-react';
 
 import JdxDatabase from '../utils/JdxDatabase';
 import OperatingSystemTask from '../utils/tasks/OperatingSystemTask';
@@ -20,10 +21,12 @@ import PdxMeshView from './PdxMeshView';
 import ImageView from './ImageView';
 import DdsImageView from './DdsImageView';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
+import StructureDataTree from "./StructureDataTree";
 
 const minimatch = require('minimatch');
 
-
+@inject('store')
+@observer
 class StructureItemView extends Component {
   constructor(props) {
     super(props);
@@ -37,21 +40,22 @@ class StructureItemView extends Component {
   }
 
   componentDidMount() {
+    this.loadItemData(this.props);
     this.loadRelations(this.props);
+  }
+
+  async loadItemData(props) {
+    const db = await JdxDatabase.get(props.project);
+    const id = props.match.params.id;
+    const typeDefinition = this.props.project.definition.types.find(x => x.id === props.match.params.type);
+
+    const item = await db[typeDefinition.id].where({[typeDefinition.primaryKey]: id}).first();
+
+    this.setState({item});
   }
 
   componentWillReceiveProps(nextProps) {
     this.loadRelations(nextProps);
-
-    if (!this.props.project || nextProps.project.gameType !== this.props.project.gameType) {
-      this.setState({definition: JdxDatabase.getDefinition(nextProps.project.gameType)});
-    }
-
-    if (nextProps.project && nextProps.databaseVersion !== this.props.databaseVersion) {
-      if (nextProps.match.params.type !== 'pdx_meshes') {
-        this.props.reloadGrid(this.gridSettings, this.getDataSource(nextProps.project.rootPath, nextProps.match.params.type, nextProps.match.params.id));
-      }
-    }
   }
 
   createTreeItem(key, item, startAtParentId, relations, parentId, idCounter, depth, path) {
@@ -325,12 +329,12 @@ class StructureItemView extends Component {
         {typeDefinition.id !== 'dds_images' && typeDefinition.sourceType && typeDefinition.sourceType.id !== 'dds_images' && _.endsWith(itemPath, '.dds') && <div><DdsImageView file={{path: itemPath}} /><br /></div>}
         {itemPath && (_.endsWith(itemPath, '.tga') || _.endsWith(itemPath, '.png') || _.endsWith(itemPath, '.jpg') || _.endsWith(itemPath, '.bmp')) && <div><ImageView file={{path: itemPath}} /><br /></div>}
 
-        {typeDefinition.id !== 'pdx_meshes' && <Grid ref={(input) => { this.grid = input; }} {...gridSettings} />}
+        <StructureDataTree data={this.state.item} maxHeight={1000} expandToDepth={2} />
 
         {this.state.relationsFrom.length > 0 && (
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <h4>References to ({this.state.relationsFrom.length})</h4>
-            <ItemGrid list={this.state.relationsFrom.slice(0, 1000)} databaseVersion={this.props.databaseVersion} style={{minHeight: 200}} disableHeight>
+            <ItemGrid list={this.state.relationsFrom.slice(0, 1000)} maxHeight={400} databaseVersion={this.props.databaseVersion} style={{minHeight: 200}} disableHeight>
               <Column
                 width={20}
                 dataKey="type"
@@ -349,7 +353,7 @@ class StructureItemView extends Component {
         {this.state.relationsTo.length > 0 && (
           <div style={{display: 'flex', flexDirection: 'column'}}>
             <h4>Referenced in ({this.state.relationsTo.length})</h4>
-            <ItemGrid list={this.state.relationsTo.slice(0, 1000)} databaseVersion={this.props.databaseVersion} style={{minHeight: 200}} disableHeight>
+            <ItemGrid list={this.state.relationsTo.slice(0, 1000)} maxHeight={400} databaseVersion={this.props.databaseVersion} style={{minHeight: 200}} disableHeight>
               <Column
                 width={20}
                 dataKey="type"
@@ -370,26 +374,5 @@ class StructureItemView extends Component {
     );
   }
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  reloadGrid: (gridSettings, dataSource) => {
-    return dataSource({}).then((result) => {
-      return dispatch(Actions.GridActions.setTreeData({
-        partial: false, data: result.data, parentId: null, stateKey: gridSettings.stateKey
-      }));
-    });
-  },
-  setTreeNodeVisibility: (id, visible, stateKey, showTreeRootNode) => {
-    dispatch(Actions.GridActions.setTreeNodeVisibility({
-      id, visible, stateKey, showTreeRootNode
-    }));
-  },
-  setPartialTreeData: (data, stateKey, parentId) => {
-    dispatch(Actions.GridActions.setTreeData({
-      partial: true, data, parentId, stateKey
-    }));
-  },
-});
-
 
 export default StructureItemView;
