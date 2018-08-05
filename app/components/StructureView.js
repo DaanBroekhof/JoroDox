@@ -149,7 +149,7 @@ class StructureView extends Component {
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
-        <Typography variant="display2">{this.props.match.params.category || this.props.project.definition.name}</Typography>
+        <Typography variant="display2">{this.props.match.params.category || this.props.project.name}</Typography>
         <Typography variant="subheading" gutterBottom style={{color: 'grey'}}>
           Last global change: {this.props.project.lastGlobalUpdate ? (new Date(this.props.project.lastGlobalUpdate)).toLocaleString() : <i>- unknown -</i>}
         </Typography>

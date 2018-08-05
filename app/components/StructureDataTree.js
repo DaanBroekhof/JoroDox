@@ -166,7 +166,6 @@ export default class StructureDataTree extends Component {
             if (_.isArray(rowData.value)) {
               return rowData.value.length + ' items: [' + rowData.value.slice(0, 20).join(', ') + (rowData.value.length > 20 ? '... '+ (rowData.value.length - 20) + ' more items' : '') + ']';
             }
-            console.log(rowData.value);
             return rowData.value;
           }}
         />

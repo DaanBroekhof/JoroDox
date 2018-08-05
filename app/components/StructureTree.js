@@ -125,7 +125,7 @@ export default class StructureTree extends React.Component {
   loadData() {
     const rootNode = {
       id: 'root',
-      name: this.props.project.definition.name,
+      name: this.props.project.name,
       kind: 'root',
       children: [],
       depth: 0,

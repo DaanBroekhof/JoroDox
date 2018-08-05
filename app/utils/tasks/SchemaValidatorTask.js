@@ -18,6 +18,8 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const db = await JdxDatabase.get(args.project);
     const definition = args.typeDefinition;
 
+    console.log(args.typeId);
+
     let ajv = SchemaValidatorTask.cachedAjv;
 
     if (!args.useCachedValidator || !ajv) {
