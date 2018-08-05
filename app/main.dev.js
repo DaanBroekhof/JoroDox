@@ -25,6 +25,8 @@ const OperatingSystemTask = require('./utils/tasks/OperatingSystemTask');
 
 let mainWindow = null;
 let backgroundWindow = null;
+let backgroundWindow2 = null;
+
 
 // Register some globals for ease of use
 global.searchWindowDir = `${__dirname}/search-window`;
@@ -100,6 +102,13 @@ app.on('ready', async () => {
     file: 'background-window-state.json',
   });
 
+  const backgroundWindow2State = windowStateKeeper({
+    defaultWidth: 1024,
+    defaultHeight: 768,
+    file: 'background-window2-state.json',
+  });
+
+
   console.log(app.getPath('userData'));
 
   backgroundWindow = new BrowserWindow({
@@ -108,6 +117,17 @@ app.on('ready', async () => {
     y: backgroundWindowState.y,
     width: backgroundWindowState.width,
     height: backgroundWindowState.height,
+    webPreferences: {
+      nodeIntegrationInWorker: true,
+    },
+  });
+
+  backgroundWindow2 = new BrowserWindow({
+    show: debugEnabled,
+    x: backgroundWindow2State.x,
+    y: backgroundWindow2State.y,
+    width: backgroundWindow2State.width,
+    height: backgroundWindow2State.height,
     webPreferences: {
       nodeIntegrationInWorker: true,
     },
@@ -127,9 +147,13 @@ app.on('ready', async () => {
 
   mainWindowState.manage(mainWindow);
   backgroundWindowState.manage(backgroundWindow);
+  backgroundWindow2State.manage(backgroundWindow2);
+
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
   backgroundWindow.loadURL(`file://${__dirname}/background.html`);
+  backgroundWindow2.loadURL(`file://${__dirname}/background.html`);
+
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -159,6 +183,9 @@ app.on('ready', async () => {
   backgroundWindow.on('close', () => {
     backgroundWindowState.saveState(backgroundWindow);
   });
+  backgroundWindow2.on('close', () => {
+    backgroundWindow2State.saveState(backgroundWindow2);
+  });
   backgroundWindow.on('closed', () => {
     // backgroundWindow = null;
   });
@@ -174,8 +201,15 @@ app.on('ready', async () => {
   });
 
 
+  let requestSplitter = 0;
   ipc.on('background-request', (event, data) => {
-    backgroundWindow.webContents.send('background-request', data);
+    requestSplitter += 1;
+
+    if (requestSplitter % 2 === 0) {
+      backgroundWindow.webContents.send('background-request', data);
+    } else {
+      backgroundWindow2.webContents.send('background-request', data);
+    }
   });
   ipc.on('background-response', (event, data) => {
     mainWindow.webContents.send('background-response', data);
@@ -188,6 +222,8 @@ app.on('ready', async () => {
   const backgroundMenuBuilder = new MenuBuilder(backgroundWindow, backgroundWindow);
   backgroundMenuBuilder.buildMenu(true);
 
+  const backgroundMenuBuilder2 = new MenuBuilder(backgroundWindow2, backgroundWindow2);
+  backgroundMenuBuilder2.buildMenu(true);
 
   const handleExternalUrls = (e, url) => {
     if (url !== mainWindow.webContents.getURL()) {

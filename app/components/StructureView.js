@@ -8,7 +8,7 @@ import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {Column} from 'react-virtualized';
 import {inject, observer} from 'mobx-react';
-import {reaction} from 'mobx';
+import {observable, reaction, when} from 'mobx';
 
 import JdxDatabase from '../utils/JdxDatabase';
 import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
@@ -103,9 +103,12 @@ class StructureView extends Component {
 
     await JdxDatabase.deleteErrorsByTypes(this.props.project, types);
 
+    const activeTasks = observable({counter: 0});
     for (const type of types) {
       try {
-        await SchemaValidatorTask.start(
+        await when(() => activeTasks.counter < 2)
+        activeTasks.counter += 1;
+        SchemaValidatorTask.start(
           {
             project: this.props.project,
             typeDefinition: type,
@@ -118,7 +121,10 @@ class StructureView extends Component {
           (error) => {
             console.error(error);
           },
-        );
+        ).then(() => {
+          activeTasks.counter -= 1;
+          this.props.project.databaseVersion += 1;
+        });
       } catch (exception) {
         console.error('Type '+ type.id, exception);
       }

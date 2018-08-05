@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import {observable, when} from 'mobx';
 
 import _ from 'lodash';
 import StructureLoaderTask from './tasks/StructureLoaderTask';
@@ -346,6 +347,7 @@ export default class JdxDatabase {
       }
     });
 
+    const activeTasks = observable({counter: 0});
     let nr = 0;
     const loadType = async (typeLoader) => {
       for (const source of typeLoader.dependentOn.reverse()) {
@@ -357,6 +359,7 @@ export default class JdxDatabase {
       nr += 1;
       const taskTitle = `Loading '${typeLoader.type.title}' [${nr}/${types.length}]`;
 
+      let promise = null;
       if (typeLoader.type.id === 'files' && !allFiles) {
         for (const filterType of typeLoader.sourceFor) {
           await this.parserToTask[typeLoader.type.reader].start({
@@ -367,16 +370,40 @@ export default class JdxDatabase {
           });
         }
       } else {
-        await this.parserToTask[typeLoader.type.reader].start({
+        promise = this.parserToTask[typeLoader.type.reader].start({
           taskTitle,
           project,
           filterTypes: typeLoader.sourceFor,
           typeDefinition: typeLoader.type,
         });
       }
-      await this.updateTypeIdentifiers(project, typeLoader.type.id);
-      project.databaseVersion += 1;
-      typeLoader.loaded = true;
+
+      if (promise && typeLoader.sourceFor.length === 0) {
+        await when(() => (activeTasks.counter < 2));
+        activeTasks.counter = activeTasks.counter + 1;
+        console.log('parallel start: ' + typeLoader.type.id);
+        promise.then(() => {
+          return this.updateTypeIdentifiers(project, typeLoader.type.id);
+        }).then(() => {
+          project.databaseVersion += 1;
+          typeLoader.loaded = true;
+          activeTasks.counter = activeTasks.counter - 1;
+          console.log('parallel done: ' + typeLoader.type.id);
+          return true;
+        }).catch((e) => {
+          throw new Error('Error', e);
+        });
+      } else {
+        console.log('serial start: ' + typeLoader.type.id);
+
+        if (promise) {
+          await promise;
+        }
+        await this.updateTypeIdentifiers(project, typeLoader.type.id);
+        project.databaseVersion += 1;
+        typeLoader.loaded = true;
+        console.log('serial done: ' + typeLoader.type.id);
+      }
     };
 
     for (const typeLoader of _.values(typeLoaders)) {
