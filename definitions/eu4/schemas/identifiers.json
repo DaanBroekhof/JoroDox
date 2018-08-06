@@ -331,10 +331,52 @@
       "$identifierValue":  {
         "type": "gfx_interface_images",
         "replaceAll": [{
-          "match": "\\\\\\\\",
+          "match": "\\\\\\\\|//",
           "replace": "/"
         }]
       },
+      "type": "string"
+    },
+    "interface_images_fixpath_or_dds": {
+      "anyOf": [
+        {
+          "$identifierValue":  {
+            "type": "gfx_interface_images",
+            "replaceAll": [{
+              "match": "\\\\\\\\|\\\\|//",
+              "replace": "/"
+            },{
+              "match": "\\.tga$",
+              "replace": ".dds"
+            }]
+          }
+        },
+        {
+          "$identifierValue":  {
+            "type": "gfx_interface_images",
+            "replaceAll": [{
+              "match": "\\\\\\\\|//",
+              "replace": "/"
+            }]
+          }
+        },
+        {
+          "$identifierValue":  {
+            "type": "event_pictures",
+            "replaceAll": [{
+              "match": "\\\\\\\\|//",
+              "replace": "/"
+            }, {
+              "match": "gfx/event_pictures/event_pictures_EUROPEAN/(.*)\\.dds",
+              "replace": "$1"
+            }]
+          }
+        },
+        {
+          "type": "string",
+          "pattern": "^tutorial"
+        }
+      ],
       "type": "string"
     },
     "interface_images_fixpath_not_empty": {
@@ -376,6 +418,16 @@
     "pdx_meshes": {
       "$identifierValue":  {
         "type": "pdx_meshes",
+        "replaceAll": [{
+          "match": "\\\\",
+          "replace": "/"
+        }]
+      },
+      "type": "string"
+    },
+    "pdx_anims": {
+      "$identifierValue":  {
+        "type": "pdx_anims",
         "replaceAll": [{
           "match": "\\\\",
           "replace": "/"

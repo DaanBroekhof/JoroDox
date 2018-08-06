@@ -340,7 +340,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 nr: nr.toString(),
                 id: definition.sourceTransform.idPath ? _.get(value, definition.sourceTransform.idPath) : null,
                 type: key,
-                data: value,
+                data: definition.sourceTransform.typeAsDataKey ? {[key]: value} : value,
               };
 
               if (definition.sourceTransform.idPath && item.id === undefined) {

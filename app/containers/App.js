@@ -30,7 +30,7 @@ import ProjectsTree from '../components/ProjectsTree';
 import ErrorPage from '../components/ErrorPage';
 import WatchDirectoryTask from '../utils/tasks/WatchDirectoryTask';
 import JdxDatabase from '../utils/JdxDatabase';
-import SchemaValidatorTask from "../utils/tasks/SchemaValidatorTask";
+import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 
 const {getCurrentWebContents, getGlobal} = require('electron').remote;
 const jetpack = require('electron').remote.require('fs-jetpack');

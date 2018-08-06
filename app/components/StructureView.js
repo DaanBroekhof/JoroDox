@@ -123,7 +123,7 @@ class StructureView extends Component {
           },
         ).then(() => {
           activeTasks.counter -= 1;
-          this.props.project.databaseVersion += 1;
+          this.props.project.errorsVersion += 1;
         });
       } catch (exception) {
         console.error('Type '+ type.id, exception);

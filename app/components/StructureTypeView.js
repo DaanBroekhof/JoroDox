@@ -141,7 +141,7 @@ class StructureTypeView extends Component {
   }
 
   validateType(typeId) {
-    const type = _(this.state.definition.types).find(x => x.id === typeId);
+    const type = _(this.props.project.definition.types).find(x => x.id === typeId);
     JdxDatabase.loadDefinitions();
 
     return new Promise((resolve, reject) => {
@@ -154,6 +154,7 @@ class StructureTypeView extends Component {
         (progress, total, message) => null,
         (result) => {
           resolve(result);
+          this.props.project.errorsVersion += 1;
         },
         (error) => {
           reject(error);

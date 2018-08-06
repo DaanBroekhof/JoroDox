@@ -56,7 +56,7 @@ export default class SchemaValidatorTask extends DbBackgroundTask {
     const validator = ajv.getSchema('http://jorodox.org/schemas/' + definition.id + '.json');
 
     if (!validator) {
-      throw new Error('No validator defined.');
+      throw new Error('No validator defined for `' + definition.id + '`.');
     }
 
     //this.progress(0, 1, 'Loading validator...');

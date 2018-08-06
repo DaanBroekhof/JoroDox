@@ -572,7 +572,12 @@
       "removeFields": [
         "namespace",
         "nr"
-      ]
+      ],
+      "customFields": {
+        "path": {
+          "type": "filePath"
+        }
+      }
     },
     "listView": {
       "pageSize": 100,

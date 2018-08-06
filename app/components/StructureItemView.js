@@ -188,6 +188,7 @@ class StructureItemView extends Component {
         (progress, total, message) => null,
         (result) => {
           resolve(result);
+          this.props.project.errorsVersion += 1;
         },
         (error) => {
           reject(error);

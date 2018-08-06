@@ -37,11 +37,17 @@ class ErrorPage extends Component {
 
   componentDidMount() {
     this.disposeLoadErrorsReaction = reaction(
-      () => this.props.project.databaseVersion,
+      () => [
+        this.props.project.databaseVersion,
+        this.props.project.errorsVersion,
+        this.props.type,
+        this.props.typeId,
+        this.props.category,
+      ],
       () => {
         this.loadErrors();
       },
-      {delay: 1000}
+      {delay: 1000, fireImmediately: true}
     );
   }
 

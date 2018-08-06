@@ -378,7 +378,8 @@
       ],
       "idPath": [
         "name"
-      ]
+      ],
+      "typeAsDataKey": true
     },
     "listView": {
       "pageSize": 100,

@@ -1,0 +1,39 @@
+{
+  "$id": "http://jorodox.org/schemas/gfx_animation_assets.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "comments": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "animation"
+      ]
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "file": {
+          "$ref": "identifiers.json#/definitions/pdx_anims_relative"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}

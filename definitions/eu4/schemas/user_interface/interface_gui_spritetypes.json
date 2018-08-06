@@ -1,0 +1,358 @@
+{
+  "$id": "http://jorodox.org/schemas/interface_gui_spritetypes.json",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nr": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spriteType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/spriteType"
+        },
+        "textSpriteType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/textSpriteType"
+        },
+        "corneredTileSpriteType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/corneredTileSpriteType"
+        },
+        "progressbartype": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/progressbartype"
+        },
+        "maskedShieldType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/maskedShieldType"
+        },
+        "frameAnimatedSpriteType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/frameAnimatedSpriteType"
+        },
+        "PieChartType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/PieChartType"
+        },
+        "LineChartType": {
+          "$ref": "interface_gui_spritetypes.json#/definitions/LineChartType"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "spriteType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "loadType": {
+          "type": "string",
+          "enum": ["INGAME", "FRONTEND", "BACKEND"]
+        },
+        "norefcount": {
+          "deprecated": true,
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "texturefile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "textureFile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "masking_texture": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "noOfFrames": {
+          "type": "number"
+        },
+        "overlay_frames_per_row": {
+          "type": "number"
+        },
+        "overlay_rows": {
+          "type": "number"
+        },
+        "framedirectiony": {
+          "type": "number"
+        },
+        "defaultAnimationTime": {
+          "type": "number"
+        },
+        "effectFile": {
+          "type": "string"
+        },
+        "allwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "alwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "transparencecheck": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "can_be_lowred": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "legacy_lazy_load": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "clicksound": {
+          "$ref": "identifiers.json#/definitions/sound"
+        },
+        "animation": {
+          "type": "object"
+        },
+        "alphamaskfile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "texturesize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        }
+      }
+    },
+    "corneredTileSpriteType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "loadType": {
+          "type": "string",
+          "enum": ["INGAME", "FRONTEND", "BACKEND"]
+        },
+        "norefcount": {
+          "deprecated": true,
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "noOfFrames": {
+          "type": "number"
+        },
+        "textureFile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "texturefile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "alwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "tiling_center": {
+          "$ref": "special_values.json#/definitions/boolean"
+        }
+      }
+    },
+    "progressbartype": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "loadType": {
+          "type": "string",
+          "enum": ["INGAME", "FRONTEND", "BACKEND"]
+        },
+        "norefcount": {
+          "deprecated": true,
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "color": {
+          "$ref": "special_values.json#/definitions/rgb_color_float"
+        },
+        "colortwo": {
+          "$ref": "special_values.json#/definitions/rgb_color_float"
+        },
+        "textureFile1": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "texturefile1": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "texturefile2": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "textureFile2": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "horizontal": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "borderSize": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "alwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "allwaystransparent": {
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "steps": {
+          "type": "number"
+        },
+        "effectFile": {
+          "type": "string"
+        }
+      }
+    },
+    "textSpriteType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "loadType": {
+          "type": "string",
+          "enum": ["INGAME", "FRONTEND", "BACKEND"]
+        },
+        "norefcount": {
+          "deprecated": true,
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "textureFile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "texturefile": {
+          "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+        },
+        "noOfFrames": {
+          "type": "number"
+        },
+        "effectFile": {
+          "type": "string"
+        },
+        "clicksound": {
+          "$ref": "identifiers.json#/definitions/sound"
+        }
+      }
+    },
+    "maskedShieldType": {
+      "$mergeProps": [
+        {"$ref": "interface_gui_spritetypes.json#/definitions/spriteType"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "textureFile1": {
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+            },
+            "textureFile2": {
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+            },
+            "textureFile3": {
+              "$ref": "identifiers.json#/definitions/interface_images_fixpath_or_dds"
+            },
+            "effectFile": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "frameAnimatedSpriteType": {
+      "$mergeProps": [
+        {
+          "$ref": "interface_gui_spritetypes.json#/definitions/spriteType"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "animation_rate_fps": {
+              "type": "number"
+            },
+            "animation_rate_spf": {
+              "type": "number"
+            },
+            "looping": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "play_on_show": {
+              "$ref": "special_values.json#/definitions/boolean"
+            },
+            "pause_on_loop": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "PieChartType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "loadType": {
+          "type": "string",
+          "enum": [
+            "INGAME",
+            "FRONTEND",
+            "BACKEND"
+          ]
+        },
+        "norefcount": {
+          "deprecated": true,
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "size": {
+          "type": "number"
+        }
+      }
+    },
+    "LineChartType": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "loadType": {
+          "type": "string",
+          "enum": [
+            "INGAME",
+            "FRONTEND",
+            "BACKEND"
+          ]
+        },
+        "norefcount": {
+          "deprecated": true,
+          "$ref": "special_values.json#/definitions/boolean"
+        },
+        "size": {
+          "$ref": "special_values.json#/definitions/coordinate_xy"
+        },
+        "effectFile": {
+          "type": "string"
+        },
+        "linewidth": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "data"
+  ]
+}
