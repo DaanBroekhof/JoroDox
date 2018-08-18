@@ -368,7 +368,7 @@
     "sourceType": {
       "id": "pdx_scripts",
       "pathPrefix": "dlc/",
-      "pathPattern": "dlc/*.dlc"
+      "pathPattern": "dlc/**/*.dlc"
     },
     "sourceTransform": {
       "type": "fileData",

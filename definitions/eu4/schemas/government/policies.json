@@ -27,7 +27,8 @@
             }
           }
         },
-        {"$ref": "country_modifiers.json#/definitions/country_modifiers"}
+        {"$ref": "country_modifiers.json#/definitions/country_modifiers"},
+        {"$ref": "rule_modifiers.json#/definitions/idea_rule_modifiers"}
       ]
     }
   },
