@@ -1,5 +1,6 @@
 import JdxDatabase from '../JdxDatabase';
 import DbBackgroundTask from './DbBackgroundTask';
+import _ from "lodash";
 
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
@@ -105,8 +106,14 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   sourceTransformByKeyValues(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
+    const localVariables = {};
     sourceItems.forEach(sourceItem => {
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
+        if (this.hasFeature('global_variables') && key[0] === '@' && !definition.sourceTransform.storeVariables) {
+          localVariables[key] = value;
+          return;
+        }
+
         const item = {};
 
         if (definition.sourceTransform.keyName) {
@@ -127,7 +134,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
           item[definition.sourceTransform.valueName] = _.pick(item[definition.sourceTransform.valueName], definition.sourceTransform.onlyValueKeys);
         }
 
-        this.doCommonItemOperations(item, definition, sourceItem.path);
+        this.doCommonItemOperations(item, definition, sourceItem.path, localVariables);
 
         items.push(item);
 
@@ -178,6 +185,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
         this.doCommonItemOperations(item, definition, sourceItem.path);
 
+        if (!this.validItem(item, definition)) {
+          return;
+        }
+
         items.push(item);
 
         if (!skipRelations) {
@@ -199,9 +210,15 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   sourceTransformByKeyKeyValues(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
+    const localVariables = {};
 
     sourceItems.forEach(sourceItem => {
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), (value, key) => {
+        if (this.hasFeature('global_variables') && key[0] === '@' && !definition.sourceTransform.storeVariables) {
+          localVariables[key] = value;
+          return;
+        }
+
         if (definition.sourceTransform.parentSubPath) {
           value = _.get(value, definition.sourceTransform.parentSubPath);
         }
@@ -223,7 +240,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             item[definition.sourceTransform.valueName] = value2;
           }
 
-          this.doCommonItemOperations(item, definition, sourceItem.path);
+          this.doCommonItemOperations(item, definition, sourceItem.path, localVariables);
 
           items.push(item);
 
@@ -257,12 +274,18 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   async sourceTransformByTypesList(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
+    const localVariables = {};
 
     let nr = 0;
     sourceItems.forEach(async sourceItem => {
       const namespaceValues = {};
       let nrFile = 0;
       _.forOwn(_.get(sourceItem, definition.sourceTransform.path), async (value) => {
+        if (this.hasFeature('global_variables') && value.name[0] === '@' && !definition.sourceTransform.storeVariables) {
+          localVariables[value.name] = value.data;
+          return;
+        }
+
         if (this.matchTypes(definition.sourceTransform.types, value.name)) {
           const item = {
             namespace: namespaceValues,
@@ -288,7 +311,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             return;
           }
 
-          this.doCommonItemOperations(item, definition, sourceItem.path);
+          this.doCommonItemOperations(item, definition, sourceItem.path, localVariables);
 
           if (!definition.sourceTransform.nrFile) {
             delete item.nrFile;
@@ -322,6 +345,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   async sourceTransformByTypesListData(sourceItems, definition, skipRelations) {
     const items = [];
     const relations = [];
+    const localVariables = {};
 
     let nr = 0;
     sourceItems.forEach(async sourceItem => {
@@ -357,7 +381,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
                 return;
               }
 
-              this.doCommonItemOperations(item, definition, sourceItem.path);
+              this.doCommonItemOperations(item, definition, sourceItem.path, localVariables);
 
               items.push(item);
 
@@ -432,10 +456,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
   }
 
   matchTypes(types, type) {
-    return types === undefined || (_.includes(types, type) || _.includes(types, '*')) && !_.includes(types, '!' + type);
+    return types === undefined || ((_.includes(types, type) || _.includes(types, '*')) && !_.includes(types, '!' + type));
   }
 
-  doCommonItemOperations(item, definition, filePath) {
+  doCommonItemOperations(item, definition, filePath, localVariables) {
     if (definition.sourceTransform.filenamePattern) {
       const found = filePath.match(new RegExp(definition.sourceTransform.filenamePattern));
       if (found) {
@@ -448,6 +472,10 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
     if (item[definition.primaryKey] !== undefined) {
       item[definition.primaryKey] = item[definition.primaryKey].toString();
+    }
+
+    if (localVariables && _.size(localVariables)) {
+      item.localVariables = localVariables;
     }
 
     if (definition.sourceTransform.removeFields) {
@@ -548,5 +576,17 @@ export default class StructureLoaderTask extends DbBackgroundTask {
 
 
     return item;
+  }
+
+  validItem(item, definition) {
+
+
+    return true;
+  }
+
+
+  hasFeature(name) {
+    const definition = JdxDatabase.getDefinition(this.project.gameType);
+    return definition.features && definition.features[name];
   }
 }

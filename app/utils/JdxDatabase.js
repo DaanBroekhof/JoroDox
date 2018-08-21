@@ -569,6 +569,13 @@ export default class JdxDatabase {
           this.definitions[data.id].types = this.definitions[data.id].types.concat(typeData);
         });
 
+        this.definitions[data.id].types = this.definitions[data.id].types.map(x => {
+          if (!x.title) {
+            x.title = _.upperFirst(x.id.replace(/_/g, ' '));
+          }
+          return x;
+        });
+
         this.definitions[data.id].schemas = [];
 
         jetpack.cwd(syspath.join(baseDir, definitionDir, 'schemas')).find(

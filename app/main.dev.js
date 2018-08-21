@@ -123,7 +123,7 @@ app.on('ready', async () => {
   });
 
   backgroundWindow2 = new BrowserWindow({
-    show: debugEnabled,
+    show: debugEnabled && false,
     x: backgroundWindow2State.x,
     y: backgroundWindow2State.y,
     width: backgroundWindow2State.width,
@@ -202,10 +202,11 @@ app.on('ready', async () => {
 
 
   let requestSplitter = 0;
+  const doSplit = false;
   ipc.on('background-request', (event, data) => {
     requestSplitter += 1;
 
-    if (requestSplitter % 2 === 0) {
+    if (requestSplitter % 2 === 0 || !doSplit) {
       backgroundWindow.webContents.send('background-request', data);
     } else {
       backgroundWindow2.webContents.send('background-request', data);
