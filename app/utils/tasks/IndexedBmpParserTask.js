@@ -15,7 +15,7 @@ export default class IndexedBmpParserTask extends DbBackgroundTask {
     const definition = JdxDatabase.getDefinition(args.project.gameType);
     this.progress(0, 1, 'Finding indexed BMP data files...');
 
-    const files = await this.filterFilesByPath(db.files, definition.types, 'indexed_bmps', args.filterTypes, args.paths);
+    const files = _.keys(await this.filterFilesByPath(db.files, definition.types, 'indexed_bmps', args.filterTypes, args.paths));
 
     this.progress(0, files.length, `Parsing ${files.length} indexed BMP data files...`);
 

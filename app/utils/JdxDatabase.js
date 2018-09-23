@@ -157,9 +157,12 @@ export default class JdxDatabase {
   }
 
   static async get(project) {
-    if (this.db[project.id] && this.db[project.id].isOpen()) {
-      return Promise.resolve(this.db[project.id]);
+    const dbCacheName = project.id + '-' + project.definitionVersion;
+    if (this.db[dbCacheName] && this.db[dbCacheName].isOpen()) {
+      return Promise.resolve(this.db[dbCacheName]);
     }
+
+    JdxDatabase.loadDefinitions();
     const root = project.rootPath;
     const definition = this.getDefinition(project.gameType);
 
@@ -188,9 +191,9 @@ export default class JdxDatabase {
     stores = _(stores).mapValues(x => x.split(',').sort().join(',')).value();
 
     const dbName = this.projectToDbName(project);
-    this.db[project.id] = await JdxDatabase.loadDbWithStores(dbName, stores);
+    this.db[dbCacheName] = await JdxDatabase.loadDbWithStores(dbName, stores);
 
-    return this.db[project.id];
+    return this.db[dbCacheName];
   }
 
   static async clearAll(project) {

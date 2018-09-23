@@ -16,7 +16,7 @@ export default class PdxDataParserTask extends DbBackgroundTask {
     const definition = JdxDatabase.getDefinition(args.project.gameType);
     this.progress(0, 1, 'Finding PDX data files...');
 
-    const files = await this.filterFilesByPath(db.files, definition.types, 'pdx_data', args.filterTypes, args.paths);
+    const files = _.keys(await this.filterFilesByPath(db.files, definition.types, 'pdx_data', args.filterTypes, args.paths));
 
     this.progress(0, files.length, `Parsing ${files.length} PDX binary data files...`);
 

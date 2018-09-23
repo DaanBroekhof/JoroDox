@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 import BackgroundTask from './BackgroundTask';
 import XXHash from 'xxhashjs';
+import _ from 'lodash';
 
 const hash = require('object-hash');
 const minimatch = require('minimatch');
@@ -42,35 +43,64 @@ export default class DbBackgroundTask extends BackgroundTask {
     return relationData;
   }
 
-  filterFilesByPath(files, types, sourceTypeId, filterTypes, paths) {
-    if (paths) {
-      return paths;
+  async filterFilesByPath(files, types, sourceTypeId, filterTypes, paths) {
+    let foundPaths = paths;
+
+    // Find paths from DB via type path definitions
+    if (!foundPaths) {
+      const patterns = {};
+      const prefixes = {};
+      _(types).forOwn((typeDefinition) => {
+        if (filterTypes) {
+          if (!_.includes(filterTypes, typeDefinition.id)) {
+            return;
+          }
+          if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
+            patterns[typeDefinition.id] = typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id);
+            prefixes[typeDefinition.id] = typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id);
+          }
+          if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
+            patterns[typeDefinition.id] = typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id);
+            prefixes[typeDefinition.id] = typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id);
+          }
+        }
+      });
+
+      foundPaths = await files.where('path').startsWithAnyOf(_.values(prefixes)).filter(file => {
+        return _.values(patterns).some(pattern => minimatch(file.path, pattern));
+      }).primaryKeys();
     }
 
-    const patterns = [];
-    const prefixes = [];
-    _(types).forOwn((typeDefinition) => {
-      if (filterTypes) {
-        if (!_.includes(filterTypes, typeDefinition.id)) {
-          return;
+    // Find which paths belong to which definitions
+    const pathsToTypeId = {};
+    foundPaths.forEach((path) => {
+      pathsToTypeId[path] = null;
+      _(types).forOwn((typeDefinition) => {
+        if (filterTypes) {
+          if (!_.includes(filterTypes, typeDefinition.id)) {
+            return;
+          }
+          if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
+            if (_.startsWith(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id))
+              && minimatch(path, typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id))) {
+              pathsToTypeId[path] = typeDefinition.id;
+            }
+          }
+          if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
+            if (path === typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id)) {
+              pathsToTypeId[path] = typeDefinition.id;
+            }
+          }
         }
-        if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.pathPattern) {
-          patterns.push(typeDefinition.sourceType.pathPattern.replace('{type.id}', typeDefinition.id));
-          prefixes.push(typeDefinition.sourceType.pathPrefix.replace('{type.id}', typeDefinition.id));
-        }
-        if (typeDefinition.sourceType && typeDefinition.sourceType.id === sourceTypeId && typeDefinition.sourceType.path) {
-          patterns.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
-          prefixes.push(typeDefinition.sourceType.path.replace('{type.id}', typeDefinition.id));
-        }
-      }
+      });
     });
 
-    return files.where('path').startsWithAnyOf(prefixes).filter(file => _(patterns).some(pattern => minimatch(file.path, pattern))).primaryKeys();
+    return pathsToTypeId;
   }
 
   async deleteMissing(newData, existingStorage, types, sourceTypeId, filterTypes, paths) {
     const foundPaths = newData.map(x => x.path);
-    const existingData = await this.filterFilesByPath(existingStorage, types, 'pdx_scripts', filterTypes, paths);
+    const existingData = _.keys(await this.filterFilesByPath(existingStorage, types, 'pdx_scripts', filterTypes, paths));
     const missingFiles = existingData.filter(x => !foundPaths.includes(x));
     if (missingFiles.length !== 0) {
       await this.deleteChunked(existingStorage.where('path').anyOf(missingFiles));

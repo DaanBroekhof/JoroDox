@@ -15,7 +15,7 @@ export default class PdxYmlFileParserTask extends DbBackgroundTask {
     const definition = JdxDatabase.getDefinition(args.project.gameType);
     this.progress(0, 1, 'Finding Paradox YML files...');
 
-    const files = await this.filterFilesByPath(db.files, definition.types, 'pdxyml_files', args.filterTypes, args.paths);
+    const files = _.keys(await this.filterFilesByPath(db.files, definition.types, 'pdxyml_files', args.filterTypes, args.paths));
 
     const results = [];
     const relations = [];

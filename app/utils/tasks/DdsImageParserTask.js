@@ -14,7 +14,7 @@ export default class DdsImageParserTask extends DbBackgroundTask {
     const definition = JdxDatabase.getDefinition(args.project.gameType);
     this.progress(0, 1, 'Finding DDS image files...');
 
-    const files = await this.filterFilesByPath(db.files, definition.types, 'dds_images', args.filterTypes, args.paths);
+    const files = _.keys(await this.filterFilesByPath(db.files, definition.types, 'dds_images', args.filterTypes, args.paths));
 
     this.progress(0, files.length, `Parsing ${files.length} DDS image files...`);
 

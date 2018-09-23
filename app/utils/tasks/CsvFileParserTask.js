@@ -22,13 +22,15 @@ export default class CsvFileParserTask extends DbBackgroundTask {
 
     this.progress(0, 1, 'Finding CSV files...');
 
-    const files = await this.filterFilesByPath(db.files, definition.types, 'csv_files', args.filterTypes, args.paths);
+    const pathsToTypeId = await this.filterFilesByPath(db.files, definition.types, 'csv_files', args.filterTypes, args.paths);
+
+    const fileCount = _.size(pathsToTypeId);
 
     const csvResults = [];
     const relations = [];
-    for (const path of files) {
+    for (const [path, typeId] of _.entries(pathsToTypeId)) {
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
-      const csvData = await new Promise((resolve, reject) => {
+      let csvData = await new Promise((resolve, reject) => {
         csvparser(iconv.decode(jetpack.read(fullPath, 'buffer'), 'win1252'), {
           delimiter: ';',
           skip_empty_lines: true,
@@ -42,6 +44,12 @@ export default class CsvFileParserTask extends DbBackgroundTask {
         });
       });
 
+      // Remove comment-rows, if in definition
+      const typeDefinition = definition.types.find((def) => def.id === typeId);
+      if (typeDefinition && typeDefinition.sourceType && typeDefinition.sourceType.rowCommentPrefix) {
+        csvData = csvData.filter((row) => !_.startsWith(row[0], typeDefinition.sourceType.rowCommentPrefix));
+      }
+
       const uniqueColumns = [];
       csvData[0].forEach(column => {
         let nr = 0;
@@ -54,8 +62,8 @@ export default class CsvFileParserTask extends DbBackgroundTask {
       });
       const csvDataObject = _.map(csvData.slice(1), (row) => _.zipObject(uniqueColumns, row));
 
-      if (csvResults.length % Math.floor(files.length / this.progressReportRate) === 0) {
-        this.progress(csvResults.length, files.length, `Parsing ${files.length} CSV files...`);
+      if (csvResults.length % Math.floor(fileCount / this.progressReportRate) === 0) {
+        this.progress(csvResults.length, fileCount, `Parsing ${fileCount} CSV files...`);
       }
 
       csvResults.push({path, data: csvDataObject});

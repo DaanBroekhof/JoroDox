@@ -475,7 +475,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
     }
 
     if (localVariables && _.size(localVariables)) {
-      item.localVariables = localVariables;
+      item.local_variables = localVariables;
     }
 
     if (definition.sourceTransform.removeFields) {
