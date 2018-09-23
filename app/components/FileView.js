@@ -32,6 +32,8 @@ export default class FileView extends Component {
 
     switch (extension ? extension[1].toLowerCase() : null) {
       case 'asset':
+      case 'pdxlint':
+      case 'settings':
       case 'gfx':
       case 'txt':
       case 'gui':

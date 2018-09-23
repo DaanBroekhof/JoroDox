@@ -23,7 +23,7 @@ export default class PdxScript {
       children: [],
       depth: 0,
       comments: [],
-      data: {},
+      data: Object.create(null),
       value: null,
     };
     this.lastId += 1;
@@ -48,7 +48,7 @@ export default class PdxScript {
         // property style object
 
         const propertyScope = {
-          id: this.lastId, type: 'property', name: prevToken, children: [], depth: scope.depth + 1, value: null, data: {}, comments: []
+          id: this.lastId, type: 'property', name: prevToken, children: [], depth: scope.depth + 1, value: null, data: Object.create(null), comments: []
         };
         this.lastId += 1;
         scope.children.push(propertyScope);
