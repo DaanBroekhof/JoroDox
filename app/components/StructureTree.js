@@ -12,17 +12,25 @@ import 'react-infinite-tree/dist/react-infinite-tree.css';
 export default class StructureTree extends React.Component {
 
   @observable.shallow treeData = [];
+  @observable expandedNodes = {};
   @observable selectedNode = null;
 
   componentDidMount() {
     this.disposeDataReaction = reaction(
-      () => this.props.project.id,
-      () => this.loadData(),
+      () => [this.props.project.id, this.props.project.definition],
+      () => {
+        this.loadData();
+        _.forOwn(this.expandedNodes, (expanded, id) => {
+          if (expanded) {
+            this.toggleRowById(id);
+          }
+        });
+      },
       {fireImmediately: true}
     );
 
     this.disposeRouteReaction = reaction(
-      () => this.props.routeParams,
+      () => [this.props.routeParams, this.props.project.definition],
       () => {
         const mappedParams = {
           category: this.props.routeParams.kind === 'c' ? this.props.routeParams.type : null,
@@ -65,11 +73,11 @@ export default class StructureTree extends React.Component {
   }
 
   doOpenToPath(node, path) {
-    if (_.startsWith(path, node.id + '.') && !node.expanded) {
+    if (_.startsWith(path, node.id + '.') && !this.expandedNodes[node.id]) {
       this.toggleRowById(node.id);
     }
     if (node.id === path) {
-      if (!node.expanded) {
+      if (!this.expandedNodes[node.id]) {
         //this.toggleRowById(node.id);
       }
       node.selected = true;
@@ -113,7 +121,7 @@ export default class StructureTree extends React.Component {
       if (x.depth > depth) {
         return;
       }
-      if (!x.expanded) {
+      if (!this.expandedNodes[x.id]) {
         this.toggleRowById(x.id);
       }
       if (x.children.length > 0) {
@@ -162,16 +170,16 @@ export default class StructureTree extends React.Component {
 
   toggleRow({index, rowData}, noToggle) {
     if (!noToggle) {
-      rowData.expanded = !rowData.expanded;
+      this.expandedNodes[rowData.id] = !this.expandedNodes[rowData.id];
     }
 
     let change = 0;
 
-    if (rowData.expanded) {
+    if (this.expandedNodes[rowData.id]) {
       this.treeData.splice(index + 1, 0, ...rowData.children);
 
       rowData.children.forEach((child, key) => {
-        if (child.expanded) {
+        if (this.expandedNodes[child.id]) {
           change += this.toggleRow({index: index + key + change + 1, rowData: child}, true);
         }
       });
@@ -187,7 +195,7 @@ export default class StructureTree extends React.Component {
   }
 
   getExpandedCount(node) {
-    const subSum = _.sumBy(node.children, (x) => x.expanded ? this.getExpandedCount(x) : 0);
+    const subSum = _.sumBy(node.children, (x) => this.expandedNodes[x.id] ? this.getExpandedCount(x) : 0);
     return node.children.length + subSum;
   }
 
@@ -215,7 +223,7 @@ export default class StructureTree extends React.Component {
           label="Name"
           cellRenderer={({rowData}) => (
             <span style={{marginLeft: (rowData.depth) * 20, position: 'relative', fontSize: 13.4}}>
-              <a style={{position: 'absolute', display: 'block', left: -20, top: -4, width: 18, height: 20, textAlign: 'center', fontSize: 14, transform: rowData.expanded ? 'rotate(90deg)' : ''}}>{rowData.children.length ? '❯' : ''}</a>
+              <a style={{position: 'absolute', display: 'block', left: -20, top: -4, width: 18, height: 20, textAlign: 'center', fontSize: 14, transform: this.expandedNodes[rowData.id] ? 'rotate(90deg)' : ''}}>{rowData.children.length ? '❯' : ''}</a>
 
               {rowData.children.length ?
                 <Icon style={{fontSize: '19px', paddingTop: 4, display: 'inline', verticalAlign: 'bottom', marginRight: 2}}>folder</Icon> :

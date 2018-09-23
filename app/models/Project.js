@@ -13,8 +13,13 @@ export default class Project {
 
   @observable lastGlobalUpdate = false;
   @observable databaseVersion = 1;
+  @observable definitionVersion = 1;
   @observable typeIds = {};
   @observable errorsVersion = 1;
+
+  @observable structureCurrentNodeKind = null;
+  @observable structureCurrentNodeKindType = null;
+  @observable structureCurrentNodeKindId = null;
 
   store = null;
 
@@ -77,7 +82,7 @@ export default class Project {
 
   @computed get
   definition() {
-    return JdxDatabase.getDefinition(this.gameType);
+    return JdxDatabase.getDefinition(this.gameType, this.definitionVersion);
   }
 
   /**
@@ -104,6 +109,11 @@ export default class Project {
   async clearAll() {
     await JdxDatabase.clearAll(this);
     this.databaseVersion += 1;
+  }
+
+  reloadDefinition() {
+    JdxDatabase.loadDefinitions();
+    this.definitionVersion += 1;
   }
 
   dispose() {

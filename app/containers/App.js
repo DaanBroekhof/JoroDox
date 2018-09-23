@@ -156,7 +156,18 @@ class App extends Component {
         this.props.store.goto('/fileview/' + (this.props.store.projectStore.currentProject ? this.props.store.projectStore.currentProject.rootPath : ''));
         break;
       case 'structure':
-        this.props.store.goto('/structure');
+        const currentProject = this.props.store.projectStore.currentProject;
+        if (currentProject.structureCurrentNodeKind === 'root') {
+          this.props.store.goto('/structure');
+        } else if (currentProject.structureCurrentNodeKind === 'category') {
+          this.props.store.goto(`/structure/c/${currentProject.structureCurrentNodeKindId}`);
+        } else if (currentProject.structureCurrentNodeKind === 'type') {
+          this.props.store.goto(`/structure/t/${currentProject.structureCurrentNodeKindType}`);
+        } else if (currentProject.structureCurrentNodeKind === 'item') {
+          this.props.store.goto(`/structure/t/${currentProject.structureCurrentNodeKindType}/${currentProject.structureCurrentNodeKindId}`);
+        } else {
+          this.props.store.goto('/structure');
+        }
         break;
       case 'projects':
         this.props.store.goto('/projects');

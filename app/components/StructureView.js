@@ -24,7 +24,12 @@ import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
 class StructureView extends Component {
 
   componentDidMount() {
-    //this.reloadCounts();
+    if (!this.props.match.params.category) {
+      this.props.project.structureCurrentNodeKind = 'root';
+    } else {
+      this.props.project.structureCurrentNodeKind = 'category';
+      this.props.project.structureCurrentNodeKindId = this.props.match.params.category;
+    }
   }
 
   reloadType(typeId) {

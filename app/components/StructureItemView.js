@@ -45,6 +45,9 @@ class StructureItemView extends Component {
       },
       {fireImmediately: true}
     );
+    this.props.project.structureCurrentNodeKind = 'item';
+    this.props.project.structureCurrentNodeKindType = this.props.match.params.type;
+    this.props.project.structureCurrentNodeKindId = this.props.match.params.id;
   }
 
   componentWillUnmount() {
@@ -173,6 +176,13 @@ class StructureItemView extends Component {
     return '';
   }
 
+  reloadTypeById(typeId) {
+    JdxDatabase.loadDefinitions();
+    return JdxDatabase.reloadTypeById(this.props.project, typeId).then(() => {
+      this.props.project.databaseVersion += 1;
+    });
+  }
+
   validateTypeItem() {
     const type = _(this.props.project.definition.types).find(x => x.id === this.props.match.params.type);
     JdxDatabase.loadDefinitions();
@@ -217,6 +227,9 @@ class StructureItemView extends Component {
             <Link to={`/structure/t/${this.props.match.params.type}`}>{typeDefinition.title}</Link>: {this.props.match.params.id}
           </Typography>
           <span style={{marginLeft: 20}}>
+            <Tooltip id="tooltip-icon" title="Reload data" placement="bottom">
+              <IconButton onClick={() => this.reloadTypeById(this.props.match.params.type)}><Icon color="action">refresh</Icon></IconButton>
+            </Tooltip>
             <Tooltip id="tooltip-icon" title="Show in file explorer" placement="bottom">
               <IconButton onClick={() => OperatingSystemTask.start({showItemInFolder: this.getItemPath()})}><Icon color="action">pageview</Icon></IconButton>
             </Tooltip>

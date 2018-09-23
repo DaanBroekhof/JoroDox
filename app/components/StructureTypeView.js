@@ -36,7 +36,6 @@ class StructureTypeView extends Component {
 
     this.state = {
       search: '',
-      definition: props.project ? JdxDatabase.getDefinition(props.project.gameType) : null,
       items: []
     };
   }
@@ -47,6 +46,9 @@ class StructureTypeView extends Component {
       () => this.loadRowCount(),
       {fireImmediately: true}
     );
+
+    this.props.project.structureCurrentNodeKind = 'type';
+    this.props.project.structureCurrentNodeKindType = this.props.match.params.type;
   }
 
   componentWillUnmount() {
@@ -75,13 +77,13 @@ class StructureTypeView extends Component {
   }
 
   loadTypeFiles(typeId) {
-    const type = _(this.state.definition.types).find(x => x.id === typeId);
+    const type = _(this.props.project.definition.types).find(x => x.id === typeId);
 
     return new Promise((resolve, reject) => {
       FileLoaderTask.start(
         {
           project: this.props.project,
-          typeDefinition: _(this.state.definition.types).find(x => x.id === 'files'),
+          typeDefinition: _(this.props.project.definition.types).find(x => x.id === 'files'),
           searchPattern: type.sourceType.pathPattern.replace('{type.id}', type.id),
           searchPath: type.sourceType.pathPrefix.replace('{type.id}', type.id),
         },
@@ -97,13 +99,13 @@ class StructureTypeView extends Component {
   }
 
   loadPdxScriptFiles(typeId) {
-    const type = _(this.state.definition.types).find(x => x.id === typeId);
+    const type = _(this.props.project.definition.types).find(x => x.id === typeId);
 
     return new Promise((resolve, reject) => {
       PdxScriptParserTask.start(
         {
           project: this.props.project,
-          definition: this.state.definition,
+          definition: this.props.project.definition,
           filterTypes: [type.id],
         },
         (progress, total, message) => console.log(`[${progress}/${total}] ${message}`),
@@ -118,7 +120,7 @@ class StructureTypeView extends Component {
   }
 
   scanType(typeId) {
-    const type = _(this.state.definition.types).find(x => x.id === typeId);
+    const type = _(this.props.project.definition.types).find(x => x.id === typeId);
 
     return new Promise((resolve, reject) => {
       StructureScannerTask.start(
@@ -173,7 +175,7 @@ class StructureTypeView extends Component {
 
   async loadMoreRows({startIndex, stopIndex}) {
     const db = await JdxDatabase.get(this.props.project);
-    const type = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
+    const type = _(this.props.project.definition.types).find(x => x.id === this.props.match.params.type);
 
     const rows = db[type.id].offset(startIndex).limit((stopIndex - startIndex) + 1);
 
@@ -184,11 +186,11 @@ class StructureTypeView extends Component {
   }
 
   render() {
-    if (!this.props.match.params.type || !this.state.definition) {
+    if (!this.props.match.params.type || !this.props.project.definition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Definitions not loaded yet.</p></Paper>);
     }
 
-    const typeDefinition = _(this.state.definition.types).find(x => x.id === this.props.match.params.type);
+    const typeDefinition = _(this.props.project.definition.types).find(x => x.id === this.props.match.params.type);
     if (!typeDefinition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>Could not find type definition.</p></Paper>);
     }
@@ -222,6 +224,9 @@ class StructureTypeView extends Component {
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Scan" placement="bottom">
               <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">printer</Icon></IconButton>
+            </Tooltip>
+            <Tooltip id="tooltip-icon" title="Definition reload" placement="bottom">
+              <IconButton onClick={() => this.props.project.reloadDefinition() }><Icon color="action">printer</Icon></IconButton>
             </Tooltip>
           </span>
         </div>
