@@ -226,7 +226,7 @@ class StructureTypeView extends Component {
               <IconButton onClick={() => this.scanType(this.props.match.params.type)}><Icon color="action">printer</Icon></IconButton>
             </Tooltip>
             <Tooltip id="tooltip-icon" title="Definition reload" placement="bottom">
-              <IconButton onClick={() => this.props.project.reloadDefinition() }><Icon color="action">printer</Icon></IconButton>
+              <IconButton onClick={() => this.props.project.reloadDefinition() }><Icon color="action">code</Icon></IconButton>
             </Tooltip>
           </span>
         </div>

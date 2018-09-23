@@ -2,7 +2,9 @@
 import React, {Component} from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
@@ -18,6 +20,7 @@ import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
 import {incrementVersion} from '../actions/database';
 import ItemGrid from './ItemGrid';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
+import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 
 @inject('store')
 @observer
@@ -154,27 +157,30 @@ class StructureView extends Component {
 
     return (
       <Paper style={{flex: 1, margin: 20, padding: 20, display: 'flex', flexDirection: 'column', minHeight: 200}}>
-        <Typography variant="display2">{this.props.match.params.category || this.props.project.name}</Typography>
+        <div style={{display: 'flex', flexGrow: 0, flexShrink: 0}}>
+          <Typography variant="display2" gutterBottom>{this.props.match.params.category || this.props.project.name}</Typography>
+          <span style={{marginLeft: 20}}>
+            <Tooltip id="tooltip-icon" title="Reload all" placement="bottom">
+              <IconButton onClick={() => this.reloadAll()}><Icon color="action">refresh</Icon></IconButton>
+            </Tooltip>
+            {!this.props.match.params.category &&
+              <Tooltip id="tooltip-icon" title="Reload diff" placement="bottom">
+                <IconButton onClick={() => this.reloadDiff()}><Icon color="action">compare_arrows</Icon></IconButton>
+              </Tooltip>
+            }
+            <Tooltip id="tooltip-icon" title="Validate all" placement="bottom">
+                <IconButton onClick={() => this.validateAll()}><Icon color="action">assignment_turned_in</Icon></IconButton>
+              </Tooltip>
+            <Tooltip id="tooltip-icon" title="Definition reload" placement="bottom">
+              <IconButton onClick={() => this.props.project.reloadDefinition() }><Icon color="action">code</Icon></IconButton>
+            </Tooltip>
+          </span>
+        </div>
+
         <Typography variant="subheading" gutterBottom style={{color: 'grey'}}>
           Last global change: {this.props.project.lastGlobalUpdate ? (new Date(this.props.project.lastGlobalUpdate)).toLocaleString() : <i>- unknown -</i>}
         </Typography>
-        <div style={{display: 'flex', flexDirection: 'row', marginBottom: 20, minHeight: 25}}>
-          {/*
-          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadStructure()}>Load raw file data</Button><br />
-          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxScripts()}>Load PDX scripts</Button><br />
-          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadPdxData()}>Load PDX data assets</Button><br />
-          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.loadStructureData()}>Load game structures</Button><br />
-          */}
-          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadAll()}>Reload all</Button>
-          <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.validateAll()}>Validate all</Button>
-          {!this.props.match.params.category &&
-            <span>
-              <Button variant="raised" color="secondary" style={{marginRight: 10}} onClick={() => this.reloadDiff()}>Reload diff</Button>
-            </span>
-          }
 
-
-        </div>
         <div className="ItemGrid">
           <ItemGrid
             list={extendedTypes}

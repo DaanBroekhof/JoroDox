@@ -155,7 +155,7 @@ class App extends Component {
       case 'fileview':
         this.props.store.goto('/fileview/' + (this.props.store.projectStore.currentProject ? this.props.store.projectStore.currentProject.rootPath : ''));
         break;
-      case 'structure':
+      case 'structure': {
         const currentProject = this.props.store.projectStore.currentProject;
         if (currentProject.structureCurrentNodeKind === 'root') {
           this.props.store.goto('/structure');
@@ -169,6 +169,7 @@ class App extends Component {
           this.props.store.goto('/structure');
         }
         break;
+      }
       case 'projects':
         this.props.store.goto('/projects');
         break;
