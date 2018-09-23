@@ -556,7 +556,7 @@ export default class StructureLoaderTask extends DbBackgroundTask {
       if (fieldDef.type === 'concat') {
         item[fieldName] = fieldDef.fields.map(x => _.get(item, x)).join(fieldDef.separator !== undefined ? fieldDef.separator : '.');
       } else if (fieldDef.type === 'get') {
-        item[fieldName] = _.get(item, fieldDef.fields);
+        item[fieldName] = _.get(item, fieldDef.fields, fieldDef.default);
       } else if (fieldDef.type === 'splitUnderscore') {
         item[fieldName] = _.get(item, fieldDef.fields).split('_');
       } else if (fieldDef.type === 'filePath') {
