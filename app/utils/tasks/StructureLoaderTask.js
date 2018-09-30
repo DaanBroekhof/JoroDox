@@ -332,7 +332,8 @@ export default class StructureLoaderTask extends DbBackgroundTask {
             }));
           }
         } else {
-          if (!definition.sourceTransform.disableNamespace) {
+          if (!definition.sourceTransform.disableNamespace
+            && (!definition.sourceTransform.filterNamespace || definition.sourceTransform.filterNamespace.includes(value.name))) {
             namespaceValues[value.name] = value.data;
           }
         }
