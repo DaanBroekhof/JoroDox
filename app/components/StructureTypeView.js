@@ -31,11 +31,14 @@ class StructureTypeView extends Component {
     rowCount: 0
   };
 
+  @observable searchInput = '';
+  @observable search = '';
+
+
   constructor(props) {
     super(props);
 
     this.state = {
-      search: '',
       items: []
     };
   }
@@ -46,6 +49,15 @@ class StructureTypeView extends Component {
       () => this.loadRowCount(),
       {fireImmediately: true}
     );
+    this.disposeSearchReaction = reaction(
+      () => this.searchInput,
+      () => {
+        this.search = this.searchInput;
+        this.itemGrid.reloadLastRows();
+        return this.loadRowCount();
+      },
+      {delay: 1000}
+    );
 
     this.props.project.structureCurrentNodeKind = 'type';
     this.props.project.structureCurrentNodeKindType = this.props.match.params.type;
@@ -53,6 +65,7 @@ class StructureTypeView extends Component {
 
   componentWillUnmount() {
     this.disposeReaction();
+    this.disposeSearchReaction();
   }
 
   async loadRowCount() {
@@ -62,8 +75,8 @@ class StructureTypeView extends Component {
 
     const ids = this.props.project.typeIds[this.props.match.params.type];
 
-    if (this.state.search) {
-      const count = Array.from(ids.entries()).filter(x => x.toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).length;
+    if (this.search) {
+      const count = Array.from(ids.entries()).filter(x => x.toString().match(new RegExp(_.escapeRegExp(this.search), 'i'))).length;
       this.data.rowCount = count;
       if (this.itemGrid) {
         this.itemGrid.reloadLastRows();
@@ -179,8 +192,8 @@ class StructureTypeView extends Component {
 
     const rows = db[type.id].offset(startIndex).limit((stopIndex - startIndex) + 1);
 
-    if (this.state.search) {
-      return rows.filter(x => x[type.primaryKey].toString().match(new RegExp(_.escapeRegExp(this.state.search), 'i'))).toArray();
+    if (this.search) {
+      return rows.filter(x => x[type.primaryKey].toString().match(new RegExp(_.escapeRegExp(this.search), 'i'))).toArray();
     }
     return rows.toArray();
   }
@@ -236,13 +249,9 @@ class StructureTypeView extends Component {
           type="search"
           margin="normal"
           style={{display: 'flex', flexGrow: 0, flexShrink: 0}}
-          value={this.state.search}
+          value={this.searchInput}
           onChange={(event) => {
-            this.setState({search: event.target.value}, () => {
-              this.itemGrid.reloadLastRows();
-
-              return this.loadRowCount();
-            });
+            this.searchInput = event.target.value;
           }}
         />
 
