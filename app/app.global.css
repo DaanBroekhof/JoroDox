@@ -1,9 +1,34 @@
-/*@import '~antd/dist/antd.css';*/
 @import url('../node_modules/font-awesome/css/font-awesome.min.css');
 
-/*@import '~material-design-icons-iconfont';*/
+/* Tweaked MaterialUI Icons font cssw, that doesn't want to load from the npm package */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url("./assets/fonts/MaterialIcons.woff2") format('woff2');
+}
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
 
-@import '~material-design-icons-iconfont/dist/material-design-icons.scss';
 
 
 
