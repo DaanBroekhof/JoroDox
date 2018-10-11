@@ -1,11 +1,28 @@
 
 export default class PdxScript {
-  constructor() {
+  options = {
+    extendedComparisonOperators: false, // Stellaris >, <, <=, >= operators
+    supportTagPlaceholder: false, // Placeholders in the form of '<placeholderbla>'
+  };
+
+  constructor(options) {
+    if (options) {
+      this.options = Object.assign(this.options, options);
+    }
+
     this.currentLine = 0;
     this.currentOffset = 0;
     this.currentLineOffset = 0;
     this.whiteSpace = [' ', '\t', '\n', '\r'];
     this.lineScope = null;
+  }
+
+  isOperator(text) {
+    if (this.options.extendedComparisonOperators) {
+      return ['>', '<', '=', '<=', '>='].includes(text);
+    } else {
+      return text === '=';
+    }
   }
 
   readFile(data) {
@@ -43,8 +60,8 @@ export default class PdxScript {
 
       token = this.readToken(scope);
 
-      // Allow assigning with an '=' or with an '{'
-      if (token === '=' || token === '{') {
+      // Allow assigning with an operator or with an '{'
+      if (this.isOperator(token) || token === '{') {
         // property style object
 
         const propertyScope = {
@@ -56,7 +73,8 @@ export default class PdxScript {
         this.moveComments(scope, propertyScope, this.currentLine - 1);
 
         // Value or '{' may follow '='
-        if (token === '=') {
+        if (this.isOperator(token)) {
+          propertyScope.operator = token;
           token = this.readToken(propertyScope);
         }
 
@@ -91,6 +109,11 @@ export default class PdxScript {
         } else {
           // Set value
           scope.data[propertyScope.name] = propertyScope.data;
+        }
+
+        // Specify non equality operators
+        if (scope.data[propertyScope.name] && propertyScope.operator !== '=' && !scope.data[propertyScope.name].operator) {
+          scope.data[propertyScope.name] = {operator: propertyScope.operator, value: scope.data[propertyScope.name]};
         }
 
         do {
@@ -188,6 +211,10 @@ export default class PdxScript {
       return this.readString(scope);
     }
 
+    if (this.options.supportTagPlaceholder && this.data[this.currentOffset] === '<' && !['=', ' '].includes(this.data[this.currentOffset + 1])) {
+      return this.readTagPlaceholder(scope);
+    }
+
     while (this.currentOffset < this.data.length) {
       if (this.data[this.currentOffset] === '#') {
         this.readComment(this.lineScope);
@@ -197,8 +224,8 @@ export default class PdxScript {
         }
         return this.readToken(scope);
       }
-      // '=', '{', '}' can only be a solo token
-      if (token !== '' && (this.data[this.currentOffset] === '=' || this.data[this.currentOffset] === '{' || this.data[this.currentOffset] === '}' || this.data[this.currentOffset] === ',')) {
+      // operator, '{', '}' can only be a solo token
+      if (token !== '' && (this.isOperator(this.data[this.currentOffset]) || this.data[this.currentOffset] === '{' || this.data[this.currentOffset] === '}' || this.data[this.currentOffset] === ',')) {
         break;
       }
 
@@ -265,6 +292,20 @@ export default class PdxScript {
         break;
       } else {
         string += this.data[this.currentOffset];
+      }
+    }
+    return string;
+  }
+
+  readTagPlaceholder(scope) {
+    let string = '<';
+
+    while (this.currentOffset < this.data.length) {
+      this.currentOffset += 1;
+      string += this.data[this.currentOffset];
+      if (this.data[this.currentOffset] === '>') {
+        this.currentOffset += 1;
+        break;
       }
     }
     return string;

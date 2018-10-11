@@ -1,7 +1,4 @@
-import BackgroundTask from './BackgroundTask';
 import JdxDatabase from '../JdxDatabase';
-import PdxScript from '../PdxScript';
-import FileView from '../../components/FileView';
 import * as iconv from 'iconv-lite';
 import DbBackgroundTask from './DbBackgroundTask';
 

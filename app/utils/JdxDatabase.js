@@ -14,6 +14,8 @@ import DdsImageParserTask from './tasks/DdsImageParserTask';
 import DeleteRelatedTask from './tasks/DeleteRelatedTask';
 import DbBackgroundTask from './tasks/DbBackgroundTask';
 import ForegroundTask from './tasks/ForegroundTask';
+import PdxTriggerDocReader from './PdxTriggerDocReader';
+import * as iconv from 'iconv-lite';
 
 const syspath = require('electron').remote.require('path');
 const jetpack = require('electron').remote.require('fs-jetpack');
@@ -547,6 +549,8 @@ export default class JdxDatabase {
           return;
         }
 
+        data.dir = syspath.join(baseDir, definitionDir);
+
         this.definitions[data.id] = data;
         this.definitions[data.id].types = [];
 
@@ -721,6 +725,10 @@ export default class JdxDatabase {
         continue;
       }
 
+      if (identifierCache[typeDefinition.id]) {
+        console.error('Double type ID: ' + typeDefinition.id);
+      }
+
       identifierCache[typeDefinition.id] = new Set(await db[typeDefinition.id].toCollection().primaryKeys());
     }
 
@@ -766,6 +774,14 @@ export default class JdxDatabase {
     }
 
     return this.allIdentifiersCache[project.id][type];
+  }
+
+  static parseProjectTriggerDefinitionFile(project) {
+    const fileText = iconv.decode(jetpack.read(syspath.join(project.definition.dir, 'trigger_docs.txt'), 'buffer'), 'win1252');
+    const data = PdxTriggerDocReader.parse(fileText);
+    const converted = PdxTriggerDocReader.convertToDefinition(data);
+
+    return converted;
   }
 
   static async addError(project, error) {

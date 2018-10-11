@@ -22,7 +22,7 @@ export default class PdxScriptParserTask extends DbBackgroundTask {
     const scripts = [];
     const relations = [];
     for (const path of files) {
-      const parser = new PdxScript();
+      const parser = new PdxScript(definition.pdxScriptOptions);
       const fullPath = args.project.rootPath + syspath.sep + path.replace(new RegExp('/', 'g'), syspath.sep);
 
       if (!jetpack.exists(fullPath)) {

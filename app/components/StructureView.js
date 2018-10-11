@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import _ from 'lodash';
 import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
 import {Column} from 'react-virtualized';
 import {inject, observer} from 'mobx-react';
 import {observable, reaction, when} from 'mobx';
@@ -17,10 +16,8 @@ import PdxScriptParserTask from '../utils/tasks/PdxScriptParserTask';
 import PdxDataParserTask from '../utils/tasks/PdxDataParserTask';
 import StructureLoaderTask from '../utils/tasks/StructureLoaderTask';
 import DeleteRelatedTask from '../utils/tasks/DeleteRelatedTask';
-import {incrementVersion} from '../actions/database';
 import ItemGrid from './ItemGrid';
 import SchemaValidatorTask from '../utils/tasks/SchemaValidatorTask';
-import OperatingSystemTask from "../utils/tasks/OperatingSystemTask";
 
 @inject('store')
 @observer
@@ -145,6 +142,13 @@ class StructureView extends Component {
     });
   }
 
+  testParse() {
+    const data = JdxDatabase.parseProjectTriggerDefinitionFile(this.props.project);
+    //console.log(data.effects.find(x => x.name === 'random_war_participant'));
+    console.log(JSON.stringify(data));
+    //console.log(data);
+  }
+
   render() {
     if (!this.props.project.definition) {
       return (<Paper style={{flex: 1, margin: 20, padding: 20, alignSelf: 'flex-start'}}><p>No data.</p></Paper>);
@@ -173,6 +177,9 @@ class StructureView extends Component {
               </Tooltip>
             <Tooltip id="tooltip-icon" title="Definition reload" placement="bottom">
               <IconButton onClick={() => this.props.project.reloadDefinition() }><Icon color="action">code</Icon></IconButton>
+            </Tooltip>
+            <Tooltip id="tooltip-icon" title="Parse test" placement="bottom">
+              <IconButton onClick={() => this.testParse() }><Icon color="action">code</Icon></IconButton>
             </Tooltip>
           </span>
         </div>
