@@ -42,7 +42,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			isCurrent: false,
 		},
 		defaultData: {
-			dataVersion: '1.0.15',
+			dataVersion: '1.1.0',
 			pathDisplayName: null,
 			fileSystem: {
 				root: null,
@@ -57,6 +57,8 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				name: null,
 				pathDisplayName: null,
 				retainedRootFileEntry: null,
+
+				shouldRequestAccess: false,
 			},
 			pdxScriptData: {
 				byPath: {},
@@ -250,7 +252,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 		encodings: {
 			// Windows code page 1252 Western European
-		    //
+			//
 			cp1252: '\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7f\u20ac\ufffd\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\ufffd\u017d\ufffd\ufffd\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\ufffd\u017e\u0178\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff',
 		},
 		showMessage: function (message) {
@@ -372,34 +374,16 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 							}
 							else
 							{
-								// Outdated structure
-								chrome.fileSystem.isRestorable(data.mod.retainedRootFileEntry, function(isRestorable) {
-									if (!isRestorable)
-										deferred.reject('Cannot restore root file entry.');
-									else
-									{
-										chrome.fileSystem.restoreEntry(data.mod.retainedRootFileEntry, function(entry) {
-											return this.setRootFileEntry(entry, data.id).then(function () {
-												chrome.storage.local.set({'lastLoadedModId': this.data.id});
-												deferred.resolve();
-											}.bind(this));
-										}.bind(this));
-									}
-								}.bind(this));
+								// Remove from storage
+                                this.storage.remove(id, function () {
+                                    return this.showMessage({title: 'JoroDox Extension Updated', text: 'The old mods/files list is no longer compatible with current Chrome version. Cleared list. (re-open them in `Settings`)'});
+                                }.bind(this));
 							}
 						}.bind(this));
 					}
 				}.bind(this), deferred.reject);
 			}.bind(this));
 
-			return deferred.promise;
-		},
-		/** @memberOf modService */
-		getDisplayPath: function (entry) {
-			var deferred = $q.defer();
-			chrome.fileSystem.getDisplayPath(entry, function (displayPath) {
-				deferred.resolve(displayPath);
-			});
 			return deferred.promise;
 		},
 		/** @memberOf modService */
@@ -410,7 +394,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			if (dataId)
 				this.data.id = dataId;
 
-			this.data.mod.retainedRootFileEntry = chrome.fileSystem.retainEntry(entry);
+			this.data.mod.retainedRootFileEntry = entry;
 			this.data.mod.name = entry.name;
 
 			this.pathToFileEntry[''] = entry;
@@ -420,13 +404,9 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return this.loadFileNode(rootFileNode).then(function() {
 				return this.loadFileNodeDirectory(rootFileNode);
-			//}.bind(this)).then(function () {
-			//	return this.refreshOpenDirectories();
 			}.bind(this)).then(function() {
-				return this.getDisplayPath(entry).then(function (displayPath) {
-					this.data.pathDisplayName = displayPath;
-					this.data.mod.pathDisplayName = displayPath;
-				}.bind(this));
+				this.data.pathDisplayName = this.data.mod.name;
+				this.data.mod.pathDisplayName = this.data.mod.name;
 			}.bind(this)).then(function () {
 				return this.saveModData();
 			}.bind(this));
@@ -522,11 +502,21 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			var deferred = $q.defer();
 
 			this.getFileEntry(fileNode.path).then(function (entry) {
-				entry.getMetadata(function (metadata) {
-					fileNode.metadata = metadata;
+				if (entry.kind == 'file')
+				{
+					entry.getFile().then( (metadata) => {
+						fileNode.metadata = metadata;
+						fileNode.metadata.lastModifiedDate = new Date( metadata.lastModified );
+						fileNode.lastMetadataCheck = new Date();
+						deferred.resolve(metadata);
+					});
+				}
+				else
+				{
+					fileNode.metadata = { lastModified: 0, lastModifiedDate: new Date( 0 ) };
 					fileNode.lastMetadataCheck = new Date();
-					deferred.resolve(metadata);
-				}, deferred.reject);
+					deferred.resolve(fileNode.metadata);
+				}
 			});
 
 			return deferred.promise;
@@ -534,11 +524,11 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 		isNodeOutdatedQuick: function (dataNode, date) {
 			if (('metadata' in dataNode) && dataNode.metadata)
 			{
-				if (dataNode.metadata.modificationTime > dataNode.lastGenerated)
+				if (dataNode.metadata.lastModifiedDate > dataNode.lastGenerated)
 				{
 					return true;
 				}
-				if (date && dataNode.metadata.modificationTime > date)
+				if (date && dataNode.metadata.lastModifiedDate > date)
 				{
 					return true;
 				}
@@ -609,7 +599,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			if (('metadata' in dataNode) && dataNode.metadata)
 			{
-				if (dataNode.metadata.modificationTime > dataNode.lastGenerated)
+				if (dataNode.metadata.lastModifiedDate > dataNode.lastGenerated)
 				{
 					deferred.resolve(true);
 					return deferred.promise;
@@ -625,7 +615,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				if (dataNode.metadata == null || dataNode.lastMetadataCheck == null || (new Date() - dataNode.lastMetadataCheck > 1000 * 600))
 				{
 					promises.push(this.getMetadata(dataNode).then(function (metadata) {
-						return metadata.modificationTime > dataNode.lastGenerated;
+						return metadata.lastModifiedDate > dataNode.lastGenerated;
 					}));
 				}
 			}
@@ -796,6 +786,23 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			});
 		},
 		/** @memberOf modService */
+		requestRootAccess: function() {
+			var deferred = $q.defer();
+			this.data.mod.retainedRootFileEntry.requestPermission( {mode: 'readwrite'} ).then( (returnState) => {
+				if (returnState == 'granted')
+				{
+					this.pathToFileEntry[''] = this.data.mod.retainedRootFileEntry;
+					deferred.resolve( this.pathToFileEntry[''] );
+					this.data.mod.shouldRequestAccess = false;
+				}
+				else
+				{
+					deferred.reject(returnState);
+				}
+			});
+			return deferred.promise;
+		},
+		/** @memberOf modService */
 		getFileEntry: function (path, options, ignoreExist, isDir) {
 			var deferred = $q.defer();
 			if (!options && this.pathToFileEntry[path])
@@ -804,49 +811,54 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			}
 			else if (path == '')
 			{
-				chrome.fileSystem.isRestorable(this.data.mod.retainedRootFileEntry, function(isRestorable) {
-					if (!isRestorable)
-						deferred.reject('Cannot restore root file entry.');
-					else
+				this.data.mod.retainedRootFileEntry.queryPermission({mode: 'readwrite'}).then((currentState) => {
+					if (currentState == 'granted')
 					{
-						chrome.fileSystem.restoreEntry(this.data.mod.retainedRootFileEntry, function(entry) {
-							this.pathToFileEntry[''] = entry;
-							deferred.resolve(entry);
-						}.bind(this));
+						this.pathToFileEntry[''] = this.data.mod.retainedRootFileEntry;
+						deferred.resolve( this.pathToFileEntry[''] );
 					}
-				}.bind(this));
+					else if ( currentState == 'denied')
+					{
+						deferred.reject("denied");
+					}
+					else if ( currentState == 'prompt' )
+					{
+						this.data.mod.shouldRequestAccess = true;
+						deferred.reject("prompt");
+					}
+				});
 			}
 			else
 			{
 				if (!options)
 					options = {};
 
-				return this.getFileEntry('').then(function (rootEntry) {
+				var parentDirPath = path.split('/');
+				var entryName = parentDirPath.pop();
+
+				return this.getFileEntry( parentDirPath.join('/') ).then(function (parentDirEntry) {
 					var deferred = $q.defer();
-					var getter = isDir || (this.data.fileSystem.byPath[path] && this.data.fileSystem.byPath[path].isDirectory) ? 'getDirectory' : 'getFile';
-					rootEntry[getter](
-						path,
-						options,
-						function (entry) {
-							this.pathToFileEntry[path] = entry;
-							deferred.resolve(entry);
-						}.bind(this),
-						function (e) {
-							if (ignoreExist && (e.name == 'NotFoundError' || e.name == 'InvalidModificationError'))
-							{
-								deferred.resolve(false);
-							}
-							else if (e.name == 'TypeMismatchError' && !isDir)
-							{
-								// Tried to access directory as a file, try again as dir
-								deferred.resolve(this.getFileEntry(path, options, ignoreExist, true));
-							}
-							else
-							{
-								deferred.reject(e);
-							}
-						}.bind(this)
-					);
+					var getter = isDir || (this.data.fileSystem.byPath[path] && this.data.fileSystem.byPath[path].isDirectory) ? 'getDirectoryHandle' : 'getFileHandle';
+
+					parentDirEntry[getter]( entryName, options ).then( (entry) => {
+						this.pathToFileEntry[path] = entry;
+						deferred.resolve(entry);
+					}).catch((e) => {
+						if (ignoreExist && (e.name == 'NotFoundError' || e.name == 'InvalidModificationError'))
+						{
+							deferred.resolve(false);
+						}
+						else if (e.name == 'TypeMismatchError' && !isDir)
+						{
+							// Tried to access directory as a file, try again as dir
+							deferred.resolve(this.getFileEntry(path, options, ignoreExist, true));
+						}
+						else
+						{
+							deferred.reject(e);
+						}
+					});
+
 					return deferred.promise;
 				}.bind(this));
 			}
@@ -857,11 +869,11 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 			{
 				return this.getFileEntry(path).then(function (entry) {
 					var deferred = $q.defer();
-					if (!entry.isFile)
+					if (entry.kind != 'file')
 						deferred.reject('Path `'+ path +'` not a file.');
 					else
 					{
-						entry.file(function (file) {
+						entry.getFile().then( function (file) {
 							deferred.resolve(file);
 						}, deferred.reject);
 					}
@@ -898,7 +910,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 					var promises = [];
 					var current = fileNode.byName;
 					var foundNames = [];
-					for (var entry of entries)
+					for (var [key, entry] of entries)
 					{
 						if (entry.name[0] == '.')
 							continue;
@@ -921,9 +933,9 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 						// New subitem
 						if (!fileNode.byName[entry.name])
 						{
-							if (entry.isFile)
+							if (entry.kind == 'file')
 								fileNode.files.push(subFileNode);
-							if (entry.isDirectory)
+							if (entry.kind == 'directory')
 								fileNode.folders.push(subFileNode);
 
 							fileNode.count++;
@@ -986,8 +998,8 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				fileNode.name = entry.name;
 				fileNode.lastGenerated = new Date();
 
-				fileNode.isFile = entry.isFile;
-				fileNode.isDirectory = entry.isDirectory;
+				fileNode.isFile = (entry.kind == 'file');
+				fileNode.isDirectory = (entry.kind == 'directory');
 
 				if (fileNode.isFile)
 				{
@@ -1840,12 +1852,12 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				}.bind(this));
 			}.bind(this));
 		},
-		'fileExists': function (path) {
+		fileExists: function (path) {
 			return this.getFileEntry(path).then(function (fileEntry) {
 				return !!fileEntry;
 			}, {}, true);
 		},
-		'getFileText': function (path, encoding) {
+		getFileText: function (path, encoding) {
 			return this.getFile(path).then(function (file) {
 				var deferred = $q.defer();
 
@@ -1862,7 +1874,7 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				return deferred.promise;
 			});
 		},
-		'writeFileText': function (path, text, encoding, overwrite) {
+		writeFileText: function (path, text, encoding, overwrite) {
 
 			if (!encoding)
 				encoding = 'cp1252';
@@ -1872,10 +1884,10 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 
 			return this.writeFileBlob(path, new Blob([text], {type: 'text/plain'}), overwrite);
 		},
-		'writeFileBuffer': function (path, buffer, overwrite) {
+		writeFileBuffer: function (path, buffer, overwrite) {
 			return this.writeFileBlob(path,  new Blob([buffer]), overwrite);
 		},
-		'writeFileBlob': function (path, blob, overwrite) {
+		writeFileBlob: function (path, blob, overwrite) {
 			return this.getFileEntry(path, {create: true, exclusive: !overwrite}, !overwrite).then(function (fileEntry) {
 				if (!fileEntry)
 				{
@@ -1885,23 +1897,19 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 				var deferred = $q.defer();
 				var truncated = false;
 
-				fileEntry.createWriter(function (writer) {
-					writer.onerror = deferred.reject;
-					writer.onwriteend = function (e) {
-						if (!truncated) {
-							truncated = true;
-							this.truncate(this.position);
-							return;
-						}
-						deferred.resolve();
-					}
-					writer.write(blob);
+				fileEntry.createWritable().then( function (writer) {
+					writer.write(blob).then( (res) => {
+						writer.close().then( deferred.resolve ).catch( deferred.reject )
+					}).catch( (e) => {
+						console.log(e);
+						deferred.reject(e);
+					});
 				}, deferred.reject);
 
 				return deferred.promise;
 			}, {create: true, exclusive: !overwrite}, !overwrite);
 		},
-		'getFileBuffer': function (path, encoding) {
+		getFileBuffer: function (path, encoding) {
 			return this.getFile(path).then(function (file) {
 				var deferred = $q.defer();
 
@@ -1919,26 +1927,16 @@ module.factory('modService', ['$rootScope', '$timeout', '$modal', '$q', 'mapAnal
 		// and put the results into the textarea, then disable the Save As button
 		readDir: function (entry) {
 			var deferred = $q.defer();
-			if (entry.isDirectory)
+			if (entry.kind == 'directory')
 			{
-				var dirReader = entry.createReader();
-
-				// Call the reader.readEntries() until no more results are returned.
 				var entries = [];
-				var readEntries = function() {
-					dirReader.readEntries(function(results) {
-						if (!results.length) {
-							return deferred.resolve(entries);
-						}
-						else {
-							results.forEach(function(item) {
-								entries.push(item);
-							});
-							readEntries();
-						}
-					}, deferred.reject);
-				};
-				readEntries(); // Start reading dirs.
+				(async function() {
+					for await (let subEntry of entry.entries())
+					{
+						entries.push(subEntry);
+					}
+					return deferred.resolve(entries);
+				})();
 			}
 			else
 			{

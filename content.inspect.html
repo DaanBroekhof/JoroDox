@@ -23,7 +23,7 @@
 			</ol>
 		</script>
 
-		<div ui-tree data-drag-enabled="false" data-empty-place-holder-enabled="false">
+		<div ui-tree data-drag-enabled="false" data-empty-place-holder-enabled="false" ng-show="!modService.data.mod.shouldRequestAccess">
 			<ol ui-tree-nodes ng-model="modService.data.fileSystem.root.folders">
 				<li ng-repeat="node in modService.data.fileSystem.root.folders" ui-tree-node ng-include="'nodes_renderer.html'" data-collapsed="true"></li>
 			</ol>
@@ -34,10 +34,15 @@
 		</div>
 	</div>
 	<div ui-layout-container class="window-box">
-		<div ui-view>
+		<div ui-view ng-controller="ContentsPage">
 			<h2>Explore</h2>
 			<p ng-show="!modService.data">You probably see this because you don't have a mod dir configured. Do that in <a ui-sref="settings">Settings</a>.</p>
 			<p ng-show="modService.data">Explore your mod structure. Green items have extra tools attached.</p>
+			<div class="alert alert-warning" ng-show="modService.data.mod.shouldRequestAccess">
+				<p><b>Directory access expired!</b></p>
+				<br />
+				<button type="button" class="btn btn-primary" ng-click="requestModRootDirAccess()">Enable Access</button>
+			</div>
 		</div>
 	</div>
 </div>

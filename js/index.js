@@ -9,10 +9,10 @@ myMod.filter('commentFilter', function() {
 		var txt = [];
 		for (key in input)
 		{
-		    if (input.hasOwnProperty(key) && input[key] != null)
-		    {
-		    	txt.push(input[key]);
-		    }
+			if (input.hasOwnProperty(key) && input[key] != null)
+			{
+				txt.push(input[key]);
+			}
 		}
 
 		return txt;
@@ -268,12 +268,10 @@ myMod.controller('FileInspect', function ($scope, node, animation, modService, p
 			return modService.writeFileBuffer($scope.node.path, buffer, true).then(function () {
 				$scope.loading = false;
 			}).then(function () {
-				modService.loadFileNodeDirectory($scope.node.parent).then(function () {
-					$state.reload();
-
-					return modService.showMessage({title: 'Mesh data updated.', text: 'Mesh data saved to `'+ $scope.node.path +'`'});
+				modService.loadFileNode($scope.node).then(function () {
+					$state.go('inspect.file', {path: $scope.node.path, 'node': $scope.node});
+					return modService.showMessage({title: 'Changes saved', text: 'Changes saved to `'+  $scope.node.path +'`'});
 				});
-
 			});
 		};
 
@@ -637,8 +635,8 @@ myMod.controller('LoadMod', ['$scope', 'modService', '$state', function ($scope,
 	$scope.mods = [];
 
 	$scope.chooseModRootDir = function () {
-		 chrome.fileSystem.chooseEntry({type: 'openDirectory'}, function(directory) {
-			modService.setRootFileEntry(directory).then(function () {
+		window.showDirectoryPicker({ mode: 'readwrite' }).then( ( handle ) => {
+			modService.setRootFileEntry(handle).then(function () {
 				$scope.loadPreviousModData();
 			});
 		});
@@ -1996,14 +1994,14 @@ myMod.controller('PanZoom', ['$scope', 'PanZoomService', 'hotkeys', '$rootScope'
 		callback: function (event, hotkey) {
 			$scope.panzoomConfig.panOnClickDrag = false;
 		},
-    }).add({
+	}).add({
 		combo: 'ctrl',
 		description: 'Don\'t pan on map-drag.',
 		action: 'keyup',
 		callback: function (event, hotkey) {
 			$scope.panzoomConfig.panOnClickDrag = true;
 		},
-    });
+	});
 
 	// The panzoom model should initialle be empty; it is initialized by the <panzoom>
 	// directive. It can be used to read the current state of pan and zoom. Also, it will
@@ -2034,4 +2032,13 @@ myMod.controller('TopBar', ['$scope', 'modService', function ($scope, modService
 // About page
 myMod.controller('AboutPage', ['$scope', function ($scope) {
 	$scope.manifest = chrome.runtime.getManifest();
+}]);
+
+// Contents page
+myMod.controller('ContentsPage', ['$scope', 'modService', function ($scope, modService) {
+	$scope.requestModRootDirAccess = function () {
+		modService.requestRootAccess().then( () => {
+			modService.refreshOpenDirectories();
+		});
+	}
 }]);

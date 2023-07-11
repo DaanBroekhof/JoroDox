@@ -10,7 +10,7 @@
 <dl class="dl-horizontal">
 	<dt>Full path:</dt><dd>{{node.path}}</dd>
 	<dt>Size:</dt><dd>{{node.metadata.size || '?'}} bytes</dd>
-	<dt>Last modified:</dt><dd>{{node.metadata.modificationTime.toLocaleString() || '?'}}</dd>
+	<dt>Last modified:</dt><dd>{{node.metadata.lastModifiedDate.toLocaleString() || '?'}}</dd>
 	<dt ng-if="node.extension != null">Extension:</dt><dd ng-if="node.extension != null">{{node.extension}}</dd>
 	<dt ng-if="node.fileType != null">File type:</dt><dd ng-if="node.fileType != null">{{node.fileType}}</dd>
 </dl>

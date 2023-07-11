@@ -1,12 +1,11 @@
 {
   "name": "JoroDox Tools",
-  "version": "0.7.0",
-  "manifest_version": 2,
-  "minimum_chrome_version": "31",
-  "app": {
-    "background": {
-      "scripts": ["background.js"]
-    }
+  "version": "0.8.0",
+  "manifest_version": 3,
+  "minimum_chrome_version": "88",
+  "background": {
+    "service_worker": "backgroundServiceWorker.js",
+    "type": "module"
   },
   "icons" : {
     "16": "img/icon-16.png",
@@ -15,7 +14,6 @@
   	"128": "img/icon-128.png"
   },
   "permissions": [
-    {"fileSystem": ["write", "retainEntries", "directory"]},
     "storage"
   ]
 }
